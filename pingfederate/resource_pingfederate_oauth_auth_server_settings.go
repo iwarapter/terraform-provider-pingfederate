@@ -181,7 +181,7 @@ func resourcePingFederateOauthAuthServerSettingsResourceUpdate(d *schema.Resourc
 	refreshTokenLength := d.Get("refresh_token_length").(int)
 	refreshRollingInterval := d.Get("refresh_rolling_interval").(int)
 
-	authSettings := pf.AuthorizationServerSettings{
+	authSettings := &pf.AuthorizationServerSettings{
 		DefaultScopeDescription:  String(defaultScopeDescription),
 		AuthorizationCodeTimeout: Int(authorizationCodeTimeout),
 		AuthorizationCodeEntropy: Int(authorizationCodeEntropy),
@@ -189,9 +189,13 @@ func resourcePingFederateOauthAuthServerSettingsResourceUpdate(d *schema.Resourc
 		RefreshRollingInterval:   Int(refreshRollingInterval),
 	}
 
+	if _, ok := d.GetOk("scopes"); ok {
+		authSettings.Scopes = expandScopes(d.Get("scopes").(*schema.Set).List())
+	}
+
 	svc := m.(*pf.PfClient).OauthAuthServerSettings
 	input := &pf.UpdateAuthorizationServerSettingsInput{
-		Body: authSettings,
+		Body: *authSettings,
 	}
 
 	result, _, _ := svc.UpdateAuthorizationServerSettings(input)
@@ -219,12 +223,18 @@ func resourcePingFederateOauthAuthServerSettingsResourceImport(d *schema.Resourc
 	return []*schema.ResourceData{d}, nil
 }
 
-func resourcePingFederateOauthAuthServerSettingsResourceReadResult(d *schema.ResourceData, rv *pf.AuthorizationServerSettings) error {
+func resourcePingFederateOauthAuthServerSettingsResourceReadResult(d *schema.ResourceData, rv *pf.AuthorizationServerSettings) (err error) {
 	log.Printf("[INFO] ")
 	setResourceDataString(d, "default_scope_description", rv.DefaultScopeDescription)
 	setResourceDataInt(d, "authorization_code_timeout", rv.AuthorizationCodeTimeout)
 	setResourceDataInt(d, "authorization_code_entropy", rv.AuthorizationCodeEntropy)
 	setResourceDataInt(d, "refresh_token_length", rv.RefreshTokenLength)
 	setResourceDataInt(d, "refresh_rolling_interval", rv.RefreshRollingInterval)
+
+	if rv.Scopes != nil && len(*rv.Scopes) > 0 {
+		if err = d.Set("scopes", flattenScopes(*rv.Scopes)); err != nil {
+			return err
+		}
+	}
 	return nil
 }

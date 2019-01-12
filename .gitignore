@@ -10,3 +10,4 @@ run.log
 coverage.out
 report.json
 pingfederate/terraform.log
+terraform.log

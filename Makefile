@@ -27,7 +27,7 @@ func-cli-gen:
 	@cd ../pingfederate-sdk-go-gen-cli/ && make generate
 
 sonar:
-	@sonar-scanner -X \
+	@sonar-scanner \
 		-Dsonar.projectKey=github.com.iwarapter.terraform-provider-pingfederate \
 		-Dsonar.sources=. \
 		-Dsonar.host.url=http://localhost:9001 \
