@@ -161,14 +161,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:91a0b06a3bdb53e7d361497901718b1c65766899d795b09cac6bb8dd5f591985"
+  digest = "1:89e2f75896df105aae36ae909818614150f96e2a77b27cd92de72e9b52c7615a"
   name = "github.com/hashicorp/go-getter"
   packages = [
     ".",
     "helper/url",
   ]
   pruneopts = "UT"
-  revision = "fd95e62a2c5cb656352a2f4abdce2c6c787a7ec7"
+  revision = "c68364a1fae197940532c487ce807eee5f890bec"
 
 [[projects]]
   branch = "master"
@@ -321,11 +321,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:54acc0a25f59027658091cd8238ad770d932a8c924237eb3fc8233340064f281"
+  digest = "1:fa3d8151d02f22f9f45e36d2e27daf8656aa017e8993d54ba52b2db71dd50a21"
   name = "github.com/iwarapter/pingfederate-sdk-go"
   packages = ["pingfederate"]
   pruneopts = "UT"
-  revision = "6af4e188375a31ca4901247a16f7c50e85a446f5"
+  revision = "4bf294d0283273272da22d09c9d059894d2b6453"
 
 [[projects]]
   digest = "1:bb81097a5b62634f3e9fec1014657855610c82d19b9a40c17612e32651e35dca"
@@ -593,6 +593,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/hashicorp/terraform/flatmap",
     "github.com/hashicorp/terraform/helper/resource",
     "github.com/hashicorp/terraform/helper/schema",
     "github.com/hashicorp/terraform/plugin",

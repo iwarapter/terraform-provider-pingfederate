@@ -1,6 +1,8 @@
 package pingfederate
 
 import (
+	"encoding/json"
+	"fmt"
 	"log"
 
 	"github.com/hashicorp/terraform/helper/schema"
@@ -39,7 +41,13 @@ func resourcePingFederateOauthAuthServerSettingsResource() *schema.Resource {
 					Type:     schema.TypeString,
 					Required: true,
 				},
-				"scopes": scopes,
+				"scopes": {
+					Type:     schema.TypeList,
+					Required: true,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+				},
 			},
 		},
 	}
@@ -111,11 +119,13 @@ func resourcePingFederateOauthAuthServerSettingsResource() *schema.Resource {
 			"persistent_grant_contract": &schema.Schema{
 				Type:     schema.TypeSet,
 				Optional: true,
+				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"extended_attributes": &schema.Schema{
-							Type:     schema.TypeSet,
+							Type:     schema.TypeList,
 							Optional: true,
+							MinItems: 1,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
@@ -169,8 +179,10 @@ func resourcePingFederateOauthAuthServerSettingsResourceCreate(d *schema.Resourc
 
 func resourcePingFederateOauthAuthServerSettingsResourceRead(d *schema.ResourceData, m interface{}) error {
 	svc := m.(*pf.PfClient).OauthAuthServerSettings
-	result, _, _ := svc.GetAuthorizationServerSettings()
-	//TODO handle the resp/error
+	result, _, err := svc.GetAuthorizationServerSettings()
+	if err != nil {
+		return fmt.Errorf(err.Error())
+	}
 	return resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result)
 }
 
@@ -182,24 +194,91 @@ func resourcePingFederateOauthAuthServerSettingsResourceUpdate(d *schema.Resourc
 	refreshRollingInterval := d.Get("refresh_rolling_interval").(int)
 
 	authSettings := &pf.AuthorizationServerSettings{
-		DefaultScopeDescription:  String(defaultScopeDescription),
-		AuthorizationCodeTimeout: Int(authorizationCodeTimeout),
+		// AdminWebServicePcvRef:             *ResourceLink
 		AuthorizationCodeEntropy: Int(authorizationCodeEntropy),
-		RefreshTokenLength:       Int(refreshTokenLength),
+		AuthorizationCodeTimeout: Int(authorizationCodeTimeout),
+		DefaultScopeDescription:  String(defaultScopeDescription),
 		RefreshRollingInterval:   Int(refreshRollingInterval),
+		RefreshTokenLength:       Int(refreshTokenLength),
+	}
+
+	if _, ok := d.GetOk("admin_web_service_pcv_ref"); ok {
+		// authSettings.AdminWebServicePcvRef = //expand
+	}
+
+	if _, ok := d.GetOk("allowed_origins"); ok {
+		strs := expandStringList(d.Get("allowed_origins").(*schema.Set).List())
+		authSettings.AllowedOrigins = &strs
+	}
+
+	if _, ok := d.GetOk("allow_unidentified_client_extension_grants"); ok {
+		authSettings.AllowUnidentifiedClientExtensionGrants = Bool(d.Get("allow_unidentified_client_extension_grants").(bool))
+	}
+
+	if _, ok := d.GetOk("allow_unidentified_client_ro_creds"); ok {
+		authSettings.AllowUnidentifiedClientROCreds = Bool(d.Get("allow_unidentified_client_ro_creds").(bool))
+	}
+
+	if _, ok := d.GetOk("bypass_authorization_for_approved_grants"); ok {
+		authSettings.BypassAuthorizationForApprovedGrants = Bool(d.Get("bypass_authorization_for_approved_grants").(bool))
+	}
+
+	if _, ok := d.GetOk("exclusive_scope_groups"); ok {
+		authSettings.ExclusiveScopeGroups = expandScopeGroups(d.Get("exclusive_scope_groups").(*schema.Set).List())
+	}
+
+	if _, ok := d.GetOk("exclusive_scopes"); ok {
+		authSettings.ExclusiveScopes = expandScopes(d.Get("exclusive_scopes").(*schema.Set).List())
+	}
+
+	if _, ok := d.GetOk("persistent_grant_contract"); ok {
+		authSettings.PersistentGrantContract = expandPersistentGrantContract(d.Get("persistent_grant_contract").(*schema.Set).List())
+	}
+
+	if _, ok := d.GetOk("persistent_grant_lifetime"); ok {
+		authSettings.PersistentGrantLifetime = Int(d.Get("persistent_grant_lifetime").(int))
+	}
+
+	if _, ok := d.GetOk("persistent_grant_lifetime_unit"); ok {
+		authSettings.PersistentGrantLifetimeUnit = String(d.Get("persistent_grant_lifetime_unit").(string))
+	}
+
+	if _, ok := d.GetOk("persistent_grant_reuse_grant_types"); ok {
+		authSettings.PersistentGrantReuseGrantTypes = expandStringList(d.Get("persistent_grant_reuse_grant_types").(*schema.Set).List())
 	}
 
 	if _, ok := d.GetOk("scopes"); ok {
 		authSettings.Scopes = expandScopes(d.Get("scopes").(*schema.Set).List())
 	}
 
+	if _, ok := d.GetOk("scope_groups"); ok {
+		authSettings.ScopeGroups = expandScopeGroups(d.Get("scope_groups").(*schema.Set).List())
+	}
+
+	if _, ok := d.GetOk("roll_refresh_token_values"); ok {
+		authSettings.RollRefreshTokenValues = Bool(d.Get("roll_refresh_token_values").(bool))
+	}
+
+	if _, ok := d.GetOk("token_endpoint_base_url"); ok {
+		authSettings.TokenEndpointBaseUrl = String(d.Get("token_endpoint_base_url").(string))
+	}
+
+	if _, ok := d.GetOk("track_user_sessions_for_logout"); ok {
+		authSettings.TrackUserSessionsForLogout = Bool(d.Get("track_user_sessions_for_logout").(bool))
+	}
+
+	b, _ := json.Marshal(*authSettings)
+	log.Printf("[INFO] AuthSettings: %s", b)
+
 	svc := m.(*pf.PfClient).OauthAuthServerSettings
 	input := &pf.UpdateAuthorizationServerSettingsInput{
 		Body: *authSettings,
 	}
 
-	result, _, _ := svc.UpdateAuthorizationServerSettings(input)
-	//TODO handle the resp/error
+	result, _, err := svc.UpdateAuthorizationServerSettings(input)
+	if err != nil {
+		return fmt.Errorf(err.Error())
+	}
 	return resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result)
 }
 
@@ -209,17 +288,12 @@ func resourcePingFederateOauthAuthServerSettingsResourceDelete(d *schema.Resourc
 }
 
 func resourcePingFederateOauthAuthServerSettingsResourceImport(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
-	// idParts := strings.SplitN(d.Id(), "/", 2)
-	// if len(idParts) != 2 || idParts[0] == "" || idParts[1] == "" {
-	// 	return nil, fmt.Errorf("unexpected format of ID (%q), expected <application_id>/<resource_id>", d.Id())
-	// }
-	// application_id := idParts[0]
-	// resource_id := idParts[1]
-	// d.Set("application_id", application_id)
-	// d.SetId(resource_id)
-
-	// svc := m.(*pingfederate.PfClient).OauthAuthServerSettings
-	// result, resp, err := svc.GetAuthorizationServerSettings()
+	svc := m.(*pf.PfClient).OauthAuthServerSettings
+	result, _, err := svc.GetAuthorizationServerSettings()
+	if err != nil {
+		return []*schema.ResourceData{d}, fmt.Errorf(err.Error())
+	}
+	resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result)
 	return []*schema.ResourceData{d}, nil
 }
 
@@ -230,11 +304,54 @@ func resourcePingFederateOauthAuthServerSettingsResourceReadResult(d *schema.Res
 	setResourceDataInt(d, "authorization_code_entropy", rv.AuthorizationCodeEntropy)
 	setResourceDataInt(d, "refresh_token_length", rv.RefreshTokenLength)
 	setResourceDataInt(d, "refresh_rolling_interval", rv.RefreshRollingInterval)
+	setResourceDataBool(d, "allow_unidentified_client_extension_grants", rv.AllowUnidentifiedClientExtensionGrants)
+	setResourceDataBool(d, "track_user_sessions_for_logout", rv.TrackUserSessionsForLogout)
+	setResourceDataString(d, "token_endpoint_base_url", rv.TokenEndpointBaseUrl)
+	setResourceDataInt(d, "persistent_grant_lifetime", rv.PersistentGrantLifetime)
+	setResourceDataString(d, "persistent_grant_lifetime_unit", rv.PersistentGrantLifetimeUnit)
+	setResourceDataBool(d, "roll_refresh_token_values", rv.RollRefreshTokenValues)
+	setResourceDataBool(d, "bypass_authorization_for_approved_grants", rv.BypassAuthorizationForApprovedGrants)
+	setResourceDataBool(d, "allow_unidentified_client_ro_creds", rv.AllowUnidentifiedClientROCreds)
 
+	// "admin_web_service_pcv_ref"
+
+	if rv.PersistentGrantReuseGrantTypes != nil && len(rv.PersistentGrantReuseGrantTypes) > 0 {
+		if err = d.Set("persistent_grant_reuse_grant_types", rv.PersistentGrantReuseGrantTypes); err != nil {
+			return err
+		}
+	}
+
+	if rv.AllowedOrigins != nil && len(*rv.AllowedOrigins) > 0 {
+		if err = d.Set("allowed_origins", *rv.AllowedOrigins); err != nil {
+			return err
+		}
+	}
+
+	if rv.PersistentGrantContract != nil {
+		if err = d.Set("persistent_grant_contract", flattenPersistentGrantContract(rv.PersistentGrantContract)); err != nil {
+			return err
+		}
+	}
 	if rv.Scopes != nil && len(*rv.Scopes) > 0 {
 		if err = d.Set("scopes", flattenScopes(*rv.Scopes)); err != nil {
 			return err
 		}
 	}
+	if rv.ScopeGroups != nil && len(*rv.ScopeGroups) > 0 {
+		if err = d.Set("scope_groups", flattenScopeGroups(*rv.ScopeGroups)); err != nil {
+			return err
+		}
+	}
+	if rv.ExclusiveScopes != nil && len(*rv.ExclusiveScopes) > 0 {
+		if err = d.Set("exclusive_scopes", flattenScopes(*rv.ExclusiveScopes)); err != nil {
+			return err
+		}
+	}
+	if rv.ExclusiveScopeGroups != nil && len(*rv.ExclusiveScopeGroups) > 0 {
+		if err = d.Set("exclusive_scope_groups", flattenScopeGroups(*rv.ExclusiveScopeGroups)); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }

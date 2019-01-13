@@ -68,7 +68,28 @@ func testAccPingFederateOauthAuthServerSettingsConfig(name, configUpdate string)
 			name        = "profile"
 			description = "profile"
 		}
+
+		scope_groups {
+			name        = "group1"
+			description = "group1"
 	
+			scopes = [
+				"address",
+				"mail",
+				"phone",
+				"openid",
+				"profile",
+			]
+		}
+
+		persistent_grant_contract {
+			extended_attributes = ["woot"]
+		}
+
+		allowed_origins = [
+			"http://localhost"
+		]
+
 		default_scope_description  = ""
 		authorization_code_timeout = 60
 		authorization_code_entropy = 30
