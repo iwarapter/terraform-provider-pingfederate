@@ -118,3 +118,121 @@ func Test_expandPersistentGrantContract(t *testing.T) {
 
 	equals(t, "woot", *(*(*expandPersistentGrantContract).ExtendedAttributes)[0].Name)
 }
+
+func testClientAuth() map[string]string {
+	return map[string]string{
+		"client_auth.#": "1",
+		"client_auth.1602811133.client_cert_issuer_dn":     "",
+		"client_auth.1602811133.client_cert_subject_dn":    "",
+		"client_auth.1602811133.enforce_replay_prevention": "true",
+		"client_auth.1602811133.type":                      "CERTIFICATE",
+	}
+}
+
+func Test_weCanFlattenClientAuth(t *testing.T) {
+	initialClientAuth := &pf.ClientAuth{
+		Type:                String("CERTIFICATE"),
+		ClientCertIssuerDn:  String(""),
+		ClientCertSubjectDn: String(""),
+	}
+
+	output := []map[string]interface{}{map[string]interface{}{"type": "CERTIFICATE", "client_cert_issuer_dn": "", "client_cert_subject_dn": ""}}
+
+	flattened := flattenClientAuth(initialClientAuth)
+
+	equals(t, output, flattened)
+}
+
+func Test_expandClientAuth(t *testing.T) {
+	expanded := flatmap.Expand(testClientAuth(), "client_auth").([]interface{})
+	expandClientAuth := expandClientAuth(expanded)
+
+	equals(t, "CERTIFICATE", *(*expandClientAuth).Type)
+}
+
+func testJwksSettings() map[string]string {
+	return map[string]string{
+		"jwks_settings.#":                   "1",
+		"jwks_settings.3441057763.jwks_url": "https://foo/bar.jwks",
+	}
+}
+
+func Test_weCanFlattenJwksSettings(t *testing.T) {
+	initialJwksSettings := &pf.JwksSettings{
+		JwksUrl: String("https://foo/bar.jwks"),
+	}
+
+	output := []map[string]interface{}{map[string]interface{}{"jwks_url": "https://foo/bar.jwks"}}
+
+	flattened := flattenJwksSettings(initialJwksSettings)
+
+	equals(t, output, flattened)
+}
+
+func Test_expandJwksSettings(t *testing.T) {
+	expanded := flatmap.Expand(testJwksSettings(), "jwks_settings").([]interface{})
+	expandJwksSettings := expandJwksSettings(expanded)
+
+	equals(t, "https://foo/bar.jwks", *(*expandJwksSettings).JwksUrl)
+}
+
+func testResourceLink() map[string]string {
+	return map[string]string{
+		"default_access_token_manager_ref.#":             "1",
+		"default_access_token_manager_ref.2212279603.id": "atat",
+	}
+}
+
+func Test_weCanFlattenResourceLink(t *testing.T) {
+	initialResourceLink := &pf.ResourceLink{
+		Id: String("atat"),
+	}
+
+	output := []map[string]interface{}{map[string]interface{}{"id": "atat"}}
+
+	flattened := flattenResourceLink(initialResourceLink)
+
+	equals(t, output, flattened)
+}
+
+func Test_expandResourceLink(t *testing.T) {
+	expanded := flatmap.Expand(testResourceLink(), "default_access_token_manager_ref").([]interface{})
+	expandResourceLink := expandResourceLink(expanded)
+
+	equals(t, "atat", *(*expandResourceLink).Id)
+}
+
+func testClientOIDCPolicy() map[string]string {
+	return map[string]string{
+		"oidc_policy.#": "1",
+		"oidc_policy.2491599396.grant_access_session_revocation_api": "true",
+		"oidc_policy.2491599396.id_token_signing_algorithm":          "",
+		"oidc_policy.2491599396.logout_uris.#":                       "1",
+		"oidc_policy.2491599396.logout_uris.3341685451":              "https://logout",
+		"oidc_policy.2491599396.ping_access_logout_capable":          "true",
+	}
+}
+
+func Test_weCanFlattenClientOIDCPolicy(t *testing.T) {
+	initialClientOIDCPolicy := &pf.ClientOIDCPolicy{
+		GrantAccessSessionRevocationApi: Bool(true),
+		LogoutUris:                      &[]*string{String("https://logout")},
+		PingAccessLogoutCapable:         Bool(true),
+		PolicyGroup: &pf.ResourceLink{
+			Id: String("atat"),
+		},
+	}
+
+	output := []map[string]interface{}{map[string]interface{}{"grant_access_session_revocation_api": true, "logout_uris": []interface{}{"https://logout"}, "ping_access_logout_capable": true, "policy_group": []map[string]interface{}{map[string]interface{}{"id": "atat"}}}}
+
+	flattened := flattenClientOIDCPolicy(initialClientOIDCPolicy)
+
+	equals(t, output, flattened)
+}
+
+func Test_expandClientOIDCPolicy(t *testing.T) {
+	expanded := flatmap.Expand(testClientOIDCPolicy(), "oidc_policy").([]interface{})
+	expandClientOIDCPolicy := expandClientOIDCPolicy(expanded)
+
+	equals(t, true, *(*expandClientOIDCPolicy).PingAccessLogoutCapable)
+}

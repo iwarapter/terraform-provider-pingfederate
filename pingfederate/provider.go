@@ -1,8 +1,6 @@
 package pingfederate
 
 import (
-	"log"
-
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -43,6 +41,7 @@ func Provider() terraform.ResourceProvider {
 		},
 		ResourcesMap: map[string]*schema.Resource{
 			"pingfederate_oauth_auth_server_settings": resourcePingFederateOauthAuthServerSettingsResource(),
+			"pingfederate_oauth_client":               resourcePingFederateOauthClientResource(),
 		},
 		ConfigureFunc: providerConfigure,
 	}
@@ -71,15 +70,13 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 }
 
 // Takes the result of flatmap.Expand for an array of strings
-// and returns a []string
+// and returns a []*string
 func expandStringList(configured []interface{}) []*string {
-	log.Printf("[INFO] expandStringList %d", len(configured))
 	vs := make([]*string, 0, len(configured))
 	for _, v := range configured {
-		val := v.(string)
-		if val != "" {
-			vs = append(vs, &val)
-			log.Printf("[DEBUG] Appending: %s", val)
+		val, ok := v.(string)
+		if ok && val != "" {
+			vs = append(vs, String(v.(string)))
 		}
 	}
 	return vs

@@ -44,7 +44,7 @@ resource "pingfederate_oauth_auth_server_settings" "settings" {
   }
 
   allowed_origins = [
-    "https://localhost"
+    "http://localhost",
   ]
 
   default_scope_description  = ""
@@ -52,4 +52,38 @@ resource "pingfederate_oauth_auth_server_settings" "settings" {
   authorization_code_entropy = 30
   refresh_token_length       = 42
   refresh_rolling_interval   = 0
+}
+
+resource "pingfederate_oauth_client" "woot" {
+  client_id = "woot"
+  name      = "woot"
+
+  grant_types = [
+    "EXTENSION",
+  ]
+
+  client_auth {
+    // type                      = "CERTIFICATE"
+    // client_cert_issuer_dn     = ""
+    // client_cert_subject_dn    = ""
+    enforce_replay_prevention = false
+    secret = "super_top_secret"
+    type = "SECRET"
+  }
+
+  // jwks_settings {
+  //   jwks = "https://stuff"
+  // }
+  default_access_token_manager_ref {
+    id = "atat"
+  }
+
+  oidc_policy {
+    grant_access_session_revocation_api = false
+    logout_uris = [
+      "https://logout",
+      "https://foo"
+    ]
+    ping_access_logout_capable = true
+  }
 }

@@ -113,7 +113,7 @@ func resourcePingFederateOauthAuthServerSettingsResource() *schema.Resource {
 				Optional: true,
 				Elem: &schema.Schema{
 					Type:         schema.TypeString,
-					ValidateFunc: validatePersistentGrantReuseGrantTypes,
+					ValidateFunc: validateGrantTypes,
 				},
 			},
 			"persistent_grant_contract": &schema.Schema{
@@ -155,19 +155,7 @@ func resourcePingFederateOauthAuthServerSettingsResource() *schema.Resource {
 				Optional: true,
 				Default:  false,
 			},
-			"admin_web_service_pcv_ref": &schema.Schema{
-				Type:     schema.TypeSet,
-				Optional: true,
-				MaxItems: 1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"id": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-					},
-				},
-			},
+			"admin_web_service_pcv_ref": resourceLinkSchema(),
 		},
 	}
 }
