@@ -67,8 +67,9 @@ resource "pingfederate_oauth_client" "woot" {
     // client_cert_issuer_dn     = ""
     // client_cert_subject_dn    = ""
     enforce_replay_prevention = false
+
     secret = "super_top_secret"
-    type = "SECRET"
+    type   = "SECRET"
   }
 
   // jwks_settings {
@@ -80,10 +81,62 @@ resource "pingfederate_oauth_client" "woot" {
 
   oidc_policy {
     grant_access_session_revocation_api = false
+
     logout_uris = [
       "https://logout",
-      "https://foo"
+      "https://foo",
     ]
+
     ping_access_logout_capable = true
+  }
+}
+
+resource "pingfederate_oauth_access_token_manager" "my_atm" {
+  instance_id = "myatat"
+  name = "my_atat"
+
+  plugin_descriptor_ref {
+    id = "org.sourceid.oauth20.token.plugin.impl.ReferenceBearerAccessTokenManagementPlugin"
+  }
+
+  configuration {
+    fields {
+      name  = "Token Length"
+      value = "28"
+    }
+
+    fields {
+      name  = "Token Lifetime"
+      value = "120"
+    }
+
+    fields {
+      name  = "Lifetime Extension Policy"
+      value = "ALL"
+    }
+
+    fields {
+      name  = "Maximum Token Lifetime"
+      value = ""
+    }
+
+    fields {
+      name  = "Lifetime Extension Threshold Percentage"
+      value = "30"
+    }
+
+    fields {
+      name  = "Mode for Synchronous RPC"
+      value = "3"
+    }
+
+    fields {
+      name  = "RPC Timeout"
+      value = "500"
+    }
+  }
+
+  attribute_contract {
+    extended_attributes = ["sub"]
   }
 }

@@ -1,13 +1,17 @@
 package pingfederate
 
 import (
+	"bytes"
+	"fmt"
+
+	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
 )
 
 func resourceLinkSchema() *schema.Schema {
 	return &schema.Schema{
-		Type:     schema.TypeSet,
+		Type:     schema.TypeList,
 		Optional: true,
 		MaxItems: 1,
 		Elem: &schema.Resource{
@@ -16,6 +20,83 @@ func resourceLinkSchema() *schema.Schema {
 					Type:     schema.TypeString,
 					Required: true,
 				},
+			},
+		},
+	}
+}
+
+func resourcePluginConfiguration() *schema.Schema {
+	return &schema.Schema{
+		Type:     schema.TypeList,
+		Required: true,
+		MaxItems: 1,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"tables": {
+					Type:     schema.TypeSet,
+					Optional: true,
+					Elem:     resourceConfigTable(),
+				},
+				"fields": {
+					Type:     schema.TypeSet,
+					Optional: true,
+					Elem:     resourceConfigField(),
+				},
+			},
+		},
+	}
+}
+
+func resourceConfigTable() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"name": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			// "rows:": {
+			// 	Type: schema.TypeSet,
+			// 	// Optional: true,
+			// 	Elem: resourceConfigRow(),
+			// },
+			"inherited": {
+				Type:     schema.TypeBool,
+				Optional: true,
+			},
+		},
+	}
+}
+
+func resourceConfigRow() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"fields": {
+				Type: schema.TypeSet,
+				// Optional: true,
+				Elem: resourceConfigField(),
+			},
+		},
+	}
+}
+
+func resourceConfigField() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"name": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"value": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"encrypted_value": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"inherited": {
+				Type:     schema.TypeBool,
+				Optional: true,
 			},
 		},
 	}
@@ -227,7 +308,7 @@ func expandClientOIDCPolicy(in []interface{}) *pf.ClientOIDCPolicy {
 			ca.PingAccessLogoutCapable = Bool(val.(bool))
 		}
 		if val, ok := l["policy_group"]; ok {
-			ca.PolicyGroup = expandResourceLink(val.(*schema.Set).List())
+			ca.PolicyGroup = expandResourceLink(val.([]interface{}))
 		}
 	}
 	return ca
@@ -252,5 +333,186 @@ func flattenClientOIDCPolicy(in *pf.ClientOIDCPolicy) []map[string]interface{} {
 		s["policy_group"] = flattenResourceLink(in.PolicyGroup)
 	}
 	m = append(m, s)
+	return m
+}
+
+func flattenConfigField(in []*pf.ConfigField) *schema.Set {
+	m := []interface{}{}
+	for _, v := range in {
+		s := make(map[string]interface{})
+		s["name"] = *v.Name
+		if v.Value != nil {
+			s["value"] = *v.Value
+		}
+		if v.EncryptedValue != nil && *v.EncryptedValue != "" {
+			s["encrypted_value"] = *v.EncryptedValue
+		}
+		if v.Inherited != nil {
+			s["inherited"] = *v.Inherited
+		}
+		m = append(m, s)
+	}
+	return schema.NewSet(configFieldHash, m)
+}
+
+func configFieldHash(v interface{}) int {
+	var buf bytes.Buffer
+	m := v.(map[string]interface{})
+	buf.WriteString(m["name"].(string))
+	if d, ok := m["value"]; ok && d.(string) != "" {
+		buf.WriteString(fmt.Sprintf("%s-", d.(string)))
+	}
+	if d, ok := m["encrypted_value"]; ok && d.(string) != "" {
+		buf.WriteString(fmt.Sprintf("%s-", d.(string)))
+	}
+	if d, ok := m["inherited"]; ok {
+		buf.WriteString(fmt.Sprintf("%t-", d.(bool)))
+	}
+	return hashcode.String(buf.String())
+}
+
+func expandConfigField(in []interface{}) *[]*pf.ConfigField {
+	configFields := []*pf.ConfigField{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		s := &pf.ConfigField{
+			Name: String(l["name"].(string)),
+		}
+		if val, ok := l["value"]; ok {
+			s.Value = String(val.(string))
+		}
+		if val, ok := l["encrypted_value"]; ok {
+			s.EncryptedValue = String(val.(string))
+		}
+		if val, ok := l["inherited"]; ok {
+			s.Inherited = Bool(val.(bool))
+		}
+		configFields = append(configFields, s)
+	}
+	return &configFields
+}
+
+func flattenConfigRow(in []*pf.ConfigRow) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, len(in))
+	for _, v := range in {
+		s := make(map[string]interface{})
+		s["fields"] = flattenConfigField(*v.Fields)
+		m = append(m, s)
+	}
+	return m
+}
+
+func expandConfigRow(in []interface{}) *[]*pf.ConfigRow {
+	configRows := []*pf.ConfigRow{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		s := &pf.ConfigRow{
+			Fields: expandConfigField(l["name"].([]interface{})),
+		}
+		configRows = append(configRows, s)
+	}
+	return &configRows
+}
+
+func flattenConfigTable(in []*pf.ConfigTable) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, len(in))
+	for _, v := range in {
+		s := make(map[string]interface{})
+		s["name"] = *v.Name
+		// if v.Rows != nil {
+		// 	s["rows"] = flattenConfigRow(*v.Rows)
+		// }
+		if v.Inherited != nil {
+			s["inherited"] = *v.Inherited
+		}
+		m = append(m, s)
+	}
+	return m
+}
+
+func expandConfigTable(in []interface{}) *[]*pf.ConfigTable {
+	configTables := []*pf.ConfigTable{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		s := &pf.ConfigTable{
+			Name: String(l["name"].(string)),
+		}
+		// if val, ok := l["rows"]; ok {
+		// 	s.Rows = expandConfigRow(val.([]interface{}))
+		// }
+		if val, ok := l["inherited"]; ok {
+			s.Inherited = Bool(val.(bool))
+		}
+		configTables = append(configTables, s)
+	}
+	return &configTables
+}
+
+func flattenPluginConfiguration(in *pf.PluginConfiguration) []interface{} {
+	// m := []interface{}{}
+	s := make(map[string]interface{})
+	// if in.Tables != nil {
+	// 	s["tables"] = flattenConfigTable(*in.Tables)
+	// }
+	if in.Fields != nil {
+		s["fields"] = flattenConfigField(*in.Fields)
+	}
+	// for _, v := range cbs.Items {
+	// 	s = append(s, flattenCacheBehaviorDeprecated(v))
+	// }
+	// return schema.NewSet(, []interface{}{s})
+	// m := make([]map[string]interface{}, 0, 1)
+	// s := make(map[string]interface{})
+	// if in.Tables != nil {
+	// 	s["tables"] = flattenConfigTable(*in.Tables)
+	// }
+	// if in.Fields != nil {
+	// 	s["fields"] = flattenConfigField(*in.Fields)
+	// }
+	// m = append(m, s)
+	// log.Printf("[INFO] PluginConfig: %s", m)
+	return []interface{}{s}
+}
+
+func expandPluginConfiguration(in []interface{}) *pf.PluginConfiguration {
+	config := &pf.PluginConfiguration{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		if val, ok := l["tables"]; ok {
+			config.Tables = expandConfigTable(val.(*schema.Set).List())
+		}
+		if val, ok := l["fields"]; ok {
+			config.Fields = expandConfigField(val.(*schema.Set).List())
+		}
+	}
+	return config
+}
+
+func flattenAccessTokenAttributeContract(in *pf.AccessTokenAttributeContract) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, 1)
+	s := make(map[string]interface{})
+	s["extended_attributes"] = flattenAccessTokenAttributes(*in.ExtendedAttributes)
+	m = append(m, s)
+	return m
+}
+
+func expandAccessTokenAttributeContract(in []interface{}) *pf.AccessTokenAttributeContract {
+	pgc := &pf.AccessTokenAttributeContract{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		atr := []*pf.AccessTokenAttribute{}
+		for _, exAtr := range l["extended_attributes"].([]interface{}) {
+			atr = append(atr, &pf.AccessTokenAttribute{Name: String(exAtr.(string))})
+		}
+		pgc.ExtendedAttributes = &atr
+	}
+	return pgc
+}
+
+func flattenAccessTokenAttributes(in []*pf.AccessTokenAttribute) []interface{} {
+	m := make([]interface{}, 0, len(in))
+	for _, v := range in {
+		m = append(m, *v.Name)
+	}
 	return m
 }

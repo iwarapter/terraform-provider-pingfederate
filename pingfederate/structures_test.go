@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform/flatmap"
+	"github.com/hashicorp/terraform/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
 )
 
@@ -235,4 +236,34 @@ func Test_expandClientOIDCPolicy(t *testing.T) {
 	expandClientOIDCPolicy := expandClientOIDCPolicy(expanded)
 
 	equals(t, true, *(*expandClientOIDCPolicy).PingAccessLogoutCapable)
+}
+
+func testPluginConfiguration() []interface{} {
+	return []interface{}{map[string]interface{}{"fields": schema.NewSet(configFieldHash, []interface{}{map[string]interface{}{"name": "Token Length", "value": "28", "inherited": false}})}}
+}
+
+func Test_weCanFlattenPluginConfiguration(t *testing.T) {
+	initialPluginConfiguration := &pf.PluginConfiguration{
+		Fields: &[]*pf.ConfigField{
+			&pf.ConfigField{
+				Name:      String("Token Length"),
+				Value:     String("28"),
+				Inherited: Bool(false),
+			},
+		},
+	}
+
+	// output := []interface{}{map[string]interface{}{"fields": schema.NewSet(configFieldHash, []interface{}{map[string]interface{}{"name": "Token Length", "value": "28", "inherited": false}})}}
+	output := testPluginConfiguration()
+
+	flattened := flattenPluginConfiguration(initialPluginConfiguration)
+
+	assert(t, output[0].(map[string]interface{})["fields"].(*schema.Set).Equal(flattened[0].(map[string]interface{})["fields"].(*schema.Set)), "")
+}
+
+func Test_expandPluginConfiguration(t *testing.T) {
+	// expanded := flatmap.Expand(testPluginConfiguration(), "configuration").([]interface{})
+	expandPluginConfiguration := expandPluginConfiguration(testPluginConfiguration())
+
+	equals(t, 1, len(*(*expandPluginConfiguration).Fields))
 }

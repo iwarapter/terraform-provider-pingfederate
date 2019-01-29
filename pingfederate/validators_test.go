@@ -151,3 +151,46 @@ func Test_validateTokenSigningAlgorithm(t *testing.T) {
 		})
 	}
 }
+
+func Test_validateClientAuthType(t *testing.T) {
+	type args struct {
+		value interface{}
+		field string
+	}
+	tests := []struct {
+		name      string
+		args      args
+		wantWarns []string
+		wantErrs  []error
+	}{
+		{
+			name: "SECRET passes",
+			args: args{
+				value: "SECRET",
+				field: "type",
+			},
+			wantWarns: nil,
+			wantErrs:  nil,
+		},
+		{
+			name: "junk does not pass",
+			args: args{
+				value: "other",
+				field: "type",
+			},
+			wantWarns: nil,
+			wantErrs:  []error{fmt.Errorf("%q must be either 'SECRET' or 'CERTIFICATE' or 'PRIVATE_KEY_JWT' not %s", "type", "other")},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotWarns, gotErrs := validateClientAuthType(tt.args.value, tt.args.field)
+			if !reflect.DeepEqual(gotWarns, tt.wantWarns) {
+				t.Errorf("validateClientAuthType() gotWarns = %v, want %v", gotWarns, tt.wantWarns)
+			}
+			if !reflect.DeepEqual(gotErrs, tt.wantErrs) {
+				t.Errorf("validateClientAuthType() gotErrs = %v, want %v", gotErrs, tt.wantErrs)
+			}
+		})
+	}
+}
