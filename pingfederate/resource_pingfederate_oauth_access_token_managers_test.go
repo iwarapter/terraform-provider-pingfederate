@@ -18,14 +18,14 @@ func TestAccPingFederateOauthAccessTokenManager(t *testing.T) {
 		CheckDestroy: testAccCheckPingFederateOauthAccessTokenManagerDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccPingFederateOauthAccessTokenManagerConfig("120"),
+				Config: testAccPingFederateOauthAccessTokenManagerConfig("acc", "120"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateOauthAccessTokenManagerExists("pingfederate_oauth_access_token_manager.my_atm", &out),
 					// testAccCheckPingFederateOauthAccessTokenManagerAttributes(),
 				),
 			},
 			{
-				Config: testAccPingFederateOauthAccessTokenManagerConfig("180"),
+				Config: testAccPingFederateOauthAccessTokenManagerConfig("acc", "180"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateOauthAccessTokenManagerExists("pingfederate_oauth_access_token_manager.my_atm", &out),
 				),
@@ -38,11 +38,11 @@ func testAccCheckPingFederateOauthAccessTokenManagerDestroy(s *terraform.State) 
 	return nil
 }
 
-func testAccPingFederateOauthAccessTokenManagerConfig(configUpdate string) string {
+func testAccPingFederateOauthAccessTokenManagerConfig(name, configUpdate string) string {
 	return fmt.Sprintf(`
 	resource "pingfederate_oauth_access_token_manager" "my_atm" {
-		instance_id = "tfaccatat"
-		name = "tf-acc-atat"
+		instance_id = "%s"
+		name = "%s"
 		plugin_descriptor_ref {
 			id = "org.sourceid.oauth20.token.plugin.impl.ReferenceBearerAccessTokenManagementPlugin"
 		}
@@ -65,7 +65,7 @@ func testAccPingFederateOauthAccessTokenManagerConfig(configUpdate string) strin
 	
 			fields {
 				name  = "Maximum Token Lifetime"
-				value = ""
+				value = "3000"
 			}
 	
 			fields {
@@ -82,12 +82,17 @@ func testAccPingFederateOauthAccessTokenManagerConfig(configUpdate string) strin
 				name  = "RPC Timeout"
 				value = "500"
 			}
+
+			fields {
+				name = "Expand Scope Groups"
+				value = "false"
+			}
 		}
 	
 		attribute_contract {
 			extended_attributes = ["sub"]
 		}
-	}`, configUpdate)
+	}`, name, name, configUpdate)
 }
 
 func testAccCheckPingFederateOauthAccessTokenManagerExists(n string, out *pf.Client) resource.TestCheckFunc {

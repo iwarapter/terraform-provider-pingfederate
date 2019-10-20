@@ -110,6 +110,7 @@ func resourcePingFederateOauthClientResource() *schema.Resource {
 				Type:     schema.TypeList,
 				Optional: true,
 				MaxItems: 1,
+				MinItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"client_cert_issuer_dn": {
@@ -198,7 +199,7 @@ func resourcePingFederateOauthClientResource() *schema.Resource {
 }
 
 func resourcePingFederateOauthClientResourceCreate(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).OauthClient
+	svc := m.(*pf.PfClient).OauthClients
 	input := pf.CreateClientInput{
 		Body: *resourcePingFederateOauthClientResourceReadData(d),
 	}
@@ -211,7 +212,7 @@ func resourcePingFederateOauthClientResourceCreate(d *schema.ResourceData, m int
 }
 
 func resourcePingFederateOauthClientResourceRead(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).OauthClient
+	svc := m.(*pf.PfClient).OauthClients
 	input := pf.GetClientInput{
 		Id: d.Id(),
 	}
@@ -223,7 +224,7 @@ func resourcePingFederateOauthClientResourceRead(d *schema.ResourceData, m inter
 }
 
 func resourcePingFederateOauthClientResourceUpdate(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).OauthClient
+	svc := m.(*pf.PfClient).OauthClients
 	input := pf.UpdateClientInput{
 		Id:   d.Id(),
 		Body: *resourcePingFederateOauthClientResourceReadData(d),
@@ -237,7 +238,7 @@ func resourcePingFederateOauthClientResourceUpdate(d *schema.ResourceData, m int
 }
 
 func resourcePingFederateOauthClientResourceDelete(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).OauthClient
+	svc := m.(*pf.PfClient).OauthClients
 	input := pf.DeleteClientInput{
 		Id: d.Id(),
 	}
@@ -287,7 +288,7 @@ func resourcePingFederateOauthClientResourceReadResult(d *schema.ResourceData, r
 			return err
 		}
 	}
-	if rv.ClientAuth != nil {
+	if rv.ClientAuth != nil && *rv.ClientAuth.Type != "NONE" {
 		if err = d.Set("client_auth", flattenClientAuth(rv.ClientAuth)); err != nil {
 			return err
 		}

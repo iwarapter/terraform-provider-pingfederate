@@ -1,9 +1,7 @@
 package pingfederate
 
 import (
-	"encoding/json"
 	"fmt"
-	"log"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
@@ -110,7 +108,7 @@ func resourcePingFederateOauthAccessTokenManagersResourceCreate(d *schema.Resour
 		return fmt.Errorf(err.Error())
 	}
 	d.SetId(*result.Id)
-	return resourcePingFederateOauthAccessTokenManagersResourceReadResult(d, result)
+	return resourcePingFederateOauthAccessTokenManagersResourceReadResult(d, result, svc)
 }
 
 func resourcePingFederateOauthAccessTokenManagersResourceRead(d *schema.ResourceData, m interface{}) error {
@@ -122,7 +120,7 @@ func resourcePingFederateOauthAccessTokenManagersResourceRead(d *schema.Resource
 	if err != nil {
 		return fmt.Errorf(err.Error())
 	}
-	return resourcePingFederateOauthAccessTokenManagersResourceReadResult(d, result)
+	return resourcePingFederateOauthAccessTokenManagersResourceReadResult(d, result, svc)
 }
 
 func resourcePingFederateOauthAccessTokenManagersResourceUpdate(d *schema.ResourceData, m interface{}) error {
@@ -136,7 +134,7 @@ func resourcePingFederateOauthAccessTokenManagersResourceUpdate(d *schema.Resour
 		return fmt.Errorf(err.Error())
 	}
 
-	return resourcePingFederateOauthAccessTokenManagersResourceReadResult(d, result)
+	return resourcePingFederateOauthAccessTokenManagersResourceReadResult(d, result, svc)
 }
 
 func resourcePingFederateOauthAccessTokenManagersResourceDelete(d *schema.ResourceData, m interface{}) error {
@@ -151,7 +149,12 @@ func resourcePingFederateOauthAccessTokenManagersResourceDelete(d *schema.Resour
 	return nil
 }
 
-func resourcePingFederateOauthAccessTokenManagersResourceReadResult(d *schema.ResourceData, rv *pf.AccessTokenManager) (err error) {
+func resourcePingFederateOauthAccessTokenManagersResourceReadResult(d *schema.ResourceData, rv *pf.AccessTokenManager, svc *pf.OauthAccessTokenManagersService) (err error) {
+	desc, _, err := svc.GetTokenManagerDescriptor(&pf.GetTokenManagerDescriptorInput{Id: *rv.PluginDescriptorRef.Id})
+	if err != nil {
+		return err
+	}
+
 	setResourceDataString(d, "name", rv.Name)
 	setResourceDataString(d, "instance_id", rv.Id)
 	if rv.PluginDescriptorRef != nil {
@@ -160,7 +163,9 @@ func resourcePingFederateOauthAccessTokenManagersResourceReadResult(d *schema.Re
 		}
 	}
 	if rv.Configuration != nil {
-		if err = d.Set("configuration", flattenPluginConfiguration(rv.Configuration)); err != nil {
+		orig := expandPluginConfiguration(d.Get("configuration").([]interface{}))
+
+		if err = d.Set("configuration", maskPluginConfigurationFromDescriptor(desc.ConfigDescriptor, orig, rv.Configuration)); err != nil {
 			return err
 		}
 	}
@@ -180,8 +185,5 @@ func resourcePingFederateOauthAccessTokenManagersResourceReadData(d *schema.Reso
 		Configuration:       expandPluginConfiguration(d.Get("configuration").([]interface{})),
 		AttributeContract:   expandAccessTokenAttributeContract(d.Get("attribute_contract").([]interface{})),
 	}
-
-	b, _ := json.Marshal(*atm)
-	log.Printf("[INFO] ATM: %s", b)
 	return atm
 }

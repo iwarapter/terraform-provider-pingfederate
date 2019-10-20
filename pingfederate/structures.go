@@ -3,6 +3,7 @@ package pingfederate
 import (
 	"bytes"
 	"fmt"
+	"log"
 
 	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -20,6 +21,10 @@ func resourceLinkSchema() *schema.Schema {
 					Type:     schema.TypeString,
 					Required: true,
 				},
+				"location": {
+					Type:     schema.TypeString,
+					Computed: true,
+				},
 			},
 		},
 	}
@@ -33,7 +38,7 @@ func resourcePluginConfiguration() *schema.Schema {
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"tables": {
-					Type:     schema.TypeSet,
+					Type:     schema.TypeList,
 					Optional: true,
 					Elem:     resourceConfigTable(),
 				},
@@ -54,14 +59,15 @@ func resourceConfigTable() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			// "rows:": {
-			// 	Type: schema.TypeSet,
-			// 	// Optional: true,
-			// 	Elem: resourceConfigRow(),
-			// },
+			"rows": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem:     resourceConfigRow(),
+			},
 			"inherited": {
 				Type:     schema.TypeBool,
 				Optional: true,
+				Default:  false,
 			},
 		},
 	}
@@ -71,9 +77,35 @@ func resourceConfigRow() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"fields": {
-				Type: schema.TypeSet,
-				// Optional: true,
-				Elem: resourceConfigField(),
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem:     resourceConfigField(),
+			},
+			"sensitive_fields": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem:     resourceSensitiveConfigField(),
+			},
+		},
+	}
+}
+
+func resourceSensitiveConfigField() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"name": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"value": {
+				Type:      schema.TypeString,
+				Required:  true,
+				Sensitive: true,
+			},
+			"inherited": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
 			},
 		},
 	}
@@ -88,13 +120,170 @@ func resourceConfigField() *schema.Resource {
 			},
 			"value": {
 				Type:     schema.TypeString,
+				Required: true,
+			},
+			"inherited": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
+		},
+	}
+}
+
+func resourcePasswordCredentialValidatorAttributeContract() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"inherited": &schema.Schema{
+				Type:     schema.TypeBool,
 				Optional: true,
 			},
-			"encrypted_value": {
+			"core_attributes": &schema.Schema{
+				Type:     schema.TypeSet,
+				Required: true,
+				MinItems: 1,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+			"extended_attributes": &schema.Schema{
+				Type:     schema.TypeSet,
+				Optional: true,
+				MinItems: 1,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+		},
+	}
+}
+
+func resourceIdpAdapterAttributeContract() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"inherited": &schema.Schema{
+				Type:    schema.TypeBool,
+				Default: false,
+			},
+			"core_attributes": &schema.Schema{
+				Type:     schema.TypeSet,
+				Required: true,
+				MinItems: 1,
+				Elem:     resourceIdpAdapterAttribute(),
+			},
+			"mask_ognl_values": &schema.Schema{
+				Type:    schema.TypeBool,
+				Default: false,
+			},
+			"extended_attributes": &schema.Schema{
+				Type:     schema.TypeSet,
+				Optional: true,
+				MinItems: 1,
+				Elem:     resourceIdpAdapterAttribute(),
+			},
+		},
+	}
+}
+
+func resourceIdpAdapterAttribute() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"name": {
+				Type:        schema.TypeString,
+				Description: "The name of this attribute.",
+				Required:    true,
+			},
+			"pseudonym": {
+				Type:        schema.TypeBool,
+				Description: "Specifies whether this attribute is used to construct a pseudonym for the SP. Defaults to false.",
+				Default:     false,
+			},
+			"masked": {
+				Type:        schema.TypeBool,
+				Description: "Specifies whether this attribute is masked in PingFederate logs. Defaults to false.",
+				Default:     false,
+			},
+		},
+	}
+}
+
+func resourceIdpAdapterAttributeMapping() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			//TODO
+			"attribute_sources": &schema.Schema{
+				Type: schema.TypeList,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"ldap_attribute_source": {
+							Type: schema.TypeList,
+							Elem: resourceLdapAttributeSource(),
+						},
+						"fields": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem:     resourceConfigField(),
+						},
+					},
+				},
+			},
+			//"core_attributes": &schema.Schema{
+			//	Type:     schema.TypeSet,
+			//	Required: true,
+			//	MinItems: 1,
+			//	Elem:     resourceIdpAdapterAttribute(),
+			//},
+			//"mask_ognl_values": &schema.Schema{
+			//	Type:    schema.TypeBool,
+			//	Default: false,
+			//},
+			//"extended_attributes": &schema.Schema{
+			//	Type:     schema.TypeSet,
+			//	Optional: true,
+			//	MinItems: 1,
+			//	Elem:     resourceIdpAdapterAttribute(),
+			//},
+		},
+	}
+}
+
+func resourceLdapAttributeSource() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"type": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"data_store_ref": resourceLinkSchema(),
+			"base_dn": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"inherited": {
+			"id": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"search_scope": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"description": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"search_filter": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			//"attribute_contract_fulfillment": {
+			//	Type: schema.TypeMap,
+			//	Optional: true,
+			//},
+			//"binary_attribute_settings": {
+			//	Type: schema.TypeMap,
+			//	Optional: true,
+			//},
+			"member_of_nested_group": {
 				Type:     schema.TypeBool,
 				Optional: true,
 			},
@@ -116,6 +305,10 @@ func flattenStringList(list []*string) []interface{} {
 		vs = append(vs, *v)
 	}
 	return vs
+}
+
+func flattenStringSet(list []*string) *schema.Set {
+	return schema.NewSet(schema.HashString, flattenStringList(list))
 }
 
 func flattenScopes(in []*pf.ScopeEntry) []map[string]interface{} {
@@ -276,6 +469,9 @@ func expandResourceLink(in []interface{}) *pf.ResourceLink {
 		if val, ok := l["id"]; ok {
 			ca.Id = String(val.(string))
 		}
+		// if val, ok := l["location"]; ok {
+		// 	ca.Location = String(val.(string))
+		// }
 	}
 	return ca
 }
@@ -286,6 +482,9 @@ func flattenResourceLink(in *pf.ResourceLink) []map[string]interface{} {
 	if in.Id != nil {
 		s["id"] = *in.Id
 	}
+	// if in.Location != nil {
+	// 	s["location"] = *in.Location
+	// }
 	m = append(m, s)
 	return m
 }
@@ -339,14 +538,46 @@ func flattenClientOIDCPolicy(in *pf.ClientOIDCPolicy) []map[string]interface{} {
 func flattenConfigField(in []*pf.ConfigField) *schema.Set {
 	m := []interface{}{}
 	for _, v := range in {
+		if v.EncryptedValue != nil {
+			continue
+		}
 		s := make(map[string]interface{})
 		s["name"] = *v.Name
+		//We check if the Encrypted value is set, if its not we can update the value as a normal password field
+		//will not return the value so we need to not overwrite it, which unfortunely means we cannot track password changes
+		//this is a limitation of ping federate.
+		if v.Value != nil && v.EncryptedValue == nil {
+			s["value"] = *v.Value
+		}
+		// if v.EncryptedValue != nil && *v.EncryptedValue != "" {
+		// 	s["encrypted_value"] = *v.EncryptedValue
+		// }
+		if v.Inherited != nil {
+			s["inherited"] = *v.Inherited
+		}
+		m = append(m, s)
+	}
+	return schema.NewSet(configFieldHash, m)
+}
+
+func flattenSensitiveConfigField(in []*pf.ConfigField) *schema.Set {
+	m := []interface{}{}
+	for _, v := range in {
+		if v.EncryptedValue == nil {
+			continue
+		}
+		s := make(map[string]interface{})
+		s["name"] = *v.Name
+		//We check if the Encrypted value is set, if its not we can update the value as a normal password field
+		//will not return the value so we need to not overwrite it, which unfortunely means we cannot track password changes
+		//this is a limitation of ping federate.
+		//if v.Value != nil && v.EncryptedValue == nil {
 		if v.Value != nil {
 			s["value"] = *v.Value
 		}
-		if v.EncryptedValue != nil && *v.EncryptedValue != "" {
-			s["encrypted_value"] = *v.EncryptedValue
-		}
+		// if v.EncryptedValue != nil && *v.EncryptedValue != "" {
+		// 	s["encrypted_value"] = *v.EncryptedValue
+		// }
 		if v.Inherited != nil {
 			s["inherited"] = *v.Inherited
 		}
@@ -362,32 +593,52 @@ func configFieldHash(v interface{}) int {
 	if d, ok := m["value"]; ok && d.(string) != "" {
 		buf.WriteString(fmt.Sprintf("%s-", d.(string)))
 	}
-	if d, ok := m["encrypted_value"]; ok && d.(string) != "" {
-		buf.WriteString(fmt.Sprintf("%s-", d.(string)))
-	}
+	// if d, ok := m["encrypted_value"]; ok && d.(string) != "" {
+	// 	buf.WriteString(fmt.Sprintf("%s-", d.(string)))
+	// }
 	if d, ok := m["inherited"]; ok {
 		buf.WriteString(fmt.Sprintf("%t-", d.(bool)))
 	}
 	return hashcode.String(buf.String())
 }
 
-func expandConfigField(in []interface{}) *[]*pf.ConfigField {
+func expandConfigFields(in []interface{}) *[]*pf.ConfigField {
 	configFields := []*pf.ConfigField{}
 	for _, raw := range in {
 		l := raw.(map[string]interface{})
-		s := &pf.ConfigField{
-			Name: String(l["name"].(string)),
+		if _, ok := l["encrypted_value"]; !ok {
+			s := &pf.ConfigField{
+				Name: String(l["name"].(string)),
+			}
+			if val, ok := l["value"]; ok {
+				s.Value = String(val.(string))
+			}
+			if val, ok := l["inherited"]; ok {
+				s.Inherited = Bool(val.(bool))
+			}
+			configFields = append(configFields, s)
 		}
-		if val, ok := l["value"]; ok {
-			s.Value = String(val.(string))
+	}
+	return &configFields
+}
+
+func expandSensitiveConfigFields(in []interface{}) *[]*pf.ConfigField {
+	configFields := []*pf.ConfigField{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		log.Printf("[DEBUG] HELPER: expand sensitive fields: %v", l)
+		if val, ok := l["value"]; ok && val.(string) != "" {
+			s := &pf.ConfigField{
+				Name: String(l["name"].(string)),
+			}
+			if val, ok := l["value"]; ok {
+				s.Value = String(val.(string))
+			}
+			if val, ok := l["inherited"]; ok {
+				s.Inherited = Bool(val.(bool))
+			}
+			configFields = append(configFields, s)
 		}
-		if val, ok := l["encrypted_value"]; ok {
-			s.EncryptedValue = String(val.(string))
-		}
-		if val, ok := l["inherited"]; ok {
-			s.Inherited = Bool(val.(bool))
-		}
-		configFields = append(configFields, s)
 	}
 	return &configFields
 }
@@ -397,6 +648,7 @@ func flattenConfigRow(in []*pf.ConfigRow) []map[string]interface{} {
 	for _, v := range in {
 		s := make(map[string]interface{})
 		s["fields"] = flattenConfigField(*v.Fields)
+		s["sensitive_fields"] = flattenSensitiveConfigField(*v.Fields)
 		m = append(m, s)
 	}
 	return m
@@ -406,28 +658,41 @@ func expandConfigRow(in []interface{}) *[]*pf.ConfigRow {
 	configRows := []*pf.ConfigRow{}
 	for _, raw := range in {
 		l := raw.(map[string]interface{})
-		s := &pf.ConfigRow{
-			Fields: expandConfigField(l["name"].([]interface{})),
+		row := &pf.ConfigRow{}
+		if val, ok := l["fields"]; ok {
+			row.Fields = expandConfigFields(val.(*schema.Set).List())
 		}
-		configRows = append(configRows, s)
+		if val, ok := l["sensitive_fields"]; ok {
+			fields := expandSensitiveConfigFields(val.(*schema.Set).List())
+			*row.Fields = append(*row.Fields, *fields...)
+		}
+		configRows = append(configRows, row)
 	}
 	return &configRows
 }
 
-func flattenConfigTable(in []*pf.ConfigTable) []map[string]interface{} {
-	m := make([]map[string]interface{}, 0, len(in))
+func flattenConfigTable(in []*pf.ConfigTable) []interface{} {
+	var m []interface{}
 	for _, v := range in {
 		s := make(map[string]interface{})
 		s["name"] = *v.Name
-		// if v.Rows != nil {
-		// 	s["rows"] = flattenConfigRow(*v.Rows)
-		// }
+		if v.Rows != nil {
+			s["rows"] = flattenConfigRow(*v.Rows)
+		}
 		if v.Inherited != nil {
 			s["inherited"] = *v.Inherited
 		}
 		m = append(m, s)
 	}
 	return m
+	//return schema.NewSet(configTableHash, m)
+}
+
+func configTableHash(v interface{}) int {
+	var buf bytes.Buffer
+	m := v.(map[string]interface{})
+	buf.WriteString(m["name"].(string))
+	return hashcode.String(buf.String())
 }
 
 func expandConfigTable(in []interface{}) *[]*pf.ConfigTable {
@@ -437,9 +702,9 @@ func expandConfigTable(in []interface{}) *[]*pf.ConfigTable {
 		s := &pf.ConfigTable{
 			Name: String(l["name"].(string)),
 		}
-		// if val, ok := l["rows"]; ok {
-		// 	s.Rows = expandConfigRow(val.([]interface{}))
-		// }
+		if val, ok := l["rows"]; ok {
+			s.Rows = expandConfigRow(val.([]interface{}))
+		}
 		if val, ok := l["inherited"]; ok {
 			s.Inherited = Bool(val.(bool))
 		}
@@ -451,9 +716,9 @@ func expandConfigTable(in []interface{}) *[]*pf.ConfigTable {
 func flattenPluginConfiguration(in *pf.PluginConfiguration) []interface{} {
 	// m := []interface{}{}
 	s := make(map[string]interface{})
-	// if in.Tables != nil {
-	// 	s["tables"] = flattenConfigTable(*in.Tables)
-	// }
+	if in.Tables != nil {
+		s["tables"] = flattenConfigTable(*in.Tables)
+	}
 	if in.Fields != nil {
 		s["fields"] = flattenConfigField(*in.Fields)
 	}
@@ -479,10 +744,20 @@ func expandPluginConfiguration(in []interface{}) *pf.PluginConfiguration {
 	for _, raw := range in {
 		l := raw.(map[string]interface{})
 		if val, ok := l["tables"]; ok {
-			config.Tables = expandConfigTable(val.(*schema.Set).List())
+			config.Tables = expandConfigTable(val.([]interface{}))
 		}
+		//if val, ok := l["fields"]; ok {
+		//	config.Fields = expandConfigFields(val.(*schema.Set).List())
+		//	log.Printf("[INFO] ConfigFields: %v", len(*config.Fields))
+		//	*config.Fields = append(*config.Fields, *expandSensitiveConfigFields(val.(*schema.Set).List())...)
+		//	log.Printf("[INFO] ConfigFieldsWithSensitive: %v", len(*config.Fields))
+		//}
 		if val, ok := l["fields"]; ok {
-			config.Fields = expandConfigField(val.(*schema.Set).List())
+			config.Fields = expandConfigFields(val.(*schema.Set).List())
+		}
+		if val, ok := l["sensitive_fields"]; ok {
+			fields := expandSensitiveConfigFields(val.(*schema.Set).List())
+			*config.Fields = append(*config.Fields, *fields...)
 		}
 	}
 	return config
@@ -515,4 +790,140 @@ func flattenAccessTokenAttributes(in []*pf.AccessTokenAttribute) []interface{} {
 		m = append(m, *v.Name)
 	}
 	return m
+}
+
+func flattenAuthenticationPolicyContractAttribute(in []*pf.AuthenticationPolicyContractAttribute) []interface{} {
+	m := make([]interface{}, 0, len(in))
+	for _, v := range in {
+		m = append(m, *v.Name)
+	}
+	return m
+}
+
+func expandAuthenticationPolicyContractAttribute(in []interface{}) *[]*pf.AuthenticationPolicyContractAttribute {
+	contractList := []*pf.AuthenticationPolicyContractAttribute{}
+	for _, raw := range in {
+		c := &pf.AuthenticationPolicyContractAttribute{
+			Name: String(raw.(string)),
+		}
+		contractList = append(contractList, c)
+	}
+	return &contractList
+}
+
+func flattenPasswordCredentialValidatorAttribute(in []*pf.PasswordCredentialValidatorAttribute) *schema.Set {
+	m := make([]interface{}, 0, len(in))
+	for _, v := range in {
+		m = append(m, *v.Name)
+	}
+	return schema.NewSet(schema.HashString, m)
+}
+
+func expandPasswordCredentialValidatorAttribute(in []interface{}) *[]*pf.PasswordCredentialValidatorAttribute {
+	contractList := []*pf.PasswordCredentialValidatorAttribute{}
+	for _, raw := range in {
+		c := &pf.PasswordCredentialValidatorAttribute{
+			Name: String(raw.(string)),
+		}
+		contractList = append(contractList, c)
+	}
+	return &contractList
+}
+
+func expandPasswordCredentialValidatorAttributeContract(in []interface{}) *pf.PasswordCredentialValidatorAttributeContract {
+	pgc := &pf.PasswordCredentialValidatorAttributeContract{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		if v, ok := l["extended_attributes"]; ok && len(v.(*schema.Set).List()) > 0 {
+			pgc.ExtendedAttributes = expandPasswordCredentialValidatorAttribute(v.(*schema.Set).List())
+		}
+		if v, ok := l["core_attributes"]; ok && len(v.(*schema.Set).List()) > 0 {
+			pgc.CoreAttributes = expandPasswordCredentialValidatorAttribute(v.(*schema.Set).List())
+		}
+	}
+	return pgc
+}
+
+func flattenPasswordCredentialValidatorAttributeContract(in *pf.PasswordCredentialValidatorAttributeContract) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, 1)
+	s := make(map[string]interface{})
+	if in.ExtendedAttributes != nil {
+		s["extended_attributes"] = flattenPasswordCredentialValidatorAttribute(*in.ExtendedAttributes)
+	}
+	if in.CoreAttributes != nil {
+		s["core_attributes"] = flattenPasswordCredentialValidatorAttribute(*in.CoreAttributes)
+	}
+	m = append(m, s)
+	return m
+}
+
+func maskPluginConfigurationFromDescriptor(desc *pf.PluginConfigDescriptor, origConf, conf *pf.PluginConfiguration) []interface{} {
+	//printPluginConfig("originConf",origConf)
+	//printPluginConfig("conf",conf)
+
+	for _, f := range *desc.Fields {
+		if *f.Type == "HASHED_TEXT" {
+			for _, i := range *conf.Fields {
+				if *i.Name == *f.Name {
+					*i.Value, _ = getConfigFieldValueByName(*i.Name, origConf.Fields)
+				}
+			}
+		}
+	}
+
+	for _, dt := range *desc.Tables {
+		for _, dc := range *dt.Columns {
+			if *dc.Type == "HASHED_TEXT" {
+				for ctIndex, ct := range *conf.Tables {
+					for crIndex, cr := range *ct.Rows {
+						for _, f := range *cr.Fields {
+							if *f.Name == *dc.Name {
+								//log.Printf("[DEBUG] HELPER: getConfigFieldValueByName ctIndex: %d crIndex: %d", ctIndex, crIndex)
+								//log.Printf("[DEBUG] HELPER: %s", *(*origConf.Tables)[ctIndex].Name)
+								//log.Printf("[DEBUG] HELPER: %v", (*(*origConf.Tables)[ctIndex].Rows)[crIndex])
+								//log.Printf("[DEBUG] HELPER: %v", *(*(*(*origConf.Tables)[ctIndex].Rows)[crIndex].Fields)[0].Name)
+								val, _ := getConfigFieldValueByName(*f.Name, (*(*origConf.Tables)[ctIndex].Rows)[crIndex].Fields)
+								f.Value = &val
+								//*f.Value, _ = getConfigFieldValueByName(*f.Name, (*(*origConf.Tables)[ctIndex].Rows)[crIndex].Fields)
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return flattenPluginConfiguration(conf)
+}
+
+func getConfigFieldValueByName(name string, fields *[]*pf.ConfigField) (string, error) {
+	for _, f := range *fields {
+		if *f.Name == name {
+			return *f.Value, nil
+		}
+	}
+	return "", nil
+}
+
+func printPluginConfig(name string, conf *pf.PluginConfiguration) {
+	log.Printf("[DEBUG] Helper: %s", name)
+	log.Printf("[DEBUG] Helper: %s Fields: %d", name, len(*conf.Fields))
+	for _, f := range *conf.Fields {
+		log.Printf("[DEBUG] Helper: %s Field: %s: Value: %s EncryptedValue: %s", name, *f.Name, *f.Value, *f.EncryptedValue)
+	}
+	log.Printf("[DEBUG] Helper: %s Tables: %d", name, len(*conf.Tables))
+	for _, t := range *conf.Tables {
+		log.Printf("[DEBUG] Helper: %s Table: %s", name, *t.Name)
+		log.Printf("[DEBUG] Helper: %s Table: %s Rows: %d", name, *t.Name, len(*t.Rows))
+		for _, r := range *t.Rows {
+			for i, f := range *r.Fields {
+				if f.Value != nil {
+					log.Printf("[DEBUG] Helper: %s Table: %s Row: %d Field: %s Value: %s", name, *t.Name, i, *f.Name, *f.Value)
+				}
+				if f.EncryptedValue != nil {
+					log.Printf("[DEBUG] Helper: %s Table: %s Row: %d Field: %s EncryptedValue: %s", name, *t.Name, i, *f.Name, *f.EncryptedValue)
+				}
+			}
+		}
+
+	}
 }

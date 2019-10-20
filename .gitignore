@@ -3,7 +3,7 @@ func-tests/.terraform
 func-tests/crash.log
 func-tests/run.log
 func-tests/terraform.*
-terraform-provider-pingfederate
+terraform-provider-pingfederate*
 .scannerwork/
 .vscode/
 run.log
@@ -11,3 +11,4 @@ coverage.out
 report.json
 pingfederate/terraform.log
 terraform.log
+terraform-provider-pingfederate_vlocal

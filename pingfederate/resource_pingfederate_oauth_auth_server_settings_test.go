@@ -12,8 +12,7 @@ import (
 func TestAccPingFederateOauthAuthServerSettings(t *testing.T) {
 	var out pf.AuthorizationServerSettings
 
-	resource.ParallelTest(t, resource.TestCase{
-		// PreCheck:     func() { testAccPreCheck(t) },
+	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederateOauthAuthServerSettingsDestroy,
 		Steps: []resource.TestStep{
@@ -21,16 +20,12 @@ func TestAccPingFederateOauthAuthServerSettings(t *testing.T) {
 				Config: testAccPingFederateOauthAuthServerSettingsConfig("bar", "404"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateOauthAuthServerSettingsExists("pingfederate_oauth_auth_server_settings.settings", 3, &out),
-					// testAccCheckPingFederateOauthAuthServerSettingsAttributes(),
-					// testAccCheckAWSPolicyAttachmentAttributes([]string{userName}, []string{roleName}, []string{groupName}, &out),
 				),
 			},
 			{
 				Config: testAccPingFederateOauthAuthServerSettingsConfig("bar", "403"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateOauthAuthServerSettingsExists("pingfederate_oauth_auth_server_settings.settings", 6, &out),
-					// testAccCheckAWSPolicyAttachmentAttributes([]string{userName2, userName3},
-					// 	[]string{roleName2, roleName3}, []string{groupName2, groupName3}, &out),
 				),
 			},
 		},

@@ -1,6 +1,7 @@
 package pingfederate
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform/flatmap"
@@ -244,6 +245,21 @@ func testPluginConfiguration() []interface{} {
 
 func Test_weCanFlattenPluginConfiguration(t *testing.T) {
 	initialPluginConfiguration := &pf.PluginConfiguration{
+		Tables: &[]*pf.ConfigTable{
+			&pf.ConfigTable{
+				Name: String("Users"),
+				Rows: &[]*pf.ConfigRow{
+					&pf.ConfigRow{
+						Fields: &[]*pf.ConfigField{
+							&pf.ConfigField{
+								Name:  String("Username"),
+								Value: String("test"),
+							},
+						},
+					},
+				},
+			},
+		},
 		Fields: &[]*pf.ConfigField{
 			&pf.ConfigField{
 				Name:      String("Token Length"),
@@ -266,4 +282,159 @@ func Test_expandPluginConfiguration(t *testing.T) {
 	expandPluginConfiguration := expandPluginConfiguration(testPluginConfiguration())
 
 	equals(t, 1, len(*(*expandPluginConfiguration).Fields))
+}
+
+func testAuthenticationPolicyContractAttribute() map[string]string {
+	return map[string]string{
+		"extended_attributes.#": "1",
+		"extended_attributes.0": "woot",
+	}
+}
+
+func Test_expandAuthenticationPolicyContractAttribute(t *testing.T) {
+	expanded := flatmap.Expand(testAuthenticationPolicyContractAttribute(), "extended_attributes").([]interface{})
+	attributes := expandAuthenticationPolicyContractAttribute(expanded)
+
+	equals(t, 1, len(*attributes))
+}
+
+func Test_weCanFlattenAuthenticationPolicyContractAttribute(t *testing.T) {
+	attributes := &[]*pf.AuthenticationPolicyContractAttribute{
+		&pf.AuthenticationPolicyContractAttribute{
+			Name: String("woot"),
+		},
+	}
+
+	output := []interface{}{"woot"}
+
+	flattened := flattenAuthenticationPolicyContractAttribute(*attributes)
+
+	equals(t, output, flattened)
+}
+
+func Test_maskPluginConfigurationFromDescriptor(t *testing.T) {
+	type args struct {
+		desc     *pf.PluginConfigDescriptor
+		origConf *pf.PluginConfiguration
+		conf     *pf.PluginConfiguration
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		{
+			name: "HOURS passes",
+			args: args{
+				desc: &pf.PluginConfigDescriptor{
+					ActionDescriptors: nil,
+					Description:       nil,
+					Fields:            &[]*pf.FieldDescriptor{},
+					Tables: &[]*pf.TableDescriptor{
+						{
+							Columns: &[]*pf.FieldDescriptor{
+								{
+									Type: String("TEXT"),
+									Name: String("Username"),
+								},
+								{
+									Type: String("HASHED_TEXT"),
+									Name: String("Password"),
+								},
+								{
+									Type: String("HASHED_TEXT"),
+									Name: String("Confirm Password"),
+								},
+								{
+									Type: String("CHECK_BOX"),
+									Name: String("Relax Password Requirements"),
+								},
+							},
+							Description:       nil,
+							Label:             nil,
+							Name:              nil,
+							RequireDefaultRow: nil,
+						},
+					},
+				},
+				origConf: &pf.PluginConfiguration{
+					Fields: &[]*pf.ConfigField{},
+					Tables: &[]*pf.ConfigTable{
+						{
+							Inherited: nil,
+							Name:      String("foo"),
+							Rows: &[]*pf.ConfigRow{
+								{
+									DefaultRow: nil,
+									Fields: &[]*pf.ConfigField{
+										{
+											Name:  String("Username"),
+											Value: String("bob"),
+										},
+										{
+											Name:  String("Password"),
+											Value: String("demo"),
+										},
+										{
+											Name:  String("Confirm Password"),
+											Value: String("demo"),
+										},
+										{
+											Name:  String("Relax Password Requirements"),
+											Value: String("true"),
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+				conf: &pf.PluginConfiguration{
+					Fields: &[]*pf.ConfigField{},
+					Tables: &[]*pf.ConfigTable{
+						{
+							Inherited: nil,
+							Name:      String("foo"),
+							Rows: &[]*pf.ConfigRow{
+								{
+									DefaultRow: nil,
+									Fields: &[]*pf.ConfigField{
+										{
+											Name:  String("Username"),
+											Value: String("bob"),
+										},
+										{
+											Name:           String("Password"),
+											EncryptedValue: String("OBF:JWE:eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2Iiwia2lkIjoicVByTTIzT2JreiIsInZlcnNpb24iOiIxMC4wLjIuMiJ9..eaoxz6IFWkCsg5om58lbSQ.1uRKxwIsB473vkP4KBY8yAUtet_Dt-ZCwDcAOkqJzGQ8sO19PfTZZQvTrmQMKZ7wTeFdKN0J5ipzSzt-MpRIuw.ViEz10Djqy9oy4XoGW2nRA"),
+										},
+										{
+											Name:           String("Confirm Password"),
+											EncryptedValue: String("OBF:JWE:eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2Iiwia2lkIjoicVByTTIzT2JreiIsInZlcnNpb24iOiIxMC4wLjIuMiJ9..eaoxz6IFWkCsg5om58lbSQ.1uRKxwIsB473vkP4KBY8yAUtet_Dt-ZCwDcAOkqJzGQ8sO19PfTZZQvTrmQMKZ7wTeFdKN0J5ipzSzt-MpRIuw.ViEz10Djqy9oy4XoGW2nRA"),
+										},
+										{
+											Name:  String("Relax Password Requirements"),
+											Value: String("true"),
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			maskPluginConfigurationFromDescriptor(tt.args.desc, tt.args.origConf, tt.args.conf)
+
+			foo := flattenPluginConfiguration(tt.args.origConf)
+			bar := flattenPluginConfiguration(tt.args.conf)
+			printPluginConfig("foo", tt.args.origConf)
+			printPluginConfig("foo", tt.args.conf)
+			fmt.Printf("%v\n%v", foo, bar)
+			//if got := ; !reflect.DeepEqual(got, tt.want) {
+			//	t.Errorf("maskPluginConfigurationFromDescriptor() = %v, want %v", got, tt.want)
+			//}
+		})
+	}
 }

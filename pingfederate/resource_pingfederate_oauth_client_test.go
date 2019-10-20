@@ -12,7 +12,7 @@ import (
 func TestAccPingFederateOauthClient(t *testing.T) {
 	var out pf.Client
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		// PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederateOauthClientDestroy,
@@ -40,6 +40,8 @@ func testAccCheckPingFederateOauthClientDestroy(s *terraform.State) error {
 
 func testAccPingFederateOauthClientConfig(configUpdate string) string {
 	return fmt.Sprintf(`
+	%s
+
 	resource "pingfederate_oauth_client" "my_client" {
 		client_id = "tf-acc-woot"
 		name      = "tf-acc-woot"
@@ -49,7 +51,7 @@ func testAccPingFederateOauthClientConfig(configUpdate string) string {
 		]
 
 		default_access_token_manager_ref {
-			id = "atat"
+			id = "${pingfederate_oauth_access_token_manager.my_atm.name}"
 		}
 	
 		oidc_policy {
@@ -60,7 +62,7 @@ func testAccPingFederateOauthClientConfig(configUpdate string) string {
 			]
 			ping_access_logout_capable = true
 		}
-	}`, configUpdate)
+	}`, testAccPingFederateOauthAccessTokenManagerConfig("client", "180"), configUpdate)
 }
 
 func testAccCheckPingFederateOauthClientExists(n string, out *pf.Client) resource.TestCheckFunc {
@@ -74,7 +76,7 @@ func testAccCheckPingFederateOauthClientExists(n string, out *pf.Client) resourc
 			return fmt.Errorf("No rule ID is set")
 		}
 
-		conn := testAccProvider.Meta().(*pf.PfClient).OauthClient
+		conn := testAccProvider.Meta().(*pf.PfClient).OauthClients
 		result, _, err := conn.GetClient(&pf.GetClientInput{Id: rs.Primary.ID})
 
 		if err != nil {

@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"net/http"
 	"net/url"
+	"os"
 
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
 )
@@ -20,6 +21,8 @@ func (c *Config) Client() (interface{}, error) {
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	url, _ := url.Parse(c.BaseURL)
 	client := pingfederate.NewClient(c.Username, c.Password, url, c.Context, nil)
-
+	if os.Getenv("TF_LOG") == "DEBUG" || os.Getenv("TF_LOG") == "TRACE" {
+		client.LogDebug = true
+	}
 	return client, nil
 }
