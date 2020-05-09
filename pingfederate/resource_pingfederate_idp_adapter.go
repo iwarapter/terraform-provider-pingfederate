@@ -1,4 +1,5 @@
 package pingfederate
+
 //
 //import (
 //	"fmt"

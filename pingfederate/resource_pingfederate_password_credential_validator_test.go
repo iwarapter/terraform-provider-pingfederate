@@ -16,14 +16,14 @@ func TestAccPingFederatePasswordCredentialValidatorResource(t *testing.T) {
 		CheckDestroy: testAccCheckPingFederatePasswordCredentialValidatorResourceDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config:             testAccPingFederatePasswordCredentialValidatorResourceConfig("demo1"),
+				Config: testAccPingFederatePasswordCredentialValidatorResourceConfig("demo1"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederatePasswordCredentialValidatorResourceExists("pingfederate_password_credential_validator.demo"),
 					// testAccCheckPingFederatePasswordCredentialValidatorResourceAttributes(),
 				),
 			},
 			{
-				Config:             testAccPingFederatePasswordCredentialValidatorResourceConfig("demo2"),
+				Config: testAccPingFederatePasswordCredentialValidatorResourceConfig("demo2"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederatePasswordCredentialValidatorResourceExists("pingfederate_password_credential_validator.demo"),
 				),

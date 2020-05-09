@@ -190,3 +190,27 @@ resource "pingfederate_password_credential_validator" "demo" {
     core_attributes = ["username"]
   }
 }
+
+resource "pingfederate_data_store" "demo" {
+  jdbc_data_store {
+    name = "terraform"
+    driver_class = "org.hsqldb.jdbcDriver"
+    user_name = "sa"
+//    password = ""
+    connection_url = "jdbc:hsqldb:mem:mymemdb"
+  }
+}
+//
+resource "pingfederate_data_store" "demo_ldap" {
+  bypass_external_validation = true
+  ldap_data_store {
+    name = "terraform_ldap"
+    ldap_type = "PING_DIRECTORY"
+    hostnames = ["host.docker.internal:1389"]
+    bind_anonymously = true
+
+
+    min_connections = 1
+    max_connections = 1
+  }
+}

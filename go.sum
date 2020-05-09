@@ -198,6 +198,10 @@ github.com/iwarapter/pingfederate-sdk-go v0.0.0-20191020150739-4e4732302e89 h1:x
 github.com/iwarapter/pingfederate-sdk-go v0.0.0-20191020150739-4e4732302e89/go.mod h1:HKrM6b8RctFKhVQaVIAHehTWASFLVLX3eO7yVxB7ETQ=
 github.com/iwarapter/pingfederate-sdk-go v0.0.0-20200427225446-4f81b1ad5844 h1:jYcXPrYrLqoH9PwJxdAsJiNpTGayxQW6l+xpAA6NKfo=
 github.com/iwarapter/pingfederate-sdk-go v0.0.0-20200427225446-4f81b1ad5844/go.mod h1:HKrM6b8RctFKhVQaVIAHehTWASFLVLX3eO7yVxB7ETQ=
+github.com/iwarapter/pingfederate-sdk-go v0.0.0-20200509201010-fc16ce2ffe68 h1:tzXTtyDcg3NTCVRi4GZAMtgrfGv0PYzJuEUQoBNa7G4=
+github.com/iwarapter/pingfederate-sdk-go v0.0.0-20200509201010-fc16ce2ffe68/go.mod h1:HKrM6b8RctFKhVQaVIAHehTWASFLVLX3eO7yVxB7ETQ=
+github.com/iwarapter/pingfederate-sdk-go v0.0.0-20200509203146-4c6bee3a0c2d h1:3buYGTBqWWAFwcJ6ZheXBBtOl4ih0NBkqnkff2L9rrw=
+github.com/iwarapter/pingfederate-sdk-go v0.0.0-20200509203146-4c6bee3a0c2d/go.mod h1:HKrM6b8RctFKhVQaVIAHehTWASFLVLX3eO7yVxB7ETQ=
 github.com/jellevandenhooff/dkim v0.0.0-20150330215556-f50fe3d243e1/go.mod h1:E0B/fFc00Y+Rasa88328GlI/XbtyysCtTHZS8h7IrBU=
 github.com/jessevdk/go-flags v1.4.0/go.mod h1:4FA24M0QyGHXBuZZK/XkWh8h0e1EYbRYJSGM75WSRxI=
 github.com/jmespath/go-jmespath v0.0.0-20160202185014-0b12d6b521d8/go.mod h1:Nht3zPeWKUH0NzdCt2Blrr5ys8VGpn0CEB0cQHVjt7k=

@@ -1,4 +1,5 @@
 package pingfederate
+
 //
 //import (
 //	"fmt"
@@ -45,7 +46,7 @@ package pingfederate
 //		plugin_descriptor_ref {
 //			id = "com.pingidentity.adapters.httpbasic.idp.HttpBasicIdpAuthnAdapter"
 //		}
-//	
+//
 //		configuration {
 //			tables {
 //				name = "Credential Validators"
@@ -60,14 +61,14 @@ package pingfederate
 //				name  = "Realm"
 //				value = "foo"
 //			}
-//	
+//
 //			fields {
 //				name  = "Challenge Retries"
 //				value = "3"
 //			}
 //
 //		}
-//	
+//
 //		attribute_contract {
 //			core_attributes = []
 //			extended_attributes = ["sub"]

@@ -3,7 +3,7 @@ VERSION ?= 0.0.1-BETA
 NAME=terraform-provider-pingfederate_v${VERSION}
 
 pf-init:
-	@docker run --rm -d --hostname pingfederate --name pingfederate -v `pwd`/pingfederate/pingfederate.lic:/opt/in/instance/server/default/conf/pingfederate.lic -v `pwd`/pingfederate/pingfederate-data.zip:/opt/in/instance/server/default/data/drop-in-deployer/data.zip --publish 9999:9999 pingidentity/pingfederate:9.3.0-alpine-edge
+	@docker run --rm -d --hostname pingfederate --name pingfederate -e PING_IDENTITY_DEVOPS_KEY=$(PING_IDENTITY_DEVOPS_KEY) -e PING_IDENTITY_DEVOPS_USER=$(PING_IDENTITY_DEVOPS_USER) -e PING_IDENTITY_ACCEPT_EULA=YES --publish 9999:9999 pingidentity/pingfederate:10.0.2-edge
 
 unit-test:
 	@go test -mod=vendor ./... -v 
