@@ -1221,3 +1221,48 @@ func printPluginConfig(name string, conf *pf.PluginConfiguration) {
 
 	}
 }
+
+func resourceAuthenticationSelectorAttributeContract() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"extended_attributes": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				MinItems: 1,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+		},
+	}
+}
+
+
+func flattenAuthenticationSelectorAttributeContract(in *pf.AuthenticationSelectorAttributeContract) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, 1)
+	s := make(map[string]interface{})
+	s["extended_attributes"] = flattenAuthenticationSelectorAttributes(*in.ExtendedAttributes)
+	m = append(m, s)
+	return m
+}
+
+func expandAuthenticationSelectorAttributeContract(in []interface{}) *pf.AuthenticationSelectorAttributeContract {
+	pgc := &pf.AuthenticationSelectorAttributeContract{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		atr := []*pf.AuthenticationSelectorAttribute{}
+		for _, exAtr := range l["extended_attributes"].([]interface{}) {
+			atr = append(atr, &pf.AuthenticationSelectorAttribute{Name: String(exAtr.(string))})
+		}
+		pgc.ExtendedAttributes = &atr
+	}
+	return pgc
+}
+
+func flattenAuthenticationSelectorAttributes(in []*pf.AuthenticationSelectorAttribute) []interface{} {
+	m := make([]interface{}, 0, len(in))
+	for _, v := range in {
+		m = append(m, *v.Name)
+	}
+	return m
+}
