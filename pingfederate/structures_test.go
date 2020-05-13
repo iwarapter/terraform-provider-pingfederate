@@ -140,7 +140,7 @@ func Test_weCanFlattenClientAuth(t *testing.T) {
 
 	output := []map[string]interface{}{map[string]interface{}{"type": "CERTIFICATE", "client_cert_issuer_dn": "", "client_cert_subject_dn": ""}}
 
-	flattened := flattenClientAuth(initialClientAuth)
+	flattened := flattenClientAuth(initialClientAuth, initialClientAuth)
 
 	equals(t, output, flattened)
 }

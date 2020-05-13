@@ -26,9 +26,10 @@ func resourcePingFederateDataStoreResource() *schema.Resource {
 func resourcePingFederateDataStoreResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"bypass_external_validation": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  false,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "External validation will be bypassed when set to true. Default to false.",
+			Default:     false,
 		},
 		"jdbc_data_store": {
 			Type:          schema.TypeList,

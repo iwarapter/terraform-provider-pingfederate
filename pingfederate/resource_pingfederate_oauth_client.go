@@ -289,7 +289,9 @@ func resourcePingFederateOauthClientResourceReadResult(d *schema.ResourceData, r
 		}
 	}
 	if rv.ClientAuth != nil && *rv.ClientAuth.Type != "NONE" {
-		if err = d.Set("client_auth", flattenClientAuth(rv.ClientAuth)); err != nil {
+		orig := expandClientAuth(d.Get("client_auth").([]interface{}))
+
+		if err = d.Set("client_auth", flattenClientAuth(orig, rv.ClientAuth)); err != nil {
 			return err
 		}
 	}

@@ -39,6 +39,7 @@ func Provider() terraform.ResourceProvider {
 			"pingfederate_authentication_policy_contract": resourcePingFederateAuthenticationPolicyContractResource(),
 			"pingfederate_authentication_selector":        resourcePingFederateAuthenticationSelectorResource(),
 			"pingfederate_data_store":                     resourcePingFederateDataStoreResource(),
+			"pingfederate_idp_adapter":                    resourcePingFederateIdpAdapterResource(),
 			"pingfederate_oauth_auth_server_settings":     resourcePingFederateOauthAuthServerSettingsResource(),
 			"pingfederate_oauth_client":                   resourcePingFederateOauthClientResource(),
 			"pingfederate_oauth_access_token_manager":     resourcePingFederateOauthAccessTokenManagersResource(),
