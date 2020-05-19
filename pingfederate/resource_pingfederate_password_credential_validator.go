@@ -2,6 +2,7 @@ package pingfederate
 
 import (
 	"fmt"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
 )

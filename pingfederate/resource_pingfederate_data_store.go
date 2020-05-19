@@ -1,12 +1,9 @@
 package pingfederate
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"github.com/hashicorp/terraform/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
-	"log"
 )
 
 func resourcePingFederateDataStoreResource() *schema.Resource {
@@ -44,7 +41,7 @@ func resourcePingFederateDataStoreResourceSchema() map[string]*schema.Schema {
 						Default:  false,
 					},
 					"connection_url_tags": {
-						Type:     schema.TypeList,
+						Type:     schema.TypeSet,
 						Optional: true,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
@@ -412,9 +409,6 @@ func resourcePingFederateDataStoreResourceReadData(d *schema.ResourceData) *pf.D
 		ds.Type = String("LDAP")
 		ds.LdapDataStore = *expandLdapDataStore(v.([]interface{}))
 	}
-	buf := new(bytes.Buffer)
-	_ = json.NewEncoder(buf).Encode(ds)
-	log.Printf("[DEBUG] HELPER: %v", buf.String())
 	//if v, ok := d.GetOkExists("custom_data_store"); ok && len(v.([]interface{})) != 0 {
 	//	ds.Type = String("CUSTOM")
 	//	ds.CustomDataStore = *expandCustomDataStore(v.([]interface{}))

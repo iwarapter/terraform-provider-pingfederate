@@ -39,8 +39,8 @@ func TestMain(m *testing.M) {
 				Hostname:   "pingfederate",
 				Repository: "pingidentity/pingfederate",
 				Mounts:     []string{dir + "/pingfederate-data.zip:/opt/in/instance/server/default/data/drop-in-deployer/data.zip"},
-				Env:        []string{fmt.Sprintf("PING_IDENTITY_DEVOPS_USER=%s", devOpsUser), fmt.Sprintf("PING_IDENTITY_DEVOPS_KEY=%s", devOpsKey)},
-				Tag:        "9.3.0-edge",
+				Env:        []string{fmt.Sprintf("PING_IDENTITY_DEVOPS_USER=%s", devOpsUser), fmt.Sprintf("PING_IDENTITY_DEVOPS_KEY=%s", devOpsKey), "PING_IDENTITY_ACCEPT_EULA=YES"},
+				Tag:        "10.0.2-edge",
 			}
 		} else {
 			options = &dockertest.RunOptions{
@@ -50,7 +50,7 @@ func TestMain(m *testing.M) {
 					dir + "/pingfederate.lic:/opt/in/instance/server/default/conf/pingfederate.lic",
 					dir + "/pingfederate-data.zip:/opt/in/instance/server/default/data/drop-in-deployer/data.zip",
 				},
-				Tag: "9.3.0-edge",
+				Tag: "10.0.2-edge",
 			}
 		}
 

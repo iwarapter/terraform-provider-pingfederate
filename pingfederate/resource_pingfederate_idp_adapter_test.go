@@ -1,13 +1,13 @@
 package pingfederate
 
 import (
-	"encoding/json"
 	"fmt"
+	"testing"
+
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
-	"testing"
 
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
 )
@@ -42,7 +42,7 @@ func testAccCheckPingFederateIdpAdapterDestroy(s *terraform.State) error {
 func testAccPingFederateIdpAdapterConfig(configUpdate string) string {
 	return fmt.Sprintf(`
 	resource "pingfederate_idp_adapter" "demo" {
-  name = "bar"
+  name = "barrr"
   plugin_descriptor_ref {
     id = "com.pingidentity.adapters.httpbasic.idp.HttpBasicIdpAuthnAdapter"
   }
@@ -106,7 +106,7 @@ func testAccPingFederateIdpAdapterConfig(configUpdate string) string {
 }
 
 resource "pingfederate_password_credential_validator" "demo" {
-  name = "bar"
+  name = "barrrrrr"
   plugin_descriptor_ref {
 	id = "org.sourceid.saml20.domain.SimpleUsernamePasswordCredentialValidator"
   }
@@ -171,30 +171,6 @@ func testAccCheckPingFederateIdpAdapterExists(n string) resource.TestCheckFunc {
 }
 
 func Test_resourcePingFederateIdpAdapterResourceReadData(t *testing.T) {
-
-	das := pf.AttributeSource{
-		JdbcAttributeSource: pf.JdbcAttributeSource{
-			Filter: String("foo"),
-			Id:     String("foo"),
-			Schema: String("foo"),
-			Table:  String("foo"),
-		},
-		AttributeContractFulfillment: map[string]*pf.AttributeFulfillmentValue{
-			"foo": {
-				Source: &pf.SourceTypeIdKey{Type: String("foo"), Id: String("bar")},
-				Value:  String("foo"),
-			},
-		},
-		DataStoreRef: &pf.ResourceLink{
-			Id: String("foo"),
-		},
-		Description: String("foo"),
-		Id:          nil,
-		Type:        String("JDBC"),
-	}
-	b, _ := json.Marshal(das)
-	fmt.Println(string(b))
-
 	cases := []struct {
 		Resource pf.IdpAdapter
 	}{
@@ -205,8 +181,31 @@ func Test_resourcePingFederateIdpAdapterResourceReadData(t *testing.T) {
 					Id: String("com.pingidentity.adapters.httpbasic.idp.HttpBasicIdpAuthnAdapter"),
 				},
 				Configuration: &pf.PluginConfiguration{
-					Fields: &[]*pf.ConfigField{},
-					Tables: &[]*pf.ConfigTable{},
+					Fields: &[]*pf.ConfigField{
+						{
+							Name:      String("Result Attribute Name"),
+							Value:     String(""),
+							Inherited: Bool(false),
+						},
+					},
+					Tables: &[]*pf.ConfigTable{
+						{
+							Name:      String("Networks"),
+							Inherited: Bool(false),
+							Rows: &[]*pf.ConfigRow{
+								{
+									//DefaultRow: Bool(false),
+									Fields: &[]*pf.ConfigField{
+										{
+											Name:      String("Network Range (CIDR notation)"),
+											Value:     String("0.0.0.0/0"),
+											Inherited: Bool(false),
+										},
+									},
+								},
+							},
+						},
+					},
 				},
 				AttributeMapping: &pf.IdpAdapterContractMapping{
 					Inherited: Bool(false),
@@ -224,41 +223,61 @@ func Test_resourcePingFederateIdpAdapterResourceReadData(t *testing.T) {
 							Value: String("sub"),
 						},
 					},
+					IssuanceCriteria: &pf.IssuanceCriteria{
+						ConditionalCriteria: &[]*pf.ConditionalIssuanceCriteriaEntry{
+							{
+								AttributeName: String("foo"),
+								Condition:     String("foo"),
+								ErrorResult:   String("foo"),
+								Source: &pf.SourceTypeIdKey{
+									Id:   String("foo"),
+									Type: String("foo"),
+								},
+								Value: String("foo"),
+							},
+						},
+						ExpressionCriteria: &[]*pf.ExpressionIssuanceCriteriaEntry{
+							{
+								ErrorResult: String("foo"),
+								Expression:  String("foo"),
+							},
+						},
+					},
 					AttributeSources: &[]*pf.AttributeSource{
 						{
 							LdapAttributeSource: pf.LdapAttributeSource{
 								AttributeContractFulfillment: map[string]*pf.AttributeFulfillmentValue{
 									"foo": {
 										Source: &pf.SourceTypeIdKey{Type: String("foo"), Id: String("bar")},
-										Value: String("foo"),
+										Value:  String("foo"),
 									},
 								},
-								BaseDn:                       String("foo"),
-								BinaryAttributeSettings:      map[string]*pf.BinaryLdapAttributeSettings{
+								BaseDn: String("foo"),
+								BinaryAttributeSettings: map[string]*pf.BinaryLdapAttributeSettings{
 									"foo": {BinaryEncoding: String("foo")},
 								},
-								DataStoreRef:                 &pf.ResourceLink{
-									Id:       String("foo"),
+								DataStoreRef: &pf.ResourceLink{
+									Id: String("foo"),
 								},
-								Description:                  String("foo"),
-								Id:                           String("foo"),
-								MemberOfNestedGroup:          Bool(true),
-								SearchFilter:                 String("foo"),
-								SearchScope:                  String("foo"),
-								Type:                         String("LDAP"),
+								Description:         String("foo"),
+								Id:                  String("foo"),
+								MemberOfNestedGroup: Bool(true),
+								SearchFilter:        String("foo"),
+								SearchScope:         String("foo"),
+								Type:                String("LDAP"),
 							},
 							AttributeContractFulfillment: map[string]*pf.AttributeFulfillmentValue{
 								"foo": {
 									Source: &pf.SourceTypeIdKey{Type: String("foo"), Id: String("bar")},
-									Value: String("foo"),
+									Value:  String("foo"),
 								},
 							},
-							DataStoreRef:                 &pf.ResourceLink{
-								Id:       String("foo"),
+							DataStoreRef: &pf.ResourceLink{
+								Id: String("foo"),
 							},
-							Description:                  String("foo"),
-							Id:                           String("foo"),
-							Type:                         String("LDAP"),
+							Description: String("foo"),
+							Id:          String("foo"),
+							Type:        String("LDAP"),
 						},
 						{
 							JdbcAttributeSource: pf.JdbcAttributeSource{
@@ -296,34 +315,34 @@ func Test_resourcePingFederateIdpAdapterResourceReadData(t *testing.T) {
 								AttributeContractFulfillment: map[string]*pf.AttributeFulfillmentValue{
 									"foo": {
 										Source: &pf.SourceTypeIdKey{Type: String("foo"), Id: String("bar")},
-										Value: String("foo"),
+										Value:  String("foo"),
 									},
 								},
-								DataStoreRef:                 &pf.ResourceLink{
-									Id:       String("foo"),
+								DataStoreRef: &pf.ResourceLink{
+									Id: String("foo"),
 								},
-								Description:                  String("foo"),
-								FilterFields:                 &[]*pf.FieldEntry{
+								Description: String("foo"),
+								FilterFields: &[]*pf.FieldEntry{
 									{
 										Name:  String("foo"),
 										Value: String("foo"),
 									},
 								},
-								Id:                           String("foo"),
-								Type:                         String("CUSTOM"),
+								Id:   String("foo"),
+								Type: String("CUSTOM"),
 							},
 							AttributeContractFulfillment: map[string]*pf.AttributeFulfillmentValue{
 								"foo": {
 									Source: &pf.SourceTypeIdKey{Type: String("foo"), Id: String("bar")},
-									Value: String("foo"),
+									Value:  String("foo"),
 								},
 							},
-							DataStoreRef:                 &pf.ResourceLink{
-								Id:       String("foo"),
+							DataStoreRef: &pf.ResourceLink{
+								Id: String("foo"),
 							},
-							Description:                  String("foo"),
-							Id:                           String("foo"),
-							Type:                         String("CUSTOM"),
+							Description: String("foo"),
+							Id:          String("foo"),
+							Type:        String("CUSTOM"),
 						},
 					},
 				},

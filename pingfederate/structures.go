@@ -74,6 +74,11 @@ func resourcePluginConfiguration() *schema.Schema {
 					Optional: true,
 					Elem:     resourceConfigField(),
 				},
+				"sensitive_fields": {
+					Type:     schema.TypeSet,
+					Optional: true,
+					Elem:     resourceSensitiveConfigField(),
+				},
 			},
 		},
 	}
@@ -126,7 +131,7 @@ func resourceSensitiveConfigField() *schema.Resource {
 			},
 			"value": {
 				Type:      schema.TypeString,
-				Required:  true,
+				Optional:  true,
 				Sensitive: true,
 			},
 			"inherited": {
@@ -147,7 +152,7 @@ func resourceConfigField() *schema.Resource {
 			},
 			"value": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"inherited": {
 				Type:     schema.TypeBool,
@@ -183,6 +188,139 @@ func resourcePasswordCredentialValidatorAttributeContract() *schema.Resource {
 			},
 		},
 	}
+}
+
+func resourceSpAdapterAttributeContract() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"inherited": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
+			"core_attributes": {
+				Type:     schema.TypeSet,
+				Required: true,
+				MinItems: 1,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+			"extended_attributes": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				//MinItems: 1,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+		},
+	}
+}
+
+func flattenSpAdapterAttribute(in []*pf.SpAdapterAttribute) *schema.Set {
+	m := make([]interface{}, 0, len(in))
+	for _, v := range in {
+		m = append(m, *v.Name)
+	}
+	return schema.NewSet(schema.HashString, m)
+}
+
+func expandSpAdapterAttribute(in []interface{}) *[]*pf.SpAdapterAttribute {
+	var contractList []*pf.SpAdapterAttribute
+	for _, raw := range in {
+		c := &pf.SpAdapterAttribute{
+			Name: String(raw.(string)),
+		}
+		contractList = append(contractList, c)
+	}
+	return &contractList
+}
+
+func expandSpAdapterAttributeContract(in []interface{}) *pf.SpAdapterAttributeContract {
+	pgc := &pf.SpAdapterAttributeContract{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		if val, ok := l["inherited"]; ok {
+			pgc.Inherited = Bool(val.(bool))
+		}
+		if v, ok := l["extended_attributes"]; ok && len(v.(*schema.Set).List()) > 0 {
+			pgc.ExtendedAttributes = expandSpAdapterAttribute(v.(*schema.Set).List())
+		}
+		if v, ok := l["core_attributes"]; ok && len(v.(*schema.Set).List()) > 0 {
+			pgc.CoreAttributes = expandSpAdapterAttribute(v.(*schema.Set).List())
+		}
+	}
+	return pgc
+}
+
+func flattenSpAdapterAttributeContract(in *pf.SpAdapterAttributeContract) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, 1)
+	s := make(map[string]interface{})
+	if in.Inherited != nil {
+		s["inherited"] = *in.Inherited
+	}
+	if in.ExtendedAttributes != nil {
+		s["extended_attributes"] = flattenSpAdapterAttribute(*in.ExtendedAttributes)
+	}
+	if in.CoreAttributes != nil {
+		s["core_attributes"] = flattenSpAdapterAttribute(*in.CoreAttributes)
+	}
+	m = append(m, s)
+	return m
+}
+
+func resourceSpAdapterTargetApplicationInfo() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"inherited": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
+			"application_name": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"application_icon_url": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+		},
+	}
+}
+
+func expandSpAdapterTargetApplicationInfo(in []interface{}) *pf.SpAdapterTargetApplicationInfo {
+	pgc := &pf.SpAdapterTargetApplicationInfo{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		if v, ok := l["inherited"]; ok {
+			pgc.Inherited = Bool(v.(bool))
+		}
+		if v, ok := l["application_name"]; ok {
+			pgc.ApplicationName = String(v.(string))
+		}
+		if v, ok := l["application_icon_url"]; ok {
+			pgc.ApplicationIconUrl = String(v.(string))
+		}
+	}
+	return pgc
+}
+
+func flattenSpAdapterTargetApplicationInfo(in *pf.SpAdapterTargetApplicationInfo) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, 1)
+	s := make(map[string]interface{})
+	if in.Inherited != nil {
+		s["inherited"] = *in.Inherited
+	}
+	if in.ApplicationName != nil {
+		s["application_name"] = *in.ApplicationName
+	}
+	if in.ApplicationIconUrl != nil {
+		s["application_icon_url"] = *in.ApplicationIconUrl
+	}
+	m = append(m, s)
+	return m
 }
 
 func resourceIdpAdapterAttributeContract() *schema.Resource {
@@ -329,7 +467,7 @@ func resourceIdpAdapterAttributeMapping() *schema.Resource {
 				Elem:     resourceCustomAttributeSource(),
 			},
 			"attribute_contract_fulfillment": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Required: true,
 				Elem:     resourceAttributeFulfillmentValue(),
 			},
@@ -357,6 +495,10 @@ func flattenIdpAdapterContractMapping(in *pf.IdpAdapterContractMapping) []map[st
 	if in.AttributeContractFulfillment != nil {
 		s["attribute_contract_fulfillment"] = flattenMapOfAttributeFulfillmentValue(in.AttributeContractFulfillment)
 	}
+	if in.IssuanceCriteria != nil && (in.IssuanceCriteria.ExpressionCriteria != nil && in.IssuanceCriteria.ConditionalCriteria != nil) {
+		s["issuance_criteria"] = flattenIssuanceCriteria(in.IssuanceCriteria)
+	}
+
 	if *in.AttributeSources != nil && len(*in.AttributeSources) > 0 {
 		var ldapAttributes []interface{}
 		var jdbcAttributes []interface{}
@@ -396,8 +538,12 @@ func expandIdpAdapterContractMapping(in []interface{}) *pf.IdpAdapterContractMap
 			iac.Inherited = Bool(v.(bool))
 		}
 		if v, ok := l["attribute_contract_fulfillment"]; ok {
-			iac.AttributeContractFulfillment = expandMapOfAttributeFulfillmentValue(v.([]interface{}))
+			iac.AttributeContractFulfillment = expandMapOfAttributeFulfillmentValue(v.(*schema.Set).List())
 		}
+		if v, ok := l["issuance_criteria"]; ok {
+			iac.IssuanceCriteria = expandIssuanceCriteria(v.([]interface{}))
+		}
+
 		if v, ok := l["ldap_attribute_source"]; ok && len(v.([]interface{})) > 0 {
 			*iac.AttributeSources = append(*iac.AttributeSources, *expandLdapAttributeSource(v.([]interface{}))...)
 		}
@@ -437,7 +583,7 @@ func resourceLdapAttributeSource() *schema.Resource {
 				Required: true,
 			},
 			"attribute_contract_fulfillment": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     resourceAttributeFulfillmentValue(),
 			},
@@ -520,7 +666,7 @@ func expandLdapAttributeSource(in []interface{}) *[]*pf.AttributeSource {
 			iac.SearchFilter = String(v.(string))
 		}
 		if v, ok := l["attribute_contract_fulfillment"]; ok {
-			iac.AttributeContractFulfillment = expandMapOfAttributeFulfillmentValue(v.([]interface{}))
+			iac.AttributeContractFulfillment = expandMapOfAttributeFulfillmentValue(v.(*schema.Set).List())
 			src.AttributeContractFulfillment = iac.AttributeContractFulfillment
 		}
 		if v, ok := l["binary_attribute_settings"]; ok {
@@ -560,7 +706,7 @@ func resourceJdbcAttributeSource() *schema.Resource {
 				Optional: true,
 			},
 			"attribute_contract_fulfillment": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     resourceAttributeFulfillmentValue(),
 			},
@@ -626,7 +772,7 @@ func expandJdbcAttributeSource(in []interface{}) *[]*pf.AttributeSource {
 			iac.Filter = String(v.(string))
 		}
 		if v, ok := l["attribute_contract_fulfillment"]; ok {
-			iac.AttributeContractFulfillment = expandMapOfAttributeFulfillmentValue(v.([]interface{}))
+			iac.AttributeContractFulfillment = expandMapOfAttributeFulfillmentValue(v.(*schema.Set).List())
 			src.AttributeContractFulfillment = iac.AttributeContractFulfillment
 		}
 		src.JdbcAttributeSource = *iac
@@ -648,7 +794,7 @@ func resourceCustomAttributeSource() *schema.Resource {
 				Optional: true,
 			},
 			"attribute_contract_fulfillment": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     resourceAttributeFulfillmentValue(),
 			},
@@ -703,7 +849,7 @@ func expandCustomAttributeSource(in []interface{}) *[]*pf.AttributeSource {
 			iac.FilterFields = expandFieldEntry(v.([]interface{}))
 		}
 		if v, ok := l["attribute_contract_fulfillment"]; ok {
-			iac.AttributeContractFulfillment = expandMapOfAttributeFulfillmentValue(v.([]interface{}))
+			iac.AttributeContractFulfillment = expandMapOfAttributeFulfillmentValue(v.(*schema.Set).List())
 			src.AttributeContractFulfillment = iac.AttributeContractFulfillment
 		}
 		src.CustomAttributeSource = *iac
@@ -796,7 +942,7 @@ func expandAttributeFulfillmentValue(in map[string]interface{}) *pf.AttributeFul
 	return ca
 }
 
-func flattenMapOfAttributeFulfillmentValue(in map[string]*pf.AttributeFulfillmentValue) []interface{} {
+func flattenMapOfAttributeFulfillmentValue(in map[string]*pf.AttributeFulfillmentValue) *schema.Set {
 	m := make([]interface{}, 0, len(in))
 	for s2 := range in {
 		s := make(map[string]interface{})
@@ -804,7 +950,20 @@ func flattenMapOfAttributeFulfillmentValue(in map[string]*pf.AttributeFulfillmen
 		s["key_name"] = s2
 		m = append(m, s)
 	}
-	return m
+	return schema.NewSet(attributeFulfillmentValueHash, m)
+}
+
+func attributeFulfillmentValueHash(v interface{}) int {
+	var buf bytes.Buffer
+	m := v.(map[string]interface{})
+	buf.WriteString(m["key_name"].(string))
+	//if d, ok := m["value"]; ok && d.(string) != "" {
+	//	buf.WriteString(fmt.Sprintf("%s-", d.(string)))
+	//}
+	//if d, ok := m["source"]; ok && d.(string) != "" {
+	//	buf.WriteString(fmt.Sprintf("%s-", d.(string)))
+	//}
+	return hashcode.String(buf.String())
 }
 
 func flattenAttributeFulfillmentValue(in *pf.AttributeFulfillmentValue) map[string]interface{} {
@@ -867,7 +1026,7 @@ func flattenSourceTypeIdKey(in *pf.SourceTypeIdKey) []interface{} {
 	return m
 }
 
-func resourceIssuanceCriteria()  *schema.Resource {
+func resourceIssuanceCriteria() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"conditional_criteria": {
@@ -884,24 +1043,29 @@ func resourceIssuanceCriteria()  *schema.Resource {
 	}
 }
 
-func flattenIssuanceCriteria(in *pf.IssuanceCriteria) map[string]interface{} {
+func flattenIssuanceCriteria(in *pf.IssuanceCriteria) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, 1)
 	s := make(map[string]interface{})
-	if in.ConditionalCriteria != nil {
-		s["expression"] = flattenConditionalIssuanceCriteriaEntry(*in.ConditionalCriteria)
+	if in.ConditionalCriteria != nil && len(*in.ConditionalCriteria) > 0 {
+		s["conditional_criteria"] = flattenConditionalIssuanceCriteriaEntry(*in.ConditionalCriteria)
 	}
-	if in.ExpressionCriteria != nil {
-		s["error_result"] = flattenExpressionIssuanceCriteriaEntry(*in.ExpressionCriteria)
+	if in.ExpressionCriteria != nil && len(*in.ExpressionCriteria) > 0 {
+		s["expression_criteria"] = flattenExpressionIssuanceCriteriaEntry(*in.ExpressionCriteria)
 	}
-	return s
+	m = append(m, s)
+	return m
 }
 
-func expandIssuanceCriteria(in map[string]interface{}) *pf.IssuanceCriteria {
+func expandIssuanceCriteria(in []interface{}) *pf.IssuanceCriteria {
 	exp := &pf.IssuanceCriteria{}
-	if v, ok := in["conditional_criteria"]; ok {
-		exp.ConditionalCriteria = expandConditionalIssuanceCriteriaEntry(v.([]interface{}))
-	}
-	if v, ok := in["expression_criteria"]; ok {
-		exp.ExpressionCriteria = expandExpressionIssuanceCriteriaEntry(v.([]interface{}))
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		if v, ok := l["conditional_criteria"]; ok {
+			exp.ConditionalCriteria = expandConditionalIssuanceCriteriaEntry(v.([]interface{}))
+		}
+		if v, ok := l["expression_criteria"]; ok {
+			exp.ExpressionCriteria = expandExpressionIssuanceCriteriaEntry(v.([]interface{}))
+		}
 	}
 	return exp
 }
@@ -1058,7 +1222,7 @@ func flattenScopes(in []*pf.ScopeEntry) []map[string]interface{} {
 }
 
 func expandScopes(in []interface{}) *[]*pf.ScopeEntry {
-	scopeList := []*pf.ScopeEntry{}
+	var scopeList []*pf.ScopeEntry
 	for _, raw := range in {
 		l := raw.(map[string]interface{})
 		s := &pf.ScopeEntry{
@@ -1083,14 +1247,14 @@ func flattenScopeGroups(in []*pf.ScopeGroupEntry) []map[string]interface{} {
 }
 
 func expandScopeGroups(in []interface{}) *[]*pf.ScopeGroupEntry {
-	scopeGroupList := []*pf.ScopeGroupEntry{}
+	var scopeGroupList []*pf.ScopeGroupEntry
 	for _, raw := range in {
 		l := raw.(map[string]interface{})
 		s := &pf.ScopeGroupEntry{
 			Name:        String(l["name"].(string)),
 			Description: String(l["description"].(string)),
 		}
-		scopes := []*string{}
+		var scopes []*string
 		for _, scope := range l["scopes"].([]interface{}) {
 			scopes = append(scopes, String(scope.(string)))
 		}
@@ -1112,7 +1276,7 @@ func expandPersistentGrantContract(in []interface{}) *pf.PersistentGrantContract
 	pgc := &pf.PersistentGrantContract{}
 	for _, raw := range in {
 		l := raw.(map[string]interface{})
-		atr := []*pf.PersistentGrantAttribute{}
+		var atr []*pf.PersistentGrantAttribute
 		for _, exAtr := range l["extended_attributes"].([]interface{}) {
 			atr = append(atr, &pf.PersistentGrantAttribute{Name: String(exAtr.(string))})
 		}
@@ -1162,7 +1326,7 @@ func flattenClientAuth(orig, in *pf.ClientAuth) []map[string]interface{} {
 	if in.EnforceReplayPrevention != nil {
 		s["enforce_replay_prevention"] = *in.EnforceReplayPrevention
 	}
-	if in.Secret == nil && orig.Secret != nil{
+	if in.Secret == nil && orig.Secret != nil {
 		s["secret"] = *orig.Secret
 	}
 	s["type"] = *in.Type
@@ -1338,7 +1502,7 @@ func configFieldHash(v interface{}) int {
 }
 
 func expandConfigFields(in []interface{}) *[]*pf.ConfigField {
-	configFields := []*pf.ConfigField{}
+	var configFields []*pf.ConfigField
 	for _, raw := range in {
 		l := raw.(map[string]interface{})
 		if _, ok := l["encrypted_value"]; !ok {
@@ -1358,7 +1522,7 @@ func expandConfigFields(in []interface{}) *[]*pf.ConfigField {
 }
 
 func expandSensitiveConfigFields(in []interface{}) *[]*pf.ConfigField {
-	configFields := []*pf.ConfigField{}
+	var configFields []*pf.ConfigField
 	for _, raw := range in {
 		l := raw.(map[string]interface{})
 		if val, ok := l["value"]; ok && val.(string) != "" {
@@ -1419,7 +1583,6 @@ func flattenConfigTable(in []*pf.ConfigTable) []interface{} {
 		m = append(m, s)
 	}
 	return m
-	//return schema.NewSet(configTableHash, m)
 }
 
 func configTableHash(v interface{}) int {
@@ -1430,7 +1593,7 @@ func configTableHash(v interface{}) int {
 }
 
 func expandConfigTable(in []interface{}) *[]*pf.ConfigTable {
-	configTables := []*pf.ConfigTable{}
+	var configTables []*pf.ConfigTable
 	for _, raw := range in {
 		l := raw.(map[string]interface{})
 		s := &pf.ConfigTable{
@@ -1448,7 +1611,6 @@ func expandConfigTable(in []interface{}) *[]*pf.ConfigTable {
 }
 
 func flattenPluginConfiguration(in *pf.PluginConfiguration) []interface{} {
-	// m := []interface{}{}
 	s := make(map[string]interface{})
 	if in.Tables != nil {
 		s["tables"] = flattenConfigTable(*in.Tables)
@@ -1456,20 +1618,9 @@ func flattenPluginConfiguration(in *pf.PluginConfiguration) []interface{} {
 	if in.Fields != nil {
 		s["fields"] = flattenConfigField(*in.Fields)
 	}
-	// for _, v := range cbs.Items {
-	// 	s = append(s, flattenCacheBehaviorDeprecated(v))
-	// }
-	// return schema.NewSet(, []interface{}{s})
-	// m := make([]map[string]interface{}, 0, 1)
-	// s := make(map[string]interface{})
-	// if in.Tables != nil {
-	// 	s["tables"] = flattenConfigTable(*in.Tables)
-	// }
-	// if in.Fields != nil {
-	// 	s["fields"] = flattenConfigField(*in.Fields)
-	// }
-	// m = append(m, s)
-	// log.Printf("[INFO] PluginConfig: %s", m)
+	if in.Fields != nil {
+		s["sensitive_fields"] = flattenSensitiveConfigField(*in.Fields)
+	}
 	return []interface{}{s}
 }
 
@@ -1480,12 +1631,6 @@ func expandPluginConfiguration(in []interface{}) *pf.PluginConfiguration {
 		if val, ok := l["tables"]; ok {
 			config.Tables = expandConfigTable(val.([]interface{}))
 		}
-		//if val, ok := l["fields"]; ok {
-		//	config.Fields = expandConfigFields(val.(*schema.Set).List())
-		//	log.Printf("[INFO] ConfigFields: %v", len(*config.Fields))
-		//	*config.Fields = append(*config.Fields, *expandSensitiveConfigFields(val.(*schema.Set).List())...)
-		//	log.Printf("[INFO] ConfigFieldsWithSensitive: %v", len(*config.Fields))
-		//}
 		if val, ok := l["fields"]; ok {
 			config.Fields = expandConfigFields(val.(*schema.Set).List())
 		}
@@ -1509,7 +1654,7 @@ func expandAccessTokenAttributeContract(in []interface{}) *pf.AccessTokenAttribu
 	pgc := &pf.AccessTokenAttributeContract{}
 	for _, raw := range in {
 		l := raw.(map[string]interface{})
-		atr := []*pf.AccessTokenAttribute{}
+		var atr []*pf.AccessTokenAttribute
 		for _, exAtr := range l["extended_attributes"].([]interface{}) {
 			atr = append(atr, &pf.AccessTokenAttribute{Name: String(exAtr.(string))})
 		}
@@ -1535,7 +1680,7 @@ func flattenAuthenticationPolicyContractAttribute(in []*pf.AuthenticationPolicyC
 }
 
 func expandAuthenticationPolicyContractAttribute(in []interface{}) *[]*pf.AuthenticationPolicyContractAttribute {
-	contractList := []*pf.AuthenticationPolicyContractAttribute{}
+	var contractList []*pf.AuthenticationPolicyContractAttribute
 	for _, raw := range in {
 		c := &pf.AuthenticationPolicyContractAttribute{
 			Name: String(raw.(string)),
@@ -1568,6 +1713,9 @@ func expandPasswordCredentialValidatorAttributeContract(in []interface{}) *pf.Pa
 	pgc := &pf.PasswordCredentialValidatorAttributeContract{}
 	for _, raw := range in {
 		l := raw.(map[string]interface{})
+		if val, ok := l["inherited"]; ok {
+			pgc.Inherited = Bool(val.(bool))
+		}
 		if v, ok := l["extended_attributes"]; ok && len(v.(*schema.Set).List()) > 0 {
 			pgc.ExtendedAttributes = expandPasswordCredentialValidatorAttribute(v.(*schema.Set).List())
 		}
@@ -1581,6 +1729,9 @@ func expandPasswordCredentialValidatorAttributeContract(in []interface{}) *pf.Pa
 func flattenPasswordCredentialValidatorAttributeContract(in *pf.PasswordCredentialValidatorAttributeContract) []map[string]interface{} {
 	m := make([]map[string]interface{}, 0, 1)
 	s := make(map[string]interface{})
+	if in.Inherited != nil {
+		s["inherited"] = *in.Inherited
+	}
 	if in.ExtendedAttributes != nil {
 		s["extended_attributes"] = flattenPasswordCredentialValidatorAttribute(*in.ExtendedAttributes)
 	}
@@ -1598,7 +1749,7 @@ func flattenJdbcDataStore(in *pf.JdbcDataStore) []map[string]interface{} {
 		s["mask_attribute_values"] = *in.MaskAttributeValues
 	}
 	if in.ConnectionUrlTags != nil && len(*in.ConnectionUrlTags) != 0 {
-		//connection_url_tags
+		s["connection_url_tags"] = flattenJdbcTagConfigs(in.ConnectionUrlTags)
 	}
 	if in.ConnectionUrl != nil {
 		s["connection_url"] = *in.ConnectionUrl
@@ -1649,7 +1800,9 @@ func expandJdbcDataStore(in []interface{}) *pf.JdbcDataStore {
 		if val, ok := l["mask_attribute_values"]; ok {
 			ca.MaskAttributeValues = Bool(val.(bool))
 		}
-		//TODO connection_url_tags
+		if val, ok := l["connection_url_tags"]; ok && len(val.(*schema.Set).List()) > 0 {
+			ca.ConnectionUrlTags = expandJdbcTagConfigs(val.(*schema.Set).List())
+		}
 		if val, ok := l["connection_url"]; ok {
 			ca.ConnectionUrl = String(val.(string))
 		}
@@ -1689,6 +1842,56 @@ func expandJdbcDataStore(in []interface{}) *pf.JdbcDataStore {
 		ca.Type = String("JDBC")
 	}
 	return ca
+}
+
+func flattenJdbcTagConfigs(in *[]*pf.JdbcTagConfig) *schema.Set {
+	var m []interface{}
+	for _, v := range *in {
+		s := make(map[string]interface{})
+		if v.ConnectionUrl != nil {
+			s["connection_url"] = *v.ConnectionUrl
+		}
+		if v.Tags != nil {
+			s["tags"] = *v.Tags
+		}
+		if v.DefaultSource != nil {
+			s["default_source"] = *v.DefaultSource
+		}
+		m = append(m, s)
+	}
+	return schema.NewSet(jdbcTagConfigHash, m)
+}
+
+func jdbcTagConfigHash(v interface{}) int {
+	var buf bytes.Buffer
+	m := v.(map[string]interface{})
+	buf.WriteString(m["connection_url"].(string))
+	if d, ok := m["tags"]; ok && d.(string) != "" {
+		buf.WriteString(fmt.Sprintf("%s-", d.(string)))
+	}
+	if d, ok := m["default_source"]; ok {
+		buf.WriteString(fmt.Sprintf("%t-", d.(bool)))
+	}
+	return hashcode.String(buf.String())
+}
+
+func expandJdbcTagConfigs(in []interface{}) *[]*pf.JdbcTagConfig {
+	var tags []*pf.JdbcTagConfig
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		f := &pf.JdbcTagConfig{}
+		if v, ok := l["connection_url"]; ok {
+			f.ConnectionUrl = String(v.(string))
+		}
+		if v, ok := l["tags"]; ok {
+			f.Tags = String(v.(string))
+		}
+		if v, ok := l["default_source"]; ok {
+			f.DefaultSource = Bool(v.(bool))
+		}
+		tags = append(tags, f)
+	}
+	return &tags
 }
 
 func flattenLdapDataStore(in *pf.LdapDataStore) []map[string]interface{} {
@@ -1869,19 +2072,23 @@ func maskPluginConfigurationFromDescriptor(desc *pf.PluginConfigDescriptor, orig
 	//printPluginConfig("originConf",origConf)
 	//printPluginConfig("conf",conf)
 
+	//if origConf.Fields != nil {
 	for _, f := range *desc.Fields {
-		if *f.Type == "HASHED_TEXT" {
+		if *f.Type == "HASHED_TEXT" || ((*f).Encrypted != nil && *f.Encrypted) {
 			for _, i := range *conf.Fields {
 				if *i.Name == *f.Name {
-					*i.Value, _ = getConfigFieldValueByName(*i.Name, origConf.Fields)
+					s, _ := getConfigFieldValueByName(*i.Name, origConf.Fields)
+					i.Value = String(s)
 				}
 			}
 		}
 	}
+	//}
 
+	//if origConf.Tables != nil {
 	for _, dt := range *desc.Tables {
 		for _, dc := range *dt.Columns {
-			if *dc.Type == "HASHED_TEXT" {
+			if *dc.Type == "HASHED_TEXT" || ((*dc).Encrypted != nil && *dc.Encrypted) {
 				for ctIndex, ct := range *conf.Tables {
 					for crIndex, cr := range *ct.Rows {
 						for _, f := range *cr.Fields {
@@ -1894,6 +2101,7 @@ func maskPluginConfigurationFromDescriptor(desc *pf.PluginConfigDescriptor, orig
 				}
 			}
 		}
+		//}
 	}
 	return flattenPluginConfiguration(conf)
 }
@@ -1911,9 +2119,9 @@ func printPluginConfig(name string, conf *pf.PluginConfiguration) {
 	log.Printf("[DEBUG] Helper: %s", name)
 	log.Printf("[DEBUG] Helper: %s Fields: %d", name, len(*conf.Fields))
 	for _, f := range *conf.Fields {
-		log.Printf("[DEBUG] Helper: %s Field: %s: Value: %s EncryptedValue: %s", name, *f.Name, *f.Value, *f.EncryptedValue)
+		log.Printf("[DEBUG] Helper: %s Field: %s: Value: %v EncryptedValue: %v", name, *f.Name, *f.Value, *f.EncryptedValue)
 	}
-	log.Printf("[DEBUG] Helper: %s Tables: %d", name, len(*conf.Tables))
+	log.Printf("[DEBUG] Helper: %s Tables: %v", name, len(*conf.Tables))
 	for _, t := range *conf.Tables {
 		log.Printf("[DEBUG] Helper: %s Table: %s", name, *t.Name)
 		log.Printf("[DEBUG] Helper: %s Table: %s Rows: %d", name, *t.Name, len(*t.Rows))
@@ -1958,7 +2166,7 @@ func expandAuthenticationSelectorAttributeContract(in []interface{}) *pf.Authent
 	pgc := &pf.AuthenticationSelectorAttributeContract{}
 	for _, raw := range in {
 		l := raw.(map[string]interface{})
-		atr := []*pf.AuthenticationSelectorAttribute{}
+		var atr []*pf.AuthenticationSelectorAttribute
 		for _, exAtr := range l["extended_attributes"].([]interface{}) {
 			atr = append(atr, &pf.AuthenticationSelectorAttribute{Name: String(exAtr.(string))})
 		}

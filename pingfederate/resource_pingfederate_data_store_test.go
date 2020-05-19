@@ -47,6 +47,10 @@ func testAccPingFederateDataStoreResourceConfig(configUpdate string) string {
 		password = ""
 		max_pool_size = %s
 		connection_url = "jdbc:hsqldb:mem:mymemdb"
+		connection_url_tags {
+		  connection_url = "jdbc:hsqldb:mem:mymemdb"
+		  default_source = true
+		}
 	  }
 	}`, configUpdate)
 }
@@ -84,7 +88,8 @@ func Test_resourcePingFederateDataStoreResourceReadData(t *testing.T) {
 		{
 			Resource: pf.DataStore{
 				JdbcDataStore: pf.JdbcDataStore{
-					ConnectionUrl:             String("jdbc:hsqldb:mem:mymemdb"),
+					ConnectionUrl: String("jdbc:hsqldb:mem:mymemdb"),
+					//ConnectionUrlTags: &[]*pf.JdbcTagConfig{},
 					DriverClass:               String("org.hsqldb.jdbcDriver"),
 					Name:                      String("terraform"),
 					Password:                  String(""),

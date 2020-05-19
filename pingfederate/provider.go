@@ -43,6 +43,7 @@ func Provider() terraform.ResourceProvider {
 			"pingfederate_oauth_auth_server_settings":     resourcePingFederateOauthAuthServerSettingsResource(),
 			"pingfederate_oauth_client":                   resourcePingFederateOauthClientResource(),
 			"pingfederate_oauth_access_token_manager":     resourcePingFederateOauthAccessTokenManagersResource(),
+			"pingfederate_sp_adapter":                     resourcePingFederateSpAdapterResource(),
 			"pingfederate_password_credential_validator":  resourcePingFederatePasswordCredentialValidatorResource(),
 		},
 		ConfigureFunc: providerConfigure,
