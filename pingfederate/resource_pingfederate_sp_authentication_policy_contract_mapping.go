@@ -143,38 +143,8 @@ func resourcePingFederateSpAuthenticationPolicyContractMappingResourceReadResult
 		}
 	}
 
-	if *rv.AttributeSources != nil && len(*rv.AttributeSources) > 0 {
-		var ldapAttributes []interface{}
-		var jdbcAttributes []interface{}
-		var customAttributes []interface{}
-		for _, v := range *rv.AttributeSources {
-			switch *v.Type {
-			case "LDAP":
-				ldapAttributes = append(ldapAttributes, flattenLdapAttributeSource(&v.LdapAttributeSource))
-				break
-			case "JDBC":
-				jdbcAttributes = append(jdbcAttributes, flattenJdbcAttributeSource(v))
-				break
-			case "CUSTOM":
-				customAttributes = append(customAttributes, flattenCustomAttributeSource(&v.CustomAttributeSource))
-				break
-			}
-		}
-		if ldapAttributes != nil && len(ldapAttributes) > 0 {
-			if err = d.Set("ldap_attribute_source", ldapAttributes); err != nil {
-				return err
-			}
-		}
-		if jdbcAttributes != nil && len(jdbcAttributes) > 0 {
-			if err = d.Set("jdbc_attribute_source", jdbcAttributes); err != nil {
-				return err
-			}
-		}
-		if customAttributes != nil && len(customAttributes) > 0 {
-			if err = d.Set("custom_attribute_source", customAttributes); err != nil {
-				return err
-			}
-		}
+	if err := flattenAttributeSources(d, rv.AttributeSources); err != nil {
+		return err
 	}
 
 	return nil

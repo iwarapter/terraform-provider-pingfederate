@@ -2182,3 +2182,66 @@ func flattenAuthenticationSelectorAttributes(in []*pf.AuthenticationSelectorAttr
 	}
 	return m
 }
+
+func expandAccessTokenMappingContext(in []interface{}) *pf.AccessTokenMappingContext {
+	pgc := &pf.AccessTokenMappingContext{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		if val, ok := l["type"]; ok {
+			pgc.Type = String(val.(string))
+		}
+		if val, ok := l["context_ref"]; ok {
+			pgc.ContextRef = expandResourceLink(val.([]interface{}))
+		}
+	}
+	return pgc
+}
+
+
+func flattenAccessTokenMappingContext(in *pf.AccessTokenMappingContext) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, 1)
+	s := make(map[string]interface{})
+	s["type"] = in.Type
+	if in.ContextRef != nil {
+		s["context_ref"] = flattenResourceLink(in.ContextRef)
+	}
+	m = append(m, s)
+	return m
+}
+
+func flattenAttributeSources(d *schema.ResourceData, rv *[]*pf.AttributeSource) error {
+	if *rv != nil && len(*rv) > 0 {
+		var ldapAttributes []interface{}
+		var jdbcAttributes []interface{}
+		var customAttributes []interface{}
+		for _, v := range *rv {
+			switch *v.Type {
+			case "LDAP":
+				ldapAttributes = append(ldapAttributes, flattenLdapAttributeSource(&v.LdapAttributeSource))
+				break
+			case "JDBC":
+				jdbcAttributes = append(jdbcAttributes, flattenJdbcAttributeSource(v))
+				break
+			case "CUSTOM":
+				customAttributes = append(customAttributes, flattenCustomAttributeSource(&v.CustomAttributeSource))
+				break
+			}
+		}
+		if ldapAttributes != nil && len(ldapAttributes) > 0 {
+			if err := d.Set("ldap_attribute_source", ldapAttributes); err != nil {
+				return err
+			}
+		}
+		if jdbcAttributes != nil && len(jdbcAttributes) > 0 {
+			if err := d.Set("jdbc_attribute_source", jdbcAttributes); err != nil {
+				return err
+			}
+		}
+		if customAttributes != nil && len(customAttributes) > 0 {
+			if err := d.Set("custom_attribute_source", customAttributes); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
