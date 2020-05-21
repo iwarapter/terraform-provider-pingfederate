@@ -1,4 +1,3 @@
-vendor
 func-tests/.terraform
 func-tests/crash.log
 func-tests/run.log
