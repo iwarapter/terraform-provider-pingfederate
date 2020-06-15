@@ -2,7 +2,7 @@ PingFederate Terraform Provider
 ==================
 
 - Website: https://iwarapter.github.io/terraform-provider-pingfederate/
-- [![Gitter](https://badges.gitter.im/iwarapter/terraform-provider-pingfederate.svg)](https://gitter.im/iwarapter/terraform-provider-pingfederate?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+- ![Status: Experimental](https://img.shields.io/badge/status-experimental-EAAA32) [![Gitter](https://badges.gitter.im/iwarapter/terraform-provider-pingfederate.svg)](https://gitter.im/iwarapter/terraform-provider-pingfederate?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
   [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=github.com.iwarapter.terraform-provider-pingfederate&metric=coverage)](https://sonarcloud.io/dashboard?id=github.com.iwarapter.terraform-provider-pingfederate)
   [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=github.com.iwarapter.terraform-provider-pingfederate&metric=alert_status)](https://sonarcloud.io/dashboard?id=github.com.iwarapter.terraform-provider-pingfederate)
   [![Build Status](https://travis-ci.org/iwarapter/terraform-provider-pingfederate.svg?branch=master)](https://travis-ci.org/iwarapter/terraform-provider-pingfederate)
