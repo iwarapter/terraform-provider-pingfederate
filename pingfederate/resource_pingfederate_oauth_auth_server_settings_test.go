@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func TestAccPingFederateOauthAuthServerSettings(t *testing.T) {
@@ -104,7 +104,7 @@ func testAccCheckPingFederateOauthAuthServerSettingsExists(n string, c int64, ou
 			return fmt.Errorf("No rule ID is set")
 		}
 
-		conn := testAccProvider.Meta().(*pf.PfClient).OauthAuthServerSettings
+		conn := testAccProvider.Meta().(pfClient).OauthAuthServerSettings
 		result, _, err := conn.GetAuthorizationServerSettings()
 
 		if err != nil {

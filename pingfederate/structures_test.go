@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func Test_weCanFlattenScopes(t *testing.T) {

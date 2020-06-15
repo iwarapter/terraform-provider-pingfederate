@@ -2,9 +2,10 @@ package pingfederate
 
 import (
 	"fmt"
+	"github.com/iwarapter/pingfederate-sdk-go/services/dataStores"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func resourcePingFederateDataStoreResource() *schema.Resource {
@@ -275,13 +276,13 @@ func resourcePingFederateDataStoreResourceSchema() map[string]*schema.Schema {
 }
 
 func resourcePingFederateDataStoreResourceCreate(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).DataStores
+	svc := m.(pfClient).DataStores
 	ds := *resourcePingFederateDataStoreResourceReadData(d)
 	var result pf.DataStore
 	result.Type = ds.Type
 	switch *ds.Type {
 	case "LDAP":
-		input := pf.CreateLdapDataStoreInput{Body: ds.LdapDataStore, BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool))}
+		input := dataStores.CreateLdapDataStoreInput{Body: ds.LdapDataStore, BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool))}
 		store, _, err := svc.CreateLdapDataStore(&input)
 		if err != nil {
 			return fmt.Errorf(err.Error())
@@ -289,7 +290,7 @@ func resourcePingFederateDataStoreResourceCreate(d *schema.ResourceData, m inter
 		result.LdapDataStore = *store
 		result.Id = store.Id
 	case "JDBC":
-		input := pf.CreateJdbcDataStoreInput{Body: ds.JdbcDataStore, BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool))}
+		input := dataStores.CreateJdbcDataStoreInput{Body: ds.JdbcDataStore, BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool))}
 		store, _, err := svc.CreateJdbcDataStore(&input)
 		if err != nil {
 			return fmt.Errorf(err.Error())
@@ -297,7 +298,7 @@ func resourcePingFederateDataStoreResourceCreate(d *schema.ResourceData, m inter
 		result.JdbcDataStore = *store
 		result.Id = store.Id
 	case "CUSTOM":
-		input := pf.CreateCustomDataStoreInput{Body: ds.CustomDataStore, BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool))}
+		input := dataStores.CreateCustomDataStoreInput{Body: ds.CustomDataStore, BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool))}
 		store, _, err := svc.CreateCustomDataStore(&input)
 		if err != nil {
 			return fmt.Errorf(err.Error())
@@ -310,8 +311,8 @@ func resourcePingFederateDataStoreResourceCreate(d *schema.ResourceData, m inter
 }
 
 func resourcePingFederateDataStoreResourceRead(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).DataStores
-	input := pf.GetDataStoreInput{
+	svc := m.(pfClient).DataStores
+	input := dataStores.GetDataStoreInput{
 		Id: d.Id(),
 	}
 	result, _, err := svc.GetDataStore(&input)
@@ -322,27 +323,27 @@ func resourcePingFederateDataStoreResourceRead(d *schema.ResourceData, m interfa
 }
 
 func resourcePingFederateDataStoreResourceUpdate(d *schema.ResourceData, m interface{}) (err error) {
-	svc := m.(*pf.PfClient).DataStores
+	svc := m.(pfClient).DataStores
 	ds := *resourcePingFederateDataStoreResourceReadData(d)
 	var result pf.DataStore
 	result.Type = ds.Type
 	switch *ds.Type {
 	case "LDAP":
-		input := pf.UpdateLdapDataStoreInput{Id: d.Id(), Body: ds.LdapDataStore}
+		input := dataStores.UpdateLdapDataStoreInput{Id: d.Id(), Body: ds.LdapDataStore}
 		store, _, err := svc.UpdateLdapDataStore(&input)
 		if err != nil {
 			return fmt.Errorf(err.Error())
 		}
 		result.LdapDataStore = *store
 	case "JDBC":
-		input := pf.UpdateJdbcDataStoreInput{Id: d.Id(), Body: ds.JdbcDataStore}
+		input := dataStores.UpdateJdbcDataStoreInput{Id: d.Id(), Body: ds.JdbcDataStore}
 		store, _, err := svc.UpdateJdbcDataStore(&input)
 		if err != nil {
 			return fmt.Errorf(err.Error())
 		}
 		result.JdbcDataStore = *store
 	case "CUSTOM":
-		input := pf.UpdateCustomDataStoreInput{Id: d.Id(), Body: ds.CustomDataStore}
+		input := dataStores.UpdateCustomDataStoreInput{Id: d.Id(), Body: ds.CustomDataStore}
 		store, _, err := svc.UpdateCustomDataStore(&input)
 		if err != nil {
 			return fmt.Errorf(err.Error())
@@ -354,8 +355,8 @@ func resourcePingFederateDataStoreResourceUpdate(d *schema.ResourceData, m inter
 }
 
 func resourcePingFederateDataStoreResourceDelete(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).DataStores
-	input := pf.DeleteDataStoreInput{
+	svc := m.(pfClient).DataStores
+	input := dataStores.DeleteDataStoreInput{
 		Id: d.Id(),
 	}
 	_, _, err := svc.DeleteDataStore(&input)
@@ -368,23 +369,14 @@ func resourcePingFederateDataStoreResourceDelete(d *schema.ResourceData, m inter
 func resourcePingFederateDataStoreResourceReadResult(d *schema.ResourceData, rv *pf.DataStore) (err error) {
 	switch *rv.Type {
 	case "LDAP":
-		if rv.Name != nil {
-			rv.LdapDataStore.Name = rv.Name
-		}
 		if err := d.Set("ldap_data_store", flattenLdapDataStore(&rv.LdapDataStore)); err != nil {
 			return err
 		}
 	case "JDBC":
-		if rv.Name != nil {
-			rv.JdbcDataStore.Name = rv.Name
-		}
 		if err := d.Set("jdbc_data_store", flattenJdbcDataStore(&rv.JdbcDataStore)); err != nil {
 			return err
 		}
 	case "CUSTOM":
-		if rv.Name != nil {
-			rv.CustomDataStore.Name = rv.Name
-		}
 		//input.Body.CustomDataStore = &ds.CustomDataStore
 	}
 

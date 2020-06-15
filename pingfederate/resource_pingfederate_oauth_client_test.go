@@ -2,11 +2,12 @@ package pingfederate
 
 import (
 	"fmt"
+	"github.com/iwarapter/pingfederate-sdk-go/services/oauthClients"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func TestAccPingFederateOauthClient(t *testing.T) {
@@ -76,8 +77,8 @@ func testAccCheckPingFederateOauthClientExists(n string, out *pf.Client) resourc
 			return fmt.Errorf("No rule ID is set")
 		}
 
-		conn := testAccProvider.Meta().(*pf.PfClient).OauthClients
-		result, _, err := conn.GetClient(&pf.GetClientInput{Id: rs.Primary.ID})
+		conn := testAccProvider.Meta().(pfClient).OauthClients
+		result, _, err := conn.GetClient(&oauthClients.GetClientInput{Id: rs.Primary.ID})
 
 		if err != nil {
 			return fmt.Errorf("Error: OauthClient (%s) not found", n)

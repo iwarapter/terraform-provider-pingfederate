@@ -2,9 +2,10 @@ package pingfederate
 
 import (
 	"fmt"
+	"github.com/iwarapter/pingfederate-sdk-go/services/passwordCredentialValidators"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func resourcePingFederatePasswordCredentialValidatorResource() *schema.Resource {
@@ -39,8 +40,8 @@ func resourcePingFederatePasswordCredentialValidatorResourceSchema() map[string]
 }
 
 func resourcePingFederatePasswordCredentialValidatorResourceCreate(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).PasswordCredentialValidators
-	input := pf.CreatePasswordCredentialValidatorInput{
+	svc := m.(pfClient).PasswordCredentialValidators
+	input := passwordCredentialValidators.CreatePasswordCredentialValidatorInput{
 		Body: *resourcePingFederatePasswordCredentialValidatorResourceReadData(d),
 	}
 	input.Body.Id = input.Body.Name
@@ -53,8 +54,8 @@ func resourcePingFederatePasswordCredentialValidatorResourceCreate(d *schema.Res
 }
 
 func resourcePingFederatePasswordCredentialValidatorResourceRead(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).PasswordCredentialValidators
-	input := pf.GetPasswordCredentialValidatorInput{
+	svc := m.(pfClient).PasswordCredentialValidators
+	input := passwordCredentialValidators.GetPasswordCredentialValidatorInput{
 		Id: d.Id(),
 	}
 	result, _, err := svc.GetPasswordCredentialValidator(&input)
@@ -65,8 +66,8 @@ func resourcePingFederatePasswordCredentialValidatorResourceRead(d *schema.Resou
 }
 
 func resourcePingFederatePasswordCredentialValidatorResourceUpdate(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).PasswordCredentialValidators
-	input := pf.UpdatePasswordCredentialValidatorInput{
+	svc := m.(pfClient).PasswordCredentialValidators
+	input := passwordCredentialValidators.UpdatePasswordCredentialValidatorInput{
 		Id:   d.Id(),
 		Body: *resourcePingFederatePasswordCredentialValidatorResourceReadData(d),
 	}
@@ -79,8 +80,8 @@ func resourcePingFederatePasswordCredentialValidatorResourceUpdate(d *schema.Res
 }
 
 func resourcePingFederatePasswordCredentialValidatorResourceDelete(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).PasswordCredentialValidators
-	input := pf.DeletePasswordCredentialValidatorInput{
+	svc := m.(pfClient).PasswordCredentialValidators
+	input := passwordCredentialValidators.DeletePasswordCredentialValidatorInput{
 		Id: d.Id(),
 	}
 	_, _, err := svc.DeletePasswordCredentialValidator(&input)
@@ -90,8 +91,8 @@ func resourcePingFederatePasswordCredentialValidatorResourceDelete(d *schema.Res
 	return nil
 }
 
-func resourcePingFederatePasswordCredentialValidatorResourceReadResult(d *schema.ResourceData, rv *pf.PasswordCredentialValidator, svc *pf.PasswordCredentialValidatorsService) (err error) {
-	desc, _, err := svc.GetPasswordCredentialValidatorDescriptor(&pf.GetPasswordCredentialValidatorDescriptorInput{Id: *rv.PluginDescriptorRef.Id})
+func resourcePingFederatePasswordCredentialValidatorResourceReadResult(d *schema.ResourceData, rv *pf.PasswordCredentialValidator, svc passwordCredentialValidators.PasswordCredentialValidatorsAPI) (err error) {
+	desc, _, err := svc.GetPasswordCredentialValidatorDescriptor(&passwordCredentialValidators.GetPasswordCredentialValidatorDescriptorInput{Id: *rv.PluginDescriptorRef.Id})
 	if err != nil {
 		return err
 	}

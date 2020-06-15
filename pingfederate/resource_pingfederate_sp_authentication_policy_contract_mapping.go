@@ -2,9 +2,10 @@ package pingfederate
 
 import (
 	"fmt"
+	"github.com/iwarapter/pingfederate-sdk-go/services/spAuthenticationPolicyContractMappings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func resourcePingFederateSpAuthenticationPolicyContractMappingResource() *schema.Resource {
@@ -74,8 +75,8 @@ func resourcePingFederateSpAuthenticationPolicyContractMappingResourceSchema() m
 }
 
 func resourcePingFederateSpAuthenticationPolicyContractMappingResourceCreate(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).SpAuthenticationPolicyContractMappings
-	input := pf.CreateApcToSpAdapterMappingInput{
+	svc := m.(pfClient).SpAuthenticationPolicyContractMappings
+	input := spAuthenticationPolicyContractMappings.CreateApcToSpAdapterMappingInput{
 		Body:                     *resourcePingFederateSpAuthenticationPolicyContractMappingResourceReadData(d),
 		BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool)),
 	}
@@ -88,8 +89,8 @@ func resourcePingFederateSpAuthenticationPolicyContractMappingResourceCreate(d *
 }
 
 func resourcePingFederateSpAuthenticationPolicyContractMappingResourceRead(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).SpAuthenticationPolicyContractMappings
-	input := pf.GetApcToSpAdapterMappingByIdInput{
+	svc := m.(pfClient).SpAuthenticationPolicyContractMappings
+	input := spAuthenticationPolicyContractMappings.GetApcToSpAdapterMappingByIdInput{
 		Id: d.Id(),
 	}
 	result, _, err := svc.GetApcToSpAdapterMappingById(&input)
@@ -100,8 +101,8 @@ func resourcePingFederateSpAuthenticationPolicyContractMappingResourceRead(d *sc
 }
 
 func resourcePingFederateSpAuthenticationPolicyContractMappingResourceUpdate(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).SpAuthenticationPolicyContractMappings
-	input := pf.UpdateApcToSpAdapterMappingByIdInput{
+	svc := m.(pfClient).SpAuthenticationPolicyContractMappings
+	input := spAuthenticationPolicyContractMappings.UpdateApcToSpAdapterMappingByIdInput{
 		Id:                       d.Id(),
 		Body:                     *resourcePingFederateSpAuthenticationPolicyContractMappingResourceReadData(d),
 		BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool)),
@@ -115,8 +116,8 @@ func resourcePingFederateSpAuthenticationPolicyContractMappingResourceUpdate(d *
 }
 
 func resourcePingFederateSpAuthenticationPolicyContractMappingResourceDelete(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).SpAuthenticationPolicyContractMappings
-	input := pf.DeleteApcToSpAdapterMappingByIdInput{
+	svc := m.(pfClient).SpAuthenticationPolicyContractMappings
+	input := spAuthenticationPolicyContractMappings.DeleteApcToSpAdapterMappingByIdInput{
 		Id: d.Id(),
 	}
 	_, _, err := svc.DeleteApcToSpAdapterMappingById(&input)

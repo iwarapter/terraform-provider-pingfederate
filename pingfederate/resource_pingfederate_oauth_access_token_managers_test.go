@@ -3,16 +3,18 @@ package pingfederate
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/google/go-cmp/cmp"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/iwarapter/pingfederate-sdk-go/services/oauthAccessTokenManagers"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func TestAccPingFederateOauthAccessTokenManager(t *testing.T) {
@@ -110,8 +112,8 @@ func testAccCheckPingFederateOauthAccessTokenManagerExists(n string, out *pf.Cli
 			return fmt.Errorf("No rule ID is set")
 		}
 
-		conn := testAccProvider.Meta().(*pf.PfClient).OauthAccessTokenManagers
-		result, _, err := conn.GetTokenManager(&pf.GetTokenManagerInput{Id: rs.Primary.ID})
+		conn := testAccProvider.Meta().(pfClient).OauthAccessTokenManagers
+		result, _, err := conn.GetTokenManager(&oauthAccessTokenManagers.GetTokenManagerInput{Id: rs.Primary.ID})
 
 		if err != nil {
 			return fmt.Errorf("Error: OauthAccessTokenManager (%s) not found", n)
@@ -167,7 +169,7 @@ func Test_resourcePingFederateOauthAccessTokenManagerResourceReadData(t *testing
 
 	// Use Client & URL from our local test server
 	url, _ := url.Parse(server.URL)
-	c := pf.NewClient("", "", url, "", server.Client())
+	c := oauthAccessTokenManagers.New("", "", url, "", server.Client())
 
 	cases := []struct {
 		Resource pf.AccessTokenManager
@@ -200,9 +202,9 @@ func Test_resourcePingFederateOauthAccessTokenManagerResourceReadData(t *testing
 
 			resourceSchema := resourcePingFederateOauthAccessTokenManagersResourceSchema()
 			resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})
-			resourcePingFederateOauthAccessTokenManagersResourceReadResult(resourceLocalData, &tc.Resource, c.OauthAccessTokenManagers)
+			resourcePingFederateOauthAccessTokenManagersResourceReadResult(resourceLocalData, &tc.Resource, c)
 
-			if got := *resourcePingFederateOauthAccessTokenManagersResourceReadData(resourceLocalData, c.OauthAccessTokenManagers); !cmp.Equal(got, tc.Resource) {
+			if got := *resourcePingFederateOauthAccessTokenManagersResourceReadData(resourceLocalData, c); !cmp.Equal(got, tc.Resource) {
 				t.Errorf("resourcePingFederateOauthAccessTokenManagerResourceReadData() = %v", cmp.Diff(got, tc.Resource))
 			}
 		})

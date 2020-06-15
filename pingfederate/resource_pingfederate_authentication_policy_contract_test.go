@@ -2,13 +2,14 @@ package pingfederate
 
 import (
 	"fmt"
+	"github.com/iwarapter/pingfederate-sdk-go/services/authenticationPolicyContracts"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func TestAccPingFederateAuthenticationPolicyContractResource(t *testing.T) {
@@ -58,8 +59,8 @@ func testAccCheckPingFederateAuthenticationPolicyContractResourceExists(n string
 			return fmt.Errorf("No rule ID is set")
 		}
 
-		conn := testAccProvider.Meta().(*pf.PfClient).AuthenticationPolicyContracts
-		result, _, err := conn.GetAuthenticationPolicyContract(&pf.GetAuthenticationPolicyContractInput{Id: rs.Primary.ID})
+		conn := testAccProvider.Meta().(pfClient).AuthenticationPolicyContracts
+		result, _, err := conn.GetAuthenticationPolicyContract(&authenticationPolicyContracts.GetAuthenticationPolicyContractInput{Id: rs.Primary.ID})
 
 		if err != nil {
 			return fmt.Errorf("Error: AuthenticationPolicyContract (%s) not found", n)

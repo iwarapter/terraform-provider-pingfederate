@@ -2,11 +2,11 @@ package pingfederate
 
 import (
 	"fmt"
+	"github.com/iwarapter/pingfederate-sdk-go/services/passwordCredentialValidators"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
 )
 
 func TestAccPingFederatePasswordCredentialValidatorResource(t *testing.T) {
@@ -86,8 +86,8 @@ func testAccCheckPingFederatePasswordCredentialValidatorResourceExists(n string)
 			return fmt.Errorf("No rule ID is set")
 		}
 
-		conn := testAccProvider.Meta().(*pf.PfClient).PasswordCredentialValidators
-		result, _, err := conn.GetPasswordCredentialValidator(&pf.GetPasswordCredentialValidatorInput{Id: rs.Primary.ID})
+		conn := testAccProvider.Meta().(pfClient).PasswordCredentialValidators
+		result, _, err := conn.GetPasswordCredentialValidator(&passwordCredentialValidators.GetPasswordCredentialValidatorInput{Id: rs.Primary.ID})
 
 		if err != nil {
 			return fmt.Errorf("Error: PasswordCredentialValidator (%s) not found", n)

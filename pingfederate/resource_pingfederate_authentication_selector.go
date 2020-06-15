@@ -2,9 +2,10 @@ package pingfederate
 
 import (
 	"fmt"
+	"github.com/iwarapter/pingfederate-sdk-go/services/authenticationSelectors"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func resourcePingFederateAuthenticationSelectorResource() *schema.Resource {
@@ -39,8 +40,8 @@ func resourcePingFederateAuthenticationSelectorResourceSchema() map[string]*sche
 }
 
 func resourcePingFederateAuthenticationSelectorResourceCreate(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).AuthenticationSelectors
-	input := pf.CreateAuthenticationSelectorInput{
+	svc := m.(pfClient).AuthenticationSelectors
+	input := authenticationSelectors.CreateAuthenticationSelectorInput{
 		Body: *resourcePingFederateAuthenticationSelectorResourceReadData(d),
 	}
 	result, _, err := svc.CreateAuthenticationSelector(&input)
@@ -52,8 +53,8 @@ func resourcePingFederateAuthenticationSelectorResourceCreate(d *schema.Resource
 }
 
 func resourcePingFederateAuthenticationSelectorResourceRead(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).AuthenticationSelectors
-	input := pf.GetAuthenticationSelectorInput{
+	svc := m.(pfClient).AuthenticationSelectors
+	input := authenticationSelectors.GetAuthenticationSelectorInput{
 		Id: d.Id(),
 	}
 	result, _, err := svc.GetAuthenticationSelector(&input)
@@ -64,8 +65,8 @@ func resourcePingFederateAuthenticationSelectorResourceRead(d *schema.ResourceDa
 }
 
 func resourcePingFederateAuthenticationSelectorResourceUpdate(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).AuthenticationSelectors
-	input := pf.UpdateAuthenticationSelectorInput{
+	svc := m.(pfClient).AuthenticationSelectors
+	input := authenticationSelectors.UpdateAuthenticationSelectorInput{
 		Id:   d.Id(),
 		Body: *resourcePingFederateAuthenticationSelectorResourceReadData(d),
 	}
@@ -78,8 +79,8 @@ func resourcePingFederateAuthenticationSelectorResourceUpdate(d *schema.Resource
 }
 
 func resourcePingFederateAuthenticationSelectorResourceDelete(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).AuthenticationSelectors
-	input := pf.DeleteAuthenticationSelectorInput{
+	svc := m.(pfClient).AuthenticationSelectors
+	input := authenticationSelectors.DeleteAuthenticationSelectorInput{
 		Id: d.Id(),
 	}
 	_, _, err := svc.DeleteAuthenticationSelector(&input)
@@ -89,8 +90,8 @@ func resourcePingFederateAuthenticationSelectorResourceDelete(d *schema.Resource
 	return nil
 }
 
-func resourcePingFederateAuthenticationSelectorResourceReadResult(d *schema.ResourceData, rv *pf.AuthenticationSelector, svc *pf.AuthenticationSelectorsService) (err error) {
-	desc, _, err := svc.GetAuthenticationSelectorDescriptorsById(&pf.GetAuthenticationSelectorDescriptorsByIdInput{Id: *rv.PluginDescriptorRef.Id})
+func resourcePingFederateAuthenticationSelectorResourceReadResult(d *schema.ResourceData, rv *pf.AuthenticationSelector, svc authenticationSelectors.AuthenticationSelectorsAPI) (err error) {
+	desc, _, err := svc.GetAuthenticationSelectorDescriptorsById(&authenticationSelectors.GetAuthenticationSelectorDescriptorsByIdInput{Id: *rv.PluginDescriptorRef.Id})
 	if err != nil {
 		return err
 	}

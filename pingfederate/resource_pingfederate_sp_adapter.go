@@ -2,9 +2,10 @@ package pingfederate
 
 import (
 	"fmt"
+	"github.com/iwarapter/pingfederate-sdk-go/services/spAdapters"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func resourcePingFederateSpAdapterResource() *schema.Resource {
@@ -50,8 +51,8 @@ func resourcePingFederateSpAdapterResourceSchema() map[string]*schema.Schema {
 }
 
 func resourcePingFederateSpAdapterResourceCreate(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).SpAdapters
-	input := pf.CreateSpAdapterInput{
+	svc := m.(pfClient).SpAdapters
+	input := spAdapters.CreateSpAdapterInput{
 		Body: *resourcePingFederateSpAdapterResourceReadData(d),
 	}
 	result, _, err := svc.CreateSpAdapter(&input)
@@ -63,8 +64,8 @@ func resourcePingFederateSpAdapterResourceCreate(d *schema.ResourceData, m inter
 }
 
 func resourcePingFederateSpAdapterResourceRead(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).SpAdapters
-	input := pf.GetSpAdapterInput{
+	svc := m.(pfClient).SpAdapters
+	input := spAdapters.GetSpAdapterInput{
 		Id: d.Id(),
 	}
 	result, _, err := svc.GetSpAdapter(&input)
@@ -75,8 +76,8 @@ func resourcePingFederateSpAdapterResourceRead(d *schema.ResourceData, m interfa
 }
 
 func resourcePingFederateSpAdapterResourceUpdate(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).SpAdapters
-	input := pf.UpdateSpAdapterInput{
+	svc := m.(pfClient).SpAdapters
+	input := spAdapters.UpdateSpAdapterInput{
 		Id:   d.Id(),
 		Body: *resourcePingFederateSpAdapterResourceReadData(d),
 	}
@@ -89,8 +90,8 @@ func resourcePingFederateSpAdapterResourceUpdate(d *schema.ResourceData, m inter
 }
 
 func resourcePingFederateSpAdapterResourceDelete(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).SpAdapters
-	input := pf.DeleteSpAdapterInput{
+	svc := m.(pfClient).SpAdapters
+	input := spAdapters.DeleteSpAdapterInput{
 		Id: d.Id(),
 	}
 	_, _, err := svc.DeleteSpAdapter(&input)
@@ -100,8 +101,8 @@ func resourcePingFederateSpAdapterResourceDelete(d *schema.ResourceData, m inter
 	return nil
 }
 
-func resourcePingFederateSpAdapterResourceReadResult(d *schema.ResourceData, rv *pf.SpAdapter, svc *pf.SpAdaptersService) (err error) {
-	desc, _, err := svc.GetSpAdapterDescriptorsById(&pf.GetSpAdapterDescriptorsByIdInput{Id: *rv.PluginDescriptorRef.Id})
+func resourcePingFederateSpAdapterResourceReadResult(d *schema.ResourceData, rv *pf.SpAdapter, svc spAdapters.SpAdaptersAPI) (err error) {
+	desc, _, err := svc.GetSpAdapterDescriptorsById(&spAdapters.GetSpAdapterDescriptorsByIdInput{Id: *rv.PluginDescriptorRef.Id})
 	if err != nil {
 		return err
 	}

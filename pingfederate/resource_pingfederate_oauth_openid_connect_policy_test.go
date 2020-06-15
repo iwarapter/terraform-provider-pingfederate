@@ -9,7 +9,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func TestAccPingFederateOauthOpenIdConnectPolicy(t *testing.T) {
@@ -132,7 +132,7 @@ func testAccCheckPingFederateOauthOpenIdConnectPolicyExists(n string) resource.T
 			return fmt.Errorf("No rule ID is set")
 		}
 
-		//conn := testAccProvider.Meta().(*pf.PfClient).OauthOpenIdConnect
+		//conn := testAccProvider.Meta().(pfClient).OauthOpenIdConnect
 		//result, _, err := conn.GetPolicy(&pf.GetPolicyInput{Id: rs.Primary.ID})
 		//
 		//if err != nil {

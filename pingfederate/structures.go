@@ -3,9 +3,10 @@ package pingfederate
 import (
 	"bytes"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
 	"hash/crc32"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 // String hashes a string to a unique hashcode.
@@ -34,6 +35,7 @@ func setOfString() *schema.Schema {
 		},
 	}
 }
+
 //
 //func requiredListOfString() *schema.Schema {
 //	return &schema.Schema{
@@ -528,7 +530,7 @@ func flattenIdpAdapterContractMapping(in *pf.IdpAdapterContractMapping) []map[st
 				customAttributes = append(customAttributes, flattenCustomAttributeSource(&v.CustomAttributeSource))
 			}
 		}
-		if  len(ldapAttributes) > 0 {
+		if len(ldapAttributes) > 0 {
 			s["ldap_attribute_source"] = ldapAttributes
 		}
 		if len(jdbcAttributes) > 0 {

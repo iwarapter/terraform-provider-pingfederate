@@ -2,9 +2,10 @@ package pingfederate
 
 import (
 	"fmt"
+	"github.com/iwarapter/pingfederate-sdk-go/services/oauthOpenIdConnect"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func resourcePingFederateOpenIdConnectPolicyResource() *schema.Resource {
@@ -79,8 +80,8 @@ func resourcePingFederateOpenIdConnectPolicyResourceSchema() map[string]*schema.
 }
 
 func resourcePingFederateOpenIdConnectPolicyResourceCreate(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).OauthOpenIdConnect
-	input := pf.CreatePolicyInput{
+	svc := m.(pfClient).OauthOpenIdConnect
+	input := oauthOpenIdConnect.CreatePolicyInput{
 		Body:                     *resourcePingFederateOpenIdConnectPolicyResourceReadData(d),
 		BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool)),
 	}
@@ -94,8 +95,8 @@ func resourcePingFederateOpenIdConnectPolicyResourceCreate(d *schema.ResourceDat
 }
 
 func resourcePingFederateOpenIdConnectPolicyResourceRead(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).OauthOpenIdConnect
-	input := pf.GetPolicyInput{
+	svc := m.(pfClient).OauthOpenIdConnect
+	input := oauthOpenIdConnect.GetPolicyInput{
 		Id: d.Id(),
 	}
 	result, _, err := svc.GetPolicy(&input)
@@ -106,8 +107,8 @@ func resourcePingFederateOpenIdConnectPolicyResourceRead(d *schema.ResourceData,
 }
 
 func resourcePingFederateOpenIdConnectPolicyResourceUpdate(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).OauthOpenIdConnect
-	input := pf.UpdatePolicyInput{
+	svc := m.(pfClient).OauthOpenIdConnect
+	input := oauthOpenIdConnect.UpdatePolicyInput{
 		Id:                       d.Id(),
 		Body:                     *resourcePingFederateOpenIdConnectPolicyResourceReadData(d),
 		BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool)),
@@ -121,8 +122,8 @@ func resourcePingFederateOpenIdConnectPolicyResourceUpdate(d *schema.ResourceDat
 }
 
 func resourcePingFederateOpenIdConnectPolicyResourceDelete(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).OauthOpenIdConnect
-	input := pf.DeletePolicyInput{
+	svc := m.(pfClient).OauthOpenIdConnect
+	input := oauthOpenIdConnect.DeletePolicyInput{
 		Id: d.Id(),
 	}
 	_, _, err := svc.DeletePolicy(&input)

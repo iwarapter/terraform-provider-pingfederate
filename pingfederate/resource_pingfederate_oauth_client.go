@@ -2,9 +2,10 @@ package pingfederate
 
 import (
 	"fmt"
+	"github.com/iwarapter/pingfederate-sdk-go/services/oauthClients"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func resourcePingFederateOauthClientResource() *schema.Resource {
@@ -199,8 +200,8 @@ func resourcePingFederateOauthClientResource() *schema.Resource {
 }
 
 func resourcePingFederateOauthClientResourceCreate(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).OauthClients
-	input := pf.CreateClientInput{
+	svc := m.(pfClient).OauthClients
+	input := oauthClients.CreateClientInput{
 		Body: *resourcePingFederateOauthClientResourceReadData(d),
 	}
 	result, _, err := svc.CreateClient(&input)
@@ -212,8 +213,8 @@ func resourcePingFederateOauthClientResourceCreate(d *schema.ResourceData, m int
 }
 
 func resourcePingFederateOauthClientResourceRead(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).OauthClients
-	input := pf.GetClientInput{
+	svc := m.(pfClient).OauthClients
+	input := oauthClients.GetClientInput{
 		Id: d.Id(),
 	}
 	result, _, err := svc.GetClient(&input)
@@ -224,8 +225,8 @@ func resourcePingFederateOauthClientResourceRead(d *schema.ResourceData, m inter
 }
 
 func resourcePingFederateOauthClientResourceUpdate(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).OauthClients
-	input := pf.UpdateClientInput{
+	svc := m.(pfClient).OauthClients
+	input := oauthClients.UpdateClientInput{
 		Id:   d.Id(),
 		Body: *resourcePingFederateOauthClientResourceReadData(d),
 	}
@@ -238,8 +239,8 @@ func resourcePingFederateOauthClientResourceUpdate(d *schema.ResourceData, m int
 }
 
 func resourcePingFederateOauthClientResourceDelete(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).OauthClients
-	input := pf.DeleteClientInput{
+	svc := m.(pfClient).OauthClients
+	input := oauthClients.DeleteClientInput{
 		Id: d.Id(),
 	}
 	_, _, err := svc.DeleteClient(&input)

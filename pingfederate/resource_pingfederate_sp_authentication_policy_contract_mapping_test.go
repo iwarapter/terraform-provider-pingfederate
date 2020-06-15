@@ -2,6 +2,7 @@ package pingfederate
 
 import (
 	"fmt"
+	"github.com/iwarapter/pingfederate-sdk-go/services/spAuthenticationPolicyContractMappings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -9,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func TestAccPingFederateSpAuthenticationPolicyContractMapping(t *testing.T) {
@@ -188,8 +189,8 @@ func testAccCheckPingFederateSpAuthenticationPolicyContractMappingExists(n strin
 			return fmt.Errorf("No rule ID is set")
 		}
 
-		conn := testAccProvider.Meta().(*pf.PfClient).SpAuthenticationPolicyContractMappings
-		result, _, err := conn.GetApcToSpAdapterMappingById(&pf.GetApcToSpAdapterMappingByIdInput{Id: rs.Primary.ID})
+		conn := testAccProvider.Meta().(pfClient).SpAuthenticationPolicyContractMappings
+		result, _, err := conn.GetApcToSpAdapterMappingById(&spAuthenticationPolicyContractMappings.GetApcToSpAdapterMappingByIdInput{Id: rs.Primary.ID})
 
 		if err != nil {
 			return fmt.Errorf("Error: SpAuthenticationPolicyContractMapping (%s) not found", n)

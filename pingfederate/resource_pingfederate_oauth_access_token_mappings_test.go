@@ -2,11 +2,11 @@ package pingfederate
 
 import (
 	"fmt"
+	"github.com/iwarapter/pingfederate-sdk-go/services/oauthAccessTokenMappings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
 )
 
 func TestAccPingFederateOauthAccessTokenMappings(t *testing.T) {
@@ -120,8 +120,8 @@ func testAccCheckPingFederateOauthAccessTokenMappingsExists(n string) resource.T
 			return fmt.Errorf("No rule ID is set")
 		}
 
-		conn := testAccProvider.Meta().(*pf.PfClient).OauthAccessTokenMappings
-		result, _, err := conn.GetMapping(&pf.GetMappingInput{Id: rs.Primary.ID})
+		conn := testAccProvider.Meta().(pfClient).OauthAccessTokenMappings
+		result, _, err := conn.GetMapping(&oauthAccessTokenMappings.GetMappingInput{Id: rs.Primary.ID})
 
 		if err != nil {
 			return fmt.Errorf("Error: OauthAccessTokenMappings (%s) not found", n)

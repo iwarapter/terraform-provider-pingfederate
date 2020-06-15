@@ -2,6 +2,7 @@ package pingfederate
 
 import (
 	"fmt"
+	"github.com/iwarapter/pingfederate-sdk-go/services/idpAdapters"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -9,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func TestAccPingFederateIdpAdapter(t *testing.T) {
@@ -155,8 +156,8 @@ func testAccCheckPingFederateIdpAdapterExists(n string) resource.TestCheckFunc {
 			return fmt.Errorf("No rule ID is set")
 		}
 
-		conn := testAccProvider.Meta().(*pf.PfClient).IdpAdapters
-		result, _, err := conn.GetIdpAdapter(&pf.GetIdpAdapterInput{Id: rs.Primary.ID})
+		conn := testAccProvider.Meta().(pfClient).IdpAdapters
+		result, _, err := conn.GetIdpAdapter(&idpAdapters.GetIdpAdapterInput{Id: rs.Primary.ID})
 
 		if err != nil {
 			return fmt.Errorf("Error: IdpAdapter (%s) not found", n)

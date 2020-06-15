@@ -2,13 +2,14 @@ package pingfederate
 
 import (
 	"fmt"
+	"github.com/iwarapter/pingfederate-sdk-go/services/dataStores"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func TestAccPingFederateDataStoreResource(t *testing.T) {
@@ -66,8 +67,8 @@ func testAccCheckPingFederateDataStoreResourceExists(n string) resource.TestChec
 			return fmt.Errorf("No rule ID is set")
 		}
 
-		conn := testAccProvider.Meta().(*pf.PfClient).DataStores
-		result, _, err := conn.GetDataStore(&pf.GetDataStoreInput{Id: rs.Primary.ID})
+		conn := testAccProvider.Meta().(pfClient).DataStores
+		result, _, err := conn.GetDataStore(&dataStores.GetDataStoreInput{Id: rs.Primary.ID})
 
 		if err != nil {
 			return fmt.Errorf("Error: DataStore (%s) not found", n)

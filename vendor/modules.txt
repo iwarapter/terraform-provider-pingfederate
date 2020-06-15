@@ -82,7 +82,7 @@ github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/empty
 github.com/golang/protobuf/ptypes/timestamp
-# github.com/google/go-cmp v0.3.1
+# github.com/google/go-cmp v0.4.1
 ## explicit
 github.com/google/go-cmp/cmp
 github.com/google/go-cmp/cmp/internal/diff
@@ -153,15 +153,73 @@ github.com/hashicorp/terraform-plugin-sdk/v2/terraform
 github.com/hashicorp/terraform-plugin-test
 # github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d
 github.com/hashicorp/yamux
-# github.com/iwarapter/pingfederate-sdk-go v0.0.0-20200509203146-4c6bee3a0c2d
+# github.com/iwarapter/pingfederate-sdk-go v0.0.0-20200615215226-2d272dddc087
 ## explicit
-github.com/iwarapter/pingfederate-sdk-go/pingfederate
+github.com/iwarapter/pingfederate-sdk-go/pingfederate/client
+github.com/iwarapter/pingfederate-sdk-go/pingfederate/models
+github.com/iwarapter/pingfederate-sdk-go/services/administrativeAccounts
+github.com/iwarapter/pingfederate-sdk-go/services/authenticationApi
+github.com/iwarapter/pingfederate-sdk-go/services/authenticationPolicies
+github.com/iwarapter/pingfederate-sdk-go/services/authenticationPolicyContracts
+github.com/iwarapter/pingfederate-sdk-go/services/authenticationSelectors
+github.com/iwarapter/pingfederate-sdk-go/services/bulk
+github.com/iwarapter/pingfederate-sdk-go/services/certificatesCa
+github.com/iwarapter/pingfederate-sdk-go/services/certificatesRevocation
+github.com/iwarapter/pingfederate-sdk-go/services/cluster
+github.com/iwarapter/pingfederate-sdk-go/services/configArchive
+github.com/iwarapter/pingfederate-sdk-go/services/configStore
+github.com/iwarapter/pingfederate-sdk-go/services/connectionMetadata
+github.com/iwarapter/pingfederate-sdk-go/services/dataStores
+github.com/iwarapter/pingfederate-sdk-go/services/extendedProperties
+github.com/iwarapter/pingfederate-sdk-go/services/idpAdapters
+github.com/iwarapter/pingfederate-sdk-go/services/idpConnectors
+github.com/iwarapter/pingfederate-sdk-go/services/idpDefaultUrls
+github.com/iwarapter/pingfederate-sdk-go/services/idpSpConnections
+github.com/iwarapter/pingfederate-sdk-go/services/idpStsRequestParametersContracts
+github.com/iwarapter/pingfederate-sdk-go/services/idpToSpAdapterMapping
+github.com/iwarapter/pingfederate-sdk-go/services/idpTokenProcessors
+github.com/iwarapter/pingfederate-sdk-go/services/kerberosRealms
+github.com/iwarapter/pingfederate-sdk-go/services/keyPairs
+github.com/iwarapter/pingfederate-sdk-go/services/keyPairsOauthOpenIdConnect
+github.com/iwarapter/pingfederate-sdk-go/services/keyPairsSigning
+github.com/iwarapter/pingfederate-sdk-go/services/keyPairsSslClient
+github.com/iwarapter/pingfederate-sdk-go/services/keyPairsSslServer
+github.com/iwarapter/pingfederate-sdk-go/services/license
+github.com/iwarapter/pingfederate-sdk-go/services/localIdentityIdentityProfiles
+github.com/iwarapter/pingfederate-sdk-go/services/metadataUrls
+github.com/iwarapter/pingfederate-sdk-go/services/notificationPublishers
+github.com/iwarapter/pingfederate-sdk-go/services/oauthAccessTokenManagers
+github.com/iwarapter/pingfederate-sdk-go/services/oauthAccessTokenMappings
+github.com/iwarapter/pingfederate-sdk-go/services/oauthAuthServerSettings
+github.com/iwarapter/pingfederate-sdk-go/services/oauthAuthenticationPolicyContractMappings
+github.com/iwarapter/pingfederate-sdk-go/services/oauthCibaServerPolicy
+github.com/iwarapter/pingfederate-sdk-go/services/oauthClientRegistrationPolicies
+github.com/iwarapter/pingfederate-sdk-go/services/oauthClientSettings
+github.com/iwarapter/pingfederate-sdk-go/services/oauthClients
+github.com/iwarapter/pingfederate-sdk-go/services/oauthIdpAdapterMappings
+github.com/iwarapter/pingfederate-sdk-go/services/oauthOpenIdConnect
+github.com/iwarapter/pingfederate-sdk-go/services/oauthOutOfBandAuthPlugins
+github.com/iwarapter/pingfederate-sdk-go/services/oauthResourceOwnerCredentialsMappings
+github.com/iwarapter/pingfederate-sdk-go/services/oauthTokenExchangeGenerator
+github.com/iwarapter/pingfederate-sdk-go/services/oauthTokenExchangeProcessor
+github.com/iwarapter/pingfederate-sdk-go/services/oauthTokenExchangeTokenGeneratorMappings
+github.com/iwarapter/pingfederate-sdk-go/services/passwordCredentialValidators
+github.com/iwarapter/pingfederate-sdk-go/services/redirectValidation
+github.com/iwarapter/pingfederate-sdk-go/services/serverSettings
+github.com/iwarapter/pingfederate-sdk-go/services/session
+github.com/iwarapter/pingfederate-sdk-go/services/spAdapters
+github.com/iwarapter/pingfederate-sdk-go/services/spAuthenticationPolicyContractMappings
+github.com/iwarapter/pingfederate-sdk-go/services/spDefaultUrls
+github.com/iwarapter/pingfederate-sdk-go/services/spIdpConnections
+github.com/iwarapter/pingfederate-sdk-go/services/spTargetUrlMappings
+github.com/iwarapter/pingfederate-sdk-go/services/spTokenGenerators
+github.com/iwarapter/pingfederate-sdk-go/services/tokenProcessorToTokenGeneratorMappings
+github.com/iwarapter/pingfederate-sdk-go/services/version
+github.com/iwarapter/pingfederate-sdk-go/services/virtualHostNames
 # github.com/jmespath/go-jmespath v0.3.0
 github.com/jmespath/go-jmespath
 # github.com/konsorten/go-windows-terminal-sequences v1.0.1
 github.com/konsorten/go-windows-terminal-sequences
-# github.com/lib/pq v1.5.2
-## explicit
 # github.com/mitchellh/copystructure v1.0.0
 github.com/mitchellh/copystructure
 # github.com/mitchellh/go-homedir v1.1.0

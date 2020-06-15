@@ -2,9 +2,10 @@ package pingfederate
 
 import (
 	"fmt"
+	"github.com/iwarapter/pingfederate-sdk-go/services/oauthAccessTokenMappings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func resourcePingFederateOauthAccessTokenMappingsResource() *schema.Resource {
@@ -65,8 +66,8 @@ func resourcePingFederateOauthAccessTokenMappingsResource() *schema.Resource {
 }
 
 func resourcePingFederateOauthAccessTokenMappingsResourceCreate(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).OauthAccessTokenMappings
-	input := pf.CreateMappingInput{
+	svc := m.(pfClient).OauthAccessTokenMappings
+	input := oauthAccessTokenMappings.CreateMappingInput{
 		Body: *resourcePingFederateOauthAccessTokenMappingsResourceReadData(d),
 	}
 	result, _, err := svc.CreateMapping(&input)
@@ -78,8 +79,8 @@ func resourcePingFederateOauthAccessTokenMappingsResourceCreate(d *schema.Resour
 }
 
 func resourcePingFederateOauthAccessTokenMappingsResourceRead(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).OauthAccessTokenMappings
-	input := pf.GetMappingInput{
+	svc := m.(pfClient).OauthAccessTokenMappings
+	input := oauthAccessTokenMappings.GetMappingInput{
 		Id: d.Id(),
 	}
 	result, _, err := svc.GetMapping(&input)
@@ -90,8 +91,8 @@ func resourcePingFederateOauthAccessTokenMappingsResourceRead(d *schema.Resource
 }
 
 func resourcePingFederateOauthAccessTokenMappingsResourceUpdate(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).OauthAccessTokenMappings
-	input := pf.UpdateMappingInput{
+	svc := m.(pfClient).OauthAccessTokenMappings
+	input := oauthAccessTokenMappings.UpdateMappingInput{
 		Id:   d.Id(),
 		Body: *resourcePingFederateOauthAccessTokenMappingsResourceReadData(d),
 	}
@@ -104,8 +105,8 @@ func resourcePingFederateOauthAccessTokenMappingsResourceUpdate(d *schema.Resour
 }
 
 func resourcePingFederateOauthAccessTokenMappingsResourceDelete(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).OauthAccessTokenMappings
-	input := pf.DeleteMappingInput{
+	svc := m.(pfClient).OauthAccessTokenMappings
+	input := oauthAccessTokenMappings.DeleteMappingInput{
 		Id: d.Id(),
 	}
 	_, _, err := svc.DeleteMapping(&input)

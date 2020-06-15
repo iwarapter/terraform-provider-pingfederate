@@ -2,9 +2,10 @@ package pingfederate
 
 import (
 	"fmt"
+	"github.com/iwarapter/pingfederate-sdk-go/services/idpAdapters"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func resourcePingFederateIdpAdapterResource() *schema.Resource {
@@ -55,8 +56,8 @@ func resourcePingFederateIdpAdapterResourceSchema() map[string]*schema.Schema {
 }
 
 func resourcePingFederateIdpAdapterResourceCreate(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).IdpAdapters
-	input := pf.CreateIdpAdapterInput{
+	svc := m.(pfClient).IdpAdapters
+	input := idpAdapters.CreateIdpAdapterInput{
 		Body:                     *resourcePingFederateIdpAdapterResourceReadData(d),
 		BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool)),
 	}
@@ -70,8 +71,8 @@ func resourcePingFederateIdpAdapterResourceCreate(d *schema.ResourceData, m inte
 }
 
 func resourcePingFederateIdpAdapterResourceRead(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).IdpAdapters
-	input := pf.GetIdpAdapterInput{
+	svc := m.(pfClient).IdpAdapters
+	input := idpAdapters.GetIdpAdapterInput{
 		Id: d.Id(),
 	}
 	result, _, err := svc.GetIdpAdapter(&input)
@@ -82,8 +83,8 @@ func resourcePingFederateIdpAdapterResourceRead(d *schema.ResourceData, m interf
 }
 
 func resourcePingFederateIdpAdapterResourceUpdate(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).IdpAdapters
-	input := pf.UpdateIdpAdapterInput{
+	svc := m.(pfClient).IdpAdapters
+	input := idpAdapters.UpdateIdpAdapterInput{
 		Id:                       d.Id(),
 		Body:                     *resourcePingFederateIdpAdapterResourceReadData(d),
 		BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool)),
@@ -97,8 +98,8 @@ func resourcePingFederateIdpAdapterResourceUpdate(d *schema.ResourceData, m inte
 }
 
 func resourcePingFederateIdpAdapterResourceDelete(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).IdpAdapters
-	input := pf.DeleteIdpAdapterInput{
+	svc := m.(pfClient).IdpAdapters
+	input := idpAdapters.DeleteIdpAdapterInput{
 		Id: d.Id(),
 	}
 	_, _, err := svc.DeleteIdpAdapter(&input)

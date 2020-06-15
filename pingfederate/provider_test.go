@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"github.com/iwarapter/pingfederate-sdk-go/services/version"
 	"log"
 	"net/http"
 	"net/url"
@@ -16,7 +17,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
 	"github.com/ory/dockertest"
 )
 
@@ -66,10 +66,10 @@ func TestMain(m *testing.M) {
 			var err error
 			http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 			url, _ := url.Parse(fmt.Sprintf("https://localhost:%s", resource.GetPort("9999/tcp")))
-			client := pf.NewClient("Administrator", "2Federate", url, "/pf-admin-api/v1", nil)
+			client := version.New("Administrator", "2Federate", url, "/pf-admin-api/v1", nil)
 
 			log.Println("Attempting to connect to PingFederate admin API....")
-			_, _, err = client.Version.GetVersion()
+			_, _, err = client.GetVersion()
 			return err
 		}); err != nil {
 			log.Fatalf("Could not connect to docker: %s", err)

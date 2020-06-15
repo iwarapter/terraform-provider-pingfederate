@@ -3,8 +3,10 @@ package pingfederate
 import (
 	"fmt"
 
+	"github.com/iwarapter/pingfederate-sdk-go/services/authenticationPolicyContracts"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func resourcePingFederateAuthenticationPolicyContractResource() *schema.Resource {
@@ -47,8 +49,8 @@ func resourcePingFederateAuthenticationPolicyContractResourceSchema() map[string
 }
 
 func resourcePingFederateAuthenticationPolicyContractResourceCreate(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).AuthenticationPolicyContracts
-	input := pf.CreateAuthenticationPolicyContractInput{
+	svc := m.(pfClient).AuthenticationPolicyContracts
+	input := authenticationPolicyContracts.CreateAuthenticationPolicyContractInput{
 		Body: *resourcePingFederateAuthenticationPolicyContractResourceReadData(d),
 	}
 	result, _, err := svc.CreateAuthenticationPolicyContract(&input)
@@ -60,8 +62,8 @@ func resourcePingFederateAuthenticationPolicyContractResourceCreate(d *schema.Re
 }
 
 func resourcePingFederateAuthenticationPolicyContractResourceRead(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).AuthenticationPolicyContracts
-	input := pf.GetAuthenticationPolicyContractInput{
+	svc := m.(pfClient).AuthenticationPolicyContracts
+	input := authenticationPolicyContracts.GetAuthenticationPolicyContractInput{
 		Id: d.Id(),
 	}
 	result, _, err := svc.GetAuthenticationPolicyContract(&input)
@@ -72,8 +74,8 @@ func resourcePingFederateAuthenticationPolicyContractResourceRead(d *schema.Reso
 }
 
 func resourcePingFederateAuthenticationPolicyContractResourceUpdate(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).AuthenticationPolicyContracts
-	input := pf.UpdateAuthenticationPolicyContractInput{
+	svc := m.(pfClient).AuthenticationPolicyContracts
+	input := authenticationPolicyContracts.UpdateAuthenticationPolicyContractInput{
 		Id:   d.Id(),
 		Body: *resourcePingFederateAuthenticationPolicyContractResourceReadData(d),
 	}
@@ -86,8 +88,8 @@ func resourcePingFederateAuthenticationPolicyContractResourceUpdate(d *schema.Re
 }
 
 func resourcePingFederateAuthenticationPolicyContractResourceDelete(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).AuthenticationPolicyContracts
-	input := pf.DeleteAuthenticationPolicyContractInput{
+	svc := m.(pfClient).AuthenticationPolicyContracts
+	input := authenticationPolicyContracts.DeleteAuthenticationPolicyContractInput{
 		Id: d.Id(),
 	}
 	_, _, err := svc.DeleteAuthenticationPolicyContract(&input)

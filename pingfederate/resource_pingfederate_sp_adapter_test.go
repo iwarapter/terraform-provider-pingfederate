@@ -3,6 +3,7 @@ package pingfederate
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/iwarapter/pingfederate-sdk-go/services/spAdapters"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -13,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func TestAccPingFederateSpAdapter(t *testing.T) {
@@ -175,8 +176,8 @@ func testAccCheckPingFederateSpAdapterExists(n string) resource.TestCheckFunc {
 			return fmt.Errorf("No rule ID is set")
 		}
 
-		conn := testAccProvider.Meta().(*pf.PfClient).SpAdapters
-		result, _, err := conn.GetSpAdapter(&pf.GetSpAdapterInput{Id: rs.Primary.ID})
+		conn := testAccProvider.Meta().(pfClient).SpAdapters
+		result, _, err := conn.GetSpAdapter(&spAdapters.GetSpAdapterInput{Id: rs.Primary.ID})
 
 		if err != nil {
 			return fmt.Errorf("Error: SpAdapter (%s) not found", n)
@@ -280,11 +281,11 @@ func Test_resourcePingFederateSpAdapterResourceReadData(t *testing.T) {
 
 			// Use Client & URL from our local test server
 			url, _ := url.Parse(server.URL)
-			c := pf.NewClient("", "", url, "", server.Client())
+			c := spAdapters.New("", "", url, "", server.Client())
 
 			resourceSchema := resourcePingFederateSpAdapterResourceSchema()
 			resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})
-			resourcePingFederateSpAdapterResourceReadResult(resourceLocalData, &tc.Resource, c.SpAdapters)
+			resourcePingFederateSpAdapterResourceReadResult(resourceLocalData, &tc.Resource, c)
 
 			if got := *resourcePingFederateSpAdapterResourceReadData(resourceLocalData); !cmp.Equal(got, tc.Resource) {
 				t.Errorf("resourcePingFederateSpAdapterResourceReadData() = %v", cmp.Diff(got, tc.Resource))

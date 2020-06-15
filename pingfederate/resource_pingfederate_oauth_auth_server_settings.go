@@ -1,12 +1,12 @@
 package pingfederate
 
 import (
-	"encoding/json"
 	"fmt"
+	"github.com/iwarapter/pingfederate-sdk-go/services/oauthAuthServerSettings"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func resourcePingFederateOauthAuthServerSettingsResource() *schema.Resource {
@@ -166,7 +166,7 @@ func resourcePingFederateOauthAuthServerSettingsResourceCreate(d *schema.Resourc
 }
 
 func resourcePingFederateOauthAuthServerSettingsResourceRead(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).OauthAuthServerSettings
+	svc := m.(pfClient).OauthAuthServerSettings
 	result, _, err := svc.GetAuthorizationServerSettings()
 	if err != nil {
 		return fmt.Errorf(err.Error())
@@ -256,11 +256,8 @@ func resourcePingFederateOauthAuthServerSettingsResourceUpdate(d *schema.Resourc
 		authSettings.TrackUserSessionsForLogout = Bool(d.Get("track_user_sessions_for_logout").(bool))
 	}
 
-	b, _ := json.Marshal(*authSettings)
-	log.Printf("[INFO] AuthSettings: %s", b)
-
-	svc := m.(*pf.PfClient).OauthAuthServerSettings
-	input := &pf.UpdateAuthorizationServerSettingsInput{
+	svc := m.(pfClient).OauthAuthServerSettings
+	input := &oauthAuthServerSettings.UpdateAuthorizationServerSettingsInput{
 		Body: *authSettings,
 	}
 
@@ -277,7 +274,7 @@ func resourcePingFederateOauthAuthServerSettingsResourceDelete(d *schema.Resourc
 }
 
 func resourcePingFederateOauthAuthServerSettingsResourceImport(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
-	svc := m.(*pf.PfClient).OauthAuthServerSettings
+	svc := m.(pfClient).OauthAuthServerSettings
 	result, _, err := svc.GetAuthorizationServerSettings()
 	if err != nil {
 		return []*schema.ResourceData{d}, fmt.Errorf(err.Error())

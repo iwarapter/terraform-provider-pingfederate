@@ -2,8 +2,11 @@ package pingfederate
 
 import (
 	"fmt"
+
+	"github.com/iwarapter/pingfederate-sdk-go/services/oauthAccessTokenManagers"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func resourcePingFederateOauthAccessTokenManagersResource() *schema.Resource {
@@ -109,8 +112,8 @@ func resourcePingFederateOauthAccessTokenManagersResourceSchema() map[string]*sc
 }
 
 func resourcePingFederateOauthAccessTokenManagersResourceCreate(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).OauthAccessTokenManagers
-	input := pf.CreateTokenManagerInput{
+	svc := m.(pfClient).OauthAccessTokenManagers
+	input := oauthAccessTokenManagers.CreateTokenManagerInput{
 		Body: *resourcePingFederateOauthAccessTokenManagersResourceReadData(d, svc),
 	}
 	result, _, err := svc.CreateTokenManager(&input)
@@ -118,25 +121,34 @@ func resourcePingFederateOauthAccessTokenManagersResourceCreate(d *schema.Resour
 		return fmt.Errorf(err.Error())
 	}
 	d.SetId(*result.Id)
-	return resourcePingFederateOauthAccessTokenManagersResourceReadResult(d, result, svc)
+	err = resourcePingFederateOauthAccessTokenManagersResourceReadResult(d, result, svc)
+	if err != nil {
+		return err
+	}
+	return setOauthAccessTokenManagerAsDefaultIfNoneSet(*result.Id, svc)
 }
 
-//func setOauthAccessTokenManagerAsDefaultIfNoneSet(id string, svc pf.OauthAccessTokenManagersService) error {
-//	result, _, err := svc.GetSettings()
-//	if err != nil {
-//		return fmt.Errorf("unable to get the OauthAccessTokenManager settings %s", err)
-//	}
-//	if result.DefaultAccessTokenManagerRef != nil {
-//		result, _, err = svc.UpdateSettings(&pf.UpdateSettingsInput{
-//			Body:                     pf.AccessTokenManagementSettings{},
-//		})
-//	}
-//	return nil
-//}
+func setOauthAccessTokenManagerAsDefaultIfNoneSet(id string, svc oauthAccessTokenManagers.OauthAccessTokenManagersAPI) error {
+	result, _, err := svc.GetSettings()
+	if err != nil {
+		return fmt.Errorf("unable to read the OauthAccessTokenManager settings %s", err)
+	}
+	if result.DefaultAccessTokenManagerRef != nil {
+		_, _, err = svc.UpdateSettings(&oauthAccessTokenManagers.UpdateSettingsInput{
+			Body: pf.AccessTokenManagementSettings{
+				DefaultAccessTokenManagerRef: &pf.ResourceLink{Id: String(id)},
+			},
+		})
+		if err != nil {
+			return fmt.Errorf("unable to update the OauthAccessTokenManager settings %s", err)
+		}
+	}
+	return nil
+}
 
 func resourcePingFederateOauthAccessTokenManagersResourceRead(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).OauthAccessTokenManagers
-	input := pf.GetTokenManagerInput{
+	svc := m.(pfClient).OauthAccessTokenManagers
+	input := oauthAccessTokenManagers.GetTokenManagerInput{
 		Id: d.Id(),
 	}
 	result, _, err := svc.GetTokenManager(&input)
@@ -147,8 +159,8 @@ func resourcePingFederateOauthAccessTokenManagersResourceRead(d *schema.Resource
 }
 
 func resourcePingFederateOauthAccessTokenManagersResourceUpdate(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).OauthAccessTokenManagers
-	input := pf.UpdateTokenManagerInput{
+	svc := m.(pfClient).OauthAccessTokenManagers
+	input := oauthAccessTokenManagers.UpdateTokenManagerInput{
 		Id:   d.Id(),
 		Body: *resourcePingFederateOauthAccessTokenManagersResourceReadData(d, svc),
 	}
@@ -161,8 +173,8 @@ func resourcePingFederateOauthAccessTokenManagersResourceUpdate(d *schema.Resour
 }
 
 func resourcePingFederateOauthAccessTokenManagersResourceDelete(d *schema.ResourceData, m interface{}) error {
-	svc := m.(*pf.PfClient).OauthAccessTokenManagers
-	input := pf.DeleteTokenManagerInput{
+	svc := m.(pfClient).OauthAccessTokenManagers
+	input := oauthAccessTokenManagers.DeleteTokenManagerInput{
 		Id: d.Id(),
 	}
 	_, _, err := svc.DeleteTokenManager(&input)
@@ -172,8 +184,8 @@ func resourcePingFederateOauthAccessTokenManagersResourceDelete(d *schema.Resour
 	return nil
 }
 
-func resourcePingFederateOauthAccessTokenManagersResourceReadResult(d *schema.ResourceData, rv *pf.AccessTokenManager, svc *pf.OauthAccessTokenManagersService) (err error) {
-	desc, _, err := svc.GetTokenManagerDescriptor(&pf.GetTokenManagerDescriptorInput{Id: *rv.PluginDescriptorRef.Id})
+func resourcePingFederateOauthAccessTokenManagersResourceReadResult(d *schema.ResourceData, rv *pf.AccessTokenManager, svc oauthAccessTokenManagers.OauthAccessTokenManagersAPI) (err error) {
+	desc, _, err := svc.GetTokenManagerDescriptor(&oauthAccessTokenManagers.GetTokenManagerDescriptorInput{Id: *rv.PluginDescriptorRef.Id})
 	if err != nil {
 		return err
 	}
@@ -200,7 +212,7 @@ func resourcePingFederateOauthAccessTokenManagersResourceReadResult(d *schema.Re
 	return nil
 }
 
-func resourcePingFederateOauthAccessTokenManagersResourceReadData(d *schema.ResourceData, svc *pf.OauthAccessTokenManagersService) *pf.AccessTokenManager {
+func resourcePingFederateOauthAccessTokenManagersResourceReadData(d *schema.ResourceData, svc oauthAccessTokenManagers.OauthAccessTokenManagersAPI) *pf.AccessTokenManager {
 	//desc, _, err := svc.GetTokenManagerDescriptor(&pf.GetTokenManagerDescriptorInput{Id: *expandResourceLink(d.Get("plugin_descriptor_ref").([]interface{})).Id})
 	//if err != nil {
 	//	//TODO

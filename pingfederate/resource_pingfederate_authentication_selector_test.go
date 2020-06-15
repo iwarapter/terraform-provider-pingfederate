@@ -3,6 +3,7 @@ package pingfederate
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/iwarapter/pingfederate-sdk-go/services/authenticationSelectors"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -12,7 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func TestAccPingFederateAuthenticationSelectorResource(t *testing.T) {
@@ -78,8 +79,8 @@ func testAccCheckPingFederateAuthenticationSelectorResourceExists(n string) reso
 			return fmt.Errorf("No rule ID is set")
 		}
 
-		conn := testAccProvider.Meta().(*pf.PfClient).AuthenticationSelectors
-		result, _, err := conn.GetAuthenticationSelector(&pf.GetAuthenticationSelectorInput{Id: rs.Primary.ID})
+		conn := testAccProvider.Meta().(pfClient).AuthenticationSelectors
+		result, _, err := conn.GetAuthenticationSelector(&authenticationSelectors.GetAuthenticationSelectorInput{Id: rs.Primary.ID})
 
 		if err != nil {
 			return fmt.Errorf("Error: AuthenticationSelector (%s) not found", n)
@@ -177,11 +178,11 @@ func Test_resourcePingFederateAuthenticationSelectorResourceReadData(t *testing.
 
 			// Use Client & URL from our local test server
 			url, _ := url.Parse(server.URL)
-			c := pf.NewClient("", "", url, "", server.Client())
+			c := authenticationSelectors.New("", "", url, "", server.Client())
 
 			resourceSchema := resourcePingFederateAuthenticationSelectorResourceSchema()
 			resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})
-			resourcePingFederateAuthenticationSelectorResourceReadResult(resourceLocalData, &tc.Resource, c.AuthenticationSelectors)
+			resourcePingFederateAuthenticationSelectorResourceReadResult(resourceLocalData, &tc.Resource, c)
 
 			if got := *resourcePingFederateAuthenticationSelectorResourceReadData(resourceLocalData); !cmp.Equal(got, tc.Resource) {
 				t.Errorf("resourcePingFederateAuthenticationSelectorResourceReadData() = %v", cmp.Diff(got, tc.Resource))
