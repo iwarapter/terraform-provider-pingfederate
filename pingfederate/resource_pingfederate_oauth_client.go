@@ -3,7 +3,7 @@ package pingfederate
 import (
 	"fmt"
 
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
 )
 
@@ -176,7 +176,7 @@ func resourcePingFederateOauthClientResource() *schema.Resource {
 				},
 			},
 			"jwks_settings": {
-				Type:     schema.TypeSet,
+				Type:     schema.TypeList,
 				Optional: true,
 				MaxItems: 1,
 				Elem: &schema.Resource{

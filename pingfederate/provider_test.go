@@ -1,6 +1,7 @@
 package pingfederate
 
 import (
+	"context"
 	"crypto/tls"
 	"fmt"
 	"log"
@@ -13,11 +14,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
 	"github.com/ory/dockertest"
-	"github.com/terraform-providers/terraform-provider-template/template"
 )
 
 func TestMain(m *testing.M) {
@@ -56,7 +56,6 @@ func TestMain(m *testing.M) {
 
 		// pulls an image, creates a container based on it and runs it
 		resource, err := pool.RunWithOptions(options)
-		resource.Expire(90)
 		if err != nil {
 			log.Fatalf("Could not start resource: %s", err)
 		}
@@ -75,7 +74,7 @@ func TestMain(m *testing.M) {
 		}); err != nil {
 			log.Fatalf("Could not connect to docker: %s", err)
 		}
-
+		resource.Expire(180)
 		os.Setenv("PINGFEDERATE_BASEURL", fmt.Sprintf("https://localhost:%s", resource.GetPort("9999/tcp")))
 		log.Println("Connected to PingFederate admin API....")
 		code := m.Run()
@@ -92,31 +91,31 @@ func TestMain(m *testing.M) {
 	}
 }
 
-var testAccProviders map[string]terraform.ResourceProvider
+var testAccProviders map[string]*schema.Provider
 var testAccProvider *schema.Provider
-var testAccProviderFactories func(providers *[]*schema.Provider) map[string]terraform.ResourceProviderFactory
-var testAccTemplateProvider *schema.Provider
+
+//var testAccProviderFactories func(providers *[]*schema.Provider) map[string]*schema.Provider
+//var testAccTemplateProvider *schema.Provider
 
 func init() {
-	testAccProvider = Provider().(*schema.Provider)
-	testAccTemplateProvider = template.Provider().(*schema.Provider)
-	testAccProviders = map[string]terraform.ResourceProvider{
+	testAccProvider = Provider()
+	//testAccTemplateProvider = template.Provider().(*schema.Provider)
+	testAccProviders = map[string]*schema.Provider{
 		"pingfederate": testAccProvider,
-		"template":     testAccTemplateProvider,
 	}
-	testAccProviderFactories = func(providers *[]*schema.Provider) map[string]terraform.ResourceProviderFactory {
-		return map[string]terraform.ResourceProviderFactory{
-			"pingfederate": func() (terraform.ResourceProvider, error) {
-				p := Provider()
-				*providers = append(*providers, p.(*schema.Provider))
-				return p, nil
-			},
-		}
-	}
+	//testAccProviderFactories = func(providers *[]*schema.Provider) map[string]*schema.Provider {
+	//	return map[string]*schema.Provider{
+	//		"pingfederate": func() (schema.Provider, error) {
+	//			p := Provider()
+	//			*providers = append(*providers, p.(*schema.Provider))
+	//			return p, nil
+	//		},
+	//	}
+	//}
 }
 
 func testAccPreCheck(t *testing.T) {
-	err := testAccProvider.Configure(terraform.NewResourceConfig(nil))
+	err := testAccProvider.Configure(context.TODO(), terraform.NewResourceConfigRaw(nil))
 	if err != nil {
 		t.Fatal(err)
 	}

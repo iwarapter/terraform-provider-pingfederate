@@ -1,13 +1,14 @@
 package pingfederate
 
 import (
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/terraform"
+	"context"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 //Provider does stuff
 //
-func Provider() terraform.ResourceProvider {
+func Provider() *schema.Provider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
 			"username": {
@@ -44,11 +45,12 @@ func Provider() terraform.ResourceProvider {
 			"pingfederate_oauth_client":                              resourcePingFederateOauthClientResource(),
 			"pingfederate_oauth_access_token_manager":                resourcePingFederateOauthAccessTokenManagersResource(),
 			"pingfederate_oauth_access_token_mappings":               resourcePingFederateOauthAccessTokenMappingsResource(),
+			"pingfederate_oauth_openid_connect_policy":               resourcePingFederateOpenIdConnectPolicyResource(),
 			"pingfederate_sp_adapter":                                resourcePingFederateSpAdapterResource(),
 			"pingfederate_sp_authentication_policy_contract_mapping": resourcePingFederateSpAuthenticationPolicyContractMappingResource(),
 			"pingfederate_password_credential_validator":             resourcePingFederatePasswordCredentialValidatorResource(),
 		},
-		ConfigureFunc: providerConfigure,
+		ConfigureContextFunc: providerConfigure,
 	}
 }
 
@@ -63,7 +65,7 @@ func init() {
 	}
 }
 
-func providerConfigure(d *schema.ResourceData) (interface{}, error) {
+func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	config := &Config{
 		Username: d.Get("username").(string),
 		Password: d.Get("password").(string),

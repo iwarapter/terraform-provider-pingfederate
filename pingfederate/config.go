@@ -2,6 +2,7 @@ package pingfederate
 
 import (
 	"crypto/tls"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"net/http"
 	"net/url"
 	"os"
@@ -17,7 +18,7 @@ type Config struct {
 }
 
 // Client configures and returns a fully initialized PAClient
-func (c *Config) Client() (interface{}, error) {
+func (c *Config) Client() (interface{}, diag.Diagnostics) {
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	url, _ := url.Parse(c.BaseURL)
 	client := pingfederate.NewClient(c.Username, c.Password, url, c.Context, nil)

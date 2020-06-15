@@ -420,3 +420,68 @@ resource "pingfederate_oauth_access_token_mappings" "demo" {
     value = "ClientId"
   }
 }
+
+resource "pingfederate_oauth_openid_connect_policy" "demo" {
+  policy_id = "foo"
+  name      = "foo"
+  access_token_manager_ref {
+    id = pingfederate_oauth_access_token_manager.my_atm.id
+  }
+  attribute_contract {
+    core_attributes {
+      name = "sub"
+    }
+    extended_attributes {
+      name                 = "email"
+      include_in_user_info = true
+    }
+    extended_attributes {
+      name                 = "email_verified"
+      include_in_user_info = true
+    }
+    extended_attributes {
+      name                 = "family_name"
+      include_in_user_info = true
+    }
+    extended_attributes {
+      name                 = "name"
+      include_in_user_info = true
+    }
+  }
+  attribute_mapping {
+    attribute_contract_fulfillment {
+      key_name = "sub"
+      source {
+        type = "NO_MAPPING"
+      }
+    }
+    attribute_contract_fulfillment {
+      key_name = "email"
+      source {
+        type = "NO_MAPPING"
+      }
+    }
+    attribute_contract_fulfillment {
+      key_name = "email_verified"
+      source {
+        type = "NO_MAPPING"
+      }
+    }
+    attribute_contract_fulfillment {
+      key_name = "family_name"
+      source {
+        type = "NO_MAPPING"
+      }
+    }
+    attribute_contract_fulfillment {
+      key_name = "name"
+      source {
+        type = "NO_MAPPING"
+      }
+    }
+  }
+
+//  scope_attribute_mappings = { //TODO hoping the new TF 2.0.0 SDK will finally support sensible maps
+//    address = ["foo", "bar"]
+//  }
+}

@@ -2,8 +2,7 @@ package pingfederate
 
 import (
 	"fmt"
-
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
 )
 
@@ -17,80 +16,91 @@ func resourcePingFederateOauthAccessTokenManagersResource() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 
-		Schema: map[string]*schema.Schema{
-			"instance_id": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-				//ValidateFunc:       "message": "The plugin ID must be less than 33 characters, contain no spaces, and be alphanumeric.",
-			},
-			"name": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"plugin_descriptor_ref": resourceLinkSchema(),
-			"configuration":         resourcePluginConfiguration(),
-			"parent_ref":            resourceLinkSchema(),
-			"attribute_contract": &schema.Schema{
-				Type:     schema.TypeList,
-				Required: true,
-				MaxItems: 1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"extended_attributes": &schema.Schema{
-							Type:     schema.TypeList,
-							Optional: true,
-							MinItems: 1,
-							Elem: &schema.Schema{
-								Type: schema.TypeString,
-							},
+		Schema: resourcePingFederateOauthAccessTokenManagersResourceSchema(),
+	}
+}
+
+func resourcePingFederateOauthAccessTokenManagersResourceSchema() map[string]*schema.Schema {
+	return map[string]*schema.Schema{
+		"instance_id": {
+			Type:     schema.TypeString,
+			Required: true,
+			//ValidateFunc:       "message": "The plugin ID must be less than 33 characters, contain no spaces, and be alphanumeric.",
+		},
+		"name": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"plugin_descriptor_ref": resourceLinkSchema(),
+		"configuration":         resourcePluginConfiguration(),
+		"parent_ref":            resourceLinkSchema(),
+		"attribute_contract": {
+			Type:     schema.TypeList,
+			Required: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"core_attributes": {
+						Type:     schema.TypeList,
+						Computed: true,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
+						},
+					},
+					"extended_attributes": {
+						Type:     schema.TypeList,
+						Optional: true,
+						MinItems: 1,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
 						},
 					},
 				},
 			},
-			"selection_settings": &schema.Schema{
-				Type:     schema.TypeSet,
-				Optional: true,
-				MaxItems: 1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"inherited": &schema.Schema{
-							Type:     schema.TypeBool,
-							Optional: true,
-							Default:  false,
-						},
-						"resource_uris": &schema.Schema{
-							Type:     schema.TypeList,
-							Optional: true,
-							Elem: &schema.Schema{
-								Type: schema.TypeString,
-							},
+		},
+		"selection_settings": {
+			Type:     schema.TypeSet,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"inherited": {
+						Type:     schema.TypeBool,
+						Optional: true,
+						Default:  false,
+					},
+					"resource_uris": {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
 						},
 					},
 				},
 			},
-			"session_validation_settings": &schema.Schema{
-				Type:     schema.TypeList,
-				Optional: true,
-				MaxItems: 1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"inherited": &schema.Schema{
-							Type:     schema.TypeBool,
-							Optional: true,
-							Default:  false,
-						},
-						"check_valid_authn_session": &schema.Schema{
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
-						"check_session_revocation_status": &schema.Schema{
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
-						"update_authn_session_activity": &schema.Schema{
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
+		},
+		"session_validation_settings": {
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"inherited": {
+						Type:     schema.TypeBool,
+						Optional: true,
+						Default:  false,
+					},
+					"check_valid_authn_session": {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					"check_session_revocation_status": {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					"update_authn_session_activity": {
+						Type:     schema.TypeBool,
+						Optional: true,
 					},
 				},
 			},
@@ -101,7 +111,7 @@ func resourcePingFederateOauthAccessTokenManagersResource() *schema.Resource {
 func resourcePingFederateOauthAccessTokenManagersResourceCreate(d *schema.ResourceData, m interface{}) error {
 	svc := m.(*pf.PfClient).OauthAccessTokenManagers
 	input := pf.CreateTokenManagerInput{
-		Body: *resourcePingFederateOauthAccessTokenManagersResourceReadData(d),
+		Body: *resourcePingFederateOauthAccessTokenManagersResourceReadData(d, svc),
 	}
 	result, _, err := svc.CreateTokenManager(&input)
 	if err != nil {
@@ -110,6 +120,19 @@ func resourcePingFederateOauthAccessTokenManagersResourceCreate(d *schema.Resour
 	d.SetId(*result.Id)
 	return resourcePingFederateOauthAccessTokenManagersResourceReadResult(d, result, svc)
 }
+
+//func setOauthAccessTokenManagerAsDefaultIfNoneSet(id string, svc pf.OauthAccessTokenManagersService) error {
+//	result, _, err := svc.GetSettings()
+//	if err != nil {
+//		return fmt.Errorf("unable to get the OauthAccessTokenManager settings %s", err)
+//	}
+//	if result.DefaultAccessTokenManagerRef != nil {
+//		result, _, err = svc.UpdateSettings(&pf.UpdateSettingsInput{
+//			Body:                     pf.AccessTokenManagementSettings{},
+//		})
+//	}
+//	return nil
+//}
 
 func resourcePingFederateOauthAccessTokenManagersResourceRead(d *schema.ResourceData, m interface{}) error {
 	svc := m.(*pf.PfClient).OauthAccessTokenManagers
@@ -127,7 +150,7 @@ func resourcePingFederateOauthAccessTokenManagersResourceUpdate(d *schema.Resour
 	svc := m.(*pf.PfClient).OauthAccessTokenManagers
 	input := pf.UpdateTokenManagerInput{
 		Id:   d.Id(),
-		Body: *resourcePingFederateOauthAccessTokenManagersResourceReadData(d),
+		Body: *resourcePingFederateOauthAccessTokenManagersResourceReadData(d, svc),
 	}
 	result, _, err := svc.UpdateTokenManager(&input)
 	if err != nil {
@@ -177,13 +200,18 @@ func resourcePingFederateOauthAccessTokenManagersResourceReadResult(d *schema.Re
 	return nil
 }
 
-func resourcePingFederateOauthAccessTokenManagersResourceReadData(d *schema.ResourceData) *pf.AccessTokenManager {
+func resourcePingFederateOauthAccessTokenManagersResourceReadData(d *schema.ResourceData, svc *pf.OauthAccessTokenManagersService) *pf.AccessTokenManager {
+	//desc, _, err := svc.GetTokenManagerDescriptor(&pf.GetTokenManagerDescriptorInput{Id: *expandResourceLink(d.Get("plugin_descriptor_ref").([]interface{})).Id})
+	//if err != nil {
+	//	//TODO
+	//}
 	atm := &pf.AccessTokenManager{
 		Name:                String(d.Get("name").(string)),
 		Id:                  String(d.Get("instance_id").(string)),
 		PluginDescriptorRef: expandResourceLink(d.Get("plugin_descriptor_ref").([]interface{})),
-		Configuration:       expandPluginConfiguration(d.Get("configuration").([]interface{})),
-		AttributeContract:   expandAccessTokenAttributeContract(d.Get("attribute_contract").([]interface{})),
+		//Configuration:       expandPluginConfigurationWithDescriptor(d.Get("configuration").([]interface{}), desc.ConfigDescriptor),
+		Configuration:     expandPluginConfiguration(d.Get("configuration").([]interface{})),
+		AttributeContract: expandAccessTokenAttributeContract(d.Get("attribute_contract").([]interface{})),
 	}
 	return atm
 }
