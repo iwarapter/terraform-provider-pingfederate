@@ -61,16 +61,6 @@ func Test_weCanFlattenPersistentGrantContract(t *testing.T) {
 	equals(t, output, flattened)
 }
 
-func testClientAuth() map[string]string {
-	return map[string]string{
-		"client_auth.#": "1",
-		"client_auth.1602811133.client_cert_issuer_dn":     "",
-		"client_auth.1602811133.client_cert_subject_dn":    "",
-		"client_auth.1602811133.enforce_replay_prevention": "true",
-		"client_auth.1602811133.type":                      "CERTIFICATE",
-	}
-}
-
 func Test_weCanFlattenClientAuth(t *testing.T) {
 	initialClientAuth := &pf.ClientAuth{
 		Type:                String("CERTIFICATE"),

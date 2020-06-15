@@ -14,7 +14,7 @@ func resourcePingFederatePasswordCredentialValidatorResource() *schema.Resource 
 		Update: resourcePingFederatePasswordCredentialValidatorResourceUpdate,
 		Delete: resourcePingFederatePasswordCredentialValidatorResourceDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: resourcePingFederatePasswordCredentialValidatorResourceSchema(),
 	}

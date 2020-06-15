@@ -14,7 +14,7 @@ func resourcePingFederateOauthClientResource() *schema.Resource {
 		Update: resourcePingFederateOauthClientResourceUpdate,
 		Delete: resourcePingFederateOauthClientResourceDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{

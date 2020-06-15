@@ -14,7 +14,7 @@ func resourcePingFederateAuthenticationSelectorResource() *schema.Resource {
 		Update: resourcePingFederateAuthenticationSelectorResourceUpdate,
 		Delete: resourcePingFederateAuthenticationSelectorResourceDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: resourcePingFederateAuthenticationSelectorResourceSchema(),

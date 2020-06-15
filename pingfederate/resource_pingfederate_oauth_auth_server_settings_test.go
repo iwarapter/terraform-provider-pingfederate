@@ -37,7 +37,7 @@ func testAccCheckPingFederateOauthAuthServerSettingsDestroy(s *terraform.State) 
 }
 
 func testAccPingFederateOauthAuthServerSettingsConfig(name, configUpdate string) string {
-	return fmt.Sprintf(`
+	return `
 	resource "pingfederate_oauth_auth_server_settings" "settings" {
 		scopes {
 			name        = "address"
@@ -90,7 +90,7 @@ func testAccPingFederateOauthAuthServerSettingsConfig(name, configUpdate string)
 		authorization_code_entropy = 30
 		refresh_token_length       = 42
 		refresh_rolling_interval   = 0
-	}`) //, name, name, configUpdate)
+	}`
 }
 
 func testAccCheckPingFederateOauthAuthServerSettingsExists(n string, c int64, out *pf.AuthorizationServerSettings) resource.TestCheckFunc {

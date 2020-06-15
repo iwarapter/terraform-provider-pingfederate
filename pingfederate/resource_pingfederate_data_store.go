@@ -14,7 +14,7 @@ func resourcePingFederateDataStoreResource() *schema.Resource {
 		Update: resourcePingFederateDataStoreResourceUpdate,
 		Delete: resourcePingFederateDataStoreResourceDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: resourcePingFederateDataStoreResourceSchema(),
@@ -288,7 +288,6 @@ func resourcePingFederateDataStoreResourceCreate(d *schema.ResourceData, m inter
 		}
 		result.LdapDataStore = *store
 		result.Id = store.Id
-		break
 	case "JDBC":
 		input := pf.CreateJdbcDataStoreInput{Body: ds.JdbcDataStore, BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool))}
 		store, _, err := svc.CreateJdbcDataStore(&input)
@@ -297,7 +296,6 @@ func resourcePingFederateDataStoreResourceCreate(d *schema.ResourceData, m inter
 		}
 		result.JdbcDataStore = *store
 		result.Id = store.Id
-		break
 	case "CUSTOM":
 		input := pf.CreateCustomDataStoreInput{Body: ds.CustomDataStore, BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool))}
 		store, _, err := svc.CreateCustomDataStore(&input)
@@ -306,7 +304,6 @@ func resourcePingFederateDataStoreResourceCreate(d *schema.ResourceData, m inter
 		}
 		result.CustomDataStore = *store
 		result.Id = store.Id
-		break
 	}
 	d.SetId(*result.Id)
 	return resourcePingFederateDataStoreResourceReadResult(d, &result)
@@ -337,7 +334,6 @@ func resourcePingFederateDataStoreResourceUpdate(d *schema.ResourceData, m inter
 			return fmt.Errorf(err.Error())
 		}
 		result.LdapDataStore = *store
-		break
 	case "JDBC":
 		input := pf.UpdateJdbcDataStoreInput{Id: d.Id(), Body: ds.JdbcDataStore}
 		store, _, err := svc.UpdateJdbcDataStore(&input)
@@ -345,7 +341,6 @@ func resourcePingFederateDataStoreResourceUpdate(d *schema.ResourceData, m inter
 			return fmt.Errorf(err.Error())
 		}
 		result.JdbcDataStore = *store
-		break
 	case "CUSTOM":
 		input := pf.UpdateCustomDataStoreInput{Id: d.Id(), Body: ds.CustomDataStore}
 		store, _, err := svc.UpdateCustomDataStore(&input)
@@ -353,7 +348,6 @@ func resourcePingFederateDataStoreResourceUpdate(d *schema.ResourceData, m inter
 			return fmt.Errorf(err.Error())
 		}
 		result.CustomDataStore = *store
-		break
 	}
 
 	return resourcePingFederateDataStoreResourceReadResult(d, &result)
@@ -380,7 +374,6 @@ func resourcePingFederateDataStoreResourceReadResult(d *schema.ResourceData, rv 
 		if err := d.Set("ldap_data_store", flattenLdapDataStore(&rv.LdapDataStore)); err != nil {
 			return err
 		}
-		break
 	case "JDBC":
 		if rv.Name != nil {
 			rv.JdbcDataStore.Name = rv.Name
@@ -388,13 +381,11 @@ func resourcePingFederateDataStoreResourceReadResult(d *schema.ResourceData, rv 
 		if err := d.Set("jdbc_data_store", flattenJdbcDataStore(&rv.JdbcDataStore)); err != nil {
 			return err
 		}
-		break
 	case "CUSTOM":
 		if rv.Name != nil {
 			rv.CustomDataStore.Name = rv.Name
 		}
 		//input.Body.CustomDataStore = &ds.CustomDataStore
-		break
 	}
 
 	return nil
@@ -402,11 +393,11 @@ func resourcePingFederateDataStoreResourceReadResult(d *schema.ResourceData, rv 
 
 func resourcePingFederateDataStoreResourceReadData(d *schema.ResourceData) *pf.DataStore {
 	ds := &pf.DataStore{}
-	if v, ok := d.GetOkExists("jdbc_data_store"); ok && len(v.([]interface{})) != 0 {
+	if v, ok := d.GetOk("jdbc_data_store"); ok && len(v.([]interface{})) != 0 {
 		ds.Type = String("JDBC")
 		ds.JdbcDataStore = *expandJdbcDataStore(v.([]interface{}))
 	}
-	if v, ok := d.GetOkExists("ldap_data_store"); ok && len(v.([]interface{})) != 0 {
+	if v, ok := d.GetOk("ldap_data_store"); ok && len(v.([]interface{})) != 0 {
 		ds.Type = String("LDAP")
 		ds.LdapDataStore = *expandLdapDataStore(v.([]interface{}))
 	}

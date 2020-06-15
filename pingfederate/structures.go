@@ -3,12 +3,9 @@ package pingfederate
 import (
 	"bytes"
 	"fmt"
-	"hash/crc32"
-	"log"
-	"strings"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate"
+	"hash/crc32"
 )
 
 // String hashes a string to a unique hashcode.
@@ -37,16 +34,16 @@ func setOfString() *schema.Schema {
 		},
 	}
 }
-
-func requiredListOfString() *schema.Schema {
-	return &schema.Schema{
-		Type:     schema.TypeList,
-		Required: true,
-		Elem: &schema.Schema{
-			Type: schema.TypeString,
-		},
-	}
-}
+//
+//func requiredListOfString() *schema.Schema {
+//	return &schema.Schema{
+//		Type:     schema.TypeList,
+//		Required: true,
+//		Elem: &schema.Schema{
+//			Type: schema.TypeString,
+//		},
+//	}
+//}
 
 func resourceLinkSchema() *schema.Schema {
 	return &schema.Schema{
@@ -525,22 +522,19 @@ func flattenIdpAdapterContractMapping(in *pf.IdpAdapterContractMapping) []map[st
 			switch *v.Type {
 			case "LDAP":
 				ldapAttributes = append(ldapAttributes, flattenLdapAttributeSource(&v.LdapAttributeSource))
-				break
 			case "JDBC":
 				jdbcAttributes = append(jdbcAttributes, flattenJdbcAttributeSource(v))
-				break
 			case "CUSTOM":
 				customAttributes = append(customAttributes, flattenCustomAttributeSource(&v.CustomAttributeSource))
-				break
 			}
 		}
-		if ldapAttributes != nil && len(ldapAttributes) > 0 {
+		if  len(ldapAttributes) > 0 {
 			s["ldap_attribute_source"] = ldapAttributes
 		}
-		if jdbcAttributes != nil && len(jdbcAttributes) > 0 {
+		if len(jdbcAttributes) > 0 {
 			s["jdbc_attribute_source"] = jdbcAttributes
 		}
-		if customAttributes != nil && len(customAttributes) > 0 {
+		if len(customAttributes) > 0 {
 			s["custom_attribute_source"] = customAttributes
 		}
 	}
@@ -963,8 +957,7 @@ func expandAttributeFulfillmentValue(in map[string]interface{}) *pf.AttributeFul
 func flattenMapOfAttributeFulfillmentValue(in map[string]*pf.AttributeFulfillmentValue) *schema.Set {
 	m := make([]interface{}, 0, len(in))
 	for s2 := range in {
-		s := make(map[string]interface{})
-		s = flattenAttributeFulfillmentValue(in[s2])
+		s := flattenAttributeFulfillmentValue(in[s2])
 		s["key_name"] = s2
 		m = append(m, s)
 	}
@@ -1208,11 +1201,6 @@ func expandExpressionIssuanceCriteriaEntry(in []interface{}) *[]*pf.ExpressionIs
 	return exps
 }
 
-// Takes the result of schema.Set of strings and returns a []*string
-func expandStringSet(configured *schema.Set) []*string {
-	return expandStringList(configured.List())
-}
-
 // Takes list of pointers to strings. Expand to an array
 // of raw strings and returns a []interface{}
 // to keep compatibility w/ schema.NewSetschema.NewSet
@@ -1222,10 +1210,6 @@ func flattenStringList(list []*string) []interface{} {
 		vs = append(vs, *v)
 	}
 	return vs
-}
-
-func flattenStringSet(list []*string) *schema.Set {
-	return schema.NewSet(schema.HashString, flattenStringList(list))
 }
 
 func flattenScopes(in []*pf.ScopeEntry) []map[string]interface{} {
@@ -1603,12 +1587,12 @@ func flattenConfigTable(in []*pf.ConfigTable) []interface{} {
 	return m
 }
 
-func configTableHash(v interface{}) int {
-	var buf bytes.Buffer
-	m := v.(map[string]interface{})
-	buf.WriteString(m["name"].(string))
-	return hashcodeString(buf.String())
-}
+//func configTableHash(v interface{}) int {
+//	var buf bytes.Buffer
+//	m := v.(map[string]interface{})
+//	buf.WriteString(m["name"].(string))
+//	return hashcodeString(buf.String())
+//}
 
 func expandConfigTable(in []interface{}) *[]*pf.ConfigTable {
 	var configTables []*pf.ConfigTable
@@ -1923,9 +1907,9 @@ func flattenLdapDataStore(in *pf.LdapDataStore) []map[string]interface{} {
 	if in.MaskAttributeValues != nil {
 		s["mask_attribute_values"] = *in.MaskAttributeValues
 	}
-	if in.HostnamesTags != nil && len(*in.HostnamesTags) != 0 {
-		//TODO connection_url_tags
-	}
+	//if in.HostnamesTags != nil && len(*in.HostnamesTags) != 0 {
+	//	//TODO connection_url_tags
+	//}
 	if in.Hostnames != nil {
 		s["hostnames"] = flattenStringList(*in.Hostnames)
 	}
@@ -2136,30 +2120,6 @@ func getConfigFieldValueByName(name string, fields *[]*pf.ConfigField) (string, 
 		}
 	}
 	return "", nil
-}
-
-func printPluginConfig(name string, conf *pf.PluginConfiguration) {
-	log.Printf("[DEBUG] Helper: %s", name)
-	log.Printf("[DEBUG] Helper: %s Fields: %d", name, len(*conf.Fields))
-	for _, f := range *conf.Fields {
-		log.Printf("[DEBUG] Helper: %s Field: %s: Value: %v EncryptedValue: %v", name, *f.Name, *f.Value, *f.EncryptedValue)
-	}
-	log.Printf("[DEBUG] Helper: %s Tables: %v", name, len(*conf.Tables))
-	for _, t := range *conf.Tables {
-		log.Printf("[DEBUG] Helper: %s Table: %s", name, *t.Name)
-		log.Printf("[DEBUG] Helper: %s Table: %s Rows: %d", name, *t.Name, len(*t.Rows))
-		for _, r := range *t.Rows {
-			for i, f := range *r.Fields {
-				if f.Value != nil {
-					log.Printf("[DEBUG] Helper: %s Table: %s Row: %d Field: %s Value: %s", name, *t.Name, i, *f.Name, *f.Value)
-				}
-				if f.EncryptedValue != nil {
-					log.Printf("[DEBUG] Helper: %s Table: %s Row: %d Field: %s EncryptedValue: %s", name, *t.Name, i, *f.Name, *f.EncryptedValue)
-				}
-			}
-		}
-
-	}
 }
 
 func resourceAuthenticationSelectorAttributeContract() *schema.Resource {
@@ -2470,55 +2430,54 @@ func expandAttributeMapping(in []interface{}) *pf.AttributeMapping {
 	return iac
 }
 
-func flattenScopeAttributeMappings(in map[string]*pf.ParameterValues) map[string][]interface{} {
-	s := make(map[string][]interface{})
-	for key, val := range in {
-		s[key] = flattenStringList(*val.Values)
-	}
-	return s
-}
+//func flattenScopeAttributeMappings(in map[string]*pf.ParameterValues) map[string][]interface{} {
+//	s := make(map[string][]interface{})
+//	for key, val := range in {
+//		s[key] = flattenStringList(*val.Values)
+//	}
+//	return s
+//}
+//
+//func expandScopeAttributeMappings(in map[string]interface{}) map[string]*pf.ParameterValues {
+//	mappings := map[string]*pf.ParameterValues{}
+//	m := expandMapOfLists(in)
+//	for key, val := range m {
+//		mappings[key] = &pf.ParameterValues{Values: &val}
+//	}
+//	return mappings
+//}
+//
+//func expandMapOfLists(in map[string]interface{}) map[string][]*string {
+//	m := map[string][]*string{}
+//	for s := range in {
+//		i := strings.LastIndex(s, ".")
+//		first := s[0:i]
+//		last := s[i+1:]
+//		if last != "#" {
+//			m[first] = append(m[first], String(in[s].(string)))
+//		}
+//	}
+//	return m
+//}
 
-func expandScopeAttributeMappings(in map[string]interface{}) map[string]*pf.ParameterValues {
-	mappings := map[string]*pf.ParameterValues{}
-	m := expandMapOfLists(in)
-	for key, val := range m {
-		mappings[key] = &pf.ParameterValues{Values: &val}
-	}
-	return mappings
-}
-
-func expandMapOfLists(in map[string]interface{}) map[string][]*string {
-	m := map[string][]*string{}
-	for s := range in {
-		i := strings.LastIndex(s, ".")
-		first := s[0:i]
-		last := s[i+1:]
-		if last != "#" {
-			m[first] = append(m[first], String(in[s].(string)))
-		}
-	}
-	return m
-}
-
-func expandPluginConfigurationWithDescriptor(in []interface{}, desc *pf.PluginConfigDescriptor) *pf.PluginConfiguration {
-
-	config := expandPluginConfiguration(in)
-	for _, descriptor := range *desc.Fields {
-		if descriptor.DefaultValue != nil {
-			if !hasField(*descriptor.Name, config) {
-				*config.Fields = append(*config.Fields, &pf.ConfigField{Name: descriptor.Name, Value: descriptor.DefaultValue})
-			}
-		}
-	}
-
-	return config
-}
-
-func hasField(name string, c *pf.PluginConfiguration) bool {
-	for _, field := range *c.Fields {
-		if *field.Name == name {
-			return true
-		}
-	}
-	return false
-}
+//func expandPluginConfigurationWithDescriptor(in []interface{}, desc *pf.PluginConfigDescriptor) *pf.PluginConfiguration {
+//	config := expandPluginConfiguration(in)
+//	for _, descriptor := range *desc.Fields {
+//		if descriptor.DefaultValue != nil {
+//			if !hasField(*descriptor.Name, config) {
+//				*config.Fields = append(*config.Fields, &pf.ConfigField{Name: descriptor.Name, Value: descriptor.DefaultValue})
+//			}
+//		}
+//	}
+//
+//	return config
+//}
+//
+//func hasField(name string, c *pf.PluginConfiguration) bool {
+//	for _, field := range *c.Fields {
+//		if *field.Name == name {
+//			return true
+//		}
+//	}
+//	return false
+//}

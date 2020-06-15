@@ -13,7 +13,7 @@ func resourcePingFederateOauthAccessTokenManagersResource() *schema.Resource {
 		Update: resourcePingFederateOauthAccessTokenManagersResourceUpdate,
 		Delete: resourcePingFederateOauthAccessTokenManagersResourceDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: resourcePingFederateOauthAccessTokenManagersResourceSchema(),

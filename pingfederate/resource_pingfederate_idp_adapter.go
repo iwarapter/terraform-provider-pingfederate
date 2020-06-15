@@ -14,7 +14,7 @@ func resourcePingFederateIdpAdapterResource() *schema.Resource {
 		Update: resourcePingFederateIdpAdapterResourceUpdate,
 		Delete: resourcePingFederateIdpAdapterResourceDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: resourcePingFederateIdpAdapterResourceSchema(),
 	}

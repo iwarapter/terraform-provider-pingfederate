@@ -14,7 +14,7 @@ func resourcePingFederateOpenIdConnectPolicyResource() *schema.Resource {
 		Update: resourcePingFederateOpenIdConnectPolicyResourceUpdate,
 		Delete: resourcePingFederateOpenIdConnectPolicyResourceDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: resourcePingFederateOpenIdConnectPolicyResourceSchema(),
 	}

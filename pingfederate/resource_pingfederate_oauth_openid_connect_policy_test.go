@@ -39,7 +39,7 @@ func testAccCheckPingFederateOauthOpenIdConnectPolicyDestroy(s *terraform.State)
 }
 
 func testAccPingFederateOauthOpenIdConnectPolicyConfig(configUpdate string) string {
-	return fmt.Sprintf(`
+	return `
 resource "pingfederate_oauth_openid_connect_policy" "demo" {
   policy_id = "foo"
   name      = "foo"
@@ -118,7 +118,7 @@ resource "pingfederate_oauth_access_token_manager" "demo" {
   attribute_contract {
     extended_attributes = ["name"]
   }
-}`) //, configUpdate)
+}`
 }
 
 func testAccCheckPingFederateOauthOpenIdConnectPolicyExists(n string) resource.TestCheckFunc {

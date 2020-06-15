@@ -14,7 +14,7 @@ func resourcePingFederateSpAuthenticationPolicyContractMappingResource() *schema
 		Update: resourcePingFederateSpAuthenticationPolicyContractMappingResourceUpdate,
 		Delete: resourcePingFederateSpAuthenticationPolicyContractMappingResourceDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: resourcePingFederateSpAuthenticationPolicyContractMappingResourceSchema(),
 	}

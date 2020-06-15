@@ -125,9 +125,6 @@ func testAccCheckPingFederateOauthAccessTokenManagerExists(n string, out *pf.Cli
 	}
 }
 
-type testOauthAccessTokenManagersService struct {
-}
-
 func Test_resourcePingFederateOauthAccessTokenManagerResourceReadData(t *testing.T) {
 	descs := pf.PluginConfigDescriptor{
 		ActionDescriptors: nil,

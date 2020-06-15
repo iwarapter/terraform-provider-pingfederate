@@ -190,9 +190,10 @@ func resourcePingFederateOauthAuthServerSettingsResourceUpdate(d *schema.Resourc
 		RefreshTokenLength:       Int(refreshTokenLength),
 	}
 
-	if _, ok := d.GetOk("admin_web_service_pcv_ref"); ok {
-		// authSettings.AdminWebServicePcvRef = //expand
-	}
+	//TODO
+	//if _, ok := d.GetOk("admin_web_service_pcv_ref"); ok {
+	//	// authSettings.AdminWebServicePcvRef = //expand
+	//}
 
 	if _, ok := d.GetOk("allowed_origins"); ok {
 		strs := expandStringList(d.Get("allowed_origins").(*schema.Set).List())
