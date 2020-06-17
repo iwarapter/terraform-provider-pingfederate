@@ -7,6 +7,6 @@ import (
 )
 
 type OauthClientSettingsAPI interface {
-	GetClientSettings() (result *models.ClientSettings, resp *http.Response, err error)
-	UpdateClientSettings(input *UpdateClientSettingsInput) (result *models.ClientSettings, resp *http.Response, err error)
+	GetClientSettings() (output *models.ClientSettings, resp *http.Response, err error)
+	UpdateClientSettings(input *UpdateClientSettingsInput) (output *models.ClientSettings, resp *http.Response, err error)
 }

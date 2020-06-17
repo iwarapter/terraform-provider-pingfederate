@@ -1,13 +1,11 @@
 package pingfederate
 
 import (
-	"encoding/json"
 	"fmt"
-	"github.com/iwarapter/pingfederate-sdk-go/services/oauthAccessTokenManagers"
 	"net/http"
-	"net/http/httptest"
-	"net/url"
 	"testing"
+
+	"github.com/iwarapter/pingfederate-sdk-go/services/oauthAccessTokenManagers"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -127,50 +125,44 @@ func testAccCheckPingFederateOauthAccessTokenManagerExists(n string, out *pf.Cli
 	}
 }
 
-func Test_resourcePingFederateOauthAccessTokenManagerResourceReadData(t *testing.T) {
-	descs := pf.PluginConfigDescriptor{
-		ActionDescriptors: nil,
-		Description:       nil,
-		Fields: &[]*pf.FieldDescriptor{
-			{
-				DefaultValue: String("28"),
-				Label:        String("Token Length"),
-				Name:         String("Token Length"),
-				Required:     Bool(true),
-				Type:         String("TEXT"),
-			},
-		},
-		Tables: &[]*pf.TableDescriptor{
-			{
-				Columns: &[]*pf.FieldDescriptor{
-					{
-						Type: String("TEXT"),
-						Name: String("Username"),
-					},
+type oauthAccessTokenManagersMock struct {
+	oauthAccessTokenManagers.OauthAccessTokenManagersAPI
+}
+
+func (m oauthAccessTokenManagersMock) GetTokenManagerDescriptor(input *oauthAccessTokenManagers.GetTokenManagerDescriptorInput) (output *pf.AccessTokenManagerDescriptor, resp *http.Response, err error) {
+	return &pf.AccessTokenManagerDescriptor{
+		ConfigDescriptor: &pf.PluginConfigDescriptor{
+			ActionDescriptors: nil,
+			Description:       nil,
+			Fields: &[]*pf.FieldDescriptor{
+				{
+					DefaultValue: String("28"),
+					Label:        String("Token Length"),
+					Name:         String("Token Length"),
+					Required:     Bool(true),
+					Type:         String("TEXT"),
 				},
-				Description:       nil,
-				Label:             nil,
-				Name:              String("Networks"),
-				RequireDefaultRow: nil,
+			},
+			Tables: &[]*pf.TableDescriptor{
+				{
+					Columns: &[]*pf.FieldDescriptor{
+						{
+							Type: String("TEXT"),
+							Name: String("Username"),
+						},
+					},
+					Description:       nil,
+					Label:             nil,
+					Name:              String("Networks"),
+					RequireDefaultRow: nil,
+				},
 			},
 		},
-	}
-	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-		// Test request parameters
-		equals(t, req.URL.String(), "/oauth/accessTokenManagers/descriptors/org.sourceid.oauth20.token.plugin.impl.ReferenceBearerAccessTokenManagementPlugin")
-		// Send response to be tested
-		b, _ := json.Marshal(pf.AuthenticationSelectorDescriptor{
-			ConfigDescriptor: &descs,
-		})
-		rw.Write(b)
-	}))
-	// Close the server when test finishes
-	defer server.Close()
+	}, nil, nil
+}
 
-	// Use Client & URL from our local test server
-	url, _ := url.Parse(server.URL)
-	c := oauthAccessTokenManagers.New("", "", url, "", server.Client())
-
+func Test_resourcePingFederateOauthAccessTokenManagerResourceReadData(t *testing.T) {
+	m := &oauthAccessTokenManagersMock{}
 	cases := []struct {
 		Resource pf.AccessTokenManager
 	}{
@@ -199,12 +191,11 @@ func Test_resourcePingFederateOauthAccessTokenManagerResourceReadData(t *testing
 	}
 	for i, tc := range cases {
 		t.Run(fmt.Sprintf("tc:%v", i), func(t *testing.T) {
-
 			resourceSchema := resourcePingFederateOauthAccessTokenManagersResourceSchema()
 			resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})
-			resourcePingFederateOauthAccessTokenManagersResourceReadResult(resourceLocalData, &tc.Resource, c)
+			resourcePingFederateOauthAccessTokenManagersResourceReadResult(resourceLocalData, &tc.Resource, m)
 
-			if got := *resourcePingFederateOauthAccessTokenManagersResourceReadData(resourceLocalData, c); !cmp.Equal(got, tc.Resource) {
+			if got := *resourcePingFederateOauthAccessTokenManagersResourceReadData(resourceLocalData, m); !cmp.Equal(got, tc.Resource) {
 				t.Errorf("resourcePingFederateOauthAccessTokenManagerResourceReadData() = %v", cmp.Diff(got, tc.Resource))
 			}
 		})

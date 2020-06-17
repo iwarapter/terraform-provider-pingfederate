@@ -7,6 +7,6 @@ import (
 )
 
 type IdpDefaultUrlsAPI interface {
-	GetDefaultUrl() (result *models.IdpDefaultUrl, resp *http.Response, err error)
-	UpdateDefaultUrlSettings(input *UpdateDefaultUrlSettingsInput) (result *models.IdpDefaultUrl, resp *http.Response, err error)
+	GetDefaultUrl() (output *models.IdpDefaultUrl, resp *http.Response, err error)
+	UpdateDefaultUrlSettings(input *UpdateDefaultUrlSettingsInput) (output *models.IdpDefaultUrl, resp *http.Response, err error)
 }

@@ -7,8 +7,8 @@ import (
 )
 
 type AuthenticationPoliciesAPI interface {
-	GetSettings() (result *models.AuthenticationPoliciesSettings, resp *http.Response, err error)
-	UpdateSettings(input *UpdateSettingsInput) (result *models.AuthenticationPoliciesSettings, resp *http.Response, err error)
-	GetDefaultAuthenticationPolicy() (result *models.AuthenticationPolicy, resp *http.Response, err error)
-	UpdateDefaultAuthenticationPolicy(input *UpdateDefaultAuthenticationPolicyInput) (result *models.AuthenticationPolicy, resp *http.Response, err error)
+	GetSettings() (output *models.AuthenticationPoliciesSettings, resp *http.Response, err error)
+	UpdateSettings(input *UpdateSettingsInput) (output *models.AuthenticationPoliciesSettings, resp *http.Response, err error)
+	GetDefaultAuthenticationPolicy() (output *models.AuthenticationPolicy, resp *http.Response, err error)
+	UpdateDefaultAuthenticationPolicy(input *UpdateDefaultAuthenticationPolicyInput) (output *models.AuthenticationPolicy, resp *http.Response, err error)
 }

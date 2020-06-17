@@ -7,5 +7,5 @@ import (
 )
 
 type KeyPairsAPI interface {
-	GetKeyAlgorithms() (result *models.KeyAlgorithms, resp *http.Response, err error)
+	GetKeyAlgorithms() (output *models.KeyAlgorithms, resp *http.Response, err error)
 }

@@ -1,10 +1,11 @@
 package pingfederate
 
 import (
+	"context"
 	"fmt"
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthAuthServerSettings"
-	"log"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
@@ -53,16 +54,16 @@ func resourcePingFederateOauthAuthServerSettingsResource() *schema.Resource {
 	}
 
 	return &schema.Resource{
-		Create: resourcePingFederateOauthAuthServerSettingsResourceCreate,
-		Read:   resourcePingFederateOauthAuthServerSettingsResourceRead,
-		Update: resourcePingFederateOauthAuthServerSettingsResourceUpdate,
-		Delete: resourcePingFederateOauthAuthServerSettingsResourceDelete,
+		CreateContext: resourcePingFederateOauthAuthServerSettingsResourceCreate,
+		ReadContext:   resourcePingFederateOauthAuthServerSettingsResourceRead,
+		UpdateContext: resourcePingFederateOauthAuthServerSettingsResourceUpdate,
+		DeleteContext: resourcePingFederateOauthAuthServerSettingsResourceDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourcePingFederateOauthAuthServerSettingsResourceImport,
+			StateContext: resourcePingFederateOauthAuthServerSettingsResourceImport,
 		},
 
 		Schema: map[string]*schema.Schema{
-			"default_scope_description": &schema.Schema{
+			"default_scope_description": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
@@ -70,59 +71,59 @@ func resourcePingFederateOauthAuthServerSettingsResource() *schema.Resource {
 			"scope_groups":           scopeGroups,
 			"exclusive_scopes":       scopes,
 			"exclusive_scope_groups": scopeGroups,
-			"authorization_code_timeout": &schema.Schema{
+			"authorization_code_timeout": {
 				Type:     schema.TypeInt,
 				Required: true,
 			},
-			"authorization_code_entropy": &schema.Schema{
+			"authorization_code_entropy": {
 				Type:     schema.TypeInt,
 				Required: true,
 			},
-			"track_user_sessions_for_logout": &schema.Schema{
+			"track_user_sessions_for_logout": {
 				Type:     schema.TypeBool,
 				Optional: true,
 			},
-			"token_endpoint_base_url": &schema.Schema{
+			"token_endpoint_base_url": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"persistent_grant_lifetime": &schema.Schema{
+			"persistent_grant_lifetime": {
 				Type:     schema.TypeInt,
 				Optional: true,
 			},
-			"persistent_grant_lifetime_unit": &schema.Schema{
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validatePersistentGrantLifetimeUnit,
+			"persistent_grant_lifetime_unit": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: validatePersistentGrantLifetimeUnit,
 			},
-			"refresh_token_length": &schema.Schema{
+			"refresh_token_length": {
 				Type:     schema.TypeInt,
 				Required: true,
 			},
-			"roll_refresh_token_values": &schema.Schema{
+			"roll_refresh_token_values": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  true,
 			},
-			"refresh_rolling_interval": &schema.Schema{
+			"refresh_rolling_interval": {
 				Type:     schema.TypeInt,
 				Required: true,
 			},
-			"persistent_grant_reuse_grant_types": &schema.Schema{
+			"persistent_grant_reuse_grant_types": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Schema{
-					Type:         schema.TypeString,
-					ValidateFunc: validateGrantTypes,
+					Type:             schema.TypeString,
+					ValidateDiagFunc: validateGrantTypes,
 				},
 			},
-			"persistent_grant_contract": &schema.Schema{
+			"persistent_grant_contract": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"extended_attributes": &schema.Schema{
+						"extended_attributes": {
 							Type:     schema.TypeList,
 							Optional: true,
 							MinItems: 1,
@@ -133,24 +134,24 @@ func resourcePingFederateOauthAuthServerSettingsResource() *schema.Resource {
 					},
 				},
 			},
-			"bypass_authorization_for_approved_grants": &schema.Schema{
+			"bypass_authorization_for_approved_grants": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  false,
 			},
-			"allow_unidentified_client_ro_creds": &schema.Schema{
+			"allow_unidentified_client_ro_creds": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  false,
 			},
-			"allowed_origins": &schema.Schema{
+			"allowed_origins": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
 			},
-			"allow_unidentified_client_extension_grants": &schema.Schema{
+			"allow_unidentified_client_extension_grants": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  false,
@@ -160,21 +161,21 @@ func resourcePingFederateOauthAuthServerSettingsResource() *schema.Resource {
 	}
 }
 
-func resourcePingFederateOauthAuthServerSettingsResourceCreate(d *schema.ResourceData, m interface{}) error {
+func resourcePingFederateOauthAuthServerSettingsResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	d.SetId("OauthAuthServerSettings")
-	return resourcePingFederateOauthAuthServerSettingsResourceUpdate(d, m)
+	return resourcePingFederateOauthAuthServerSettingsResourceUpdate(ctx, d, m)
 }
 
-func resourcePingFederateOauthAuthServerSettingsResourceRead(d *schema.ResourceData, m interface{}) error {
+func resourcePingFederateOauthAuthServerSettingsResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthAuthServerSettings
 	result, _, err := svc.GetAuthorizationServerSettings()
 	if err != nil {
-		return fmt.Errorf(err.Error())
+		return diag.Errorf("unable to read OauthAuthServerSettings: %s", err)
 	}
 	return resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result)
 }
 
-func resourcePingFederateOauthAuthServerSettingsResourceUpdate(d *schema.ResourceData, m interface{}) error {
+func resourcePingFederateOauthAuthServerSettingsResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	defaultScopeDescription := d.Get("default_scope_description").(string)
 	authorizationCodeTimeout := d.Get("authorization_code_timeout").(int)
 	authorizationCodeEntropy := d.Get("authorization_code_entropy").(int)
@@ -263,17 +264,17 @@ func resourcePingFederateOauthAuthServerSettingsResourceUpdate(d *schema.Resourc
 
 	result, _, err := svc.UpdateAuthorizationServerSettings(input)
 	if err != nil {
-		return fmt.Errorf(err.Error())
+		return diag.Errorf("unable to update OauthAuthServerSettings: %s", err)
 	}
 	return resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result)
 }
 
-func resourcePingFederateOauthAuthServerSettingsResourceDelete(d *schema.ResourceData, m interface{}) error {
+func resourcePingFederateOauthAuthServerSettingsResourceDelete(_ context.Context, _ *schema.ResourceData, _ interface{}) diag.Diagnostics {
 	//resource cannot be deleted just not tracked by terraform anymore
 	return nil
 }
 
-func resourcePingFederateOauthAuthServerSettingsResourceImport(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+func resourcePingFederateOauthAuthServerSettingsResourceImport(_ context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 	svc := m.(pfClient).OauthAuthServerSettings
 	result, _, err := svc.GetAuthorizationServerSettings()
 	if err != nil {
@@ -283,61 +284,61 @@ func resourcePingFederateOauthAuthServerSettingsResourceImport(d *schema.Resourc
 	return []*schema.ResourceData{d}, nil
 }
 
-func resourcePingFederateOauthAuthServerSettingsResourceReadResult(d *schema.ResourceData, rv *pf.AuthorizationServerSettings) (err error) {
-	log.Printf("[INFO] ")
-	setResourceDataString(d, "default_scope_description", rv.DefaultScopeDescription)
-	setResourceDataInt(d, "authorization_code_timeout", rv.AuthorizationCodeTimeout)
-	setResourceDataInt(d, "authorization_code_entropy", rv.AuthorizationCodeEntropy)
-	setResourceDataInt(d, "refresh_token_length", rv.RefreshTokenLength)
-	setResourceDataInt(d, "refresh_rolling_interval", rv.RefreshRollingInterval)
-	setResourceDataBool(d, "allow_unidentified_client_extension_grants", rv.AllowUnidentifiedClientExtensionGrants)
-	setResourceDataBool(d, "track_user_sessions_for_logout", rv.TrackUserSessionsForLogout)
-	setResourceDataString(d, "token_endpoint_base_url", rv.TokenEndpointBaseUrl)
-	setResourceDataInt(d, "persistent_grant_lifetime", rv.PersistentGrantLifetime)
-	setResourceDataString(d, "persistent_grant_lifetime_unit", rv.PersistentGrantLifetimeUnit)
-	setResourceDataBool(d, "roll_refresh_token_values", rv.RollRefreshTokenValues)
-	setResourceDataBool(d, "bypass_authorization_for_approved_grants", rv.BypassAuthorizationForApprovedGrants)
-	setResourceDataBool(d, "allow_unidentified_client_ro_creds", rv.AllowUnidentifiedClientROCreds)
+func resourcePingFederateOauthAuthServerSettingsResourceReadResult(d *schema.ResourceData, rv *pf.AuthorizationServerSettings) diag.Diagnostics {
+	var diags diag.Diagnostics
+	setResourceDataStringithDiagnostic(d, "default_scope_description", rv.DefaultScopeDescription, &diags)
+	setResourceDataIntWithDiagnostic(d, "authorization_code_timeout", rv.AuthorizationCodeTimeout, &diags)
+	setResourceDataIntWithDiagnostic(d, "authorization_code_entropy", rv.AuthorizationCodeEntropy, &diags)
+	setResourceDataIntWithDiagnostic(d, "refresh_token_length", rv.RefreshTokenLength, &diags)
+	setResourceDataIntWithDiagnostic(d, "refresh_rolling_interval", rv.RefreshRollingInterval, &diags)
+	setResourceDataBoolWithDiagnostic(d, "allow_unidentified_client_extension_grants", rv.AllowUnidentifiedClientExtensionGrants, &diags)
+	setResourceDataBoolWithDiagnostic(d, "track_user_sessions_for_logout", rv.TrackUserSessionsForLogout, &diags)
+	setResourceDataStringithDiagnostic(d, "token_endpoint_base_url", rv.TokenEndpointBaseUrl, &diags)
+	setResourceDataIntWithDiagnostic(d, "persistent_grant_lifetime", rv.PersistentGrantLifetime, &diags)
+	setResourceDataStringithDiagnostic(d, "persistent_grant_lifetime_unit", rv.PersistentGrantLifetimeUnit, &diags)
+	setResourceDataBoolWithDiagnostic(d, "roll_refresh_token_values", rv.RollRefreshTokenValues, &diags)
+	setResourceDataBoolWithDiagnostic(d, "bypass_authorization_for_approved_grants", rv.BypassAuthorizationForApprovedGrants, &diags)
+	setResourceDataBoolWithDiagnostic(d, "allow_unidentified_client_ro_creds", rv.AllowUnidentifiedClientROCreds, &diags)
 
 	// "admin_web_service_pcv_ref"
 
 	if rv.PersistentGrantReuseGrantTypes != nil && len(rv.PersistentGrantReuseGrantTypes) > 0 {
-		if err = d.Set("persistent_grant_reuse_grant_types", rv.PersistentGrantReuseGrantTypes); err != nil {
-			return err
+		if err := d.Set("persistent_grant_reuse_grant_types", rv.PersistentGrantReuseGrantTypes); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
 
 	if rv.AllowedOrigins != nil && len(*rv.AllowedOrigins) > 0 {
-		if err = d.Set("allowed_origins", *rv.AllowedOrigins); err != nil {
-			return err
+		if err := d.Set("allowed_origins", *rv.AllowedOrigins); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
 
 	if rv.PersistentGrantContract != nil {
-		if err = d.Set("persistent_grant_contract", flattenPersistentGrantContract(rv.PersistentGrantContract)); err != nil {
-			return err
+		if err := d.Set("persistent_grant_contract", flattenPersistentGrantContract(rv.PersistentGrantContract)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
 	if rv.Scopes != nil && len(*rv.Scopes) > 0 {
-		if err = d.Set("scopes", flattenScopes(*rv.Scopes)); err != nil {
-			return err
+		if err := d.Set("scopes", flattenScopes(*rv.Scopes)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
 	if rv.ScopeGroups != nil && len(*rv.ScopeGroups) > 0 {
-		if err = d.Set("scope_groups", flattenScopeGroups(*rv.ScopeGroups)); err != nil {
-			return err
+		if err := d.Set("scope_groups", flattenScopeGroups(*rv.ScopeGroups)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
 	if rv.ExclusiveScopes != nil && len(*rv.ExclusiveScopes) > 0 {
-		if err = d.Set("exclusive_scopes", flattenScopes(*rv.ExclusiveScopes)); err != nil {
-			return err
+		if err := d.Set("exclusive_scopes", flattenScopes(*rv.ExclusiveScopes)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
 	if rv.ExclusiveScopeGroups != nil && len(*rv.ExclusiveScopeGroups) > 0 {
-		if err = d.Set("exclusive_scope_groups", flattenScopeGroups(*rv.ExclusiveScopeGroups)); err != nil {
-			return err
+		if err := d.Set("exclusive_scope_groups", flattenScopeGroups(*rv.ExclusiveScopeGroups)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
 
-	return nil
+	return diags
 }

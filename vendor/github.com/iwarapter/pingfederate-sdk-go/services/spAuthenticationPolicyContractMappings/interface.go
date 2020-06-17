@@ -7,9 +7,9 @@ import (
 )
 
 type SpAuthenticationPolicyContractMappingsAPI interface {
-	GetApcToSpAdapterMappings() (result *models.ApcToSpAdapterMappings, resp *http.Response, err error)
-	CreateApcToSpAdapterMapping(input *CreateApcToSpAdapterMappingInput) (result *models.ApcToSpAdapterMapping, resp *http.Response, err error)
-	GetApcToSpAdapterMappingById(input *GetApcToSpAdapterMappingByIdInput) (result *models.ApcToSpAdapterMapping, resp *http.Response, err error)
-	UpdateApcToSpAdapterMappingById(input *UpdateApcToSpAdapterMappingByIdInput) (result *models.ApcToSpAdapterMapping, resp *http.Response, err error)
-	DeleteApcToSpAdapterMappingById(input *DeleteApcToSpAdapterMappingByIdInput) (result *models.ApiResult, resp *http.Response, err error)
+	GetApcToSpAdapterMappings() (output *models.ApcToSpAdapterMappings, resp *http.Response, err error)
+	CreateApcToSpAdapterMapping(input *CreateApcToSpAdapterMappingInput) (output *models.ApcToSpAdapterMapping, resp *http.Response, err error)
+	GetApcToSpAdapterMappingById(input *GetApcToSpAdapterMappingByIdInput) (output *models.ApcToSpAdapterMapping, resp *http.Response, err error)
+	UpdateApcToSpAdapterMappingById(input *UpdateApcToSpAdapterMappingByIdInput) (output *models.ApcToSpAdapterMapping, resp *http.Response, err error)
+	DeleteApcToSpAdapterMappingById(input *DeleteApcToSpAdapterMappingByIdInput) (output *models.ApiResult, resp *http.Response, err error)
 }

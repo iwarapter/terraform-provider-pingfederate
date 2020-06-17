@@ -2,8 +2,9 @@ package pingfederate
 
 import (
 	"fmt"
-	"github.com/iwarapter/pingfederate-sdk-go/services/spAuthenticationPolicyContractMappings"
 	"testing"
+
+	"github.com/iwarapter/pingfederate-sdk-go/services/spAuthenticationPolicyContractMappings"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"

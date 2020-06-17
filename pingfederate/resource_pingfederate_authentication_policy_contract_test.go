@@ -2,8 +2,9 @@ package pingfederate
 
 import (
 	"fmt"
-	"github.com/iwarapter/pingfederate-sdk-go/services/authenticationPolicyContracts"
 	"testing"
+
+	"github.com/iwarapter/pingfederate-sdk-go/services/authenticationPolicyContracts"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -42,7 +43,7 @@ func testAccCheckPingFederateAuthenticationPolicyContractResourceDestroy(s *terr
 func testAccPingFederateAuthenticationPolicyContractResourceConfig(configUpdate string) string {
 	return fmt.Sprintf(`
 	resource "pingfederate_authentication_policy_contract" "demo" {
-		name = "wee"
+		name = "testing"
 		core_attributes = ["subject"]
 		extended_attributes = ["foo", "%s"]
 	}`, configUpdate)

@@ -3,169 +3,188 @@ package oauthCibaServerPolicy
 import (
 	"fmt"
 	"net/http"
-	"net/url"
 	"strings"
 
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/client"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/client/metadata"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/request"
+)
+
+const (
+	// ServiceName - The name of service.
+	ServiceName = "OauthCibaServerPolicy"
 )
 
 type OauthCibaServerPolicyService struct {
-	Client *client.PfClient
+	*client.PfClient
 }
 
 // New creates a new instance of the OauthCibaServerPolicyService client.
-func New(username string, password string, baseUrl *url.URL, context string, httpClient *http.Client) *OauthCibaServerPolicyService {
+func New(cfg *config.Config) *OauthCibaServerPolicyService {
 
-	return &OauthCibaServerPolicyService{Client: client.NewClient(username, password, baseUrl, context, httpClient)}
+	return &OauthCibaServerPolicyService{PfClient: client.New(
+		*cfg,
+		metadata.ClientInfo{
+			ServiceName: ServiceName,
+			Endpoint:    *cfg.Endpoint,
+			APIVersion:  pingfederate.SDKVersion,
+		},
+	)}
+}
+
+// newRequest creates a new request for a OauthCibaServerPolicy operation
+func (c *OauthCibaServerPolicyService) newRequest(op *request.Operation, params, data interface{}) *request.Request {
+	req := c.NewRequest(op, params, data)
+
+	return req
 }
 
 //GetSettings - Get general ciba server request policy settings.
 //RequestType: GET
 //Input:
-func (s *OauthCibaServerPolicyService) GetSettings() (result *models.CibaServerPolicySettings, resp *http.Response, err error) {
+func (s *OauthCibaServerPolicyService) GetSettings() (output *models.CibaServerPolicySettings, resp *http.Response, err error) {
 	path := "/oauth/cibaServerPolicy/settings"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetSettings",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.CibaServerPolicySettings{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //UpdateSettings - Update general ciba server request policy settings.
 //RequestType: PUT
 //Input: input *UpdateSettingsInput
-func (s *OauthCibaServerPolicyService) UpdateSettings(input *UpdateSettingsInput) (result *models.CibaServerPolicySettings, resp *http.Response, err error) {
+func (s *OauthCibaServerPolicyService) UpdateSettings(input *UpdateSettingsInput) (output *models.CibaServerPolicySettings, resp *http.Response, err error) {
 	path := "/oauth/cibaServerPolicy/settings"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("PUT", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "UpdateSettings",
+		HTTPMethod: "PUT",
+		HTTPPath:   path,
 	}
+	output = &models.CibaServerPolicySettings{}
+	req := s.newRequest(op, input.Body, output)
 	if input.BypassExternalValidation != nil {
-		req.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
+		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
-
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetPolicies - Get list of request policies.
 //RequestType: GET
 //Input:
-func (s *OauthCibaServerPolicyService) GetPolicies() (result *models.RequestPolicies, resp *http.Response, err error) {
+func (s *OauthCibaServerPolicyService) GetPolicies() (output *models.RequestPolicies, resp *http.Response, err error) {
 	path := "/oauth/cibaServerPolicy/requestPolicies"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetPolicies",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.RequestPolicies{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //CreatePolicy - Create a new request policy.
 //RequestType: POST
 //Input: input *CreatePolicyInput
-func (s *OauthCibaServerPolicyService) CreatePolicy(input *CreatePolicyInput) (result *models.RequestPolicy, resp *http.Response, err error) {
+func (s *OauthCibaServerPolicyService) CreatePolicy(input *CreatePolicyInput) (output *models.RequestPolicy, resp *http.Response, err error) {
 	path := "/oauth/cibaServerPolicy/requestPolicies"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("POST", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "CreatePolicy",
+		HTTPMethod: "POST",
+		HTTPPath:   path,
 	}
+	output = &models.RequestPolicy{}
+	req := s.newRequest(op, input.Body, output)
 	if input.BypassExternalValidation != nil {
-		req.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
+		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
-
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetPolicy - Find request policy by ID.
 //RequestType: GET
 //Input: input *GetPolicyInput
-func (s *OauthCibaServerPolicyService) GetPolicy(input *GetPolicyInput) (result *models.RequestPolicy, resp *http.Response, err error) {
+func (s *OauthCibaServerPolicyService) GetPolicy(input *GetPolicyInput) (output *models.RequestPolicy, resp *http.Response, err error) {
 	path := "/oauth/cibaServerPolicy/requestPolicies/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetPolicy",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.RequestPolicy{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //UpdatePolicy - Update a request policy.
 //RequestType: PUT
 //Input: input *UpdatePolicyInput
-func (s *OauthCibaServerPolicyService) UpdatePolicy(input *UpdatePolicyInput) (result *models.RequestPolicy, resp *http.Response, err error) {
+func (s *OauthCibaServerPolicyService) UpdatePolicy(input *UpdatePolicyInput) (output *models.RequestPolicy, resp *http.Response, err error) {
 	path := "/oauth/cibaServerPolicy/requestPolicies/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("PUT", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "UpdatePolicy",
+		HTTPMethod: "PUT",
+		HTTPPath:   path,
 	}
+	output = &models.RequestPolicy{}
+	req := s.newRequest(op, input.Body, output)
 	if input.BypassExternalValidation != nil {
-		req.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
+		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
-
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //DeletePolicy - Delete a request policy.
 //RequestType: DELETE
 //Input: input *DeletePolicyInput
-func (s *OauthCibaServerPolicyService) DeletePolicy(input *DeletePolicyInput) (result *models.ApiResult, resp *http.Response, err error) {
+func (s *OauthCibaServerPolicyService) DeletePolicy(input *DeletePolicyInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/oauth/cibaServerPolicy/requestPolicies/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("DELETE", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "DeletePolicy",
+		HTTPMethod: "DELETE",
+		HTTPPath:   path,
 	}
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
-	}
-	return result, resp, nil
+	req := s.newRequest(op, nil, output)
 
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
+	}
+	return nil, req.HTTPResponse, req.Error
 }
 
 type CreatePolicyInput struct {

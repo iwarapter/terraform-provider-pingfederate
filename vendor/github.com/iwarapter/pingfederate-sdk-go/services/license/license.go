@@ -1,98 +1,119 @@
 package license
 
 import (
-	"fmt"
 	"net/http"
-	"net/url"
 
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/client"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/client/metadata"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/request"
+)
+
+const (
+	// ServiceName - The name of service.
+	ServiceName = "License"
 )
 
 type LicenseService struct {
-	Client *client.PfClient
+	*client.PfClient
 }
 
 // New creates a new instance of the LicenseService client.
-func New(username string, password string, baseUrl *url.URL, context string, httpClient *http.Client) *LicenseService {
+func New(cfg *config.Config) *LicenseService {
 
-	return &LicenseService{Client: client.NewClient(username, password, baseUrl, context, httpClient)}
+	return &LicenseService{PfClient: client.New(
+		*cfg,
+		metadata.ClientInfo{
+			ServiceName: ServiceName,
+			Endpoint:    *cfg.Endpoint,
+			APIVersion:  pingfederate.SDKVersion,
+		},
+	)}
+}
+
+// newRequest creates a new request for a License operation
+func (c *LicenseService) newRequest(op *request.Operation, params, data interface{}) *request.Request {
+	req := c.NewRequest(op, params, data)
+
+	return req
 }
 
 //GetLicenseAgreement - Get license agreement link.
 //RequestType: GET
 //Input:
-func (s *LicenseService) GetLicenseAgreement() (result *models.LicenseAgreementInfo, resp *http.Response, err error) {
+func (s *LicenseService) GetLicenseAgreement() (output *models.LicenseAgreementInfo, resp *http.Response, err error) {
 	path := "/license/agreement"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetLicenseAgreement",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.LicenseAgreementInfo{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //UpdateLicenseAgreement - Accept license agreement.
 //RequestType: PUT
 //Input: input *UpdateLicenseAgreementInput
-func (s *LicenseService) UpdateLicenseAgreement(input *UpdateLicenseAgreementInput) (result *models.LicenseAgreementInfo, resp *http.Response, err error) {
+func (s *LicenseService) UpdateLicenseAgreement(input *UpdateLicenseAgreementInput) (output *models.LicenseAgreementInfo, resp *http.Response, err error) {
 	path := "/license/agreement"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("PUT", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "UpdateLicenseAgreement",
+		HTTPMethod: "PUT",
+		HTTPPath:   path,
 	}
+	output = &models.LicenseAgreementInfo{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetLicense - Get a license summary.
 //RequestType: GET
 //Input:
-func (s *LicenseService) GetLicense() (result *models.LicenseView, resp *http.Response, err error) {
+func (s *LicenseService) GetLicense() (output *models.LicenseView, resp *http.Response, err error) {
 	path := "/license"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetLicense",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.LicenseView{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //UpdateLicense - Import a license.
 //RequestType: PUT
 //Input: input *UpdateLicenseInput
-func (s *LicenseService) UpdateLicense(input *UpdateLicenseInput) (result *models.LicenseView, resp *http.Response, err error) {
+func (s *LicenseService) UpdateLicense(input *UpdateLicenseInput) (output *models.LicenseView, resp *http.Response, err error) {
 	path := "/license"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("PUT", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "UpdateLicense",
+		HTTPMethod: "PUT",
+		HTTPPath:   path,
 	}
+	output = &models.LicenseView{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 type UpdateLicenseInput struct {

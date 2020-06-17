@@ -7,6 +7,6 @@ import (
 )
 
 type KeyPairsOauthOpenIdConnectAPI interface {
-	GetOauthOidcKeysSettings() (result *models.OAuthOidcKeysSettings, resp *http.Response, err error)
-	UpdateOAuthOidcKeysSettings(input *UpdateOAuthOidcKeysSettingsInput) (result *models.OAuthOidcKeysSettings, resp *http.Response, err error)
+	GetOauthOidcKeysSettings() (output *models.OAuthOidcKeysSettings, resp *http.Response, err error)
+	UpdateOAuthOidcKeysSettings(input *UpdateOAuthOidcKeysSettingsInput) (output *models.OAuthOidcKeysSettings, resp *http.Response, err error)
 }

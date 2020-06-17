@@ -4,7 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
-	"github.com/iwarapter/pingfederate-sdk-go/services/version"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
 	"log"
 	"net/http"
 	"net/url"
@@ -14,6 +14,8 @@ import (
 	"runtime"
 	"testing"
 	"time"
+
+	"github.com/iwarapter/pingfederate-sdk-go/services/version"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -65,8 +67,8 @@ func TestMain(m *testing.M) {
 		if err := pool.Retry(func() error {
 			var err error
 			http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-			url, _ := url.Parse(fmt.Sprintf("https://localhost:%s", resource.GetPort("9999/tcp")))
-			client := version.New("Administrator", "2Federate", url, "/pf-admin-api/v1", nil)
+			pfUrl, _ := url.Parse(fmt.Sprintf("https://localhost:%s/pf-admin-api/v1", resource.GetPort("9999/tcp")))
+			client := version.New(config.NewConfig().WithUsername("Administrator").WithPassword("2Federate").WithEndpoint(pfUrl.String()))
 
 			log.Println("Attempting to connect to PingFederate admin API....")
 			_, _, err = client.GetVersion()

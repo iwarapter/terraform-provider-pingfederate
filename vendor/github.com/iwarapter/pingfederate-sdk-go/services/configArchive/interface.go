@@ -7,6 +7,6 @@ import (
 )
 
 type ConfigArchiveAPI interface {
-	ImportConfigArchive(input *ImportConfigArchiveInput) (result *models.ApiResult, resp *http.Response, err error)
+	ImportConfigArchive(input *ImportConfigArchiveInput) (output *models.ApiResult, resp *http.Response, err error)
 	ExportConfigArchive() (resp *http.Response, err error)
 }

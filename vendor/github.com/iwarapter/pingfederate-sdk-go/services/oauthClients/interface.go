@@ -7,11 +7,11 @@ import (
 )
 
 type OauthClientsAPI interface {
-	GetClients(input *GetClientsInput) (result *models.Clients, resp *http.Response, err error)
-	CreateClient(input *CreateClientInput) (result *models.Client, resp *http.Response, err error)
-	GetClient(input *GetClientInput) (result *models.Client, resp *http.Response, err error)
-	UpdateClient(input *UpdateClientInput) (result *models.Client, resp *http.Response, err error)
-	DeleteClient(input *DeleteClientInput) (result *models.ApiResult, resp *http.Response, err error)
-	GetClientSecret(input *GetClientSecretInput) (result *models.ClientSecret, resp *http.Response, err error)
-	UpdateClientSecret(input *UpdateClientSecretInput) (result *models.ClientSecret, resp *http.Response, err error)
+	GetClients(input *GetClientsInput) (output *models.Clients, resp *http.Response, err error)
+	CreateClient(input *CreateClientInput) (output *models.Client, resp *http.Response, err error)
+	GetClient(input *GetClientInput) (output *models.Client, resp *http.Response, err error)
+	UpdateClient(input *UpdateClientInput) (output *models.Client, resp *http.Response, err error)
+	DeleteClient(input *DeleteClientInput) (output *models.ApiResult, resp *http.Response, err error)
+	GetClientSecret(input *GetClientSecretInput) (output *models.ClientSecret, resp *http.Response, err error)
+	UpdateClientSecret(input *UpdateClientSecretInput) (output *models.ClientSecret, resp *http.Response, err error)
 }

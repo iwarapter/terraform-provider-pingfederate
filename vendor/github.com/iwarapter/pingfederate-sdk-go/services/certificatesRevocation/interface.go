@@ -7,10 +7,10 @@ import (
 )
 
 type CertificatesRevocationAPI interface {
-	GetRevocationSettings() (result *models.CertificateRevocationSettings, resp *http.Response, err error)
-	UpdateRevocationSettings(input *UpdateRevocationSettingsInput) (result *models.CertificateRevocationSettings, resp *http.Response, err error)
-	GetOcspCertificates() (result *models.CertViews, resp *http.Response, err error)
-	ImportOcspCertificate(input *ImportOcspCertificateInput) (result *models.CertView, resp *http.Response, err error)
-	GetOcspCertificateById(input *GetOcspCertificateByIdInput) (result *models.CertView, resp *http.Response, err error)
-	DeleteOcspCertificateById(input *DeleteOcspCertificateByIdInput) (result *models.ApiResult, resp *http.Response, err error)
+	GetRevocationSettings() (output *models.CertificateRevocationSettings, resp *http.Response, err error)
+	UpdateRevocationSettings(input *UpdateRevocationSettingsInput) (output *models.CertificateRevocationSettings, resp *http.Response, err error)
+	GetOcspCertificates() (output *models.CertViews, resp *http.Response, err error)
+	ImportOcspCertificate(input *ImportOcspCertificateInput) (output *models.CertView, resp *http.Response, err error)
+	GetOcspCertificateById(input *GetOcspCertificateByIdInput) (output *models.CertView, resp *http.Response, err error)
+	DeleteOcspCertificateById(input *DeleteOcspCertificateByIdInput) (output *models.ApiResult, resp *http.Response, err error)
 }

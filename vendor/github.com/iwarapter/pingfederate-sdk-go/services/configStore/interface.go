@@ -7,8 +7,8 @@ import (
 )
 
 type ConfigStoreAPI interface {
-	GetSetting(input *GetSettingInput) (result *models.ConfigStoreSetting, resp *http.Response, err error)
-	UpdateSetting(input *UpdateSettingInput) (result *models.ConfigStoreSetting, resp *http.Response, err error)
-	DeleteSetting(input *DeleteSettingInput) (result *models.ApiResult, resp *http.Response, err error)
-	GetSettings(input *GetSettingsInput) (result *models.ConfigStoreBundle, resp *http.Response, err error)
+	GetSetting(input *GetSettingInput) (output *models.ConfigStoreSetting, resp *http.Response, err error)
+	UpdateSetting(input *UpdateSettingInput) (output *models.ConfigStoreSetting, resp *http.Response, err error)
+	DeleteSetting(input *DeleteSettingInput) (output *models.ApiResult, resp *http.Response, err error)
+	GetSettings(input *GetSettingsInput) (output *models.ConfigStoreBundle, resp *http.Response, err error)
 }

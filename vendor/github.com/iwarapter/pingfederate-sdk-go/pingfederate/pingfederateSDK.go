@@ -1,4 +1,4 @@
-package client
+package pingfederate
 
 const SDKName = "pingfederate-sdk-go"
 

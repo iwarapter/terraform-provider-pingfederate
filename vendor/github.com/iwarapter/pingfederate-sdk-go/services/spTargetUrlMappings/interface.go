@@ -7,6 +7,6 @@ import (
 )
 
 type SpTargetUrlMappingsAPI interface {
-	GetUrlMappings() (result *models.SpUrlMappings, resp *http.Response, err error)
-	UpdateUrlMappings(input *UpdateUrlMappingsInput) (result *models.SpUrlMappings, resp *http.Response, err error)
+	GetUrlMappings() (output *models.SpUrlMappings, resp *http.Response, err error)
+	UpdateUrlMappings(input *UpdateUrlMappingsInput) (output *models.SpUrlMappings, resp *http.Response, err error)
 }

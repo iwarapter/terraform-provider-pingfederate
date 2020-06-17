@@ -7,6 +7,6 @@ import (
 )
 
 type RedirectValidationAPI interface {
-	GetRedirectValidationSettings() (result *models.RedirectValidationSettings, resp *http.Response, err error)
-	UpdateRedirectValidationSettings(input *UpdateRedirectValidationSettingsInput) (result *models.RedirectValidationSettings, resp *http.Response, err error)
+	GetRedirectValidationSettings() (output *models.RedirectValidationSettings, resp *http.Response, err error)
+	UpdateRedirectValidationSettings(input *UpdateRedirectValidationSettingsInput) (output *models.RedirectValidationSettings, resp *http.Response, err error)
 }

@@ -1,164 +1,185 @@
 package idpTokenProcessors
 
 import (
-	"fmt"
 	"net/http"
-	"net/url"
 	"strings"
 
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/client"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/client/metadata"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/request"
+)
+
+const (
+	// ServiceName - The name of service.
+	ServiceName = "IdpTokenProcessors"
 )
 
 type IdpTokenProcessorsService struct {
-	Client *client.PfClient
+	*client.PfClient
 }
 
 // New creates a new instance of the IdpTokenProcessorsService client.
-func New(username string, password string, baseUrl *url.URL, context string, httpClient *http.Client) *IdpTokenProcessorsService {
+func New(cfg *config.Config) *IdpTokenProcessorsService {
 
-	return &IdpTokenProcessorsService{Client: client.NewClient(username, password, baseUrl, context, httpClient)}
+	return &IdpTokenProcessorsService{PfClient: client.New(
+		*cfg,
+		metadata.ClientInfo{
+			ServiceName: ServiceName,
+			Endpoint:    *cfg.Endpoint,
+			APIVersion:  pingfederate.SDKVersion,
+		},
+	)}
+}
+
+// newRequest creates a new request for a IdpTokenProcessors operation
+func (c *IdpTokenProcessorsService) newRequest(op *request.Operation, params, data interface{}) *request.Request {
+	req := c.NewRequest(op, params, data)
+
+	return req
 }
 
 //GetTokenProcessorDescriptors - Get the list of available token processors.
 //RequestType: GET
 //Input:
-func (s *IdpTokenProcessorsService) GetTokenProcessorDescriptors() (result *models.TokenProcessorDescriptors, resp *http.Response, err error) {
+func (s *IdpTokenProcessorsService) GetTokenProcessorDescriptors() (output *models.TokenProcessorDescriptors, resp *http.Response, err error) {
 	path := "/idp/tokenProcessors/descriptors"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetTokenProcessorDescriptors",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.TokenProcessorDescriptors{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetTokenProcessorDescriptorsById - Get the description of a token processor plugin by ID.
 //RequestType: GET
 //Input: input *GetTokenProcessorDescriptorsByIdInput
-func (s *IdpTokenProcessorsService) GetTokenProcessorDescriptorsById(input *GetTokenProcessorDescriptorsByIdInput) (result *models.TokenProcessorDescriptor, resp *http.Response, err error) {
+func (s *IdpTokenProcessorsService) GetTokenProcessorDescriptorsById(input *GetTokenProcessorDescriptorsByIdInput) (output *models.TokenProcessorDescriptor, resp *http.Response, err error) {
 	path := "/idp/tokenProcessors/descriptors/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetTokenProcessorDescriptorsById",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.TokenProcessorDescriptor{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetTokenProcessors - Get the list of token processor instances.
 //RequestType: GET
 //Input:
-func (s *IdpTokenProcessorsService) GetTokenProcessors() (result *models.TokenProcessors, resp *http.Response, err error) {
+func (s *IdpTokenProcessorsService) GetTokenProcessors() (output *models.TokenProcessors, resp *http.Response, err error) {
 	path := "/idp/tokenProcessors"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetTokenProcessors",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.TokenProcessors{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //CreateTokenProcessor - Create a new token processor instance.
 //RequestType: POST
 //Input: input *CreateTokenProcessorInput
-func (s *IdpTokenProcessorsService) CreateTokenProcessor(input *CreateTokenProcessorInput) (result *models.TokenProcessor, resp *http.Response, err error) {
+func (s *IdpTokenProcessorsService) CreateTokenProcessor(input *CreateTokenProcessorInput) (output *models.TokenProcessor, resp *http.Response, err error) {
 	path := "/idp/tokenProcessors"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("POST", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "CreateTokenProcessor",
+		HTTPMethod: "POST",
+		HTTPPath:   path,
 	}
+	output = &models.TokenProcessor{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetTokenProcessor - Find a token processor instance by ID.
 //RequestType: GET
 //Input: input *GetTokenProcessorInput
-func (s *IdpTokenProcessorsService) GetTokenProcessor(input *GetTokenProcessorInput) (result *models.TokenProcessor, resp *http.Response, err error) {
+func (s *IdpTokenProcessorsService) GetTokenProcessor(input *GetTokenProcessorInput) (output *models.TokenProcessor, resp *http.Response, err error) {
 	path := "/idp/tokenProcessors/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetTokenProcessor",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.TokenProcessor{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //UpdateTokenProcessor - Update a token processor instance.
 //RequestType: PUT
 //Input: input *UpdateTokenProcessorInput
-func (s *IdpTokenProcessorsService) UpdateTokenProcessor(input *UpdateTokenProcessorInput) (result *models.TokenProcessor, resp *http.Response, err error) {
+func (s *IdpTokenProcessorsService) UpdateTokenProcessor(input *UpdateTokenProcessorInput) (output *models.TokenProcessor, resp *http.Response, err error) {
 	path := "/idp/tokenProcessors/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("PUT", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "UpdateTokenProcessor",
+		HTTPMethod: "PUT",
+		HTTPPath:   path,
 	}
+	output = &models.TokenProcessor{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //DeleteTokenProcessor - Delete a token processor instance.
 //RequestType: DELETE
 //Input: input *DeleteTokenProcessorInput
-func (s *IdpTokenProcessorsService) DeleteTokenProcessor(input *DeleteTokenProcessorInput) (result *models.ApiResult, resp *http.Response, err error) {
+func (s *IdpTokenProcessorsService) DeleteTokenProcessor(input *DeleteTokenProcessorInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/idp/tokenProcessors/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("DELETE", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "DeleteTokenProcessor",
+		HTTPMethod: "DELETE",
+		HTTPPath:   path,
 	}
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
-	}
-	return result, resp, nil
+	req := s.newRequest(op, nil, output)
 
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
+	}
+	return nil, req.HTTPResponse, req.Error
 }
 
 type CreateTokenProcessorInput struct {

@@ -7,9 +7,9 @@ import (
 )
 
 type OauthAccessTokenMappingsAPI interface {
-	GetMappings() (result *models.AccessTokenMappings, resp *http.Response, err error)
-	CreateMapping(input *CreateMappingInput) (result *models.AccessTokenMapping, resp *http.Response, err error)
-	GetMapping(input *GetMappingInput) (result *models.AccessTokenMapping, resp *http.Response, err error)
-	UpdateMapping(input *UpdateMappingInput) (result *models.AccessTokenMapping, resp *http.Response, err error)
-	DeleteMapping(input *DeleteMappingInput) (result *models.ApiResult, resp *http.Response, err error)
+	GetMappings() (output *models.AccessTokenMappings, resp *http.Response, err error)
+	CreateMapping(input *CreateMappingInput) (output *models.AccessTokenMapping, resp *http.Response, err error)
+	GetMapping(input *GetMappingInput) (output *models.AccessTokenMapping, resp *http.Response, err error)
+	UpdateMapping(input *UpdateMappingInput) (output *models.AccessTokenMapping, resp *http.Response, err error)
+	DeleteMapping(input *DeleteMappingInput) (output *models.ApiResult, resp *http.Response, err error)
 }

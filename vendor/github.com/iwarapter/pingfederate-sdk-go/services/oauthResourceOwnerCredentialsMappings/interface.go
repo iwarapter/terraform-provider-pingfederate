@@ -7,9 +7,9 @@ import (
 )
 
 type OauthResourceOwnerCredentialsMappingsAPI interface {
-	GetResourceOwnerCredentialsMappings() (result *models.ResourceOwnerCredentialsMappings, resp *http.Response, err error)
-	CreateResourceOwnerCredentialsMapping(input *CreateResourceOwnerCredentialsMappingInput) (result *models.ResourceOwnerCredentialsMapping, resp *http.Response, err error)
-	GetResourceOwnerCredentialsMapping(input *GetResourceOwnerCredentialsMappingInput) (result *models.ResourceOwnerCredentialsMapping, resp *http.Response, err error)
-	UpdateResourceOwnerCredentialsMapping(input *UpdateResourceOwnerCredentialsMappingInput) (result *models.ResourceOwnerCredentialsMapping, resp *http.Response, err error)
-	DeleteResourceOwnerCredentialsMapping(input *DeleteResourceOwnerCredentialsMappingInput) (result *models.ApiResult, resp *http.Response, err error)
+	GetResourceOwnerCredentialsMappings() (output *models.ResourceOwnerCredentialsMappings, resp *http.Response, err error)
+	CreateResourceOwnerCredentialsMapping(input *CreateResourceOwnerCredentialsMappingInput) (output *models.ResourceOwnerCredentialsMapping, resp *http.Response, err error)
+	GetResourceOwnerCredentialsMapping(input *GetResourceOwnerCredentialsMappingInput) (output *models.ResourceOwnerCredentialsMapping, resp *http.Response, err error)
+	UpdateResourceOwnerCredentialsMapping(input *UpdateResourceOwnerCredentialsMappingInput) (output *models.ResourceOwnerCredentialsMapping, resp *http.Response, err error)
+	DeleteResourceOwnerCredentialsMapping(input *DeleteResourceOwnerCredentialsMappingInput) (output *models.ApiResult, resp *http.Response, err error)
 }

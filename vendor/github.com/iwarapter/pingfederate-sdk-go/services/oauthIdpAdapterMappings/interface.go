@@ -7,9 +7,9 @@ import (
 )
 
 type OauthIdpAdapterMappingsAPI interface {
-	GetIdpAdapterMappings() (result *models.IdpAdapterMappings, resp *http.Response, err error)
-	CreateIdpAdapterMapping(input *CreateIdpAdapterMappingInput) (result *models.IdpAdapterMapping, resp *http.Response, err error)
-	GetIdpAdapterMapping(input *GetIdpAdapterMappingInput) (result *models.IdpAdapterMapping, resp *http.Response, err error)
-	UpdateIdpAdapterMapping(input *UpdateIdpAdapterMappingInput) (result *models.IdpAdapterMapping, resp *http.Response, err error)
-	DeleteIdpAdapterMapping(input *DeleteIdpAdapterMappingInput) (result *models.ApiResult, resp *http.Response, err error)
+	GetIdpAdapterMappings() (output *models.IdpAdapterMappings, resp *http.Response, err error)
+	CreateIdpAdapterMapping(input *CreateIdpAdapterMappingInput) (output *models.IdpAdapterMapping, resp *http.Response, err error)
+	GetIdpAdapterMapping(input *GetIdpAdapterMappingInput) (output *models.IdpAdapterMapping, resp *http.Response, err error)
+	UpdateIdpAdapterMapping(input *UpdateIdpAdapterMappingInput) (output *models.IdpAdapterMapping, resp *http.Response, err error)
+	DeleteIdpAdapterMapping(input *DeleteIdpAdapterMappingInput) (output *models.ApiResult, resp *http.Response, err error)
 }

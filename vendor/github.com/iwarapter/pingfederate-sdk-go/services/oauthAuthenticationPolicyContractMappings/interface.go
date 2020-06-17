@@ -7,9 +7,9 @@ import (
 )
 
 type OauthAuthenticationPolicyContractMappingsAPI interface {
-	GetApcMappings() (result *models.ApcToPersistentGrantMappings, resp *http.Response, err error)
-	CreateApcMapping(input *CreateApcMappingInput) (result *models.ApcToPersistentGrantMapping, resp *http.Response, err error)
-	GetApcMapping(input *GetApcMappingInput) (result *models.ApcToPersistentGrantMapping, resp *http.Response, err error)
-	UpdateApcMapping(input *UpdateApcMappingInput) (result *models.ApcToPersistentGrantMapping, resp *http.Response, err error)
-	DeleteApcMapping(input *DeleteApcMappingInput) (result *models.ApiResult, resp *http.Response, err error)
+	GetApcMappings() (output *models.ApcToPersistentGrantMappings, resp *http.Response, err error)
+	CreateApcMapping(input *CreateApcMappingInput) (output *models.ApcToPersistentGrantMapping, resp *http.Response, err error)
+	GetApcMapping(input *GetApcMappingInput) (output *models.ApcToPersistentGrantMapping, resp *http.Response, err error)
+	UpdateApcMapping(input *UpdateApcMappingInput) (output *models.ApcToPersistentGrantMapping, resp *http.Response, err error)
+	DeleteApcMapping(input *DeleteApcMappingInput) (output *models.ApiResult, resp *http.Response, err error)
 }

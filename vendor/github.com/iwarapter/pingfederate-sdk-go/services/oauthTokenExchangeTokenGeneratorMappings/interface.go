@@ -7,9 +7,9 @@ import (
 )
 
 type OauthTokenExchangeTokenGeneratorMappingsAPI interface {
-	GetTokenGeneratorMappings() (result *models.ProcessorPolicyToGeneratorMappings, resp *http.Response, err error)
-	CreateTokenGeneratorMapping(input *CreateTokenGeneratorMappingInput) (result *models.ProcessorPolicyToGeneratorMapping, resp *http.Response, err error)
-	GetTokenGeneratorMappingById(input *GetTokenGeneratorMappingByIdInput) (result *models.ProcessorPolicyToGeneratorMapping, resp *http.Response, err error)
-	UpdateTokenGeneratorMappingById(input *UpdateTokenGeneratorMappingByIdInput) (result *models.ProcessorPolicyToGeneratorMapping, resp *http.Response, err error)
-	DeleteTokenGeneratorMappingById(input *DeleteTokenGeneratorMappingByIdInput) (result *models.ProcessorPolicyToGeneratorMapping, resp *http.Response, err error)
+	GetTokenGeneratorMappings() (output *models.ProcessorPolicyToGeneratorMappings, resp *http.Response, err error)
+	CreateTokenGeneratorMapping(input *CreateTokenGeneratorMappingInput) (output *models.ProcessorPolicyToGeneratorMapping, resp *http.Response, err error)
+	GetTokenGeneratorMappingById(input *GetTokenGeneratorMappingByIdInput) (output *models.ProcessorPolicyToGeneratorMapping, resp *http.Response, err error)
+	UpdateTokenGeneratorMappingById(input *UpdateTokenGeneratorMappingByIdInput) (output *models.ProcessorPolicyToGeneratorMapping, resp *http.Response, err error)
+	DeleteTokenGeneratorMappingById(input *DeleteTokenGeneratorMappingByIdInput) (output *models.ProcessorPolicyToGeneratorMapping, resp *http.Response, err error)
 }

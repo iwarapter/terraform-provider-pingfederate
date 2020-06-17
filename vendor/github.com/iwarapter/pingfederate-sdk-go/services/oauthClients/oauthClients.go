@@ -1,177 +1,187 @@
 package oauthClients
 
 import (
-	"fmt"
 	"net/http"
-	"net/url"
 	"strings"
 
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/client"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/client/metadata"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/request"
+)
+
+const (
+	// ServiceName - The name of service.
+	ServiceName = "OauthClients"
 )
 
 type OauthClientsService struct {
-	Client *client.PfClient
+	*client.PfClient
 }
 
 // New creates a new instance of the OauthClientsService client.
-func New(username string, password string, baseUrl *url.URL, context string, httpClient *http.Client) *OauthClientsService {
+func New(cfg *config.Config) *OauthClientsService {
 
-	return &OauthClientsService{Client: client.NewClient(username, password, baseUrl, context, httpClient)}
+	return &OauthClientsService{PfClient: client.New(
+		*cfg,
+		metadata.ClientInfo{
+			ServiceName: ServiceName,
+			Endpoint:    *cfg.Endpoint,
+			APIVersion:  pingfederate.SDKVersion,
+		},
+	)}
+}
+
+// newRequest creates a new request for a OauthClients operation
+func (c *OauthClientsService) newRequest(op *request.Operation, params, data interface{}) *request.Request {
+	req := c.NewRequest(op, params, data)
+
+	return req
 }
 
 //GetClients - Get the list of OAuth clients.
 //RequestType: GET
 //Input: input *GetClientsInput
-func (s *OauthClientsService) GetClients(input *GetClientsInput) (result *models.Clients, resp *http.Response, err error) {
+func (s *OauthClientsService) GetClients(input *GetClientsInput) (output *models.Clients, resp *http.Response, err error) {
 	path := "/oauth/clients"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	q := rel.Query()
-	if input.Page != "" {
-		q.Set("page", input.Page)
+	op := &request.Operation{
+		Name:       "GetClients",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
-	if input.NumberPerPage != "" {
-		q.Set("numberPerPage", input.NumberPerPage)
-	}
-	if input.Filter != "" {
-		q.Set("filter", input.Filter)
-	}
-	rel.RawQuery = q.Encode()
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
-	}
+	output = &models.Clients{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //CreateClient - Create a new OAuth client.
 //RequestType: POST
 //Input: input *CreateClientInput
-func (s *OauthClientsService) CreateClient(input *CreateClientInput) (result *models.Client, resp *http.Response, err error) {
+func (s *OauthClientsService) CreateClient(input *CreateClientInput) (output *models.Client, resp *http.Response, err error) {
 	path := "/oauth/clients"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("POST", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "CreateClient",
+		HTTPMethod: "POST",
+		HTTPPath:   path,
 	}
+	output = &models.Client{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetClient - Find the OAuth client by ID.
 //RequestType: GET
 //Input: input *GetClientInput
-func (s *OauthClientsService) GetClient(input *GetClientInput) (result *models.Client, resp *http.Response, err error) {
+func (s *OauthClientsService) GetClient(input *GetClientInput) (output *models.Client, resp *http.Response, err error) {
 	path := "/oauth/clients/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetClient",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.Client{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //UpdateClient - Updates the OAuth client.
 //RequestType: PUT
 //Input: input *UpdateClientInput
-func (s *OauthClientsService) UpdateClient(input *UpdateClientInput) (result *models.Client, resp *http.Response, err error) {
+func (s *OauthClientsService) UpdateClient(input *UpdateClientInput) (output *models.Client, resp *http.Response, err error) {
 	path := "/oauth/clients/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("PUT", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "UpdateClient",
+		HTTPMethod: "PUT",
+		HTTPPath:   path,
 	}
+	output = &models.Client{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //DeleteClient - Delete an OAuth client.
 //RequestType: DELETE
 //Input: input *DeleteClientInput
-func (s *OauthClientsService) DeleteClient(input *DeleteClientInput) (result *models.ApiResult, resp *http.Response, err error) {
+func (s *OauthClientsService) DeleteClient(input *DeleteClientInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/oauth/clients/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("DELETE", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "DeleteClient",
+		HTTPMethod: "DELETE",
+		HTTPPath:   path,
 	}
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
-	}
-	return result, resp, nil
+	req := s.newRequest(op, nil, output)
 
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
+	}
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetClientSecret - Get the client secret of an existing OAuth client.
 //RequestType: GET
 //Input: input *GetClientSecretInput
-func (s *OauthClientsService) GetClientSecret(input *GetClientSecretInput) (result *models.ClientSecret, resp *http.Response, err error) {
+func (s *OauthClientsService) GetClientSecret(input *GetClientSecretInput) (output *models.ClientSecret, resp *http.Response, err error) {
 	path := "/oauth/clients/{id}/clientAuth/clientSecret"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetClientSecret",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.ClientSecret{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //UpdateClientSecret - Update the client secret of an existing OAuth client.
 //RequestType: PUT
 //Input: input *UpdateClientSecretInput
-func (s *OauthClientsService) UpdateClientSecret(input *UpdateClientSecretInput) (result *models.ClientSecret, resp *http.Response, err error) {
+func (s *OauthClientsService) UpdateClientSecret(input *UpdateClientSecretInput) (output *models.ClientSecret, resp *http.Response, err error) {
 	path := "/oauth/clients/{id}/clientAuth/clientSecret"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("PUT", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "UpdateClientSecret",
+		HTTPMethod: "PUT",
+		HTTPPath:   path,
 	}
+	output = &models.ClientSecret{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 type CreateClientInput struct {

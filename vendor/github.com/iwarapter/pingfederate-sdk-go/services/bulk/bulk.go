@@ -3,44 +3,61 @@ package bulk
 import (
 	"fmt"
 	"net/http"
-	"net/url"
 
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/client"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/client/metadata"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/request"
+)
+
+const (
+	// ServiceName - The name of service.
+	ServiceName = "Bulk"
 )
 
 type BulkService struct {
-	Client *client.PfClient
+	*client.PfClient
 }
 
 // New creates a new instance of the BulkService client.
-func New(username string, password string, baseUrl *url.URL, context string, httpClient *http.Client) *BulkService {
+func New(cfg *config.Config) *BulkService {
 
-	return &BulkService{Client: client.NewClient(username, password, baseUrl, context, httpClient)}
+	return &BulkService{PfClient: client.New(
+		*cfg,
+		metadata.ClientInfo{
+			ServiceName: ServiceName,
+			Endpoint:    *cfg.Endpoint,
+			APIVersion:  pingfederate.SDKVersion,
+		},
+	)}
+}
+
+// newRequest creates a new request for a Bulk operation
+func (c *BulkService) newRequest(op *request.Operation, params, data interface{}) *request.Request {
+	req := c.NewRequest(op, params, data)
+
+	return req
 }
 
 //ExportConfiguration - Export all API resources to a JSON file.
 //RequestType: GET
 //Input: input *ExportConfigurationInput
-func (s *BulkService) ExportConfiguration(input *ExportConfigurationInput) (result *models.BulkConfig, resp *http.Response, err error) {
+func (s *BulkService) ExportConfiguration(input *ExportConfigurationInput) (output *models.BulkConfig, resp *http.Response, err error) {
 	path := "/bulk/export"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	q := rel.Query()
-	if input.IncludeExternalResources != "" {
-		q.Set("includeExternalResources", input.IncludeExternalResources)
+	op := &request.Operation{
+		Name:       "ExportConfiguration",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
-	rel.RawQuery = q.Encode()
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
-	}
+	output = &models.BulkConfig{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //ImportConfiguration - Import configuration for a PingFederate deployment from a JSON file.
@@ -48,26 +65,20 @@ func (s *BulkService) ExportConfiguration(input *ExportConfigurationInput) (resu
 //Input: input *ImportConfigurationInput
 func (s *BulkService) ImportConfiguration(input *ImportConfigurationInput) (resp *http.Response, err error) {
 	path := "/bulk/import"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	q := rel.Query()
-	if input.FailFast != "" {
-		q.Set("failFast", input.FailFast)
+	op := &request.Operation{
+		Name:       "ImportConfiguration",
+		HTTPMethod: "POST",
+		HTTPPath:   path,
 	}
-	rel.RawQuery = q.Encode()
-	req, err := s.Client.NewRequest("POST", rel, input.Body)
-	if err != nil {
-		return nil, err
-	}
+
+	req := s.newRequest(op, input.Body, nil)
 	if input.BypassExternalValidation != nil {
-		req.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
+		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
-
-	resp, err = s.Client.Do(req, nil)
-	if err != nil {
-		return resp, err
+	if req.Send() == nil {
+		return req.HTTPResponse, nil
 	}
-	return resp, nil
-
+	return req.HTTPResponse, req.Error
 }
 
 type ExportConfigurationInput struct {

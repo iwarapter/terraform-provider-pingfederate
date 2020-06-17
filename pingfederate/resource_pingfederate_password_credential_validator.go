@@ -1,19 +1,20 @@
 package pingfederate
 
 import (
-	"fmt"
+	"context"
 	"github.com/iwarapter/pingfederate-sdk-go/services/passwordCredentialValidators"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func resourcePingFederatePasswordCredentialValidatorResource() *schema.Resource {
 	return &schema.Resource{
-		Create: resourcePingFederatePasswordCredentialValidatorResourceCreate,
-		Read:   resourcePingFederatePasswordCredentialValidatorResourceRead,
-		Update: resourcePingFederatePasswordCredentialValidatorResourceUpdate,
-		Delete: resourcePingFederatePasswordCredentialValidatorResourceDelete,
+		CreateContext: resourcePingFederatePasswordCredentialValidatorResourceCreate,
+		ReadContext:   resourcePingFederatePasswordCredentialValidatorResourceRead,
+		UpdateContext: resourcePingFederatePasswordCredentialValidatorResourceUpdate,
+		DeleteContext: resourcePingFederatePasswordCredentialValidatorResourceDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
@@ -23,14 +24,14 @@ func resourcePingFederatePasswordCredentialValidatorResource() *schema.Resource 
 
 func resourcePingFederatePasswordCredentialValidatorResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
-		"name": &schema.Schema{
+		"name": {
 			Type:     schema.TypeString,
 			Required: true,
 		},
 		"plugin_descriptor_ref": resourceLinkSchema(),
 		"parent_ref":            resourceLinkSchema(),
 		"configuration":         resourcePluginConfiguration(),
-		"attribute_contract": &schema.Schema{
+		"attribute_contract": {
 			Type:     schema.TypeList,
 			Required: true,
 			MaxItems: 1,
@@ -39,7 +40,7 @@ func resourcePingFederatePasswordCredentialValidatorResourceSchema() map[string]
 	}
 }
 
-func resourcePingFederatePasswordCredentialValidatorResourceCreate(d *schema.ResourceData, m interface{}) error {
+func resourcePingFederatePasswordCredentialValidatorResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).PasswordCredentialValidators
 	input := passwordCredentialValidators.CreatePasswordCredentialValidatorInput{
 		Body: *resourcePingFederatePasswordCredentialValidatorResourceReadData(d),
@@ -47,25 +48,25 @@ func resourcePingFederatePasswordCredentialValidatorResourceCreate(d *schema.Res
 	input.Body.Id = input.Body.Name
 	result, _, err := svc.CreatePasswordCredentialValidator(&input)
 	if err != nil {
-		return fmt.Errorf("%v", err)
+		return diag.Errorf("unable to create PasswordCredentialValidators: %s", err)
 	}
 	d.SetId(*result.Id)
 	return resourcePingFederatePasswordCredentialValidatorResourceReadResult(d, result, svc)
 }
 
-func resourcePingFederatePasswordCredentialValidatorResourceRead(d *schema.ResourceData, m interface{}) error {
+func resourcePingFederatePasswordCredentialValidatorResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).PasswordCredentialValidators
 	input := passwordCredentialValidators.GetPasswordCredentialValidatorInput{
 		Id: d.Id(),
 	}
 	result, _, err := svc.GetPasswordCredentialValidator(&input)
 	if err != nil {
-		return fmt.Errorf("%v", err)
+		return diag.Errorf("unable to read PasswordCredentialValidators: %s", err)
 	}
 	return resourcePingFederatePasswordCredentialValidatorResourceReadResult(d, result, svc)
 }
 
-func resourcePingFederatePasswordCredentialValidatorResourceUpdate(d *schema.ResourceData, m interface{}) error {
+func resourcePingFederatePasswordCredentialValidatorResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).PasswordCredentialValidators
 	input := passwordCredentialValidators.UpdatePasswordCredentialValidatorInput{
 		Id:   d.Id(),
@@ -73,40 +74,40 @@ func resourcePingFederatePasswordCredentialValidatorResourceUpdate(d *schema.Res
 	}
 	result, _, err := svc.UpdatePasswordCredentialValidator(&input)
 	if err != nil {
-		return fmt.Errorf("%v", err)
+		return diag.Errorf("unable to update PasswordCredentialValidators: %s", err)
 	}
 
 	return resourcePingFederatePasswordCredentialValidatorResourceReadResult(d, result, svc)
 }
 
-func resourcePingFederatePasswordCredentialValidatorResourceDelete(d *schema.ResourceData, m interface{}) error {
+func resourcePingFederatePasswordCredentialValidatorResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).PasswordCredentialValidators
 	input := passwordCredentialValidators.DeletePasswordCredentialValidatorInput{
 		Id: d.Id(),
 	}
 	_, _, err := svc.DeletePasswordCredentialValidator(&input)
 	if err != nil {
-		return fmt.Errorf("%v", err)
+		return diag.Errorf("unable to delete PasswordCredentialValidators: %s", err)
 	}
 	return nil
 }
 
-func resourcePingFederatePasswordCredentialValidatorResourceReadResult(d *schema.ResourceData, rv *pf.PasswordCredentialValidator, svc passwordCredentialValidators.PasswordCredentialValidatorsAPI) (err error) {
+func resourcePingFederatePasswordCredentialValidatorResourceReadResult(d *schema.ResourceData, rv *pf.PasswordCredentialValidator, svc passwordCredentialValidators.PasswordCredentialValidatorsAPI) diag.Diagnostics {
 	desc, _, err := svc.GetPasswordCredentialValidatorDescriptor(&passwordCredentialValidators.GetPasswordCredentialValidatorDescriptorInput{Id: *rv.PluginDescriptorRef.Id})
 	if err != nil {
-		return err
+		return diag.Errorf("unable to retrieve PasswordCredentialValidators descriptor: %s", err)
 	}
-
-	setResourceDataString(d, "name", rv.Name)
+	var diags diag.Diagnostics
+	setResourceDataStringithDiagnostic(d, "name", rv.Name, &diags)
 	if rv.PluginDescriptorRef != nil {
 		if err = d.Set("plugin_descriptor_ref", flattenResourceLink(rv.PluginDescriptorRef)); err != nil {
-			return err
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
 
 	if rv.ParentRef != nil {
 		if err = d.Set("parent_ref", flattenResourceLink(rv.ParentRef)); err != nil {
-			return err
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
 
@@ -114,28 +115,15 @@ func resourcePingFederatePasswordCredentialValidatorResourceReadResult(d *schema
 		orig := expandPluginConfiguration(d.Get("configuration").([]interface{}))
 
 		if err = d.Set("configuration", maskPluginConfigurationFromDescriptor(desc.ConfigDescriptor, orig, rv.Configuration)); err != nil {
-			return err
+			diags = append(diags, diag.FromErr(err)...)
 		}
-		//if err = d.Set("configuration", flattenPluginConfiguration(rv.Configuration)); err != nil {
-		//	return err
-		//}
 	}
 	if rv.AttributeContract != nil {
 		if err = d.Set("attribute_contract", flattenPasswordCredentialValidatorAttributeContract(rv.AttributeContract)); err != nil {
-			return err
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
-	// if rv.ExtendedAttributes != nil && len(*rv.ExtendedAttributes) > 0 {
-	// 	if err = d.Set("extended_attributes", flattenPasswordCredentialValidatorAttribute(*rv.ExtendedAttributes)); err != nil {
-	// 		return err
-	// 	}
-	// }
-	// if rv.CoreAttributes != nil && len(*rv.CoreAttributes) > 0 {
-	// 	if err = d.Set("core_attributes", flattenPasswordCredentialValidatorAttribute(*rv.CoreAttributes)); err != nil {
-	// 		return err
-	// 	}
-	// }
-	return nil
+	return diags
 }
 
 func resourcePingFederatePasswordCredentialValidatorResourceReadData(d *schema.ResourceData) *pf.PasswordCredentialValidator {

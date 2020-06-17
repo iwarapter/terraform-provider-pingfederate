@@ -7,6 +7,6 @@ import (
 )
 
 type ClusterAPI interface {
-	GetClusterStatus() (result *models.ClusterStatus, resp *http.Response, err error)
-	StartReplication() (result *models.ApiResult, resp *http.Response, err error)
+	GetClusterStatus() (output *models.ClusterStatus, resp *http.Response, err error)
+	StartReplication() (output *models.ApiResult, resp *http.Response, err error)
 }

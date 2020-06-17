@@ -3,393 +3,415 @@ package dataStores
 import (
 	"fmt"
 	"net/http"
-	"net/url"
 	"strings"
 
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/client"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/client/metadata"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/request"
+)
+
+const (
+	// ServiceName - The name of service.
+	ServiceName = "DataStores"
 )
 
 type DataStoresService struct {
-	Client *client.PfClient
+	*client.PfClient
 }
 
 // New creates a new instance of the DataStoresService client.
-func New(username string, password string, baseUrl *url.URL, context string, httpClient *http.Client) *DataStoresService {
+func New(cfg *config.Config) *DataStoresService {
 
-	return &DataStoresService{Client: client.NewClient(username, password, baseUrl, context, httpClient)}
+	return &DataStoresService{PfClient: client.New(
+		*cfg,
+		metadata.ClientInfo{
+			ServiceName: ServiceName,
+			Endpoint:    *cfg.Endpoint,
+			APIVersion:  pingfederate.SDKVersion,
+		},
+	)}
+}
+
+// newRequest creates a new request for a DataStores operation
+func (c *DataStoresService) newRequest(op *request.Operation, params, data interface{}) *request.Request {
+	req := c.NewRequest(op, params, data)
+
+	return req
 }
 
 //GetCustomDataStoreDescriptors - Get the list of available custom data store descriptors.
 //RequestType: GET
 //Input:
-func (s *DataStoresService) GetCustomDataStoreDescriptors() (result *models.CustomDataStoreDescriptors, resp *http.Response, err error) {
+func (s *DataStoresService) GetCustomDataStoreDescriptors() (output *models.CustomDataStoreDescriptors, resp *http.Response, err error) {
 	path := "/dataStores/descriptors"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetCustomDataStoreDescriptors",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.CustomDataStoreDescriptors{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetCustomDataStoreDescriptor - Get the description of a custom data store plugin by ID.
 //RequestType: GET
 //Input: input *GetCustomDataStoreDescriptorInput
-func (s *DataStoresService) GetCustomDataStoreDescriptor(input *GetCustomDataStoreDescriptorInput) (result *models.CustomDataStoreDescriptor, resp *http.Response, err error) {
+func (s *DataStoresService) GetCustomDataStoreDescriptor(input *GetCustomDataStoreDescriptorInput) (output *models.CustomDataStoreDescriptor, resp *http.Response, err error) {
 	path := "/dataStores/descriptors/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetCustomDataStoreDescriptor",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.CustomDataStoreDescriptor{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetDataStores - Get list of data stores.
 //RequestType: GET
 //Input:
-func (s *DataStoresService) GetDataStores() (result *models.DataStores, resp *http.Response, err error) {
+func (s *DataStoresService) GetDataStores() (output *models.DataStores, resp *http.Response, err error) {
 	path := "/dataStores"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetDataStores",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.DataStores{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //CreateJdbcDataStore - Create a new data store.
 //RequestType: POST
 //Input: input *CreateJdbcDataStoreInput
-func (s *DataStoresService) CreateJdbcDataStore(input *CreateJdbcDataStoreInput) (result *models.JdbcDataStore, resp *http.Response, err error) {
+func (s *DataStoresService) CreateJdbcDataStore(input *CreateJdbcDataStoreInput) (output *models.JdbcDataStore, resp *http.Response, err error) {
 	path := "/dataStores"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("POST", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "CreateJdbcDataStore",
+		HTTPMethod: "POST",
+		HTTPPath:   path,
 	}
+	output = &models.JdbcDataStore{}
+	req := s.newRequest(op, input.Body, output)
 	if input.BypassExternalValidation != nil {
-		req.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
+		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
-
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //CreateLdapDataStore - Create a new data store.
 //RequestType: POST
 //Input: input *CreateLdapDataStoreInput
-func (s *DataStoresService) CreateLdapDataStore(input *CreateLdapDataStoreInput) (result *models.LdapDataStore, resp *http.Response, err error) {
+func (s *DataStoresService) CreateLdapDataStore(input *CreateLdapDataStoreInput) (output *models.LdapDataStore, resp *http.Response, err error) {
 	path := "/dataStores"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("POST", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "CreateLdapDataStore",
+		HTTPMethod: "POST",
+		HTTPPath:   path,
 	}
+	output = &models.LdapDataStore{}
+	req := s.newRequest(op, input.Body, output)
 	if input.BypassExternalValidation != nil {
-		req.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
+		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
-
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //CreateCustomDataStore - Create a new data store.
 //RequestType: POST
 //Input: input *CreateCustomDataStoreInput
-func (s *DataStoresService) CreateCustomDataStore(input *CreateCustomDataStoreInput) (result *models.CustomDataStore, resp *http.Response, err error) {
+func (s *DataStoresService) CreateCustomDataStore(input *CreateCustomDataStoreInput) (output *models.CustomDataStore, resp *http.Response, err error) {
 	path := "/dataStores"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("POST", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "CreateCustomDataStore",
+		HTTPMethod: "POST",
+		HTTPPath:   path,
 	}
+	output = &models.CustomDataStore{}
+	req := s.newRequest(op, input.Body, output)
 	if input.BypassExternalValidation != nil {
-		req.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
+		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
-
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetDataStore - Find data store by ID.
 //RequestType: GET
 //Input: input *GetDataStoreInput
-func (s *DataStoresService) GetDataStore(input *GetDataStoreInput) (result *models.DataStore, resp *http.Response, err error) {
+func (s *DataStoresService) GetDataStore(input *GetDataStoreInput) (output *models.DataStore, resp *http.Response, err error) {
 	path := "/dataStores/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetDataStore",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.DataStore{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //DeleteDataStore - Delete a data store.
 //RequestType: DELETE
 //Input: input *DeleteDataStoreInput
-func (s *DataStoresService) DeleteDataStore(input *DeleteDataStoreInput) (result *models.ApiResult, resp *http.Response, err error) {
+func (s *DataStoresService) DeleteDataStore(input *DeleteDataStoreInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/dataStores/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("DELETE", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "DeleteDataStore",
+		HTTPMethod: "DELETE",
+		HTTPPath:   path,
 	}
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
-	}
-	return result, resp, nil
+	req := s.newRequest(op, nil, output)
 
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
+	}
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetJdbcDataStore - Find data store by ID.
 //RequestType: GET
 //Input: input *GetJdbcDataStoreInput
-func (s *DataStoresService) GetJdbcDataStore(input *GetJdbcDataStoreInput) (result *models.JdbcDataStore, resp *http.Response, err error) {
+func (s *DataStoresService) GetJdbcDataStore(input *GetJdbcDataStoreInput) (output *models.JdbcDataStore, resp *http.Response, err error) {
 	path := "/dataStores/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetJdbcDataStore",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.JdbcDataStore{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetLdapDataStore - Find data store by ID.
 //RequestType: GET
 //Input: input *GetLdapDataStoreInput
-func (s *DataStoresService) GetLdapDataStore(input *GetLdapDataStoreInput) (result *models.LdapDataStore, resp *http.Response, err error) {
+func (s *DataStoresService) GetLdapDataStore(input *GetLdapDataStoreInput) (output *models.LdapDataStore, resp *http.Response, err error) {
 	path := "/dataStores/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetLdapDataStore",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.LdapDataStore{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetCustomDataStore - Find data store by ID.
 //RequestType: GET
 //Input: input *GetCustomDataStoreInput
-func (s *DataStoresService) GetCustomDataStore(input *GetCustomDataStoreInput) (result *models.CustomDataStore, resp *http.Response, err error) {
+func (s *DataStoresService) GetCustomDataStore(input *GetCustomDataStoreInput) (output *models.CustomDataStore, resp *http.Response, err error) {
 	path := "/dataStores/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetCustomDataStore",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.CustomDataStore{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //UpdateJdbcDataStore - Update a data store.
 //RequestType: PUT
 //Input: input *UpdateJdbcDataStoreInput
-func (s *DataStoresService) UpdateJdbcDataStore(input *UpdateJdbcDataStoreInput) (result *models.JdbcDataStore, resp *http.Response, err error) {
+func (s *DataStoresService) UpdateJdbcDataStore(input *UpdateJdbcDataStoreInput) (output *models.JdbcDataStore, resp *http.Response, err error) {
 	path := "/dataStores/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("PUT", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "UpdateJdbcDataStore",
+		HTTPMethod: "PUT",
+		HTTPPath:   path,
 	}
+	output = &models.JdbcDataStore{}
+	req := s.newRequest(op, input.Body, output)
 	if input.BypassExternalValidation != nil {
-		req.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
+		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
-
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //UpdateLdapDataStore - Update a data store.
 //RequestType: PUT
 //Input: input *UpdateLdapDataStoreInput
-func (s *DataStoresService) UpdateLdapDataStore(input *UpdateLdapDataStoreInput) (result *models.LdapDataStore, resp *http.Response, err error) {
+func (s *DataStoresService) UpdateLdapDataStore(input *UpdateLdapDataStoreInput) (output *models.LdapDataStore, resp *http.Response, err error) {
 	path := "/dataStores/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("PUT", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "UpdateLdapDataStore",
+		HTTPMethod: "PUT",
+		HTTPPath:   path,
 	}
+	output = &models.LdapDataStore{}
+	req := s.newRequest(op, input.Body, output)
 	if input.BypassExternalValidation != nil {
-		req.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
+		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
-
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //UpdateCustomDataStore - Update a data store.
 //RequestType: PUT
 //Input: input *UpdateCustomDataStoreInput
-func (s *DataStoresService) UpdateCustomDataStore(input *UpdateCustomDataStoreInput) (result *models.CustomDataStore, resp *http.Response, err error) {
+func (s *DataStoresService) UpdateCustomDataStore(input *UpdateCustomDataStoreInput) (output *models.CustomDataStore, resp *http.Response, err error) {
 	path := "/dataStores/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("PUT", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "UpdateCustomDataStore",
+		HTTPMethod: "PUT",
+		HTTPPath:   path,
 	}
+	output = &models.CustomDataStore{}
+	req := s.newRequest(op, input.Body, output)
 	if input.BypassExternalValidation != nil {
-		req.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
+		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
-
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetActions - List the actions for a data store instance.
 //RequestType: GET
 //Input: input *GetActionsInput
-func (s *DataStoresService) GetActions(input *GetActionsInput) (result *models.Actions, resp *http.Response, err error) {
+func (s *DataStoresService) GetActions(input *GetActionsInput) (output *models.Actions, resp *http.Response, err error) {
 	path := "/dataStores/{id}/actions"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetActions",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.Actions{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetAction - Find a data store instance's action by ID.
 //RequestType: GET
 //Input: input *GetActionInput
-func (s *DataStoresService) GetAction(input *GetActionInput) (result *models.Action, resp *http.Response, err error) {
+func (s *DataStoresService) GetAction(input *GetActionInput) (output *models.Action, resp *http.Response, err error) {
 	path := "/dataStores/{id}/actions/{actionId}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
 	path = strings.Replace(path, "{actionId}", input.ActionId, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetAction",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.Action{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //InvokeAction - Invokes an action for a data source instance.
 //RequestType: POST
 //Input: input *InvokeActionInput
-func (s *DataStoresService) InvokeAction(input *InvokeActionInput) (result *models.ActionResult, resp *http.Response, err error) {
+func (s *DataStoresService) InvokeAction(input *InvokeActionInput) (output *models.ActionResult, resp *http.Response, err error) {
 	path := "/dataStores/{id}/actions/{actionId}/invokeAction"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
 	path = strings.Replace(path, "{actionId}", input.ActionId, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("POST", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "InvokeAction",
+		HTTPMethod: "POST",
+		HTTPPath:   path,
 	}
+	output = &models.ActionResult{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 type CreateCustomDataStoreInput struct {
+	Body models.CustomDataStore
+
+	BypassExternalValidation *bool
+}
+
+type CreateDataStoreInput struct {
 	Body models.CustomDataStore
 
 	BypassExternalValidation *bool
@@ -447,6 +469,13 @@ type InvokeActionInput struct {
 
 type UpdateCustomDataStoreInput struct {
 	Body models.CustomDataStore
+	Id   string
+
+	BypassExternalValidation *bool
+}
+
+type UpdateDataStoreInput struct {
+	Body models.LdapDataStore
 	Id   string
 
 	BypassExternalValidation *bool

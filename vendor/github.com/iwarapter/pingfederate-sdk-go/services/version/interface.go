@@ -7,5 +7,5 @@ import (
 )
 
 type VersionAPI interface {
-	GetVersion() (result *models.Version, resp *http.Response, err error)
+	GetVersion() (output *models.Version, resp *http.Response, err error)
 }

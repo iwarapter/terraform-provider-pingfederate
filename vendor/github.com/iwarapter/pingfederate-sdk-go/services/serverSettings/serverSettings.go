@@ -1,277 +1,290 @@
 package serverSettings
 
 import (
-	"fmt"
 	"net/http"
-	"net/url"
 
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/client"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/client/metadata"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/request"
+)
+
+const (
+	// ServiceName - The name of service.
+	ServiceName = "ServerSettings"
 )
 
 type ServerSettingsService struct {
-	Client *client.PfClient
+	*client.PfClient
 }
 
 // New creates a new instance of the ServerSettingsService client.
-func New(username string, password string, baseUrl *url.URL, context string, httpClient *http.Client) *ServerSettingsService {
+func New(cfg *config.Config) *ServerSettingsService {
 
-	return &ServerSettingsService{Client: client.NewClient(username, password, baseUrl, context, httpClient)}
+	return &ServerSettingsService{PfClient: client.New(
+		*cfg,
+		metadata.ClientInfo{
+			ServiceName: ServiceName,
+			Endpoint:    *cfg.Endpoint,
+			APIVersion:  pingfederate.SDKVersion,
+		},
+	)}
+}
+
+// newRequest creates a new request for a ServerSettings operation
+func (c *ServerSettingsService) newRequest(op *request.Operation, params, data interface{}) *request.Request {
+	req := c.NewRequest(op, params, data)
+
+	return req
 }
 
 //GetServerSettings - Gets the server settings
 //RequestType: GET
 //Input:
-func (s *ServerSettingsService) GetServerSettings() (result *models.ServerSettings, resp *http.Response, err error) {
+func (s *ServerSettingsService) GetServerSettings() (output *models.ServerSettings, resp *http.Response, err error) {
 	path := "/serverSettings"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetServerSettings",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.ServerSettings{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //UpdateServerSettings - Update the server settings.
 //RequestType: PUT
 //Input: input *UpdateServerSettingsInput
-func (s *ServerSettingsService) UpdateServerSettings(input *UpdateServerSettingsInput) (result *models.ServerSettings, resp *http.Response, err error) {
+func (s *ServerSettingsService) UpdateServerSettings(input *UpdateServerSettingsInput) (output *models.ServerSettings, resp *http.Response, err error) {
 	path := "/serverSettings"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("PUT", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "UpdateServerSettings",
+		HTTPMethod: "PUT",
+		HTTPPath:   path,
 	}
+	output = &models.ServerSettings{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetNotificationSettings - Gets the notification settings
 //RequestType: GET
 //Input:
-func (s *ServerSettingsService) GetNotificationSettings() (result *models.NotificationSettings, resp *http.Response, err error) {
+func (s *ServerSettingsService) GetNotificationSettings() (output *models.NotificationSettings, resp *http.Response, err error) {
 	path := "/serverSettings/notifications"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetNotificationSettings",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.NotificationSettings{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //UpdateNotificationSettings - Update the notification settings.
 //RequestType: PUT
 //Input: input *UpdateNotificationSettingsInput
-func (s *ServerSettingsService) UpdateNotificationSettings(input *UpdateNotificationSettingsInput) (result *models.NotificationSettings, resp *http.Response, err error) {
+func (s *ServerSettingsService) UpdateNotificationSettings(input *UpdateNotificationSettingsInput) (output *models.NotificationSettings, resp *http.Response, err error) {
 	path := "/serverSettings/notifications"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("PUT", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "UpdateNotificationSettings",
+		HTTPMethod: "PUT",
+		HTTPPath:   path,
 	}
+	output = &models.NotificationSettings{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetEmailServerSettings - (Deprecated) Gets the email server settings
 //RequestType: GET
 //Input:
-func (s *ServerSettingsService) GetEmailServerSettings() (result *models.EmailServerSettings, resp *http.Response, err error) {
+func (s *ServerSettingsService) GetEmailServerSettings() (output *models.EmailServerSettings, resp *http.Response, err error) {
 	path := "/serverSettings/emailServer"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetEmailServerSettings",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.EmailServerSettings{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //UpdateEmailServerSettings - (Deprecated) Update the email server settings
 //RequestType: PUT
 //Input: input *UpdateEmailServerSettingsInput
-func (s *ServerSettingsService) UpdateEmailServerSettings(input *UpdateEmailServerSettingsInput) (result *models.EmailServerSettings, resp *http.Response, err error) {
+func (s *ServerSettingsService) UpdateEmailServerSettings(input *UpdateEmailServerSettingsInput) (output *models.EmailServerSettings, resp *http.Response, err error) {
 	path := "/serverSettings/emailServer"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	q := rel.Query()
-	if input.ValidationEmail != "" {
-		q.Set("validationEmail", input.ValidationEmail)
+	op := &request.Operation{
+		Name:       "UpdateEmailServerSettings",
+		HTTPMethod: "PUT",
+		HTTPPath:   path,
 	}
-	if input.ValidateOnly != "" {
-		q.Set("validateOnly", input.ValidateOnly)
-	}
-	rel.RawQuery = q.Encode()
-	req, err := s.Client.NewRequest("PUT", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
-	}
+	output = &models.EmailServerSettings{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetCaptchaSettings - Gets the CAPTCHA settings.
 //RequestType: GET
 //Input:
-func (s *ServerSettingsService) GetCaptchaSettings() (result *models.CaptchaSettings, resp *http.Response, err error) {
+func (s *ServerSettingsService) GetCaptchaSettings() (output *models.CaptchaSettings, resp *http.Response, err error) {
 	path := "/serverSettings/captchaSettings"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetCaptchaSettings",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.CaptchaSettings{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //UpdateCaptchaSettings - Update the CAPTCHA settings.
 //RequestType: PUT
 //Input: input *UpdateCaptchaSettingsInput
-func (s *ServerSettingsService) UpdateCaptchaSettings(input *UpdateCaptchaSettingsInput) (result *models.CaptchaSettings, resp *http.Response, err error) {
+func (s *ServerSettingsService) UpdateCaptchaSettings(input *UpdateCaptchaSettingsInput) (output *models.CaptchaSettings, resp *http.Response, err error) {
 	path := "/serverSettings/captchaSettings"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("PUT", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "UpdateCaptchaSettings",
+		HTTPMethod: "PUT",
+		HTTPPath:   path,
 	}
+	output = &models.CaptchaSettings{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetSystemKeys - Get the system keys.
 //RequestType: GET
 //Input:
-func (s *ServerSettingsService) GetSystemKeys() (result *models.SystemKeys, resp *http.Response, err error) {
+func (s *ServerSettingsService) GetSystemKeys() (output *models.SystemKeys, resp *http.Response, err error) {
 	path := "/serverSettings/systemKeys"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetSystemKeys",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.SystemKeys{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //UpdateSystemKeys - Update the system keys.
 //RequestType: PUT
 //Input: input *UpdateSystemKeysInput
-func (s *ServerSettingsService) UpdateSystemKeys(input *UpdateSystemKeysInput) (result *models.SystemKeys, resp *http.Response, err error) {
+func (s *ServerSettingsService) UpdateSystemKeys(input *UpdateSystemKeysInput) (output *models.SystemKeys, resp *http.Response, err error) {
 	path := "/serverSettings/systemKeys"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("PUT", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "UpdateSystemKeys",
+		HTTPMethod: "PUT",
+		HTTPPath:   path,
 	}
+	output = &models.SystemKeys{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //RotateSystemKeys - Rotate the system keys.
 //RequestType: POST
 //Input:
-func (s *ServerSettingsService) RotateSystemKeys() (result *models.SystemKeys, resp *http.Response, err error) {
+func (s *ServerSettingsService) RotateSystemKeys() (output *models.SystemKeys, resp *http.Response, err error) {
 	path := "/serverSettings/systemKeys/rotate"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("POST", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "RotateSystemKeys",
+		HTTPMethod: "POST",
+		HTTPPath:   path,
 	}
+	output = &models.SystemKeys{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetOutBoundProvisioningSettings - Get database used for outbound provisioning
 //RequestType: GET
 //Input:
-func (s *ServerSettingsService) GetOutBoundProvisioningSettings() (result *models.OutboundProvisionDatabase, resp *http.Response, err error) {
+func (s *ServerSettingsService) GetOutBoundProvisioningSettings() (output *models.OutboundProvisionDatabase, resp *http.Response, err error) {
 	path := "/serverSettings/outboundProvisioning"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetOutBoundProvisioningSettings",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.OutboundProvisionDatabase{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //UpdateOutBoundProvisioningSettings - Update database used for outbound provisioning
 //RequestType: PUT
 //Input: input *UpdateOutBoundProvisioningSettingsInput
-func (s *ServerSettingsService) UpdateOutBoundProvisioningSettings(input *UpdateOutBoundProvisioningSettingsInput) (result *models.OutboundProvisionDatabase, resp *http.Response, err error) {
+func (s *ServerSettingsService) UpdateOutBoundProvisioningSettings(input *UpdateOutBoundProvisioningSettingsInput) (output *models.OutboundProvisionDatabase, resp *http.Response, err error) {
 	path := "/serverSettings/outboundProvisioning"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("PUT", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "UpdateOutBoundProvisioningSettings",
+		HTTPMethod: "PUT",
+		HTTPPath:   path,
 	}
+	output = &models.OutboundProvisionDatabase{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 type UpdateCaptchaSettingsInput struct {

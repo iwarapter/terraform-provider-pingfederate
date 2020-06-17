@@ -7,11 +7,11 @@ import (
 )
 
 type SpTokenGeneratorsAPI interface {
-	GetTokenGeneratorDescriptors() (result *models.TokenGeneratorDescriptors, resp *http.Response, err error)
-	GetTokenGeneratorDescriptorsById(input *GetTokenGeneratorDescriptorsByIdInput) (result *models.TokenGeneratorDescriptor, resp *http.Response, err error)
-	GetTokenGenerators() (result *models.TokenGenerators, resp *http.Response, err error)
-	CreateTokenGenerator(input *CreateTokenGeneratorInput) (result *models.TokenGenerator, resp *http.Response, err error)
-	GetTokenGenerator(input *GetTokenGeneratorInput) (result *models.TokenGenerator, resp *http.Response, err error)
-	UpdateTokenGenerator(input *UpdateTokenGeneratorInput) (result *models.TokenGenerator, resp *http.Response, err error)
-	DeleteTokenGenerator(input *DeleteTokenGeneratorInput) (result *models.ApiResult, resp *http.Response, err error)
+	GetTokenGeneratorDescriptors() (output *models.TokenGeneratorDescriptors, resp *http.Response, err error)
+	GetTokenGeneratorDescriptorsById(input *GetTokenGeneratorDescriptorsByIdInput) (output *models.TokenGeneratorDescriptor, resp *http.Response, err error)
+	GetTokenGenerators() (output *models.TokenGenerators, resp *http.Response, err error)
+	CreateTokenGenerator(input *CreateTokenGeneratorInput) (output *models.TokenGenerator, resp *http.Response, err error)
+	GetTokenGenerator(input *GetTokenGeneratorInput) (output *models.TokenGenerator, resp *http.Response, err error)
+	UpdateTokenGenerator(input *UpdateTokenGeneratorInput) (output *models.TokenGenerator, resp *http.Response, err error)
+	DeleteTokenGenerator(input *DeleteTokenGeneratorInput) (output *models.ApiResult, resp *http.Response, err error)
 }

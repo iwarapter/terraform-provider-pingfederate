@@ -1,13 +1,11 @@
 package pingfederate
 
 import (
-	"encoding/json"
 	"fmt"
-	"github.com/iwarapter/pingfederate-sdk-go/services/spAdapters"
 	"net/http"
-	"net/http/httptest"
-	"net/url"
 	"testing"
+
+	"github.com/iwarapter/pingfederate-sdk-go/services/spAdapters"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -46,7 +44,7 @@ func testAccCheckPingFederateSpAdapterDestroy(s *terraform.State) error {
 
 func testAccPingFederateSpAdapterConfig(configUpdate string) string {
 	return fmt.Sprintf(`
-	resource "pingfederate_sp_adapter" "demo" {
+resource "pingfederate_sp_adapter" "demo" {
   name = "bar"
   sp_adapter_id = "spadaptertest1"
   plugin_descriptor_ref {
@@ -191,7 +189,41 @@ func testAccCheckPingFederateSpAdapterExists(n string) resource.TestCheckFunc {
 	}
 }
 
+type spAdaptersMock struct {
+	spAdapters.SpAdaptersAPI
+}
+
+func (s spAdaptersMock) GetSpAdapterDescriptorsById(input *spAdapters.GetSpAdapterDescriptorsByIdInput) (output *pf.SpAdapterDescriptor, resp *http.Response, err error) {
+	return &pf.SpAdapterDescriptor{
+		AttributeContract: nil,
+		ClassName:         String("com.pingidentity.pf.selectors.cidr.CIDRAdapterSelector"),
+		ConfigDescriptor: &pf.PluginConfigDescriptor{
+			ActionDescriptors: nil,
+			Description:       nil,
+			Fields:            &[]*pf.FieldDescriptor{},
+			Tables: &[]*pf.TableDescriptor{
+				{
+					Columns: &[]*pf.FieldDescriptor{
+						{
+							Type: String("TEXT"),
+							Name: String("Username"),
+						},
+					},
+					Description:       nil,
+					Label:             nil,
+					Name:              String("Networks"),
+					RequireDefaultRow: nil,
+				},
+			},
+		},
+		Id:                       String("com.pingidentity.pf.selectors.cidr.CIDRAdapterSelector"),
+		Name:                     String("CIDR Authentication Selector"),
+		SupportsExtendedContract: nil,
+	}, nil, nil
+}
+
 func Test_resourcePingFederateSpAdapterResourceReadData(t *testing.T) {
+	m := &spAdaptersMock{}
 	cases := []struct {
 		Resource pf.SpAdapter
 	}{
@@ -241,51 +273,9 @@ func Test_resourcePingFederateSpAdapterResourceReadData(t *testing.T) {
 	}
 	for i, tc := range cases {
 		t.Run(fmt.Sprintf("tc:%v", i), func(t *testing.T) {
-
-			descs := pf.PluginConfigDescriptor{
-				ActionDescriptors: nil,
-				Description:       nil,
-				Fields:            &[]*pf.FieldDescriptor{},
-				Tables: &[]*pf.TableDescriptor{
-					{
-						Columns: &[]*pf.FieldDescriptor{
-							{
-								Type: String("TEXT"),
-								Name: String("Username"),
-							},
-						},
-						Description:       nil,
-						Label:             nil,
-						Name:              String("Networks"),
-						RequireDefaultRow: nil,
-					},
-				},
-			}
-
-			server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-				// Test request parameters
-				equals(t, req.URL.String(), "/sp/adapters/descriptors/com.pingidentity.adapters.httpbasic.idp.HttpBasicSpAuthnAdapter")
-				// Send response to be tested
-				b, _ := json.Marshal(pf.AuthenticationSelectorDescriptor{
-					AttributeContract:        nil,
-					ClassName:                String("com.pingidentity.pf.selectors.cidr.CIDRAdapterSelector"),
-					ConfigDescriptor:         &descs,
-					Id:                       String("com.pingidentity.pf.selectors.cidr.CIDRAdapterSelector"),
-					Name:                     String("CIDR Authentication Selector"),
-					SupportsExtendedContract: nil,
-				})
-				rw.Write(b)
-			}))
-			// Close the server when test finishes
-			defer server.Close()
-
-			// Use Client & URL from our local test server
-			url, _ := url.Parse(server.URL)
-			c := spAdapters.New("", "", url, "", server.Client())
-
 			resourceSchema := resourcePingFederateSpAdapterResourceSchema()
 			resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})
-			resourcePingFederateSpAdapterResourceReadResult(resourceLocalData, &tc.Resource, c)
+			resourcePingFederateSpAdapterResourceReadResult(resourceLocalData, &tc.Resource, m)
 
 			if got := *resourcePingFederateSpAdapterResourceReadData(resourceLocalData); !cmp.Equal(got, tc.Resource) {
 				t.Errorf("resourcePingFederateSpAdapterResourceReadData() = %v", cmp.Diff(got, tc.Resource))

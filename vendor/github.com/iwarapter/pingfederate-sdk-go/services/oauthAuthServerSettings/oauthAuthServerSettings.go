@@ -1,389 +1,410 @@
 package oauthAuthServerSettings
 
 import (
-	"fmt"
 	"net/http"
-	"net/url"
 	"strings"
 
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/client"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/client/metadata"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/request"
+)
+
+const (
+	// ServiceName - The name of service.
+	ServiceName = "OauthAuthServerSettings"
 )
 
 type OauthAuthServerSettingsService struct {
-	Client *client.PfClient
+	*client.PfClient
 }
 
 // New creates a new instance of the OauthAuthServerSettingsService client.
-func New(username string, password string, baseUrl *url.URL, context string, httpClient *http.Client) *OauthAuthServerSettingsService {
+func New(cfg *config.Config) *OauthAuthServerSettingsService {
 
-	return &OauthAuthServerSettingsService{Client: client.NewClient(username, password, baseUrl, context, httpClient)}
+	return &OauthAuthServerSettingsService{PfClient: client.New(
+		*cfg,
+		metadata.ClientInfo{
+			ServiceName: ServiceName,
+			Endpoint:    *cfg.Endpoint,
+			APIVersion:  pingfederate.SDKVersion,
+		},
+	)}
+}
+
+// newRequest creates a new request for a OauthAuthServerSettings operation
+func (c *OauthAuthServerSettingsService) newRequest(op *request.Operation, params, data interface{}) *request.Request {
+	req := c.NewRequest(op, params, data)
+
+	return req
 }
 
 //GetAuthorizationServerSettings - Get the Authorization Server Settings.
 //RequestType: GET
 //Input:
-func (s *OauthAuthServerSettingsService) GetAuthorizationServerSettings() (result *models.AuthorizationServerSettings, resp *http.Response, err error) {
+func (s *OauthAuthServerSettingsService) GetAuthorizationServerSettings() (output *models.AuthorizationServerSettings, resp *http.Response, err error) {
 	path := "/oauth/authServerSettings"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetAuthorizationServerSettings",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.AuthorizationServerSettings{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //UpdateAuthorizationServerSettings - Update the Authorization Server Settings.
 //RequestType: PUT
 //Input: input *UpdateAuthorizationServerSettingsInput
-func (s *OauthAuthServerSettingsService) UpdateAuthorizationServerSettings(input *UpdateAuthorizationServerSettingsInput) (result *models.AuthorizationServerSettings, resp *http.Response, err error) {
+func (s *OauthAuthServerSettingsService) UpdateAuthorizationServerSettings(input *UpdateAuthorizationServerSettingsInput) (output *models.AuthorizationServerSettings, resp *http.Response, err error) {
 	path := "/oauth/authServerSettings"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("PUT", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "UpdateAuthorizationServerSettings",
+		HTTPMethod: "PUT",
+		HTTPPath:   path,
 	}
+	output = &models.AuthorizationServerSettings{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //AddCommonScope - Add a new common scope.
 //RequestType: POST
 //Input: input *AddCommonScopeInput
-func (s *OauthAuthServerSettingsService) AddCommonScope(input *AddCommonScopeInput) (result *models.ScopeEntry, resp *http.Response, err error) {
+func (s *OauthAuthServerSettingsService) AddCommonScope(input *AddCommonScopeInput) (output *models.ScopeEntry, resp *http.Response, err error) {
 	path := "/oauth/authServerSettings/scopes/commonScopes"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("POST", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "AddCommonScope",
+		HTTPMethod: "POST",
+		HTTPPath:   path,
 	}
+	output = &models.ScopeEntry{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetCommonScope - Get an existing common scope.
 //RequestType: GET
 //Input: input *GetCommonScopeInput
-func (s *OauthAuthServerSettingsService) GetCommonScope(input *GetCommonScopeInput) (result *models.ScopeEntry, resp *http.Response, err error) {
+func (s *OauthAuthServerSettingsService) GetCommonScope(input *GetCommonScopeInput) (output *models.ScopeEntry, resp *http.Response, err error) {
 	path := "/oauth/authServerSettings/scopes/commonScopes/{name}"
 	path = strings.Replace(path, "{name}", input.Name, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetCommonScope",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.ScopeEntry{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //UpdateCommonScope - Update an existing common scope.
 //RequestType: PUT
 //Input: input *UpdateCommonScopeInput
-func (s *OauthAuthServerSettingsService) UpdateCommonScope(input *UpdateCommonScopeInput) (result *models.ScopeEntry, resp *http.Response, err error) {
+func (s *OauthAuthServerSettingsService) UpdateCommonScope(input *UpdateCommonScopeInput) (output *models.ScopeEntry, resp *http.Response, err error) {
 	path := "/oauth/authServerSettings/scopes/commonScopes/{name}"
 	path = strings.Replace(path, "{name}", input.Name, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("PUT", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "UpdateCommonScope",
+		HTTPMethod: "PUT",
+		HTTPPath:   path,
 	}
+	output = &models.ScopeEntry{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //RemoveCommonScope - Remove an existing common scope.
 //RequestType: DELETE
 //Input: input *RemoveCommonScopeInput
-func (s *OauthAuthServerSettingsService) RemoveCommonScope(input *RemoveCommonScopeInput) (result *models.ApiResult, resp *http.Response, err error) {
+func (s *OauthAuthServerSettingsService) RemoveCommonScope(input *RemoveCommonScopeInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/oauth/authServerSettings/scopes/commonScopes/{name}"
 	path = strings.Replace(path, "{name}", input.Name, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("DELETE", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "RemoveCommonScope",
+		HTTPMethod: "DELETE",
+		HTTPPath:   path,
 	}
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
-	}
-	return result, resp, nil
+	req := s.newRequest(op, nil, output)
 
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
+	}
+	return nil, req.HTTPResponse, req.Error
 }
 
 //AddCommonScopeGroup - Create a new common scope group.
 //RequestType: POST
 //Input: input *AddCommonScopeGroupInput
-func (s *OauthAuthServerSettingsService) AddCommonScopeGroup(input *AddCommonScopeGroupInput) (result *models.ScopeGroupEntry, resp *http.Response, err error) {
+func (s *OauthAuthServerSettingsService) AddCommonScopeGroup(input *AddCommonScopeGroupInput) (output *models.ScopeGroupEntry, resp *http.Response, err error) {
 	path := "/oauth/authServerSettings/scopes/commonScopeGroups"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("POST", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "AddCommonScopeGroup",
+		HTTPMethod: "POST",
+		HTTPPath:   path,
 	}
+	output = &models.ScopeGroupEntry{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetCommonScopeGroup - Get an existing common scope group.
 //RequestType: GET
 //Input: input *GetCommonScopeGroupInput
-func (s *OauthAuthServerSettingsService) GetCommonScopeGroup(input *GetCommonScopeGroupInput) (result *models.ScopeGroupEntry, resp *http.Response, err error) {
+func (s *OauthAuthServerSettingsService) GetCommonScopeGroup(input *GetCommonScopeGroupInput) (output *models.ScopeGroupEntry, resp *http.Response, err error) {
 	path := "/oauth/authServerSettings/scopes/commonScopeGroups/{name}"
 	path = strings.Replace(path, "{name}", input.Name, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetCommonScopeGroup",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.ScopeGroupEntry{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //UpdateCommonScopeGroup - Update an existing common scope group.
 //RequestType: PUT
 //Input: input *UpdateCommonScopeGroupInput
-func (s *OauthAuthServerSettingsService) UpdateCommonScopeGroup(input *UpdateCommonScopeGroupInput) (result *models.ScopeGroupEntry, resp *http.Response, err error) {
+func (s *OauthAuthServerSettingsService) UpdateCommonScopeGroup(input *UpdateCommonScopeGroupInput) (output *models.ScopeGroupEntry, resp *http.Response, err error) {
 	path := "/oauth/authServerSettings/scopes/commonScopeGroups/{name}"
 	path = strings.Replace(path, "{name}", input.Name, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("PUT", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "UpdateCommonScopeGroup",
+		HTTPMethod: "PUT",
+		HTTPPath:   path,
 	}
+	output = &models.ScopeGroupEntry{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //RemoveCommonScopeGroup - Remove an existing common scope group.
 //RequestType: DELETE
 //Input: input *RemoveCommonScopeGroupInput
-func (s *OauthAuthServerSettingsService) RemoveCommonScopeGroup(input *RemoveCommonScopeGroupInput) (result *models.ApiResult, resp *http.Response, err error) {
+func (s *OauthAuthServerSettingsService) RemoveCommonScopeGroup(input *RemoveCommonScopeGroupInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/oauth/authServerSettings/scopes/commonScopeGroups/{name}"
 	path = strings.Replace(path, "{name}", input.Name, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("DELETE", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "RemoveCommonScopeGroup",
+		HTTPMethod: "DELETE",
+		HTTPPath:   path,
 	}
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
-	}
-	return result, resp, nil
+	req := s.newRequest(op, nil, output)
 
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
+	}
+	return nil, req.HTTPResponse, req.Error
 }
 
 //AddExclusiveScope - Add a new exclusive scope.
 //RequestType: POST
 //Input: input *AddExclusiveScopeInput
-func (s *OauthAuthServerSettingsService) AddExclusiveScope(input *AddExclusiveScopeInput) (result *models.ScopeEntry, resp *http.Response, err error) {
+func (s *OauthAuthServerSettingsService) AddExclusiveScope(input *AddExclusiveScopeInput) (output *models.ScopeEntry, resp *http.Response, err error) {
 	path := "/oauth/authServerSettings/scopes/exclusiveScopes"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("POST", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "AddExclusiveScope",
+		HTTPMethod: "POST",
+		HTTPPath:   path,
 	}
+	output = &models.ScopeEntry{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetExclusiveScope - Get an existing exclusive scope.
 //RequestType: GET
 //Input: input *GetExclusiveScopeInput
-func (s *OauthAuthServerSettingsService) GetExclusiveScope(input *GetExclusiveScopeInput) (result *models.ScopeEntry, resp *http.Response, err error) {
+func (s *OauthAuthServerSettingsService) GetExclusiveScope(input *GetExclusiveScopeInput) (output *models.ScopeEntry, resp *http.Response, err error) {
 	path := "/oauth/authServerSettings/scopes/exclusiveScopes/{name}"
 	path = strings.Replace(path, "{name}", input.Name, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetExclusiveScope",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.ScopeEntry{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //UpdateExclusiveScope - Update an existing exclusive scope.
 //RequestType: PUT
 //Input: input *UpdateExclusiveScopeInput
-func (s *OauthAuthServerSettingsService) UpdateExclusiveScope(input *UpdateExclusiveScopeInput) (result *models.ScopeEntry, resp *http.Response, err error) {
+func (s *OauthAuthServerSettingsService) UpdateExclusiveScope(input *UpdateExclusiveScopeInput) (output *models.ScopeEntry, resp *http.Response, err error) {
 	path := "/oauth/authServerSettings/scopes/exclusiveScopes/{name}"
 	path = strings.Replace(path, "{name}", input.Name, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("PUT", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "UpdateExclusiveScope",
+		HTTPMethod: "PUT",
+		HTTPPath:   path,
 	}
+	output = &models.ScopeEntry{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //RemoveExclusiveScope - Remove an existing exclusive scope.
 //RequestType: DELETE
 //Input: input *RemoveExclusiveScopeInput
-func (s *OauthAuthServerSettingsService) RemoveExclusiveScope(input *RemoveExclusiveScopeInput) (result *models.ApiResult, resp *http.Response, err error) {
+func (s *OauthAuthServerSettingsService) RemoveExclusiveScope(input *RemoveExclusiveScopeInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/oauth/authServerSettings/scopes/exclusiveScopes/{name}"
 	path = strings.Replace(path, "{name}", input.Name, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("DELETE", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "RemoveExclusiveScope",
+		HTTPMethod: "DELETE",
+		HTTPPath:   path,
 	}
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
-	}
-	return result, resp, nil
+	req := s.newRequest(op, nil, output)
 
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
+	}
+	return nil, req.HTTPResponse, req.Error
 }
 
 //AddExclusiveScopeGroup - Create a new exclusive scope group.
 //RequestType: POST
 //Input: input *AddExclusiveScopeGroupInput
-func (s *OauthAuthServerSettingsService) AddExclusiveScopeGroup(input *AddExclusiveScopeGroupInput) (result *models.ScopeGroupEntry, resp *http.Response, err error) {
+func (s *OauthAuthServerSettingsService) AddExclusiveScopeGroup(input *AddExclusiveScopeGroupInput) (output *models.ScopeGroupEntry, resp *http.Response, err error) {
 	path := "/oauth/authServerSettings/scopes/exclusiveScopeGroups"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("POST", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "AddExclusiveScopeGroup",
+		HTTPMethod: "POST",
+		HTTPPath:   path,
 	}
+	output = &models.ScopeGroupEntry{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetExclusiveScopeGroup - Get an existing exclusive scope group.
 //RequestType: GET
 //Input: input *GetExclusiveScopeGroupInput
-func (s *OauthAuthServerSettingsService) GetExclusiveScopeGroup(input *GetExclusiveScopeGroupInput) (result *models.ScopeGroupEntry, resp *http.Response, err error) {
+func (s *OauthAuthServerSettingsService) GetExclusiveScopeGroup(input *GetExclusiveScopeGroupInput) (output *models.ScopeGroupEntry, resp *http.Response, err error) {
 	path := "/oauth/authServerSettings/scopes/exclusiveScopeGroups/{name}"
 	path = strings.Replace(path, "{name}", input.Name, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetExclusiveScopeGroup",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.ScopeGroupEntry{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //UpdateExclusiveScopeGroups - Update an existing exclusive scope group.
 //RequestType: PUT
 //Input: input *UpdateExclusiveScopeGroupsInput
-func (s *OauthAuthServerSettingsService) UpdateExclusiveScopeGroups(input *UpdateExclusiveScopeGroupsInput) (result *models.ScopeGroupEntry, resp *http.Response, err error) {
+func (s *OauthAuthServerSettingsService) UpdateExclusiveScopeGroups(input *UpdateExclusiveScopeGroupsInput) (output *models.ScopeGroupEntry, resp *http.Response, err error) {
 	path := "/oauth/authServerSettings/scopes/exclusiveScopeGroups/{name}"
 	path = strings.Replace(path, "{name}", input.Name, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("PUT", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "UpdateExclusiveScopeGroups",
+		HTTPMethod: "PUT",
+		HTTPPath:   path,
 	}
+	output = &models.ScopeGroupEntry{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //RemoveExclusiveScopeGroup - Remove an existing exclusive scope group.
 //RequestType: DELETE
 //Input: input *RemoveExclusiveScopeGroupInput
-func (s *OauthAuthServerSettingsService) RemoveExclusiveScopeGroup(input *RemoveExclusiveScopeGroupInput) (result *models.ApiResult, resp *http.Response, err error) {
+func (s *OauthAuthServerSettingsService) RemoveExclusiveScopeGroup(input *RemoveExclusiveScopeGroupInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/oauth/authServerSettings/scopes/exclusiveScopeGroups/{name}"
 	path = strings.Replace(path, "{name}", input.Name, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("DELETE", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "RemoveExclusiveScopeGroup",
+		HTTPMethod: "DELETE",
+		HTTPPath:   path,
 	}
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
-	}
-	return result, resp, nil
+	req := s.newRequest(op, nil, output)
 
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
+	}
+	return nil, req.HTTPResponse, req.Error
 }
 
 type AddCommonScopeInput struct {

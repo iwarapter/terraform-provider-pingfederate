@@ -1,19 +1,20 @@
 package pingfederate
 
 import (
-	"fmt"
+	"context"
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthOpenIdConnect"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func resourcePingFederateOpenIdConnectPolicyResource() *schema.Resource {
 	return &schema.Resource{
-		Create: resourcePingFederateOpenIdConnectPolicyResourceCreate,
-		Read:   resourcePingFederateOpenIdConnectPolicyResourceRead,
-		Update: resourcePingFederateOpenIdConnectPolicyResourceUpdate,
-		Delete: resourcePingFederateOpenIdConnectPolicyResourceDelete,
+		CreateContext: resourcePingFederateOpenIdConnectPolicyResourceCreate,
+		ReadContext:   resourcePingFederateOpenIdConnectPolicyResourceRead,
+		UpdateContext: resourcePingFederateOpenIdConnectPolicyResourceUpdate,
+		DeleteContext: resourcePingFederateOpenIdConnectPolicyResourceDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
@@ -79,7 +80,7 @@ func resourcePingFederateOpenIdConnectPolicyResourceSchema() map[string]*schema.
 	}
 }
 
-func resourcePingFederateOpenIdConnectPolicyResourceCreate(d *schema.ResourceData, m interface{}) error {
+func resourcePingFederateOpenIdConnectPolicyResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthOpenIdConnect
 	input := oauthOpenIdConnect.CreatePolicyInput{
 		Body:                     *resourcePingFederateOpenIdConnectPolicyResourceReadData(d),
@@ -88,25 +89,25 @@ func resourcePingFederateOpenIdConnectPolicyResourceCreate(d *schema.ResourceDat
 	input.Body.Id = input.Body.Name
 	result, _, err := svc.CreatePolicy(&input)
 	if err != nil {
-		return fmt.Errorf("%v", err)
+		return diag.Errorf("unable to create OauthOpenIdConnectPolicy: %s", err)
 	}
 	d.SetId(*result.Id)
 	return resourcePingFederateOpenIdConnectPolicyResourceReadResult(d, result)
 }
 
-func resourcePingFederateOpenIdConnectPolicyResourceRead(d *schema.ResourceData, m interface{}) error {
+func resourcePingFederateOpenIdConnectPolicyResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthOpenIdConnect
 	input := oauthOpenIdConnect.GetPolicyInput{
 		Id: d.Id(),
 	}
 	result, _, err := svc.GetPolicy(&input)
 	if err != nil {
-		return fmt.Errorf("%v", err)
+		return diag.Errorf("unable to read OauthOpenIdConnectPolicy: %s", err)
 	}
 	return resourcePingFederateOpenIdConnectPolicyResourceReadResult(d, result)
 }
 
-func resourcePingFederateOpenIdConnectPolicyResourceUpdate(d *schema.ResourceData, m interface{}) error {
+func resourcePingFederateOpenIdConnectPolicyResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthOpenIdConnect
 	input := oauthOpenIdConnect.UpdatePolicyInput{
 		Id:                       d.Id(),
@@ -115,53 +116,55 @@ func resourcePingFederateOpenIdConnectPolicyResourceUpdate(d *schema.ResourceDat
 	}
 	result, _, err := svc.UpdatePolicy(&input)
 	if err != nil {
-		return fmt.Errorf("%v", err)
+		return diag.Errorf("unable to update OauthOpenIdConnectPolicy: %s", err)
 	}
 
 	return resourcePingFederateOpenIdConnectPolicyResourceReadResult(d, result)
 }
 
-func resourcePingFederateOpenIdConnectPolicyResourceDelete(d *schema.ResourceData, m interface{}) error {
+func resourcePingFederateOpenIdConnectPolicyResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthOpenIdConnect
 	input := oauthOpenIdConnect.DeletePolicyInput{
 		Id: d.Id(),
 	}
 	_, _, err := svc.DeletePolicy(&input)
 	if err != nil {
-		return fmt.Errorf("%v", err)
+		return diag.Errorf("unable to delete OauthOpenIdConnectPolicy: %s", err)
 	}
 	return nil
 }
 
-func resourcePingFederateOpenIdConnectPolicyResourceReadResult(d *schema.ResourceData, rv *pf.OpenIdConnectPolicy) (err error) {
-	setResourceDataString(d, "name", rv.Name)
-	setResourceDataString(d, "policy_id", rv.Id)
+func resourcePingFederateOpenIdConnectPolicyResourceReadResult(d *schema.ResourceData, rv *pf.OpenIdConnectPolicy) diag.Diagnostics {
+	var diags diag.Diagnostics
+	setResourceDataStringithDiagnostic(d, "name", rv.Name, &diags)
+	setResourceDataStringithDiagnostic(d, "policy_id", rv.Id, &diags)
 	if rv.AccessTokenManagerRef != nil {
-		if err = d.Set("access_token_manager_ref", flattenResourceLink(rv.AccessTokenManagerRef)); err != nil {
-			return err
+		if err := d.Set("access_token_manager_ref", flattenResourceLink(rv.AccessTokenManagerRef)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
+
 		}
 	}
-	setResourceDataInt(d, "id_token_lifetime", rv.IdTokenLifetime)
-	setResourceDataBool(d, "include_sri_in_id_token", rv.IncludeSriInIdToken)
-	setResourceDataBool(d, "include_user_in_id_token", rv.IncludeUserInfoInIdToken)
-	setResourceDataBool(d, "include_shash_in_id_token", rv.IncludeSHashInIdToken)
-	setResourceDataBool(d, "return_id_token_on_refresh_grant", rv.ReturnIdTokenOnRefreshGrant)
+	setResourceDataIntWithDiagnostic(d, "id_token_lifetime", rv.IdTokenLifetime, &diags)
+	setResourceDataBoolWithDiagnostic(d, "include_sri_in_id_token", rv.IncludeSriInIdToken, &diags)
+	setResourceDataBoolWithDiagnostic(d, "include_user_in_id_token", rv.IncludeUserInfoInIdToken, &diags)
+	setResourceDataBoolWithDiagnostic(d, "include_shash_in_id_token", rv.IncludeSHashInIdToken, &diags)
+	setResourceDataBoolWithDiagnostic(d, "return_id_token_on_refresh_grant", rv.ReturnIdTokenOnRefreshGrant, &diags)
 	if rv.AttributeContract != nil {
-		if err = d.Set("attribute_contract", flattenOpenIdConnectAttributeContract(rv.AttributeContract)); err != nil {
-			return err
+		if err := d.Set("attribute_contract", flattenOpenIdConnectAttributeContract(rv.AttributeContract)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
 	if rv.AttributeMapping != nil {
-		if err = d.Set("attribute_mapping", flattenAttributeMapping(rv.AttributeMapping)); err != nil {
-			return err
+		if err := d.Set("attribute_mapping", flattenAttributeMapping(rv.AttributeMapping)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
 	//if rv.ScopeAttributeMappings != nil {
-	//	if err = d.Set("scope_attribute_mappings", flattenScopeAttributeMappings(rv.ScopeAttributeMappings)); err != nil {
-	//		return err
+	//	if err := d.Set("scope_attribute_mappings", flattenScopeAttributeMappings(rv.ScopeAttributeMappings)); err != nil {
+	//					diags = append(diags, diag.FromErr(err)...)
 	//	}
 	//}
-	return nil
+	return diags
 }
 
 func resourcePingFederateOpenIdConnectPolicyResourceReadData(d *schema.ResourceData) *pf.OpenIdConnectPolicy {

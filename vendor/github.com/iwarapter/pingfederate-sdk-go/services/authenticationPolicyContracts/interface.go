@@ -7,9 +7,9 @@ import (
 )
 
 type AuthenticationPolicyContractsAPI interface {
-	GetAuthenticationPolicyContracts(input *GetAuthenticationPolicyContractsInput) (result *models.AuthenticationPolicyContracts, resp *http.Response, err error)
-	CreateAuthenticationPolicyContract(input *CreateAuthenticationPolicyContractInput) (result *models.AuthenticationPolicyContract, resp *http.Response, err error)
-	GetAuthenticationPolicyContract(input *GetAuthenticationPolicyContractInput) (result *models.AuthenticationPolicyContract, resp *http.Response, err error)
-	UpdateAuthenticationPolicyContract(input *UpdateAuthenticationPolicyContractInput) (result *models.AuthenticationPolicyContract, resp *http.Response, err error)
-	DeleteAuthenticationPolicyContract(input *DeleteAuthenticationPolicyContractInput) (result *models.ApiResult, resp *http.Response, err error)
+	GetAuthenticationPolicyContracts(input *GetAuthenticationPolicyContractsInput) (output *models.AuthenticationPolicyContracts, resp *http.Response, err error)
+	CreateAuthenticationPolicyContract(input *CreateAuthenticationPolicyContractInput) (output *models.AuthenticationPolicyContract, resp *http.Response, err error)
+	GetAuthenticationPolicyContract(input *GetAuthenticationPolicyContractInput) (output *models.AuthenticationPolicyContract, resp *http.Response, err error)
+	UpdateAuthenticationPolicyContract(input *UpdateAuthenticationPolicyContractInput) (output *models.AuthenticationPolicyContract, resp *http.Response, err error)
+	DeleteAuthenticationPolicyContract(input *DeleteAuthenticationPolicyContractInput) (output *models.ApiResult, resp *http.Response, err error)
 }

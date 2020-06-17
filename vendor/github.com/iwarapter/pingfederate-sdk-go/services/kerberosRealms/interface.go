@@ -7,11 +7,11 @@ import (
 )
 
 type KerberosRealmsAPI interface {
-	GetKerberosRealmSettings() (result *models.KerberosRealmsSettings, resp *http.Response, err error)
-	UpdateSettings(input *UpdateSettingsInput) (result *models.KerberosRealmsSettings, resp *http.Response, err error)
-	GetKerberosRealms() (result *models.KerberosRealms, resp *http.Response, err error)
-	CreateKerberosRealm(input *CreateKerberosRealmInput) (result *models.KerberosRealm, resp *http.Response, err error)
-	GetKerberosRealm(input *GetKerberosRealmInput) (result *models.KerberosRealm, resp *http.Response, err error)
-	UpdateKerberosRealm(input *UpdateKerberosRealmInput) (result *models.KerberosRealm, resp *http.Response, err error)
-	DeleteKerberosRealm(input *DeleteKerberosRealmInput) (result *models.ApiResult, resp *http.Response, err error)
+	GetKerberosRealmSettings() (output *models.KerberosRealmsSettings, resp *http.Response, err error)
+	UpdateSettings(input *UpdateSettingsInput) (output *models.KerberosRealmsSettings, resp *http.Response, err error)
+	GetKerberosRealms() (output *models.KerberosRealms, resp *http.Response, err error)
+	CreateKerberosRealm(input *CreateKerberosRealmInput) (output *models.KerberosRealm, resp *http.Response, err error)
+	GetKerberosRealm(input *GetKerberosRealmInput) (output *models.KerberosRealm, resp *http.Response, err error)
+	UpdateKerberosRealm(input *UpdateKerberosRealmInput) (output *models.KerberosRealm, resp *http.Response, err error)
+	DeleteKerberosRealm(input *DeleteKerberosRealmInput) (output *models.ApiResult, resp *http.Response, err error)
 }

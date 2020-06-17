@@ -7,6 +7,6 @@ import (
 )
 
 type ExtendedPropertiesAPI interface {
-	GetExtendedProperties() (result *models.ExtendedProperties, resp *http.Response, err error)
-	UpdateExtendedProperties(input *UpdateExtendedPropertiesInput) (result *models.ExtendedProperties, resp *http.Response, err error)
+	GetExtendedProperties() (output *models.ExtendedProperties, resp *http.Response, err error)
+	UpdateExtendedProperties(input *UpdateExtendedPropertiesInput) (output *models.ExtendedProperties, resp *http.Response, err error)
 }

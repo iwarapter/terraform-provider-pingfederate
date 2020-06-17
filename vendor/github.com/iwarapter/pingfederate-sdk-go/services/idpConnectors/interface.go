@@ -7,6 +7,6 @@ import (
 )
 
 type IdpConnectorsAPI interface {
-	GetIdpConnectorDescriptors() (result *models.SaasPluginDescriptors, resp *http.Response, err error)
-	GetIdpConnectorDescriptorById(input *GetIdpConnectorDescriptorByIdInput) (result *models.SaasPluginDescriptor, resp *http.Response, err error)
+	GetIdpConnectorDescriptors() (output *models.SaasPluginDescriptors, resp *http.Response, err error)
+	GetIdpConnectorDescriptorById(input *GetIdpConnectorDescriptorByIdInput) (output *models.SaasPluginDescriptor, resp *http.Response, err error)
 }

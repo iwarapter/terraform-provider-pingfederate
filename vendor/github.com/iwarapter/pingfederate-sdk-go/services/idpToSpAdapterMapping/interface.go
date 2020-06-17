@@ -7,9 +7,9 @@ import (
 )
 
 type IdpToSpAdapterMappingAPI interface {
-	GetIdpToSpAdapterMappings() (result *models.IdpToSpAdapterMappings, resp *http.Response, err error)
-	CreateIdpToSpAdapterMapping(input *CreateIdpToSpAdapterMappingInput) (result *models.IdpToSpAdapterMapping, resp *http.Response, err error)
-	GetIdpToSpAdapterMappingsById(input *GetIdpToSpAdapterMappingsByIdInput) (result *models.IdpToSpAdapterMapping, resp *http.Response, err error)
-	UpdateIdpToSpAdapterMapping(input *UpdateIdpToSpAdapterMappingInput) (result *models.IdpToSpAdapterMapping, resp *http.Response, err error)
-	DeleteIdpToSpAdapterMappingsById(input *DeleteIdpToSpAdapterMappingsByIdInput) (result *models.ApiResult, resp *http.Response, err error)
+	GetIdpToSpAdapterMappings() (output *models.IdpToSpAdapterMappings, resp *http.Response, err error)
+	CreateIdpToSpAdapterMapping(input *CreateIdpToSpAdapterMappingInput) (output *models.IdpToSpAdapterMapping, resp *http.Response, err error)
+	GetIdpToSpAdapterMappingsById(input *GetIdpToSpAdapterMappingsByIdInput) (output *models.IdpToSpAdapterMapping, resp *http.Response, err error)
+	UpdateIdpToSpAdapterMapping(input *UpdateIdpToSpAdapterMappingInput) (output *models.IdpToSpAdapterMapping, resp *http.Response, err error)
+	DeleteIdpToSpAdapterMappingsById(input *DeleteIdpToSpAdapterMappingsByIdInput) (output *models.ApiResult, resp *http.Response, err error)
 }

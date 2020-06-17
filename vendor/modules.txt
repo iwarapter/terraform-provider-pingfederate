@@ -89,6 +89,8 @@ github.com/google/go-cmp/cmp/internal/diff
 github.com/google/go-cmp/cmp/internal/flags
 github.com/google/go-cmp/cmp/internal/function
 github.com/google/go-cmp/cmp/internal/value
+# github.com/google/uuid v1.1.1
+github.com/google/uuid
 # github.com/googleapis/gax-go/v2 v2.0.5
 github.com/googleapis/gax-go/v2
 # github.com/gotestyourself/gotestyourself v2.2.0+incompatible
@@ -98,6 +100,7 @@ github.com/hashicorp/errwrap
 # github.com/hashicorp/go-cleanhttp v0.5.1
 github.com/hashicorp/go-cleanhttp
 # github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
+## explicit
 github.com/hashicorp/go-cty/cty
 github.com/hashicorp/go-cty/cty/convert
 github.com/hashicorp/go-cty/cty/gocty
@@ -153,10 +156,14 @@ github.com/hashicorp/terraform-plugin-sdk/v2/terraform
 github.com/hashicorp/terraform-plugin-test
 # github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d
 github.com/hashicorp/yamux
-# github.com/iwarapter/pingfederate-sdk-go v0.0.0-20200615215226-2d272dddc087
+# github.com/iwarapter/pingfederate-sdk-go v0.0.0-20200617093823-207d4fb6fdc0
 ## explicit
+github.com/iwarapter/pingfederate-sdk-go/pingfederate
 github.com/iwarapter/pingfederate-sdk-go/pingfederate/client
+github.com/iwarapter/pingfederate-sdk-go/pingfederate/client/metadata
+github.com/iwarapter/pingfederate-sdk-go/pingfederate/config
 github.com/iwarapter/pingfederate-sdk-go/pingfederate/models
+github.com/iwarapter/pingfederate-sdk-go/pingfederate/request
 github.com/iwarapter/pingfederate-sdk-go/services/administrativeAccounts
 github.com/iwarapter/pingfederate-sdk-go/services/authenticationApi
 github.com/iwarapter/pingfederate-sdk-go/services/authenticationPolicies

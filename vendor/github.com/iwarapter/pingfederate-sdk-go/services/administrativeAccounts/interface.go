@@ -7,11 +7,11 @@ import (
 )
 
 type AdministrativeAccountsAPI interface {
-	GetAccounts() (result *models.AdministrativeAccounts, resp *http.Response, err error)
-	AddAccount(input *AddAccountInput) (result *models.AdministrativeAccount, resp *http.Response, err error)
-	GetAccount(input *GetAccountInput) (result *models.AdministrativeAccount, resp *http.Response, err error)
-	UpdateAccount(input *UpdateAccountInput) (result *models.AdministrativeAccount, resp *http.Response, err error)
-	DeleteAccount(input *DeleteAccountInput) (result *models.ApiResult, resp *http.Response, err error)
-	ResetPassword(input *ResetPasswordInput) (result *models.UserCredentials, resp *http.Response, err error)
-	ChangePassword(input *ChangePasswordInput) (result *models.UserCredentials, resp *http.Response, err error)
+	GetAccounts() (output *models.AdministrativeAccounts, resp *http.Response, err error)
+	AddAccount(input *AddAccountInput) (output *models.AdministrativeAccount, resp *http.Response, err error)
+	GetAccount(input *GetAccountInput) (output *models.AdministrativeAccount, resp *http.Response, err error)
+	UpdateAccount(input *UpdateAccountInput) (output *models.AdministrativeAccount, resp *http.Response, err error)
+	DeleteAccount(input *DeleteAccountInput) (output *models.ApiResult, resp *http.Response, err error)
+	ResetPassword(input *ResetPasswordInput) (output *models.UserCredentials, resp *http.Response, err error)
+	ChangePassword(input *ChangePasswordInput) (output *models.UserCredentials, resp *http.Response, err error)
 }

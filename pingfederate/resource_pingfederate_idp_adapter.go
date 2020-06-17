@@ -1,19 +1,20 @@
 package pingfederate
 
 import (
-	"fmt"
+	"context"
 	"github.com/iwarapter/pingfederate-sdk-go/services/idpAdapters"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func resourcePingFederateIdpAdapterResource() *schema.Resource {
 	return &schema.Resource{
-		Create: resourcePingFederateIdpAdapterResourceCreate,
-		Read:   resourcePingFederateIdpAdapterResourceRead,
-		Update: resourcePingFederateIdpAdapterResourceUpdate,
-		Delete: resourcePingFederateIdpAdapterResourceDelete,
+		CreateContext: resourcePingFederateIdpAdapterResourceCreate,
+		ReadContext:   resourcePingFederateIdpAdapterResourceRead,
+		UpdateContext: resourcePingFederateIdpAdapterResourceUpdate,
+		DeleteContext: resourcePingFederateIdpAdapterResourceDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
@@ -55,7 +56,7 @@ func resourcePingFederateIdpAdapterResourceSchema() map[string]*schema.Schema {
 	}
 }
 
-func resourcePingFederateIdpAdapterResourceCreate(d *schema.ResourceData, m interface{}) error {
+func resourcePingFederateIdpAdapterResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).IdpAdapters
 	input := idpAdapters.CreateIdpAdapterInput{
 		Body:                     *resourcePingFederateIdpAdapterResourceReadData(d),
@@ -64,25 +65,25 @@ func resourcePingFederateIdpAdapterResourceCreate(d *schema.ResourceData, m inte
 	input.Body.Id = input.Body.Name
 	result, _, err := svc.CreateIdpAdapter(&input)
 	if err != nil {
-		return fmt.Errorf("%v", err)
+		return diag.Errorf("unable to create IdpAdapters: %s", err)
 	}
 	d.SetId(*result.Id)
 	return resourcePingFederateIdpAdapterResourceReadResult(d, result)
 }
 
-func resourcePingFederateIdpAdapterResourceRead(d *schema.ResourceData, m interface{}) error {
+func resourcePingFederateIdpAdapterResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).IdpAdapters
 	input := idpAdapters.GetIdpAdapterInput{
 		Id: d.Id(),
 	}
 	result, _, err := svc.GetIdpAdapter(&input)
 	if err != nil {
-		return fmt.Errorf("%v", err)
+		return diag.Errorf("unable to read IdpAdapters: %s", err)
 	}
 	return resourcePingFederateIdpAdapterResourceReadResult(d, result)
 }
 
-func resourcePingFederateIdpAdapterResourceUpdate(d *schema.ResourceData, m interface{}) error {
+func resourcePingFederateIdpAdapterResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).IdpAdapters
 	input := idpAdapters.UpdateIdpAdapterInput{
 		Id:                       d.Id(),
@@ -91,57 +92,58 @@ func resourcePingFederateIdpAdapterResourceUpdate(d *schema.ResourceData, m inte
 	}
 	result, _, err := svc.UpdateIdpAdapter(&input)
 	if err != nil {
-		return fmt.Errorf("%v", err)
+		return diag.Errorf("unable to update IdpAdapters: %s", err)
 	}
 
 	return resourcePingFederateIdpAdapterResourceReadResult(d, result)
 }
 
-func resourcePingFederateIdpAdapterResourceDelete(d *schema.ResourceData, m interface{}) error {
+func resourcePingFederateIdpAdapterResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).IdpAdapters
 	input := idpAdapters.DeleteIdpAdapterInput{
 		Id: d.Id(),
 	}
 	_, _, err := svc.DeleteIdpAdapter(&input)
 	if err != nil {
-		return fmt.Errorf("%v", err)
+		return diag.Errorf("unable to delete IdpAdapters: %s", err)
 	}
 	return nil
 }
 
-func resourcePingFederateIdpAdapterResourceReadResult(d *schema.ResourceData, rv *pf.IdpAdapter) (err error) {
-	setResourceDataString(d, "name", rv.Name)
-	setResourceDataString(d, "authn_ctx_class_ref", rv.AuthnCtxClassRef)
+func resourcePingFederateIdpAdapterResourceReadResult(d *schema.ResourceData, rv *pf.IdpAdapter) diag.Diagnostics {
+	var diags diag.Diagnostics
+	setResourceDataStringithDiagnostic(d, "name", rv.Name, &diags)
+	setResourceDataStringithDiagnostic(d, "authn_ctx_class_ref", rv.AuthnCtxClassRef, &diags)
 	if rv.PluginDescriptorRef != nil {
-		if err = d.Set("plugin_descriptor_ref", flattenResourceLink(rv.PluginDescriptorRef)); err != nil {
-			return err
+		if err := d.Set("plugin_descriptor_ref", flattenResourceLink(rv.PluginDescriptorRef)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
 
 	if rv.ParentRef != nil {
-		if err = d.Set("parent_ref", flattenResourceLink(rv.ParentRef)); err != nil {
-			return err
+		if err := d.Set("parent_ref", flattenResourceLink(rv.ParentRef)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
 
 	if rv.Configuration != nil {
-		if err = d.Set("configuration", flattenPluginConfiguration(rv.Configuration)); err != nil {
-			return err
+		if err := d.Set("configuration", flattenPluginConfiguration(rv.Configuration)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
 
 	if rv.AttributeContract != nil {
-		if err = d.Set("attribute_contract", flattenIdpAdapterAttributeContract(rv.AttributeContract)); err != nil {
-			return err
+		if err := d.Set("attribute_contract", flattenIdpAdapterAttributeContract(rv.AttributeContract)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
 
 	if rv.AttributeMapping != nil {
-		if err = d.Set("attribute_mapping", flattenIdpAdapterContractMapping(rv.AttributeMapping)); err != nil {
-			return err
+		if err := d.Set("attribute_mapping", flattenIdpAdapterContractMapping(rv.AttributeMapping)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
-	return nil
+	return diags
 }
 
 func resourcePingFederateIdpAdapterResourceReadData(d *schema.ResourceData) *pf.IdpAdapter {

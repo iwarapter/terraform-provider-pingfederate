@@ -1,13 +1,11 @@
 package pingfederate
 
 import (
-	"encoding/json"
 	"fmt"
-	"github.com/iwarapter/pingfederate-sdk-go/services/authenticationSelectors"
 	"net/http"
-	"net/http/httptest"
-	"net/url"
 	"testing"
+
+	"github.com/iwarapter/pingfederate-sdk-go/services/authenticationSelectors"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -94,6 +92,39 @@ func testAccCheckPingFederateAuthenticationSelectorResourceExists(n string) reso
 	}
 }
 
+type authenticationSelectorMock struct {
+	authenticationSelectors.AuthenticationSelectorsAPI
+}
+
+func (m authenticationSelectorMock) GetAuthenticationSelectorDescriptorsById(input *authenticationSelectors.GetAuthenticationSelectorDescriptorsByIdInput) (output *pf.AuthenticationSelectorDescriptor, resp *http.Response, err error) {
+	return &pf.AuthenticationSelectorDescriptor{
+		AttributeContract: nil,
+		ClassName:         String("com.pingidentity.pf.selectors.cidr.CIDRAdapterSelector"),
+		ConfigDescriptor: &pf.PluginConfigDescriptor{
+			ActionDescriptors: nil,
+			Description:       nil,
+			Fields:            &[]*pf.FieldDescriptor{},
+			Tables: &[]*pf.TableDescriptor{
+				{
+					Columns: &[]*pf.FieldDescriptor{
+						{
+							Type: String("TEXT"),
+							Name: String("Username"),
+						},
+					},
+					Description:       nil,
+					Label:             nil,
+					Name:              String("Networks"),
+					RequireDefaultRow: nil,
+				},
+			},
+		},
+		Id:                       String("com.pingidentity.pf.selectors.cidr.CIDRAdapterSelector"),
+		Name:                     String("CIDR Authentication Selector"),
+		SupportsExtendedContract: nil,
+	}, nil, nil
+}
+
 func Test_resourcePingFederateAuthenticationSelectorResourceReadData(t *testing.T) {
 	cases := []struct {
 		Resource pf.AuthenticationSelector
@@ -139,46 +170,7 @@ func Test_resourcePingFederateAuthenticationSelectorResourceReadData(t *testing.
 	for i, tc := range cases {
 		t.Run(fmt.Sprintf("tc:%v", i), func(t *testing.T) {
 
-			descs := pf.PluginConfigDescriptor{
-				ActionDescriptors: nil,
-				Description:       nil,
-				Fields:            &[]*pf.FieldDescriptor{},
-				Tables: &[]*pf.TableDescriptor{
-					{
-						Columns: &[]*pf.FieldDescriptor{
-							{
-								Type: String("TEXT"),
-								Name: String("Username"),
-							},
-						},
-						Description:       nil,
-						Label:             nil,
-						Name:              String("Networks"),
-						RequireDefaultRow: nil,
-					},
-				},
-			}
-
-			server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-				// Test request parameters
-				equals(t, req.URL.String(), "/authenticationSelectors/descriptors/com.pingidentity.pf.selectors.cidr.CIDRAdapterSelector")
-				// Send response to be tested
-				b, _ := json.Marshal(pf.AuthenticationSelectorDescriptor{
-					AttributeContract:        nil,
-					ClassName:                String("com.pingidentity.pf.selectors.cidr.CIDRAdapterSelector"),
-					ConfigDescriptor:         &descs,
-					Id:                       String("com.pingidentity.pf.selectors.cidr.CIDRAdapterSelector"),
-					Name:                     String("CIDR Authentication Selector"),
-					SupportsExtendedContract: nil,
-				})
-				rw.Write(b)
-			}))
-			// Close the server when test finishes
-			defer server.Close()
-
-			// Use Client & URL from our local test server
-			url, _ := url.Parse(server.URL)
-			c := authenticationSelectors.New("", "", url, "", server.Client())
+			c := authenticationSelectorMock{}
 
 			resourceSchema := resourcePingFederateAuthenticationSelectorResourceSchema()
 			resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})

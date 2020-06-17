@@ -1,29 +1,30 @@
 package pingfederate
 
 import (
-	"fmt"
+	"context"
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthClients"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func resourcePingFederateOauthClientResource() *schema.Resource {
 	return &schema.Resource{
-		Create: resourcePingFederateOauthClientResourceCreate,
-		Read:   resourcePingFederateOauthClientResourceRead,
-		Update: resourcePingFederateOauthClientResourceUpdate,
-		Delete: resourcePingFederateOauthClientResourceDelete,
+		CreateContext: resourcePingFederateOauthClientResourceCreate,
+		ReadContext:   resourcePingFederateOauthClientResourceRead,
+		UpdateContext: resourcePingFederateOauthClientResourceUpdate,
+		DeleteContext: resourcePingFederateOauthClientResourceDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"client_id": &schema.Schema{
+			"client_id": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
@@ -32,15 +33,15 @@ func resourcePingFederateOauthClientResource() *schema.Resource {
 				Required: true,
 				MinItems: 1,
 				Elem: &schema.Schema{
-					Type:         schema.TypeString,
-					ValidateFunc: validateGrantTypes,
+					Type:             schema.TypeString,
+					ValidateDiagFunc: validateGrantTypes,
 				},
 			},
 			"bypass_approval_page": {
 				Type:     schema.TypeBool,
 				Optional: true,
 			},
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
@@ -51,20 +52,20 @@ func resourcePingFederateOauthClientResource() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
-			"logo_url": &schema.Schema{
+			"logo_url": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"persistent_grant_expiration_time": &schema.Schema{
+			"persistent_grant_expiration_time": {
 				Type:     schema.TypeInt,
 				Optional: true,
 			},
-			"persistent_grant_expiration_time_unit": &schema.Schema{
+			"persistent_grant_expiration_time_unit": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "DAYS",
 			},
-			"persistent_grant_expiration_type": &schema.Schema{
+			"persistent_grant_expiration_type": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "SERVER_DEFAULT",
@@ -76,16 +77,16 @@ func resourcePingFederateOauthClientResource() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
-			"refresh_rolling": &schema.Schema{
+			"refresh_rolling": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "SERVER_DEFAULT",
 			},
-			"require_signed_requests": &schema.Schema{
+			"require_signed_requests": {
 				Type:     schema.TypeBool,
 				Optional: true,
 			},
-			"restrict_scopes": &schema.Schema{
+			"restrict_scopes": {
 				Type:     schema.TypeBool,
 				Optional: true,
 			},
@@ -103,7 +104,7 @@ func resourcePingFederateOauthClientResource() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
-			"validate_using_all_eligible_atms": &schema.Schema{
+			"validate_using_all_eligible_atms": {
 				Type:     schema.TypeBool,
 				Optional: true,
 			},
@@ -136,9 +137,9 @@ func resourcePingFederateOauthClientResource() *schema.Resource {
 							ConflictsWith: []string{"client_auth.0.client_cert_issuer_dn", "client_auth.0.client_cert_subject_dn"},
 						},
 						"type": {
-							Type:         schema.TypeString,
-							Required:     true,
-							ValidateFunc: validateClientAuthType,
+							Type:             schema.TypeString,
+							Required:         true,
+							ValidateDiagFunc: validateClientAuthType,
 						},
 					},
 				},
@@ -155,10 +156,10 @@ func resourcePingFederateOauthClientResource() *schema.Resource {
 							Optional: true,
 						},
 						"id_token_signing_algorithm": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							Default:      "RS256",
-							ValidateFunc: validateTokenSigningAlgorithm,
+							Type:             schema.TypeString,
+							Optional:         true,
+							Default:          "RS256",
+							ValidateDiagFunc: validateTokenSigningAlgorithm,
 						},
 						"logout_uris": {
 							Type:     schema.TypeList,
@@ -199,32 +200,32 @@ func resourcePingFederateOauthClientResource() *schema.Resource {
 	}
 }
 
-func resourcePingFederateOauthClientResourceCreate(d *schema.ResourceData, m interface{}) error {
+func resourcePingFederateOauthClientResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthClients
 	input := oauthClients.CreateClientInput{
 		Body: *resourcePingFederateOauthClientResourceReadData(d),
 	}
 	result, _, err := svc.CreateClient(&input)
 	if err != nil {
-		return fmt.Errorf(err.Error())
+		return diag.Errorf("unable to create OauthClients: %s", err)
 	}
 	d.SetId(*result.ClientId)
 	return resourcePingFederateOauthClientResourceReadResult(d, result)
 }
 
-func resourcePingFederateOauthClientResourceRead(d *schema.ResourceData, m interface{}) error {
+func resourcePingFederateOauthClientResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthClients
 	input := oauthClients.GetClientInput{
 		Id: d.Id(),
 	}
 	result, _, err := svc.GetClient(&input)
 	if err != nil {
-		return fmt.Errorf(err.Error())
+		return diag.Errorf("unable to read OauthClients: %s", err)
 	}
 	return resourcePingFederateOauthClientResourceReadResult(d, result)
 }
 
-func resourcePingFederateOauthClientResourceUpdate(d *schema.ResourceData, m interface{}) error {
+func resourcePingFederateOauthClientResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthClients
 	input := oauthClients.UpdateClientInput{
 		Id:   d.Id(),
@@ -232,86 +233,87 @@ func resourcePingFederateOauthClientResourceUpdate(d *schema.ResourceData, m int
 	}
 	result, _, err := svc.UpdateClient(&input)
 	if err != nil {
-		return fmt.Errorf(err.Error())
+		return diag.Errorf("unable to update OauthClients: %s", err)
 	}
 
 	return resourcePingFederateOauthClientResourceReadResult(d, result)
 }
 
-func resourcePingFederateOauthClientResourceDelete(d *schema.ResourceData, m interface{}) error {
+func resourcePingFederateOauthClientResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthClients
 	input := oauthClients.DeleteClientInput{
 		Id: d.Id(),
 	}
 	_, _, err := svc.DeleteClient(&input)
 	if err != nil {
-		return fmt.Errorf(err.Error())
+		return diag.Errorf("unable to delete OauthClients: %s", err)
 	}
 	return nil
 }
 
-func resourcePingFederateOauthClientResourceReadResult(d *schema.ResourceData, rv *pf.Client) (err error) {
+func resourcePingFederateOauthClientResourceReadResult(d *schema.ResourceData, rv *pf.Client) diag.Diagnostics {
 	//TODO
-	setResourceDataString(d, "name", rv.Name)
-	setResourceDataString(d, "client_id", rv.ClientId)
-	setResourceDataBool(d, "bypass_approval_page", rv.BypassApprovalPage)
-	setResourceDataString(d, "description", rv.Description)
-	setResourceDataString(d, "logo_url", rv.LogoUrl)
-	setResourceDataInt(d, "persistent_grant_expiration_time", rv.PersistentGrantExpirationTime)
-	setResourceDataString(d, "persistent_grant_expiration_time_unit", rv.PersistentGrantExpirationTimeUnit)
-	setResourceDataString(d, "persistent_grant_expiration_type", rv.PersistentGrantExpirationType)
-	setResourceDataString(d, "refresh_rolling", rv.RefreshRolling)
-	setResourceDataBool(d, "require_signed_requests", rv.RequireSignedRequests)
-	setResourceDataBool(d, "restrict_scopes", rv.RestrictScopes)
-	setResourceDataBool(d, "validate_using_all_eligible_atms", rv.ValidateUsingAllEligibleAtms)
+	var diags diag.Diagnostics
+	setResourceDataStringithDiagnostic(d, "name", rv.Name, &diags)
+	setResourceDataStringithDiagnostic(d, "client_id", rv.ClientId, &diags)
+	setResourceDataBoolWithDiagnostic(d, "bypass_approval_page", rv.BypassApprovalPage, &diags)
+	setResourceDataStringithDiagnostic(d, "description", rv.Description, &diags)
+	setResourceDataStringithDiagnostic(d, "logo_url", rv.LogoUrl, &diags)
+	setResourceDataIntWithDiagnostic(d, "persistent_grant_expiration_time", rv.PersistentGrantExpirationTime, &diags)
+	setResourceDataStringithDiagnostic(d, "persistent_grant_expiration_time_unit", rv.PersistentGrantExpirationTimeUnit, &diags)
+	setResourceDataStringithDiagnostic(d, "persistent_grant_expiration_type", rv.PersistentGrantExpirationType, &diags)
+	setResourceDataStringithDiagnostic(d, "refresh_rolling", rv.RefreshRolling, &diags)
+	setResourceDataBoolWithDiagnostic(d, "require_signed_requests", rv.RequireSignedRequests, &diags)
+	setResourceDataBoolWithDiagnostic(d, "restrict_scopes", rv.RestrictScopes, &diags)
+	setResourceDataBoolWithDiagnostic(d, "validate_using_all_eligible_atms", rv.ValidateUsingAllEligibleAtms, &diags)
 	if rv.GrantTypes != nil && len(*rv.GrantTypes) > 0 {
-		if err = d.Set("grant_types", *rv.GrantTypes); err != nil {
-			return err
+		if err := d.Set("grant_types", *rv.GrantTypes); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
 	if rv.ExclusiveScopes != nil && len(*rv.ExclusiveScopes) > 0 {
-		if err = d.Set("exclusive_scopes", *rv.ExclusiveScopes); err != nil {
-			return err
+		if err := d.Set("exclusive_scopes", *rv.ExclusiveScopes); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
 	if rv.RedirectUris != nil && len(*rv.RedirectUris) > 0 {
-		if err = d.Set("redirect_uris", *rv.RedirectUris); err != nil {
-			return err
+		if err := d.Set("redirect_uris", *rv.RedirectUris); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
 	if rv.RestrictedResponseTypes != nil && len(*rv.RestrictedResponseTypes) > 0 {
-		if err = d.Set("restricted_response_types", *rv.RestrictedResponseTypes); err != nil {
-			return err
+		if err := d.Set("restricted_response_types", *rv.RestrictedResponseTypes); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
 	if rv.RestrictedScopes != nil && len(*rv.RestrictedScopes) > 0 {
-		if err = d.Set("restricted_scopes", *rv.RestrictedScopes); err != nil {
-			return err
+		if err := d.Set("restricted_scopes", *rv.RestrictedScopes); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
 	if rv.ClientAuth != nil && *rv.ClientAuth.Type != "NONE" {
 		orig := expandClientAuth(d.Get("client_auth").([]interface{}))
 
-		if err = d.Set("client_auth", flattenClientAuth(orig, rv.ClientAuth)); err != nil {
-			return err
+		if err := d.Set("client_auth", flattenClientAuth(orig, rv.ClientAuth)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
 	if rv.JwksSettings != nil {
-		if err = d.Set("jwks_settings", flattenJwksSettings(rv.JwksSettings)); err != nil {
-			return err
+		if err := d.Set("jwks_settings", flattenJwksSettings(rv.JwksSettings)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
 	if rv.DefaultAccessTokenManagerRef != nil {
-		if err = d.Set("default_access_token_manager_ref", flattenResourceLink(rv.DefaultAccessTokenManagerRef)); err != nil {
-			return err
+		if err := d.Set("default_access_token_manager_ref", flattenResourceLink(rv.DefaultAccessTokenManagerRef)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
 	if rv.OidcPolicy != nil {
-		if err = d.Set("oidc_policy", flattenClientOIDCPolicy(rv.OidcPolicy)); err != nil {
-			return err
+		if err := d.Set("oidc_policy", flattenClientOIDCPolicy(rv.OidcPolicy)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
-	return nil
+	return diags
 }
 
 func resourcePingFederateOauthClientResourceReadData(d *schema.ResourceData) *pf.Client {

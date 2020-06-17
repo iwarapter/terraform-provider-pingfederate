@@ -7,9 +7,9 @@ import (
 )
 
 type IdpStsRequestParametersContractsAPI interface {
-	GetStsRequestParamContracts() (result *models.StsRequestParametersContracts, resp *http.Response, err error)
-	CreateStsRequestParamContract(input *CreateStsRequestParamContractInput) (result *models.StsRequestParametersContract, resp *http.Response, err error)
-	GetStsRequestParamContractById(input *GetStsRequestParamContractByIdInput) (result *models.StsRequestParametersContract, resp *http.Response, err error)
-	UpdateStsRequestParamContractById(input *UpdateStsRequestParamContractByIdInput) (result *models.StsRequestParametersContract, resp *http.Response, err error)
-	DeleteStsRequestParamContractById(input *DeleteStsRequestParamContractByIdInput) (result *models.ApiResult, resp *http.Response, err error)
+	GetStsRequestParamContracts() (output *models.StsRequestParametersContracts, resp *http.Response, err error)
+	CreateStsRequestParamContract(input *CreateStsRequestParamContractInput) (output *models.StsRequestParametersContract, resp *http.Response, err error)
+	GetStsRequestParamContractById(input *GetStsRequestParamContractByIdInput) (output *models.StsRequestParametersContract, resp *http.Response, err error)
+	UpdateStsRequestParamContractById(input *UpdateStsRequestParamContractByIdInput) (output *models.StsRequestParametersContract, resp *http.Response, err error)
+	DeleteStsRequestParamContractById(input *DeleteStsRequestParamContractByIdInput) (output *models.ApiResult, resp *http.Response, err error)
 }

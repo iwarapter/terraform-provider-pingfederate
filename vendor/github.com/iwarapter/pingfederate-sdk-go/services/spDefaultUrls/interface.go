@@ -7,6 +7,6 @@ import (
 )
 
 type SpDefaultUrlsAPI interface {
-	GetDefaultUrls() (result *models.SpDefaultUrls, resp *http.Response, err error)
-	UpdateDefaultUrls(input *UpdateDefaultUrlsInput) (result *models.SpDefaultUrls, resp *http.Response, err error)
+	GetDefaultUrls() (output *models.SpDefaultUrls, resp *http.Response, err error)
+	UpdateDefaultUrls(input *UpdateDefaultUrlsInput) (output *models.SpDefaultUrls, resp *http.Response, err error)
 }

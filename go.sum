@@ -85,6 +85,8 @@ github.com/google/martian v2.1.0+incompatible h1:/CP5g8u/VJHijgedC/Legn3BAbAaWPg
 github.com/google/martian v2.1.0+incompatible/go.mod h1:9I4somxYTbIHy5NJKHRl3wXiIaQGbYVAs8BPL6v8lEs=
 github.com/google/pprof v0.0.0-20181206194817-3ea8567a2e57/go.mod h1:zfwlbNMJ+OItoe0UupaVj+oy1omPYYDuagoSzA8v9mc=
 github.com/google/pprof v0.0.0-20190515194954-54271f7e092f/go.mod h1:zfwlbNMJ+OItoe0UupaVj+oy1omPYYDuagoSzA8v9mc=
+github.com/google/uuid v1.1.1 h1:Gkbcsh/GbpXz7lPftLA3P6TYMwjCLYm83jiFQZF/3gY=
+github.com/google/uuid v1.1.1/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/googleapis/gax-go/v2 v2.0.4/go.mod h1:0Wqv26UfaUD9n4G6kQubkQ+KchISgw+vpHVxEJEs9eg=
 github.com/googleapis/gax-go/v2 v2.0.5 h1:sjZBwGj9Jlw33ImPtvFviGYvseOtDM7hkSKB7+Tv3SM=
 github.com/googleapis/gax-go/v2 v2.0.5/go.mod h1:DWXyrwAJ9X0FpwwEdw+IPEYBICEFu5mhpdKc/us6bOk=
@@ -134,12 +136,8 @@ github.com/hashicorp/terraform-plugin-test v1.4.0/go.mod h1:QIJHYz8j+xJtdtLrFTlz
 github.com/hashicorp/yamux v0.0.0-20180604194846-3520598351bb/go.mod h1:+NfK9FKeTrX5uv1uIXGdwYDTeHna2qgaIlx54MXqjAM=
 github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d h1:kJCB4vdITiW1eC1vq2e6IsrXKrZit1bv/TDYFGMp4BQ=
 github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d/go.mod h1:+NfK9FKeTrX5uv1uIXGdwYDTeHna2qgaIlx54MXqjAM=
-github.com/iwarapter/pingfederate-sdk-go v0.0.0-20200615190956-b7143a9dfab5 h1:eoDruywkOaNcOx93cNRnIshXdhIjoNKyE1KB+IiuvAo=
-github.com/iwarapter/pingfederate-sdk-go v0.0.0-20200615190956-b7143a9dfab5/go.mod h1:v/ANtZy8dXd4WrNsA9C52LH38e7E8zaEBWtuHvUkb1Y=
-github.com/iwarapter/pingfederate-sdk-go v0.0.0-20200615195016-aae2e33813b0 h1:FmJyLs2vcbu5JeWSL/2Zz9jiwRbk1URUIVP5DWXc6pE=
-github.com/iwarapter/pingfederate-sdk-go v0.0.0-20200615195016-aae2e33813b0/go.mod h1:v/ANtZy8dXd4WrNsA9C52LH38e7E8zaEBWtuHvUkb1Y=
-github.com/iwarapter/pingfederate-sdk-go v0.0.0-20200615215226-2d272dddc087 h1:yoeVoGpfW+avNxCoMAM4mJCd7VU9fDI5fdzvc7Sp/Fs=
-github.com/iwarapter/pingfederate-sdk-go v0.0.0-20200615215226-2d272dddc087/go.mod h1:v/ANtZy8dXd4WrNsA9C52LH38e7E8zaEBWtuHvUkb1Y=
+github.com/iwarapter/pingfederate-sdk-go v0.0.0-20200617093823-207d4fb6fdc0 h1:hqLdgscDo4s5d8qHwftinSRJspHEzEzwa1lzdt2yPkk=
+github.com/iwarapter/pingfederate-sdk-go v0.0.0-20200617093823-207d4fb6fdc0/go.mod h1:Bqy/rcqMT8v4ODCg7Gp3LShwr6qD/pX/MqJNihee0Ho=
 github.com/jhump/protoreflect v1.6.0 h1:h5jfMVslIg6l29nsMs0D8Wj17RDVdNYti0vDN/PZZoE=
 github.com/jhump/protoreflect v1.6.0/go.mod h1:eaTn3RZAmMBcV0fifFvlm6VHNz3wSkYyXYWUh7ymB74=
 github.com/jmespath/go-jmespath v0.0.0-20160202185014-0b12d6b521d8/go.mod h1:Nht3zPeWKUH0NzdCt2Blrr5ys8VGpn0CEB0cQHVjt7k=

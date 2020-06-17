@@ -7,11 +7,11 @@ import (
 )
 
 type AuthenticationApiAPI interface {
-	GetAuthenticationApiSettings() (result *models.AuthnApiSettings, resp *http.Response, err error)
-	UpdateAuthenticationApiSettings(input *UpdateAuthenticationApiSettingsInput) (result *models.AuthnApiSettings, resp *http.Response, err error)
-	GetAuthenticationApiApplications() (result *models.AuthnApiApplications, resp *http.Response, err error)
-	CreateApplication(input *CreateApplicationInput) (result *models.AuthnApiApplication, resp *http.Response, err error)
-	GetApplication(input *GetApplicationInput) (result *models.AuthnApiApplication, resp *http.Response, err error)
-	UpdateApplication(input *UpdateApplicationInput) (result *models.AuthnApiApplication, resp *http.Response, err error)
-	DeleteApplication(input *DeleteApplicationInput) (result *models.ApiResult, resp *http.Response, err error)
+	GetAuthenticationApiSettings() (output *models.AuthnApiSettings, resp *http.Response, err error)
+	UpdateAuthenticationApiSettings(input *UpdateAuthenticationApiSettingsInput) (output *models.AuthnApiSettings, resp *http.Response, err error)
+	GetAuthenticationApiApplications() (output *models.AuthnApiApplications, resp *http.Response, err error)
+	CreateApplication(input *CreateApplicationInput) (output *models.AuthnApiApplication, resp *http.Response, err error)
+	GetApplication(input *GetApplicationInput) (output *models.AuthnApiApplication, resp *http.Response, err error)
+	UpdateApplication(input *UpdateApplicationInput) (output *models.AuthnApiApplication, resp *http.Response, err error)
+	DeleteApplication(input *DeleteApplicationInput) (output *models.ApiResult, resp *http.Response, err error)
 }

@@ -1,20 +1,20 @@
 package pingfederate
 
 import (
-	"fmt"
-
+	"context"
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthAccessTokenManagers"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func resourcePingFederateOauthAccessTokenManagersResource() *schema.Resource {
 	return &schema.Resource{
-		Create: resourcePingFederateOauthAccessTokenManagersResourceCreate,
-		Read:   resourcePingFederateOauthAccessTokenManagersResourceRead,
-		Update: resourcePingFederateOauthAccessTokenManagersResourceUpdate,
-		Delete: resourcePingFederateOauthAccessTokenManagersResourceDelete,
+		CreateContext: resourcePingFederateOauthAccessTokenManagersResourceCreate,
+		ReadContext:   resourcePingFederateOauthAccessTokenManagersResourceRead,
+		UpdateContext: resourcePingFederateOauthAccessTokenManagersResourceUpdate,
+		DeleteContext: resourcePingFederateOauthAccessTokenManagersResourceDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
@@ -111,27 +111,27 @@ func resourcePingFederateOauthAccessTokenManagersResourceSchema() map[string]*sc
 	}
 }
 
-func resourcePingFederateOauthAccessTokenManagersResourceCreate(d *schema.ResourceData, m interface{}) error {
+func resourcePingFederateOauthAccessTokenManagersResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthAccessTokenManagers
 	input := oauthAccessTokenManagers.CreateTokenManagerInput{
 		Body: *resourcePingFederateOauthAccessTokenManagersResourceReadData(d, svc),
 	}
 	result, _, err := svc.CreateTokenManager(&input)
 	if err != nil {
-		return fmt.Errorf(err.Error())
+		return diag.Errorf("unable to read OauthAccessTokenManagers: %s", err)
 	}
 	d.SetId(*result.Id)
-	err = resourcePingFederateOauthAccessTokenManagersResourceReadResult(d, result, svc)
-	if err != nil {
-		return err
+	diags := resourcePingFederateOauthAccessTokenManagersResourceReadResult(d, result, svc)
+	if diags.HasError() {
+		return diags
 	}
 	return setOauthAccessTokenManagerAsDefaultIfNoneSet(*result.Id, svc)
 }
 
-func setOauthAccessTokenManagerAsDefaultIfNoneSet(id string, svc oauthAccessTokenManagers.OauthAccessTokenManagersAPI) error {
+func setOauthAccessTokenManagerAsDefaultIfNoneSet(id string, svc oauthAccessTokenManagers.OauthAccessTokenManagersAPI) diag.Diagnostics {
 	result, _, err := svc.GetSettings()
 	if err != nil {
-		return fmt.Errorf("unable to read the OauthAccessTokenManager settings %s", err)
+		return diag.Errorf("unable to read the OauthAccessTokenManagers settings %s", err)
 	}
 	if result.DefaultAccessTokenManagerRef != nil {
 		_, _, err = svc.UpdateSettings(&oauthAccessTokenManagers.UpdateSettingsInput{
@@ -140,25 +140,25 @@ func setOauthAccessTokenManagerAsDefaultIfNoneSet(id string, svc oauthAccessToke
 			},
 		})
 		if err != nil {
-			return fmt.Errorf("unable to update the OauthAccessTokenManager settings %s", err)
+			return diag.Errorf("unable to update the OauthAccessTokenManagers settings %s", err)
 		}
 	}
 	return nil
 }
 
-func resourcePingFederateOauthAccessTokenManagersResourceRead(d *schema.ResourceData, m interface{}) error {
+func resourcePingFederateOauthAccessTokenManagersResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthAccessTokenManagers
 	input := oauthAccessTokenManagers.GetTokenManagerInput{
 		Id: d.Id(),
 	}
 	result, _, err := svc.GetTokenManager(&input)
 	if err != nil {
-		return fmt.Errorf(err.Error())
+		return diag.Errorf("unable to read OauthAccessTokenManagers: %s", err)
 	}
 	return resourcePingFederateOauthAccessTokenManagersResourceReadResult(d, result, svc)
 }
 
-func resourcePingFederateOauthAccessTokenManagersResourceUpdate(d *schema.ResourceData, m interface{}) error {
+func resourcePingFederateOauthAccessTokenManagersResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthAccessTokenManagers
 	input := oauthAccessTokenManagers.UpdateTokenManagerInput{
 		Id:   d.Id(),
@@ -166,50 +166,51 @@ func resourcePingFederateOauthAccessTokenManagersResourceUpdate(d *schema.Resour
 	}
 	result, _, err := svc.UpdateTokenManager(&input)
 	if err != nil {
-		return fmt.Errorf(err.Error())
+		return diag.Errorf("unable to update OauthAccessTokenManagers: %s", err)
 	}
 
 	return resourcePingFederateOauthAccessTokenManagersResourceReadResult(d, result, svc)
 }
 
-func resourcePingFederateOauthAccessTokenManagersResourceDelete(d *schema.ResourceData, m interface{}) error {
+func resourcePingFederateOauthAccessTokenManagersResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthAccessTokenManagers
 	input := oauthAccessTokenManagers.DeleteTokenManagerInput{
 		Id: d.Id(),
 	}
 	_, _, err := svc.DeleteTokenManager(&input)
 	if err != nil {
-		return fmt.Errorf(err.Error())
+		return diag.Errorf("unable to delete OauthAccessTokenManagers: %s", err)
 	}
 	return nil
 }
 
-func resourcePingFederateOauthAccessTokenManagersResourceReadResult(d *schema.ResourceData, rv *pf.AccessTokenManager, svc oauthAccessTokenManagers.OauthAccessTokenManagersAPI) (err error) {
+func resourcePingFederateOauthAccessTokenManagersResourceReadResult(d *schema.ResourceData, rv *pf.AccessTokenManager, svc oauthAccessTokenManagers.OauthAccessTokenManagersAPI) diag.Diagnostics {
 	desc, _, err := svc.GetTokenManagerDescriptor(&oauthAccessTokenManagers.GetTokenManagerDescriptorInput{Id: *rv.PluginDescriptorRef.Id})
 	if err != nil {
-		return err
-	}
+		return diag.Errorf("unable to retrieve oauthAccessTokenManagers descriptor: %s", err)
 
-	setResourceDataString(d, "name", rv.Name)
-	setResourceDataString(d, "instance_id", rv.Id)
+	}
+	var diags diag.Diagnostics
+	setResourceDataStringithDiagnostic(d, "name", rv.Name, &diags)
+	setResourceDataStringithDiagnostic(d, "instance_id", rv.Id, &diags)
 	if rv.PluginDescriptorRef != nil {
-		if err = d.Set("plugin_descriptor_ref", flattenResourceLink(rv.PluginDescriptorRef)); err != nil {
-			return err
+		if err := d.Set("plugin_descriptor_ref", flattenResourceLink(rv.PluginDescriptorRef)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
 	if rv.Configuration != nil {
 		orig := expandPluginConfiguration(d.Get("configuration").([]interface{}))
 
-		if err = d.Set("configuration", maskPluginConfigurationFromDescriptor(desc.ConfigDescriptor, orig, rv.Configuration)); err != nil {
-			return err
+		if err := d.Set("configuration", maskPluginConfigurationFromDescriptor(desc.ConfigDescriptor, orig, rv.Configuration)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
 	if rv.AttributeContract != nil {
-		if err = d.Set("attribute_contract", flattenAccessTokenAttributeContract(rv.AttributeContract)); err != nil {
-			return err
+		if err := d.Set("attribute_contract", flattenAccessTokenAttributeContract(rv.AttributeContract)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
-	return nil
+	return diags
 }
 
 func resourcePingFederateOauthAccessTokenManagersResourceReadData(d *schema.ResourceData, svc oauthAccessTokenManagers.OauthAccessTokenManagersAPI) *pf.AccessTokenManager {

@@ -40,7 +40,8 @@ func Provider() *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{
 			"pingfederate_authentication_policy_contract":            resourcePingFederateAuthenticationPolicyContractResource(),
 			"pingfederate_authentication_selector":                   resourcePingFederateAuthenticationSelectorResource(),
-			"pingfederate_data_store":                                resourcePingFederateDataStoreResource(),
+			"pingfederate_jdbc_data_store":                           resourcePingFederateJdbcDataStoreResource(),
+			"pingfederate_ldap_data_store":                           resourcePingFederateLdapDataStoreResource(),
 			"pingfederate_idp_adapter":                               resourcePingFederateIdpAdapterResource(),
 			"pingfederate_oauth_auth_server_settings":                resourcePingFederateOauthAuthServerSettingsResource(),
 			"pingfederate_oauth_client":                              resourcePingFederateOauthClientResource(),
@@ -102,29 +103,26 @@ func Int(v int) *int { return &v }
 // to store v and returns a pointer to it.
 func String(v string) *string { return &v }
 
-func setResourceDataString(d *schema.ResourceData, name string, data *string) error {
+func setResourceDataStringithDiagnostic(d *schema.ResourceData, name string, data *string, diags *diag.Diagnostics) {
 	if data != nil {
 		if err := d.Set(name, *data); err != nil {
-			return err
+			*diags = append(*diags, diag.FromErr(err)...)
 		}
 	}
-	return nil
 }
 
-func setResourceDataInt(d *schema.ResourceData, name string, data *int) error {
+func setResourceDataIntWithDiagnostic(d *schema.ResourceData, name string, data *int, diags *diag.Diagnostics) {
 	if data != nil {
 		if err := d.Set(name, *data); err != nil {
-			return err
+			*diags = append(*diags, diag.FromErr(err)...)
 		}
 	}
-	return nil
 }
 
-func setResourceDataBool(d *schema.ResourceData, name string, data *bool) error {
+func setResourceDataBoolWithDiagnostic(d *schema.ResourceData, name string, data *bool, diags *diag.Diagnostics) {
 	if data != nil {
 		if err := d.Set(name, *data); err != nil {
-			return err
+			*diags = append(*diags, diag.FromErr(err)...)
 		}
 	}
-	return nil
 }

@@ -7,6 +7,6 @@ import (
 )
 
 type VirtualHostNamesAPI interface {
-	GetVirtualHostNamesSettings() (result *models.VirtualHostNameSettings, resp *http.Response, err error)
-	UpdateVirtualHostNamesSettings(input *UpdateVirtualHostNamesSettingsInput) (result *models.VirtualHostNameSettings, resp *http.Response, err error)
+	GetVirtualHostNamesSettings() (output *models.VirtualHostNameSettings, resp *http.Response, err error)
+	UpdateVirtualHostNamesSettings(input *UpdateVirtualHostNamesSettingsInput) (output *models.VirtualHostNameSettings, resp *http.Response, err error)
 }

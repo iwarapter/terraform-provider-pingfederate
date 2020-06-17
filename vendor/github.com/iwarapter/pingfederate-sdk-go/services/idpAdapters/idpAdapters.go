@@ -3,246 +3,255 @@ package idpAdapters
 import (
 	"fmt"
 	"net/http"
-	"net/url"
 	"strings"
 
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/client"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/client/metadata"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/request"
+)
+
+const (
+	// ServiceName - The name of service.
+	ServiceName = "IdpAdapters"
 )
 
 type IdpAdaptersService struct {
-	Client *client.PfClient
+	*client.PfClient
 }
 
 // New creates a new instance of the IdpAdaptersService client.
-func New(username string, password string, baseUrl *url.URL, context string, httpClient *http.Client) *IdpAdaptersService {
+func New(cfg *config.Config) *IdpAdaptersService {
 
-	return &IdpAdaptersService{Client: client.NewClient(username, password, baseUrl, context, httpClient)}
+	return &IdpAdaptersService{PfClient: client.New(
+		*cfg,
+		metadata.ClientInfo{
+			ServiceName: ServiceName,
+			Endpoint:    *cfg.Endpoint,
+			APIVersion:  pingfederate.SDKVersion,
+		},
+	)}
+}
+
+// newRequest creates a new request for a IdpAdapters operation
+func (c *IdpAdaptersService) newRequest(op *request.Operation, params, data interface{}) *request.Request {
+	req := c.NewRequest(op, params, data)
+
+	return req
 }
 
 //GetIdpAdapterDescriptors - Get the list of available IdP adapter descriptors.
 //RequestType: GET
 //Input:
-func (s *IdpAdaptersService) GetIdpAdapterDescriptors() (result *models.IdpAdapterDescriptors, resp *http.Response, err error) {
+func (s *IdpAdaptersService) GetIdpAdapterDescriptors() (output *models.IdpAdapterDescriptors, resp *http.Response, err error) {
 	path := "/idp/adapters/descriptors"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetIdpAdapterDescriptors",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.IdpAdapterDescriptors{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetIdpAdapterDescriptorsById - Get the description of an IdP adapter plugin by ID.
 //RequestType: GET
 //Input: input *GetIdpAdapterDescriptorsByIdInput
-func (s *IdpAdaptersService) GetIdpAdapterDescriptorsById(input *GetIdpAdapterDescriptorsByIdInput) (result *models.IdpAdapterDescriptor, resp *http.Response, err error) {
+func (s *IdpAdaptersService) GetIdpAdapterDescriptorsById(input *GetIdpAdapterDescriptorsByIdInput) (output *models.IdpAdapterDescriptor, resp *http.Response, err error) {
 	path := "/idp/adapters/descriptors/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetIdpAdapterDescriptorsById",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.IdpAdapterDescriptor{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetIdpAdapters - Get the list of configured IdP adapter instances.
 //RequestType: GET
 //Input: input *GetIdpAdaptersInput
-func (s *IdpAdaptersService) GetIdpAdapters(input *GetIdpAdaptersInput) (result *models.IdpAdapters, resp *http.Response, err error) {
+func (s *IdpAdaptersService) GetIdpAdapters(input *GetIdpAdaptersInput) (output *models.IdpAdapters, resp *http.Response, err error) {
 	path := "/idp/adapters"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	q := rel.Query()
-	if input.Page != "" {
-		q.Set("page", input.Page)
+	op := &request.Operation{
+		Name:       "GetIdpAdapters",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
-	if input.NumberPerPage != "" {
-		q.Set("numberPerPage", input.NumberPerPage)
-	}
-	if input.Filter != "" {
-		q.Set("filter", input.Filter)
-	}
-	rel.RawQuery = q.Encode()
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
-	}
+	output = &models.IdpAdapters{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //CreateIdpAdapter - Create a new IdP adapter instance.
 //RequestType: POST
 //Input: input *CreateIdpAdapterInput
-func (s *IdpAdaptersService) CreateIdpAdapter(input *CreateIdpAdapterInput) (result *models.IdpAdapter, resp *http.Response, err error) {
+func (s *IdpAdaptersService) CreateIdpAdapter(input *CreateIdpAdapterInput) (output *models.IdpAdapter, resp *http.Response, err error) {
 	path := "/idp/adapters"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("POST", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "CreateIdpAdapter",
+		HTTPMethod: "POST",
+		HTTPPath:   path,
 	}
+	output = &models.IdpAdapter{}
+	req := s.newRequest(op, input.Body, output)
 	if input.BypassExternalValidation != nil {
-		req.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
+		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
-
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetIdpAdapter - Find an IdP adapter instance by ID.
 //RequestType: GET
 //Input: input *GetIdpAdapterInput
-func (s *IdpAdaptersService) GetIdpAdapter(input *GetIdpAdapterInput) (result *models.IdpAdapter, resp *http.Response, err error) {
+func (s *IdpAdaptersService) GetIdpAdapter(input *GetIdpAdapterInput) (output *models.IdpAdapter, resp *http.Response, err error) {
 	path := "/idp/adapters/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetIdpAdapter",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.IdpAdapter{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //UpdateIdpAdapter - Update an IdP adapter instance.
 //RequestType: PUT
 //Input: input *UpdateIdpAdapterInput
-func (s *IdpAdaptersService) UpdateIdpAdapter(input *UpdateIdpAdapterInput) (result *models.IdpAdapter, resp *http.Response, err error) {
+func (s *IdpAdaptersService) UpdateIdpAdapter(input *UpdateIdpAdapterInput) (output *models.IdpAdapter, resp *http.Response, err error) {
 	path := "/idp/adapters/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("PUT", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "UpdateIdpAdapter",
+		HTTPMethod: "PUT",
+		HTTPPath:   path,
 	}
+	output = &models.IdpAdapter{}
+	req := s.newRequest(op, input.Body, output)
 	if input.BypassExternalValidation != nil {
-		req.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
+		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
-
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //DeleteIdpAdapter - Delete an IdP adapter instance.
 //RequestType: DELETE
 //Input: input *DeleteIdpAdapterInput
-func (s *IdpAdaptersService) DeleteIdpAdapter(input *DeleteIdpAdapterInput) (result *models.ApiResult, resp *http.Response, err error) {
+func (s *IdpAdaptersService) DeleteIdpAdapter(input *DeleteIdpAdapterInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/idp/adapters/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("DELETE", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "DeleteIdpAdapter",
+		HTTPMethod: "DELETE",
+		HTTPPath:   path,
 	}
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
-	}
-	return result, resp, nil
+	req := s.newRequest(op, nil, output)
 
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
+	}
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetActions - List the actions for an IdP adapter instance.
 //RequestType: GET
 //Input: input *GetActionsInput
-func (s *IdpAdaptersService) GetActions(input *GetActionsInput) (result *models.Actions, resp *http.Response, err error) {
+func (s *IdpAdaptersService) GetActions(input *GetActionsInput) (output *models.Actions, resp *http.Response, err error) {
 	path := "/idp/adapters/{id}/actions"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetActions",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.Actions{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetAction - Find an IdP adapter instance's action by ID.
 //RequestType: GET
 //Input: input *GetActionInput
-func (s *IdpAdaptersService) GetAction(input *GetActionInput) (result *models.Action, resp *http.Response, err error) {
+func (s *IdpAdaptersService) GetAction(input *GetActionInput) (output *models.Action, resp *http.Response, err error) {
 	path := "/idp/adapters/{id}/actions/{actionId}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
 	path = strings.Replace(path, "{actionId}", input.ActionId, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetAction",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.Action{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //InvokeAction - Invokes an action for an IdP adapter instance.
 //RequestType: POST
 //Input: input *InvokeActionInput
-func (s *IdpAdaptersService) InvokeAction(input *InvokeActionInput) (result *models.ActionResult, resp *http.Response, err error) {
+func (s *IdpAdaptersService) InvokeAction(input *InvokeActionInput) (output *models.ActionResult, resp *http.Response, err error) {
 	path := "/idp/adapters/{id}/actions/{actionId}/invokeAction"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
 	path = strings.Replace(path, "{actionId}", input.ActionId, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("POST", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "InvokeAction",
+		HTTPMethod: "POST",
+		HTTPPath:   path,
 	}
+	output = &models.ActionResult{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 type CreateIdpAdapterInput struct {

@@ -1,164 +1,185 @@
 package keyPairsSigning
 
 import (
-	"fmt"
 	"net/http"
-	"net/url"
 	"strings"
 
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/client"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/client/metadata"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/request"
+)
+
+const (
+	// ServiceName - The name of service.
+	ServiceName = "KeyPairsSigning"
 )
 
 type KeyPairsSigningService struct {
-	Client *client.PfClient
+	*client.PfClient
 }
 
 // New creates a new instance of the KeyPairsSigningService client.
-func New(username string, password string, baseUrl *url.URL, context string, httpClient *http.Client) *KeyPairsSigningService {
+func New(cfg *config.Config) *KeyPairsSigningService {
 
-	return &KeyPairsSigningService{Client: client.NewClient(username, password, baseUrl, context, httpClient)}
+	return &KeyPairsSigningService{PfClient: client.New(
+		*cfg,
+		metadata.ClientInfo{
+			ServiceName: ServiceName,
+			Endpoint:    *cfg.Endpoint,
+			APIVersion:  pingfederate.SDKVersion,
+		},
+	)}
+}
+
+// newRequest creates a new request for a KeyPairsSigning operation
+func (c *KeyPairsSigningService) newRequest(op *request.Operation, params, data interface{}) *request.Request {
+	req := c.NewRequest(op, params, data)
+
+	return req
 }
 
 //GetKeyPairs - Get list of key pairs.
 //RequestType: GET
 //Input:
-func (s *KeyPairsSigningService) GetKeyPairs() (result *models.KeyPairViews, resp *http.Response, err error) {
+func (s *KeyPairsSigningService) GetKeyPairs() (output *models.KeyPairViews, resp *http.Response, err error) {
 	path := "/keyPairs/signing"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetKeyPairs",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.KeyPairViews{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //ImportKeyPair - Import a new key pair.
 //RequestType: POST
 //Input: input *ImportKeyPairInput
-func (s *KeyPairsSigningService) ImportKeyPair(input *ImportKeyPairInput) (result *models.KeyPairView, resp *http.Response, err error) {
+func (s *KeyPairsSigningService) ImportKeyPair(input *ImportKeyPairInput) (output *models.KeyPairView, resp *http.Response, err error) {
 	path := "/keyPairs/signing/import"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("POST", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "ImportKeyPair",
+		HTTPMethod: "POST",
+		HTTPPath:   path,
 	}
+	output = &models.KeyPairView{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //CreateKeyPair - Generate a new key pair.
 //RequestType: POST
 //Input: input *CreateKeyPairInput
-func (s *KeyPairsSigningService) CreateKeyPair(input *CreateKeyPairInput) (result *models.KeyPairView, resp *http.Response, err error) {
+func (s *KeyPairsSigningService) CreateKeyPair(input *CreateKeyPairInput) (output *models.KeyPairView, resp *http.Response, err error) {
 	path := "/keyPairs/signing/generate"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("POST", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "CreateKeyPair",
+		HTTPMethod: "POST",
+		HTTPPath:   path,
 	}
+	output = &models.KeyPairView{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetKeyPair - Retrieve details of a key pair.
 //RequestType: GET
 //Input: input *GetKeyPairInput
-func (s *KeyPairsSigningService) GetKeyPair(input *GetKeyPairInput) (result *models.KeyPairView, resp *http.Response, err error) {
+func (s *KeyPairsSigningService) GetKeyPair(input *GetKeyPairInput) (output *models.KeyPairView, resp *http.Response, err error) {
 	path := "/keyPairs/signing/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetKeyPair",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.KeyPairView{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //DeleteKeyPair - Delete a key pair.
 //RequestType: DELETE
 //Input: input *DeleteKeyPairInput
-func (s *KeyPairsSigningService) DeleteKeyPair(input *DeleteKeyPairInput) (result *models.ApiResult, resp *http.Response, err error) {
+func (s *KeyPairsSigningService) DeleteKeyPair(input *DeleteKeyPairInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/keyPairs/signing/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("DELETE", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "DeleteKeyPair",
+		HTTPMethod: "DELETE",
+		HTTPPath:   path,
 	}
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
-	}
-	return result, resp, nil
+	req := s.newRequest(op, nil, output)
 
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
+	}
+	return nil, req.HTTPResponse, req.Error
 }
 
 //ExportCsr - Generate a new certificate signing request (CSR) for this key pair.
 //RequestType: GET
 //Input: input *ExportCsrInput
-func (s *KeyPairsSigningService) ExportCsr(input *ExportCsrInput) (result *string, resp *http.Response, err error) {
+func (s *KeyPairsSigningService) ExportCsr(input *ExportCsrInput) (output *string, resp *http.Response, err error) {
 	path := "/keyPairs/signing/{id}/csr"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "ExportCsr",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = pingfederate.String("")
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //ImportCsrResponse - Import a CSR response for this key pair.
 //RequestType: POST
 //Input: input *ImportCsrResponseInput
-func (s *KeyPairsSigningService) ImportCsrResponse(input *ImportCsrResponseInput) (result *models.KeyPairView, resp *http.Response, err error) {
+func (s *KeyPairsSigningService) ImportCsrResponse(input *ImportCsrResponseInput) (output *models.KeyPairView, resp *http.Response, err error) {
 	path := "/keyPairs/signing/{id}/csr"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("POST", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "ImportCsrResponse",
+		HTTPMethod: "POST",
+		HTTPPath:   path,
 	}
+	output = &models.KeyPairView{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //ExportPKCS12File - Download the key pair in PKCS12 format.
@@ -168,102 +189,102 @@ func (s *KeyPairsSigningService) ExportPKCS12File(input *ExportPKCS12FileInput) 
 	path := "/keyPairs/signing/{id}/pkcs12"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("POST", rel, input.Body)
-	if err != nil {
-		return nil, err
+	op := &request.Operation{
+		Name:       "ExportPKCS12File",
+		HTTPMethod: "POST",
+		HTTPPath:   path,
 	}
 
-	resp, err = s.Client.Do(req, nil)
-	if err != nil {
-		return resp, err
-	}
-	return resp, nil
+	req := s.newRequest(op, input.Body, nil)
 
+	if req.Send() == nil {
+		return req.HTTPResponse, nil
+	}
+	return req.HTTPResponse, req.Error
 }
 
 //ExportCertificateFile - Download the certificate from a given key pair.
 //RequestType: GET
 //Input: input *ExportCertificateFileInput
-func (s *KeyPairsSigningService) ExportCertificateFile(input *ExportCertificateFileInput) (result *string, resp *http.Response, err error) {
+func (s *KeyPairsSigningService) ExportCertificateFile(input *ExportCertificateFileInput) (output *string, resp *http.Response, err error) {
 	path := "/keyPairs/signing/{id}/certificate"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "ExportCertificateFile",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = pingfederate.String("")
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //GetRotationSettings - Retrieve details of rotation settings for a key pair.
 //RequestType: GET
 //Input: input *GetRotationSettingsInput
-func (s *KeyPairsSigningService) GetRotationSettings(input *GetRotationSettingsInput) (result *models.KeyPairRotationSettings, resp *http.Response, err error) {
+func (s *KeyPairsSigningService) GetRotationSettings(input *GetRotationSettingsInput) (output *models.KeyPairRotationSettings, resp *http.Response, err error) {
 	path := "/keyPairs/signing/{id}/rotationSettings"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetRotationSettings",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.KeyPairRotationSettings{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //UpdateRotationSettings - Add rotation settings to a key pair
 //RequestType: PUT
 //Input: input *UpdateRotationSettingsInput
-func (s *KeyPairsSigningService) UpdateRotationSettings(input *UpdateRotationSettingsInput) (result *models.KeyPairRotationSettings, resp *http.Response, err error) {
+func (s *KeyPairsSigningService) UpdateRotationSettings(input *UpdateRotationSettingsInput) (output *models.KeyPairRotationSettings, resp *http.Response, err error) {
 	path := "/keyPairs/signing/{id}/rotationSettings"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("PUT", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "UpdateRotationSettings",
+		HTTPMethod: "PUT",
+		HTTPPath:   path,
 	}
+	output = &models.KeyPairRotationSettings{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //DeleteKeyPairRotationSettings - Delete rotation settings for a signing key pair.
 //RequestType: DELETE
 //Input: input *DeleteKeyPairRotationSettingsInput
-func (s *KeyPairsSigningService) DeleteKeyPairRotationSettings(input *DeleteKeyPairRotationSettingsInput) (result *models.ApiResult, resp *http.Response, err error) {
+func (s *KeyPairsSigningService) DeleteKeyPairRotationSettings(input *DeleteKeyPairRotationSettingsInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/keyPairs/signing/{id}/rotationSettings"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("DELETE", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "DeleteKeyPairRotationSettings",
+		HTTPMethod: "DELETE",
+		HTTPPath:   path,
 	}
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
-	}
-	return result, resp, nil
+	req := s.newRequest(op, nil, output)
 
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
+	}
+	return nil, req.HTTPResponse, req.Error
 }
 
 type CreateKeyPairInput struct {

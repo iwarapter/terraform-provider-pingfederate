@@ -7,11 +7,11 @@ import (
 )
 
 type OauthCibaServerPolicyAPI interface {
-	GetSettings() (result *models.CibaServerPolicySettings, resp *http.Response, err error)
-	UpdateSettings(input *UpdateSettingsInput) (result *models.CibaServerPolicySettings, resp *http.Response, err error)
-	GetPolicies() (result *models.RequestPolicies, resp *http.Response, err error)
-	CreatePolicy(input *CreatePolicyInput) (result *models.RequestPolicy, resp *http.Response, err error)
-	GetPolicy(input *GetPolicyInput) (result *models.RequestPolicy, resp *http.Response, err error)
-	UpdatePolicy(input *UpdatePolicyInput) (result *models.RequestPolicy, resp *http.Response, err error)
-	DeletePolicy(input *DeletePolicyInput) (result *models.ApiResult, resp *http.Response, err error)
+	GetSettings() (output *models.CibaServerPolicySettings, resp *http.Response, err error)
+	UpdateSettings(input *UpdateSettingsInput) (output *models.CibaServerPolicySettings, resp *http.Response, err error)
+	GetPolicies() (output *models.RequestPolicies, resp *http.Response, err error)
+	CreatePolicy(input *CreatePolicyInput) (output *models.RequestPolicy, resp *http.Response, err error)
+	GetPolicy(input *GetPolicyInput) (output *models.RequestPolicy, resp *http.Response, err error)
+	UpdatePolicy(input *UpdatePolicyInput) (output *models.RequestPolicy, resp *http.Response, err error)
+	DeletePolicy(input *DeletePolicyInput) (output *models.ApiResult, resp *http.Response, err error)
 }

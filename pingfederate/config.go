@@ -2,8 +2,10 @@ package pingfederate
 
 import (
 	"crypto/tls"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
 	"net/http"
 	"net/url"
+	"os"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/iwarapter/pingfederate-sdk-go/services/administrativeAccounts"
@@ -138,72 +140,76 @@ type pfClient struct {
 
 // Client configures and returns a fully initialized PAClient
 func (c *Config) Client() (interface{}, diag.Diagnostics) {
+	/* #nosec */
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	url, _ := url.Parse(c.BaseURL)
 
-	client := pfClient{
-		AdministrativeAccounts:           administrativeAccounts.New(c.Username, c.Password, url, c.Context, nil),
-		AuthenticationApi:                authenticationApi.New(c.Username, c.Password, url, c.Context, nil),
-		AuthenticationPolicies:           authenticationPolicies.New(c.Username, c.Password, url, c.Context, nil),
-		AuthenticationPolicyContracts:    authenticationPolicyContracts.New(c.Username, c.Password, url, c.Context, nil),
-		AuthenticationSelectors:          authenticationSelectors.New(c.Username, c.Password, url, c.Context, nil),
-		Bulk:                             bulk.New(c.Username, c.Password, url, c.Context, nil),
-		CertificatesCa:                   certificatesCa.New(c.Username, c.Password, url, c.Context, nil),
-		CertificatesRevocation:           certificatesRevocation.New(c.Username, c.Password, url, c.Context, nil),
-		Cluster:                          cluster.New(c.Username, c.Password, url, c.Context, nil),
-		ConfigArchive:                    configArchive.New(c.Username, c.Password, url, c.Context, nil),
-		ConfigStore:                      configStore.New(c.Username, c.Password, url, c.Context, nil),
-		ConnectionMetadata:               connectionMetadata.New(c.Username, c.Password, url, c.Context, nil),
-		DataStores:                       dataStores.New(c.Username, c.Password, url, c.Context, nil),
-		ExtendedProperties:               extendedProperties.New(c.Username, c.Password, url, c.Context, nil),
-		IdpAdapters:                      idpAdapters.New(c.Username, c.Password, url, c.Context, nil),
-		IdpConnectors:                    idpConnectors.New(c.Username, c.Password, url, c.Context, nil),
-		IdpDefaultUrls:                   idpDefaultUrls.New(c.Username, c.Password, url, c.Context, nil),
-		IdpSpConnections:                 idpSpConnections.New(c.Username, c.Password, url, c.Context, nil),
-		IdpStsRequestParametersContracts: idpStsRequestParametersContracts.New(c.Username, c.Password, url, c.Context, nil),
-		IdpToSpAdapterMapping:            idpToSpAdapterMapping.New(c.Username, c.Password, url, c.Context, nil),
-		IdpTokenProcessors:               idpTokenProcessors.New(c.Username, c.Password, url, c.Context, nil),
-		KerberosRealms:                   kerberosRealms.New(c.Username, c.Password, url, c.Context, nil),
-		KeyPairs:                         keyPairs.New(c.Username, c.Password, url, c.Context, nil),
-		KeyPairsOauthOpenIdConnect:       keyPairsOauthOpenIdConnect.New(c.Username, c.Password, url, c.Context, nil),
-		KeyPairsSigning:                  keyPairsSigning.New(c.Username, c.Password, url, c.Context, nil),
-		KeyPairsSslClient:                keyPairsSslClient.New(c.Username, c.Password, url, c.Context, nil),
-		KeyPairsSslServer:                keyPairsSslServer.New(c.Username, c.Password, url, c.Context, nil),
-		License:                          license.New(c.Username, c.Password, url, c.Context, nil),
-		LocalIdentityIdentityProfiles:    localIdentityIdentityProfiles.New(c.Username, c.Password, url, c.Context, nil),
-		MetadataUrls:                     metadataUrls.New(c.Username, c.Password, url, c.Context, nil),
-		NotificationPublishers:           notificationPublishers.New(c.Username, c.Password, url, c.Context, nil),
-		OauthAccessTokenManagers:         oauthAccessTokenManagers.New(c.Username, c.Password, url, c.Context, nil),
-		OauthAccessTokenMappings:         oauthAccessTokenMappings.New(c.Username, c.Password, url, c.Context, nil),
-		OauthAuthServerSettings:          oauthAuthServerSettings.New(c.Username, c.Password, url, c.Context, nil),
-		OauthAuthenticationPolicyContractMappings: oauthAuthenticationPolicyContractMappings.New(c.Username, c.Password, url, c.Context, nil),
-		OauthCibaServerPolicy:                     oauthCibaServerPolicy.New(c.Username, c.Password, url, c.Context, nil),
-		OauthClientRegistrationPolicies:           oauthClientRegistrationPolicies.New(c.Username, c.Password, url, c.Context, nil),
-		OauthClientSettings:                       oauthClientSettings.New(c.Username, c.Password, url, c.Context, nil),
-		OauthClients:                              oauthClients.New(c.Username, c.Password, url, c.Context, nil),
-		OauthIdpAdapterMappings:                   oauthIdpAdapterMappings.New(c.Username, c.Password, url, c.Context, nil),
-		OauthOpenIdConnect:                        oauthOpenIdConnect.New(c.Username, c.Password, url, c.Context, nil),
-		OauthOutOfBandAuthPlugins:                 oauthOutOfBandAuthPlugins.New(c.Username, c.Password, url, c.Context, nil),
-		OauthResourceOwnerCredentialsMappings:     oauthResourceOwnerCredentialsMappings.New(c.Username, c.Password, url, c.Context, nil),
-		OauthTokenExchangeGenerator:               oauthTokenExchangeGenerator.New(c.Username, c.Password, url, c.Context, nil),
-		OauthTokenExchangeProcessor:               oauthTokenExchangeProcessor.New(c.Username, c.Password, url, c.Context, nil),
-		OauthTokenExchangeTokenGeneratorMappings:  oauthTokenExchangeTokenGeneratorMappings.New(c.Username, c.Password, url, c.Context, nil),
-		PasswordCredentialValidators:              passwordCredentialValidators.New(c.Username, c.Password, url, c.Context, nil),
-		RedirectValidation:                        redirectValidation.New(c.Username, c.Password, url, c.Context, nil),
-		ServerSettings:                            serverSettings.New(c.Username, c.Password, url, c.Context, nil),
-		Session:                                   session.New(c.Username, c.Password, url, c.Context, nil),
-		SpAdapters:                                spAdapters.New(c.Username, c.Password, url, c.Context, nil),
-		SpAuthenticationPolicyContractMappings:    spAuthenticationPolicyContractMappings.New(c.Username, c.Password, url, c.Context, nil),
-		SpDefaultUrls:                             spDefaultUrls.New(c.Username, c.Password, url, c.Context, nil),
-		SpIdpConnections:                          spIdpConnections.New(c.Username, c.Password, url, c.Context, nil),
-		SpTargetUrlMappings:                       spTargetUrlMappings.New(c.Username, c.Password, url, c.Context, nil),
-		SpTokenGenerators:                         spTokenGenerators.New(c.Username, c.Password, url, c.Context, nil),
-		TokenProcessorToTokenGeneratorMappings:    tokenProcessorToTokenGeneratorMappings.New(c.Username, c.Password, url, c.Context, nil),
-		Version:                                   version.New(c.Username, c.Password, url, c.Context, nil),
-		VirtualHostNames:                          virtualHostNames.New(c.Username, c.Password, url, c.Context, nil),
+	cfg := config.NewConfig().WithEndpoint(url.String() + c.Context).WithUsername(c.Username).WithPassword(c.Password)
+
+	if os.Getenv("TF_LOG") == "DEBUG" || os.Getenv("TF_LOG") == "TRACE" {
+		cfg.WithDebug(true)
 	}
-	//if os.Getenv("TF_LOG") == "DEBUG" || os.Getenv("TF_LOG") == "TRACE" {
-	//	client.LogDebug = true
-	//}
+
+	client := pfClient{
+		AdministrativeAccounts:           administrativeAccounts.New(cfg),
+		AuthenticationApi:                authenticationApi.New(cfg),
+		AuthenticationPolicies:           authenticationPolicies.New(cfg),
+		AuthenticationPolicyContracts:    authenticationPolicyContracts.New(cfg),
+		AuthenticationSelectors:          authenticationSelectors.New(cfg),
+		Bulk:                             bulk.New(cfg),
+		CertificatesCa:                   certificatesCa.New(cfg),
+		CertificatesRevocation:           certificatesRevocation.New(cfg),
+		Cluster:                          cluster.New(cfg),
+		ConfigArchive:                    configArchive.New(cfg),
+		ConfigStore:                      configStore.New(cfg),
+		ConnectionMetadata:               connectionMetadata.New(cfg),
+		DataStores:                       dataStores.New(cfg),
+		ExtendedProperties:               extendedProperties.New(cfg),
+		IdpAdapters:                      idpAdapters.New(cfg),
+		IdpConnectors:                    idpConnectors.New(cfg),
+		IdpDefaultUrls:                   idpDefaultUrls.New(cfg),
+		IdpSpConnections:                 idpSpConnections.New(cfg),
+		IdpStsRequestParametersContracts: idpStsRequestParametersContracts.New(cfg),
+		IdpToSpAdapterMapping:            idpToSpAdapterMapping.New(cfg),
+		IdpTokenProcessors:               idpTokenProcessors.New(cfg),
+		KerberosRealms:                   kerberosRealms.New(cfg),
+		KeyPairs:                         keyPairs.New(cfg),
+		KeyPairsOauthOpenIdConnect:       keyPairsOauthOpenIdConnect.New(cfg),
+		KeyPairsSigning:                  keyPairsSigning.New(cfg),
+		KeyPairsSslClient:                keyPairsSslClient.New(cfg),
+		KeyPairsSslServer:                keyPairsSslServer.New(cfg),
+		License:                          license.New(cfg),
+		LocalIdentityIdentityProfiles:    localIdentityIdentityProfiles.New(cfg),
+		MetadataUrls:                     metadataUrls.New(cfg),
+		NotificationPublishers:           notificationPublishers.New(cfg),
+		OauthAccessTokenManagers:         oauthAccessTokenManagers.New(cfg),
+		OauthAccessTokenMappings:         oauthAccessTokenMappings.New(cfg),
+		OauthAuthServerSettings:          oauthAuthServerSettings.New(cfg),
+		OauthAuthenticationPolicyContractMappings: oauthAuthenticationPolicyContractMappings.New(cfg),
+		OauthCibaServerPolicy:                     oauthCibaServerPolicy.New(cfg),
+		OauthClientRegistrationPolicies:           oauthClientRegistrationPolicies.New(cfg),
+		OauthClientSettings:                       oauthClientSettings.New(cfg),
+		OauthClients:                              oauthClients.New(cfg),
+		OauthIdpAdapterMappings:                   oauthIdpAdapterMappings.New(cfg),
+		OauthOpenIdConnect:                        oauthOpenIdConnect.New(cfg),
+		OauthOutOfBandAuthPlugins:                 oauthOutOfBandAuthPlugins.New(cfg),
+		OauthResourceOwnerCredentialsMappings:     oauthResourceOwnerCredentialsMappings.New(cfg),
+		OauthTokenExchangeGenerator:               oauthTokenExchangeGenerator.New(cfg),
+		OauthTokenExchangeProcessor:               oauthTokenExchangeProcessor.New(cfg),
+		OauthTokenExchangeTokenGeneratorMappings:  oauthTokenExchangeTokenGeneratorMappings.New(cfg),
+		PasswordCredentialValidators:              passwordCredentialValidators.New(cfg),
+		RedirectValidation:                        redirectValidation.New(cfg),
+		ServerSettings:                            serverSettings.New(cfg),
+		Session:                                   session.New(cfg),
+		SpAdapters:                                spAdapters.New(cfg),
+		SpAuthenticationPolicyContractMappings:    spAuthenticationPolicyContractMappings.New(cfg),
+		SpDefaultUrls:                             spDefaultUrls.New(cfg),
+		SpIdpConnections:                          spIdpConnections.New(cfg),
+		SpTargetUrlMappings:                       spTargetUrlMappings.New(cfg),
+		SpTokenGenerators:                         spTokenGenerators.New(cfg),
+		TokenProcessorToTokenGeneratorMappings:    tokenProcessorToTokenGeneratorMappings.New(cfg),
+		Version:                                   version.New(cfg),
+		VirtualHostNames:                          virtualHostNames.New(cfg),
+	}
 	return client, nil
 }

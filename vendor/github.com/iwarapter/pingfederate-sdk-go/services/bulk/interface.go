@@ -7,6 +7,6 @@ import (
 )
 
 type BulkAPI interface {
-	ExportConfiguration(input *ExportConfigurationInput) (result *models.BulkConfig, resp *http.Response, err error)
+	ExportConfiguration(input *ExportConfigurationInput) (output *models.BulkConfig, resp *http.Response, err error)
 	ImportConfiguration(input *ImportConfigurationInput) (resp *http.Response, err error)
 }

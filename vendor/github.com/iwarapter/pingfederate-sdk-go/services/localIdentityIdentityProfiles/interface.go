@@ -7,9 +7,9 @@ import (
 )
 
 type LocalIdentityIdentityProfilesAPI interface {
-	GetIdentityProfiles(input *GetIdentityProfilesInput) (result *models.LocalIdentityProfiles, resp *http.Response, err error)
-	CreateIdentityProfile(input *CreateIdentityProfileInput) (result *models.LocalIdentityProfile, resp *http.Response, err error)
-	GetIdentityProfile(input *GetIdentityProfileInput) (result *models.LocalIdentityProfile, resp *http.Response, err error)
-	UpdateIdentityProfile(input *UpdateIdentityProfileInput) (result *models.LocalIdentityProfile, resp *http.Response, err error)
-	DeleteIdentityProfile(input *DeleteIdentityProfileInput) (result *models.ApiResult, resp *http.Response, err error)
+	GetIdentityProfiles(input *GetIdentityProfilesInput) (output *models.LocalIdentityProfiles, resp *http.Response, err error)
+	CreateIdentityProfile(input *CreateIdentityProfileInput) (output *models.LocalIdentityProfile, resp *http.Response, err error)
+	GetIdentityProfile(input *GetIdentityProfileInput) (output *models.LocalIdentityProfile, resp *http.Response, err error)
+	UpdateIdentityProfile(input *UpdateIdentityProfileInput) (output *models.LocalIdentityProfile, resp *http.Response, err error)
+	DeleteIdentityProfile(input *DeleteIdentityProfileInput) (output *models.ApiResult, resp *http.Response, err error)
 }

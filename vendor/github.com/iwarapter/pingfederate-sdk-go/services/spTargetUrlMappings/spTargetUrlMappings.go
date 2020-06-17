@@ -1,60 +1,81 @@
 package spTargetUrlMappings
 
 import (
-	"fmt"
 	"net/http"
-	"net/url"
 
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/client"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/client/metadata"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/request"
+)
+
+const (
+	// ServiceName - The name of service.
+	ServiceName = "SpTargetUrlMappings"
 )
 
 type SpTargetUrlMappingsService struct {
-	Client *client.PfClient
+	*client.PfClient
 }
 
 // New creates a new instance of the SpTargetUrlMappingsService client.
-func New(username string, password string, baseUrl *url.URL, context string, httpClient *http.Client) *SpTargetUrlMappingsService {
+func New(cfg *config.Config) *SpTargetUrlMappingsService {
 
-	return &SpTargetUrlMappingsService{Client: client.NewClient(username, password, baseUrl, context, httpClient)}
+	return &SpTargetUrlMappingsService{PfClient: client.New(
+		*cfg,
+		metadata.ClientInfo{
+			ServiceName: ServiceName,
+			Endpoint:    *cfg.Endpoint,
+			APIVersion:  pingfederate.SDKVersion,
+		},
+	)}
+}
+
+// newRequest creates a new request for a SpTargetUrlMappings operation
+func (c *SpTargetUrlMappingsService) newRequest(op *request.Operation, params, data interface{}) *request.Request {
+	req := c.NewRequest(op, params, data)
+
+	return req
 }
 
 //GetUrlMappings - List the mappings between URLs and adapter or connection instances.
 //RequestType: GET
 //Input:
-func (s *SpTargetUrlMappingsService) GetUrlMappings() (result *models.SpUrlMappings, resp *http.Response, err error) {
+func (s *SpTargetUrlMappingsService) GetUrlMappings() (output *models.SpUrlMappings, resp *http.Response, err error) {
 	path := "/sp/targetUrlMappings"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("GET", rel, nil)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "GetUrlMappings",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
 	}
+	output = &models.SpUrlMappings{}
+	req := s.newRequest(op, nil, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 //UpdateUrlMappings - Update the mappings between URLs and adapters or connections instances.
 //RequestType: PUT
 //Input: input *UpdateUrlMappingsInput
-func (s *SpTargetUrlMappingsService) UpdateUrlMappings(input *UpdateUrlMappingsInput) (result *models.SpUrlMappings, resp *http.Response, err error) {
+func (s *SpTargetUrlMappingsService) UpdateUrlMappings(input *UpdateUrlMappingsInput) (output *models.SpUrlMappings, resp *http.Response, err error) {
 	path := "/sp/targetUrlMappings"
-	rel := &url.URL{Path: fmt.Sprintf("%s%s", s.Client.Context, path)}
-	req, err := s.Client.NewRequest("PUT", rel, input.Body)
-	if err != nil {
-		return nil, nil, err
+	op := &request.Operation{
+		Name:       "UpdateUrlMappings",
+		HTTPMethod: "PUT",
+		HTTPPath:   path,
 	}
+	output = &models.SpUrlMappings{}
+	req := s.newRequest(op, input.Body, output)
 
-	resp, err = s.Client.Do(req, &result)
-	if err != nil {
-		return result, resp, err
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
 	}
-	return result, resp, nil
-
+	return nil, req.HTTPResponse, req.Error
 }
 
 type UpdateUrlMappingsInput struct {
