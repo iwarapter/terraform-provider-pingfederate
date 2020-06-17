@@ -3,6 +3,7 @@ package pingfederate
 import (
 	"context"
 	"fmt"
+
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthAuthServerSettings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"

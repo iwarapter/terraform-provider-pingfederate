@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
-	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
 	"log"
 	"net/http"
 	"net/url"
@@ -14,6 +13,8 @@ import (
 	"runtime"
 	"testing"
 	"time"
+
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/version"
 

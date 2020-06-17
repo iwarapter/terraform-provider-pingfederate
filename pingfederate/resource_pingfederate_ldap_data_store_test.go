@@ -85,19 +85,19 @@ func Test_resourcePingFederateLdapDataStoreResourceReadData(t *testing.T) {
 	}{
 		{
 			Resource: pf.LdapDataStore{
-				Name:                String("terraform"),
-				Password:            String("foo"),
-				MaskAttributeValues: Bool(true),
-				Type:                String("LDAP"),
-				LdapDnsSrvPrefix:    String("_ldap._tcp"),
-				LdapsDnsSrvPrefix:   String("_ldaps._tcp"),
-				ConnectionTimeout: Int(3000),
-				CreateIfNecessary: Bool(true),
-				DnsTtl: Int(60000),
-				MaxWait: Int(-1),
-				ReadTimeout: Int(3000),
+				Name:                 String("terraform"),
+				Password:             String("foo"),
+				MaskAttributeValues:  Bool(true),
+				Type:                 String("LDAP"),
+				LdapDnsSrvPrefix:     String("_ldap._tcp"),
+				LdapsDnsSrvPrefix:    String("_ldaps._tcp"),
+				ConnectionTimeout:    Int(3000),
+				CreateIfNecessary:    Bool(true),
+				DnsTtl:               Int(60000),
+				MaxWait:              Int(-1),
+				ReadTimeout:          Int(3000),
 				TimeBetweenEvictions: Int(60000),
-				VerifyHost: Bool(true),
+				VerifyHost:           Bool(true),
 
 				//TODO Only set because terraform sdk defaults int's to 0 :/
 				EncryptedPassword: String("foo"),

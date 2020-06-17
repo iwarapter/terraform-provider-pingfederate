@@ -2,6 +2,7 @@ package pingfederate
 
 import (
 	"context"
+
 	"github.com/iwarapter/pingfederate-sdk-go/services/authenticationPolicyContracts"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"

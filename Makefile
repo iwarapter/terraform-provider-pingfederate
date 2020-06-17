@@ -5,6 +5,11 @@ NAME=terraform-provider-pingfederate_v${VERSION}
 pf-init:
 	@docker run --rm -d --hostname pingfederate -v `pwd`/pingfederate/pingfederate-data.zip:/opt/in/instance/server/default/data/drop-in-deployer/data.zip --name pingfederate -e PING_IDENTITY_DEVOPS_KEY=$(PING_IDENTITY_DEVOPS_KEY) -e PING_IDENTITY_DEVOPS_USER=$(PING_IDENTITY_DEVOPS_USER) -e PING_IDENTITY_ACCEPT_EULA=YES --publish 9999:9999 --publish 9031:9031 pingidentity/pingfederate:10.0.2-edge
 
+checks:
+	@go fmt ./...
+	@staticcheck ./...
+	@goimports -w pingfederate
+
 unit-test:
 	@go test -mod=vendor ./... -v 
 

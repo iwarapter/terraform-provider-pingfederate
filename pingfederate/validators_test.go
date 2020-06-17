@@ -1,9 +1,10 @@
 package pingfederate
 
 import (
+	"testing"
+
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"testing"
 )
 
 func Test_validatePersistentGrantLifetimeUnit(t *testing.T) {

@@ -2,10 +2,11 @@ package pingfederate
 
 import (
 	"crypto/tls"
-	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
 	"net/http"
 	"net/url"
 	"os"
+
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/iwarapter/pingfederate-sdk-go/services/administrativeAccounts"
