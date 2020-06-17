@@ -51,7 +51,7 @@ func resourcePingFederateOauthAccessTokenManagersResourceSchema() map[string]*sc
 						},
 					},
 					"extended_attributes": {
-						Type:     schema.TypeList,
+						Type:     schema.TypeSet,
 						Optional: true,
 						MinItems: 1,
 						Elem: &schema.Schema{

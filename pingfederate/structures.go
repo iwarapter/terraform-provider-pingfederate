@@ -1664,7 +1664,7 @@ func expandAccessTokenAttributeContract(in []interface{}) *pf.AccessTokenAttribu
 	for _, raw := range in {
 		l := raw.(map[string]interface{})
 		var atr []*pf.AccessTokenAttribute
-		for _, exAtr := range l["extended_attributes"].([]interface{}) {
+		for _, exAtr := range l["extended_attributes"].(*schema.Set).List() {
 			atr = append(atr, &pf.AccessTokenAttribute{Name: String(exAtr.(string))})
 		}
 		pgc.ExtendedAttributes = &atr
