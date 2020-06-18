@@ -34,6 +34,7 @@ func resourcePingFederateOpenIdConnectPolicyResourceSchema() map[string]*schema.
 		"policy_id": {
 			Type:     schema.TypeString,
 			Required: true,
+			ForceNew: true,
 		},
 		"name": {
 			Type:     schema.TypeString,
@@ -87,7 +88,6 @@ func resourcePingFederateOpenIdConnectPolicyResourceCreate(_ context.Context, d 
 		Body:                     *resourcePingFederateOpenIdConnectPolicyResourceReadData(d),
 		BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool)),
 	}
-	input.Body.Id = input.Body.Name
 	result, _, err := svc.CreatePolicy(&input)
 	if err != nil {
 		return diag.Errorf("unable to create OauthOpenIdConnectPolicy: %s", err)
