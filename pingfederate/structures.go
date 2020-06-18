@@ -4,6 +4,9 @@ import (
 	"bytes"
 	"fmt"
 	"hash/crc32"
+	"strings"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
@@ -77,7 +80,8 @@ func resourceRequiredLinkSchema() *schema.Schema {
 func resourcePluginConfiguration() *schema.Schema {
 	return &schema.Schema{
 		Type:     schema.TypeList,
-		Required: true,
+		Optional: true,
+		Computed: true,
 		MaxItems: 1,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
@@ -1635,10 +1639,10 @@ func expandPluginConfiguration(in []interface{}) *pf.PluginConfiguration {
 		if val, ok := l["tables"]; ok && len(val.([]interface{})) > 0 {
 			config.Tables = expandConfigTable(val.([]interface{}))
 		}
-		if val, ok := l["fields"]; ok {
+		if val, ok := l["fields"]; ok && len(val.(*schema.Set).List()) > 0 {
 			config.Fields = expandConfigFields(val.(*schema.Set).List())
 		}
-		if val, ok := l["sensitive_fields"]; ok {
+		if val, ok := l["sensitive_fields"]; ok && len(val.(*schema.Set).List()) > 0 {
 			fields := expandSensitiveConfigFields(val.(*schema.Set).List())
 			*config.Fields = append(*config.Fields, *fields...)
 		}
@@ -1802,8 +1806,6 @@ func expandJdbcTagConfigs(in []interface{}) *[]*pf.JdbcTagConfig {
 }
 
 func maskPluginConfigurationFromDescriptor(desc *pf.PluginConfigDescriptor, origConf, conf *pf.PluginConfiguration) []interface{} {
-	//printPluginConfig("originConf",origConf)
-	//printPluginConfig("conf",conf)
 
 	//if origConf.Fields != nil {
 	for _, f := range *desc.Fields {
@@ -1834,8 +1836,8 @@ func maskPluginConfigurationFromDescriptor(desc *pf.PluginConfigDescriptor, orig
 				}
 			}
 		}
-		//}
 	}
+
 	return flattenPluginConfiguration(conf)
 }
 
@@ -2187,23 +2189,53 @@ func expandAttributeMapping(in []interface{}) *pf.AttributeMapping {
 //}
 
 //func expandPluginConfigurationWithDescriptor(in []interface{}, desc *pf.PluginConfigDescriptor) *pf.PluginConfiguration {
+//	log.Printf("[INFO] Expanding config with descriptor")
 //	config := expandPluginConfiguration(in)
+//	log.Printf("[INFO] We have %d fields before", len(*config.Fields))
 //	for _, descriptor := range *desc.Fields {
+//		log.Printf("[INFO] Checking field %s", *descriptor.Name)
 //		if descriptor.DefaultValue != nil {
 //			if !hasField(*descriptor.Name, config) {
+//				log.Printf("[INFO] Field %s is required, default is %s", *descriptor.Name, *descriptor.DefaultValue)
 //				*config.Fields = append(*config.Fields, &pf.ConfigField{Name: descriptor.Name, Value: descriptor.DefaultValue})
 //			}
 //		}
 //	}
-//
+//	log.Printf("[INFO] We have %d fields after", len(*config.Fields))
 //	return config
 //}
-//
-//func hasField(name string, c *pf.PluginConfiguration) bool {
-//	for _, field := range *c.Fields {
-//		if *field.Name == name {
-//			return true
-//		}
-//	}
-//	return false
-//}
+
+func validateConfiguration(d *schema.ResourceDiff, desc *pf.PluginConfigDescriptor) error {
+	var diags diag.Diagnostics
+	config := expandPluginConfiguration(d.Get("configuration").([]interface{}))
+	for _, descriptor := range *desc.Fields {
+		if descriptor.Required != nil {
+			if !hasField(*descriptor.Name, config) {
+				if descriptor.DefaultValue != nil {
+					diags = append(diags, diag.FromErr(fmt.Errorf("the field '%s' is required, its default value is '%s'", *descriptor.Name, *descriptor.DefaultValue))...)
+				} else {
+					diags = append(diags, diag.FromErr(fmt.Errorf("the field '%s' is required", *descriptor.Name))...)
+				}
+			}
+		}
+	}
+	if diags.HasError() {
+		msgs := []string{
+			"configuration validation failed against the class descriptor definition",
+		}
+		for _, diagnostic := range diags {
+			msgs = append(msgs, diagnostic.Summary)
+		}
+		return fmt.Errorf(strings.Join(msgs, "\n"))
+	}
+	return nil
+}
+
+func hasField(name string, c *pf.PluginConfiguration) bool {
+	for _, field := range *c.Fields {
+		if *field.Name == name {
+			return true
+		}
+	}
+	return false
+}

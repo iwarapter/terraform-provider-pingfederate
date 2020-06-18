@@ -2,12 +2,13 @@ package pingfederate
 
 import (
 	"context"
-
-	"github.com/iwarapter/pingfederate-sdk-go/services/passwordCredentialValidators"
+	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
+	"github.com/iwarapter/pingfederate-sdk-go/services/passwordCredentialValidators"
 )
 
 func resourcePingFederatePasswordCredentialValidatorResource() *schema.Resource {
@@ -20,6 +21,28 @@ func resourcePingFederatePasswordCredentialValidatorResource() *schema.Resource 
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: resourcePingFederatePasswordCredentialValidatorResourceSchema(),
+		CustomizeDiff: func(ctx context.Context, d *schema.ResourceDiff, m interface{}) error {
+			svc := m.(pfClient).PasswordCredentialValidators
+			if className, ok := d.GetOk("plugin_descriptor_ref.0.id"); ok {
+				desc, _, err := svc.GetPasswordCredentialValidatorDescriptor(&passwordCredentialValidators.GetPasswordCredentialValidatorDescriptorInput{Id: className.(string)})
+				if err != nil {
+					descs, _, err := svc.GetPasswordCredentialValidatorDescriptors()
+					if err == nil && descs != nil {
+						list := func(in *[]*pf.PasswordCredentialValidatorDescriptor) string {
+							var plugins []string
+							for _, descriptor := range *in {
+								plugins = append(plugins, *descriptor.ClassName)
+							}
+							return strings.Join(plugins, "\n\t")
+						}
+						return fmt.Errorf("unable to find plugin_descriptor for %s available plugins:\n\t%s", className.(string), list(descs.Items))
+					}
+					return fmt.Errorf("unable to find plugin_descriptor for %s", className.(string))
+				}
+				return validateConfiguration(d, desc.ConfigDescriptor)
+			}
+			return nil
+		},
 	}
 }
 

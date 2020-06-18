@@ -3,6 +3,7 @@ package pingfederate
 import (
 	"fmt"
 	"net/http"
+	"regexp"
 	"testing"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/spAdapters"
@@ -33,6 +34,10 @@ func TestAccPingFederateSpAdapter(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateSpAdapterExists("pingfederate_sp_adapter.demo"),
 				),
+			},
+			{
+				Config:      testAccPingFederateSpAdapterConfigWrongPlugin(),
+				ExpectError: regexp.MustCompile(`unable to find plugin_descriptor for com\.pingidentity\.adapters\.opentoken\.wrong available plugins:`),
 			},
 		},
 	})
@@ -161,6 +166,34 @@ resource "pingfederate_sp_adapter" "demo" {
   }
 }
 `, configUpdate)
+}
+
+func testAccPingFederateSpAdapterConfigWrongPlugin() string {
+	return `
+resource "pingfederate_sp_adapter" "demo" {
+  name = "bar"
+  sp_adapter_id = "spadaptertest1"
+  plugin_descriptor_ref {
+    id = "com.pingidentity.adapters.opentoken.wrong"
+  }
+
+  configuration {
+    fields {
+      name  = "Use Verbose Error Messages"
+      value = "false"
+    }
+  }
+
+  attribute_contract {
+    core_attributes = [ "subject" ]
+  }
+  
+  target_application_info {
+	application_name = "foo"
+	application_icon_url = "https://%s"
+  }
+}
+`
 }
 
 func testAccCheckPingFederateSpAdapterExists(n string) resource.TestCheckFunc {

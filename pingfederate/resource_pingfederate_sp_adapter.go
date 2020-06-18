@@ -2,6 +2,8 @@ package pingfederate
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/iwarapter/pingfederate-sdk-go/services/spAdapters"
@@ -20,6 +22,28 @@ func resourcePingFederateSpAdapterResource() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: resourcePingFederateSpAdapterResourceSchema(),
+		CustomizeDiff: func(ctx context.Context, d *schema.ResourceDiff, m interface{}) error {
+			svc := m.(pfClient).SpAdapters
+			if className, ok := d.GetOk("plugin_descriptor_ref.0.id"); ok {
+				desc, _, err := svc.GetSpAdapterDescriptorsById(&spAdapters.GetSpAdapterDescriptorsByIdInput{Id: className.(string)})
+				if err != nil {
+					descs, _, err := svc.GetSpAdapterDescriptors()
+					if err == nil && descs != nil {
+						list := func(in *[]*pf.SpAdapterDescriptor) string {
+							var plugins []string
+							for _, descriptor := range *in {
+								plugins = append(plugins, *descriptor.ClassName)
+							}
+							return strings.Join(plugins, "\n\t")
+						}
+						return fmt.Errorf("unable to find plugin_descriptor for %s available plugins:\n\t%s", className.(string), list(descs.Items))
+					}
+					return fmt.Errorf("unable to find plugin_descriptor for %s", className.(string))
+				}
+				return validateConfiguration(d, desc.ConfigDescriptor)
+			}
+			return nil
+		},
 	}
 }
 

@@ -3,6 +3,7 @@ package pingfederate
 import (
 	"fmt"
 	"net/http"
+	"regexp"
 	"testing"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/authenticationSelectors"
@@ -32,6 +33,10 @@ func TestAccPingFederateAuthenticationSelectorResource(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateAuthenticationSelectorResourceExists("pingfederate_authentication_selector.demo"),
 				),
+			},
+			{
+				Config:      testAccPingFederateAuthenticationSelectorResourceConfigWrongPlugins(),
+				ExpectError: regexp.MustCompile(`unable to find plugin_descriptor for com\.pingidentity\.pf\.selectors\.cidr\.wrong available plugins:`),
 			},
 		},
 	})
@@ -64,6 +69,32 @@ func testAccPingFederateAuthenticationSelectorResourceConfig(configUpdate string
 	}
   }
 }`, configUpdate)
+}
+
+func testAccPingFederateAuthenticationSelectorResourceConfigWrongPlugins() string {
+	return `
+resource "pingfederate_authentication_selector" "demo" {
+  name = "wee"
+  plugin_descriptor_ref {
+	id = "com.pingidentity.pf.selectors.cidr.wrong"
+  }
+
+  configuration {
+	fields {
+      name = "Result Attribute Name"
+	  value = ""
+	}
+	tables {
+	  name = "Networks"
+	  rows {
+		fields {
+		  name  = "Network Range (CIDR notation)"
+		  value = "127.0.0.1"
+		}
+	  }
+	}
+  }
+}`
 }
 
 func testAccCheckPingFederateAuthenticationSelectorResourceExists(n string) resource.TestCheckFunc {

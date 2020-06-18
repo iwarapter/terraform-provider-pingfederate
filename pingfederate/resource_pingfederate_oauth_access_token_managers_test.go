@@ -3,6 +3,7 @@ package pingfederate
 import (
 	"fmt"
 	"net/http"
+	"regexp"
 	"testing"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthAccessTokenManagers"
@@ -33,6 +34,10 @@ func TestAccPingFederateOauthAccessTokenManager(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateOauthAccessTokenManagerExists("pingfederate_oauth_access_token_manager.my_atm", &out),
 				),
+			},
+			{
+				Config:      testAccPingFederateOauthAccessTokenManagerConfigWrongPlugin(),
+				ExpectError: regexp.MustCompile(`unable to find plugin_descriptor for org\.sourceid\.oauth20\.token\.plugin\.impl\.wrong available plugins:`),
 			},
 		},
 	})
@@ -97,6 +102,33 @@ func testAccPingFederateOauthAccessTokenManagerConfig(name, configUpdate string)
 			extended_attributes = ["sub"]
 		}
 	}`, name, name, configUpdate)
+}
+
+func testAccPingFederateOauthAccessTokenManagerConfigWrongPlugin() string {
+	return `
+resource "pingfederate_oauth_access_token_manager" "my_atm" {
+	instance_id = "foo"
+	name = "foo"
+	plugin_descriptor_ref {
+		id = "org.sourceid.oauth20.token.plugin.impl.wrong"
+	}
+
+	configuration {
+		fields {
+			name  = "Token Length"
+			value = "28"
+		}
+
+		fields {
+			name  = "Token Lifetime"
+			value = "%s"
+		}
+	}
+
+	attribute_contract {
+		extended_attributes = ["sub"]
+	}
+}`
 }
 
 func testAccCheckPingFederateOauthAccessTokenManagerExists(n string, out *pf.Client) resource.TestCheckFunc {

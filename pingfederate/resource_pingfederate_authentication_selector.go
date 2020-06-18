@@ -2,6 +2,8 @@ package pingfederate
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/authenticationSelectors"
 
@@ -19,8 +21,29 @@ func resourcePingFederateAuthenticationSelectorResource() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-
 		Schema: resourcePingFederateAuthenticationSelectorResourceSchema(),
+		CustomizeDiff: func(ctx context.Context, d *schema.ResourceDiff, m interface{}) error {
+			svc := m.(pfClient).AuthenticationSelectors
+			if className, ok := d.GetOk("plugin_descriptor_ref.0.id"); ok {
+				desc, _, err := svc.GetAuthenticationSelectorDescriptorsById(&authenticationSelectors.GetAuthenticationSelectorDescriptorsByIdInput{Id: className.(string)})
+				if err != nil {
+					descs, _, err := svc.GetAuthenticationSelectorDescriptors()
+					if err == nil && descs != nil {
+						list := func(in *[]*pf.AuthenticationSelectorDescriptor) string {
+							var plugins []string
+							for _, descriptor := range *in {
+								plugins = append(plugins, *descriptor.ClassName)
+							}
+							return strings.Join(plugins, "\n\t")
+						}
+						return fmt.Errorf("unable to find plugin_descriptor for %s available plugins:\n\t%s", className.(string), list(descs.Items))
+					}
+					return fmt.Errorf("unable to find plugin_descriptor for %s", className.(string))
+				}
+				return validateConfiguration(d, desc.ConfigDescriptor)
+			}
+			return nil
+		},
 	}
 }
 

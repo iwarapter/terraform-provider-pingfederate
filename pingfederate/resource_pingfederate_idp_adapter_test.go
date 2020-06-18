@@ -2,6 +2,7 @@ package pingfederate
 
 import (
 	"fmt"
+	"regexp"
 	"testing"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/idpAdapters"
@@ -32,6 +33,10 @@ func TestAccPingFederateIdpAdapter(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateIdpAdapterExists("pingfederate_idp_adapter.demo"),
 				),
+			},
+			{
+				Config:      testAccPingFederateIdpAdapterConfigWrongPlugin(),
+				ExpectError: regexp.MustCompile(`unable to find plugin_descriptor for com\.pingidentity\.adapters\.httpbasic\.idp\.wrong available plugins:`),
 			},
 		},
 	})
@@ -144,6 +149,51 @@ resource "pingfederate_password_credential_validator" "demo" {
   }
 }
 `, configUpdate)
+}
+
+func testAccPingFederateIdpAdapterConfigWrongPlugin() string {
+	return `
+resource "pingfederate_idp_adapter" "demo" {
+  name = "barrr"
+  plugin_descriptor_ref {
+    id = "com.pingidentity.adapters.httpbasic.idp.wrong"
+  }
+
+  configuration {
+    fields {
+      name  = "Realm"
+      value = "foo"
+    }
+
+  }
+
+  attribute_contract {
+    core_attributes {
+      name      = "username"
+      pseudonym = true
+    }
+    extended_attributes {
+      name = "sub"
+    }
+  }
+  attribute_mapping {
+    attribute_contract_fulfillment {
+      key_name = "sub"
+      source {
+        type = "ADAPTER"
+      }
+      value = "sub"
+    }
+    attribute_contract_fulfillment {
+      key_name = "username"
+      source {
+        type = "ADAPTER"
+      }
+      value = "username"
+    }
+  }
+}
+`
 }
 
 func testAccCheckPingFederateIdpAdapterExists(n string) resource.TestCheckFunc {
