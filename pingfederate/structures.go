@@ -50,6 +50,154 @@ func setOfString() *schema.Schema {
 //	}
 //}
 
+func resourceAuthenticationPolicyTreeSchema() *schema.Schema {
+	return &schema.Schema{
+		Type:     schema.TypeList,
+		Optional: true,
+		MaxItems: 1,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"name": {
+					Type:     schema.TypeString,
+					Required: true,
+				},
+				"description": {
+					Type:     schema.TypeString,
+					Optional: true,
+				},
+				"authentication_api_application_ref": resourceLinkSchema(),
+				"enabled": {
+					Type:     schema.TypeBool,
+					Optional: true,
+					Default:  true,
+				},
+				"root_node": resourceAuthenticationPolicyTreeNodeSchema(),
+			},
+		},
+	}
+}
+
+func resourceAuthenticationPolicyTreeNodeSchema() *schema.Schema {
+	return &schema.Schema{
+		Type:     schema.TypeSet,
+		Optional: true,
+		MaxItems: 1,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"action": resourcePolicyActionSchema(),
+				//"children": {
+				//	Type:     schema.TypeSet,
+				//	Optional: true,
+				//	Elem:     resourceAuthenticationPolicyTreeNodeSchema(),
+				//},
+			},
+		},
+	}
+}
+
+func resourcePolicyActionSchema() *schema.Schema {
+	return &schema.Schema{
+		Type:     schema.TypeSet,
+		Optional: true,
+		MaxItems: 1,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"type": {
+					Type:     schema.TypeString,
+					Required: true,
+					ValidateDiagFunc: func(value interface{}, path cty.Path) diag.Diagnostics {
+						v := value.(string)
+						switch v {
+						case
+							"APC_MAPPING",
+							"LOCAL_IDENTITY_MAPPING",
+							"AUTHN_SELECTOR",
+							"AUTHN_SOURCE",
+							"DONE",
+							"CONTINUE",
+							"RESTART":
+							return nil
+						}
+						return diag.Errorf("must be either 'APC_MAPPING' or 'LOCAL_IDENTITY_MAPPING' or 'AUTHN_SELECTOR' or 'AUTHN_SOURCE' or 'DONE' or 'CONTINUE' or 'RESTART' not %s", v)
+					},
+				},
+				"context": {
+					Type:     schema.TypeString,
+					Optional: true,
+				},
+				"authentication_selector_ref": {
+					Type:     schema.TypeList,
+					Optional: true,
+					MaxItems: 1,
+
+					ConflictsWith: []string{
+						"authentication_policy_contract_ref",
+						"attribute_mapping",
+						"local_identity_ref",
+						"inbound_mapping",
+						"outbound_attribute_mapping",
+						"attribute_rules",
+						"authentication_source",
+						"input_user_id_mapping",
+					},
+					Elem: &schema.Resource{
+						Schema: map[string]*schema.Schema{
+							"id": {
+								Type:     schema.TypeString,
+								Required: true,
+							},
+							"location": {
+								Type:     schema.TypeString,
+								Computed: true,
+							},
+						},
+					},
+				},
+				"attribute_mapping": {
+					Type:     schema.TypeList,
+					Optional: true,
+					MaxItems: 1,
+					Elem:    resourceAttributeMapping(),
+					ConflictsWith: []string{
+						"local_identity_ref",
+						"inbound_mapping",
+						"outbound_attribute_mapping",
+						"authentication_selector_ref",
+						"attribute_rules",
+						"authentication_source",
+						"input_user_id_mapping",
+					},
+				},
+				"authentication_policy_contract_ref": {
+					Type:     schema.TypeList,
+					Optional: true,
+					MaxItems: 1,
+					ConflictsWith: []string{
+						"local_identity_ref",
+						"inbound_mapping",
+						"outbound_attribute_mapping",
+						"attribute_rules",
+						"authentication_source",
+						"input_user_id_mapping",
+					},
+					Elem: &schema.Resource{
+						Schema: map[string]*schema.Schema{
+							"id": {
+								Type:     schema.TypeString,
+								Required: true,
+							},
+							"location": {
+								Type:     schema.TypeString,
+								Computed: true,
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+}
+
 func resourceLinkSchema() *schema.Schema {
 	return &schema.Schema{
 		Type:     schema.TypeList,
