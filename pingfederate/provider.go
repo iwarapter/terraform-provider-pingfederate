@@ -38,6 +38,7 @@ func Provider() *schema.Provider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
+			"pingfederate_authentication_policies":                      resourcePingFederateAuthenticationPoliciesResource(),
 			"pingfederate_authentication_policy_contract":               resourcePingFederateAuthenticationPolicyContractResource(),
 			"pingfederate_authentication_selector":                      resourcePingFederateAuthenticationSelectorResource(),
 			"pingfederate_jdbc_data_store":                              resourcePingFederateJdbcDataStoreResource(),

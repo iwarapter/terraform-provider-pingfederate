@@ -2,11 +2,12 @@ package pingfederate
 
 import (
 	"context"
-	"github.com/hashicorp/go-cty/cty"
 
+	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
+	"github.com/iwarapter/pingfederate-sdk-go/services/authenticationPolicies"
 )
 
 func resourcePingFederateAuthenticationPoliciesResource() *schema.Resource {
@@ -64,89 +65,75 @@ func resourcePingFederateAuthenticationPoliciesResourceSchema() map[string]*sche
 }
 
 func resourcePingFederateAuthenticationPoliciesResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//svc := m.(pfClient).AuthenticationPolicyContracts
-	//input := authenticationPolicyContracts.CreateAuthenticationPolicyContractInput{
-	//	Body: *resourcePingFederateAuthenticationPoliciesResourceReadData(d),
-	//}
-	//result, _, err := svc.CreateAuthenticationPolicyContract(&input)
-	//if err != nil {
-	//	return diag.Errorf("unable to create AuthenticationPolicyContracts: %s", err)
-	//}
-	//d.SetId(*result.Id)
-	//return resourcePingFederateAuthenticationPoliciesResourceReadResult(d, result)
-	return nil
+	svc := m.(pfClient).AuthenticationPolicies
+	input := authenticationPolicies.UpdateDefaultAuthenticationPolicyInput{
+		Body: *resourcePingFederateAuthenticationPoliciesResourceReadData(d),
+	}
+	result, _, err := svc.UpdateDefaultAuthenticationPolicy(&input)
+	if err != nil {
+		return diag.Errorf("unable to create AuthenticationPolicies: %s", err)
+	}
+	d.SetId("default_authentication_policies")
+	return resourcePingFederateAuthenticationPoliciesResourceReadResult(d, result)
 }
 
 func resourcePingFederateAuthenticationPoliciesResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//svc := m.(pfClient).AuthenticationPolicyContracts
-	//input := authenticationPolicyContracts.GetAuthenticationPolicyContractInput{
-	//	Id: d.Id(),
-	//}
-	//result, _, err := svc.GetAuthenticationPolicyContract(&input)
-	//if err != nil {
-	//	return diag.Errorf("unable to read AuthenticationPolicyContracts: %s", err)
-	//}
-	//return resourcePingFederateAuthenticationPoliciesResourceReadResult(d, result)
-	return nil
+	svc := m.(pfClient).AuthenticationPolicies
+	result, _, err := svc.GetDefaultAuthenticationPolicy()
+	if err != nil {
+		return diag.Errorf("unable to read AuthenticationPolicies: %s", err)
+	}
+	return resourcePingFederateAuthenticationPoliciesResourceReadResult(d, result)
 }
 
 func resourcePingFederateAuthenticationPoliciesResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//svc := m.(pfClient).AuthenticationPolicyContracts
-	//input := authenticationPolicyContracts.UpdateAuthenticationPolicyContractInput{
-	//	Id:   d.Id(),
-	//	Body: *resourcePingFederateAuthenticationPoliciesResourceReadData(d),
-	//}
-	//result, _, err := svc.UpdateAuthenticationPolicyContract(&input)
-	//if err != nil {
-	//	return diag.Errorf("unable to update AuthenticationPolicyContracts: %s", err)
-	//}
-	//
-	//return resourcePingFederateAuthenticationPoliciesResourceReadResult(d, result)
+	svc := m.(pfClient).AuthenticationPolicies
+	input := authenticationPolicies.UpdateDefaultAuthenticationPolicyInput{
+		Body: *resourcePingFederateAuthenticationPoliciesResourceReadData(d),
+	}
+	result, _, err := svc.UpdateDefaultAuthenticationPolicy(&input)
+	if err != nil {
+		return diag.Errorf("unable to update AuthenticationPolicies: %s", err)
+	}
+
+	return resourcePingFederateAuthenticationPoliciesResourceReadResult(d, result)
+}
+
+func resourcePingFederateAuthenticationPoliciesResourceDelete(_ context.Context, _ *schema.ResourceData, _ interface{}) diag.Diagnostics {
 	return nil
 }
 
-func resourcePingFederateAuthenticationPoliciesResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//svc := m.(pfClient).AuthenticationPolicyContracts
-	//input := authenticationPolicyContracts.DeleteAuthenticationPolicyContractInput{
-	//	Id: d.Id(),
-	//}
-	//_, _, err := svc.DeleteAuthenticationPolicyContract(&input)
-	//if err != nil {
-	//	return diag.Errorf("unable to delete AuthenticationPolicyContracts: %s", err)
-	//}
-	return nil
-}
+func resourcePingFederateAuthenticationPoliciesResourceReadResult(d *schema.ResourceData, rv *pf.AuthenticationPolicy) diag.Diagnostics {
+	var diags diag.Diagnostics
+	setResourceDataBoolWithDiagnostic(d, "fail_if_no_selection", rv.FailIfNoSelection, &diags)
 
-func resourcePingFederateAuthenticationPoliciesResourceReadResult(d *schema.ResourceData, rv *pf.AuthenticationPolicyContract) diag.Diagnostics {
-	//var diags diag.Diagnostics
-	//setResourceDataStringithDiagnostic(d, "name", rv.Name, &diags)
-	//if rv.ExtendedAttributes != nil && len(*rv.ExtendedAttributes) > 0 {
-	//	if err := d.Set("extended_attributes", flattenAuthenticationPolicyContractAttribute(*rv.ExtendedAttributes)); err != nil {
-	//		diags = append(diags, diag.FromErr(err)...)
-	//
-	//	}
-	//}
-	//if rv.CoreAttributes != nil && len(*rv.CoreAttributes) > 0 {
-	//	if err := d.Set("core_attributes", flattenAuthenticationPolicyContractAttribute(*rv.CoreAttributes)); err != nil {
-	//		diags = append(diags, diag.FromErr(err)...)
-	//
-	//	}
-	//}
+	if rv.DefaultAuthenticationSources != nil {
+		if err := d.Set("default_authentication_sources", flattenAuthenticationSources(*rv.DefaultAuthenticationSources)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
+		}
+	}
+	if rv.TrackedHttpParameters != nil {
+		if err := d.Set("tracked_http_parameters", flattenStringList(*rv.TrackedHttpParameters)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
+		}
+	}
+
+	if rv.AuthnSelectionTrees != nil {
+		if err := d.Set("authn_selection_trees", flattenAuthenticationPolicyTrees(*rv.AuthnSelectionTrees)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
+		}
+	}
 
 	return nil
 }
 
-func resourcePingFederateAuthenticationPoliciesResourceReadData(d *schema.ResourceData) *pf.AuthenticationPolicyContract {
-	//core := expandAuthenticationPolicyContractAttribute(d.Get("core_attributes").(*schema.Set).List())
-	//contract := &pf.AuthenticationPolicyContract{
-	//	Name:           String(d.Get("name").(string)),
-	//	CoreAttributes: core,
-	//}
-	//
-	//if _, ok := d.GetOk("extended_attributes"); ok {
-	//	contract.ExtendedAttributes = expandAuthenticationPolicyContractAttribute(d.Get("extended_attributes").(*schema.Set).List())
-	//}
-	//
-	//return contract
-	return nil
+func resourcePingFederateAuthenticationPoliciesResourceReadData(d *schema.ResourceData) *pf.AuthenticationPolicy {
+	strs := expandStringList(d.Get("tracked_http_parameters").(*schema.Set).List())
+	policy := &pf.AuthenticationPolicy{
+		FailIfNoSelection:            Bool(d.Get("fail_if_no_selection").(bool)),
+		TrackedHttpParameters:        &strs,
+		DefaultAuthenticationSources: expandAuthenticationSources(d.Get("default_authentication_sources").(*schema.Set).List()),
+		AuthnSelectionTrees:          expandAuthenticationPolicyTrees(d.Get("authn_selection_trees").(*schema.Set).List()),
+	}
+	return policy
 }
