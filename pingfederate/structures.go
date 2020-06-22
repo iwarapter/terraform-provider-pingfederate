@@ -4,7 +4,10 @@ import (
 	"bytes"
 	"fmt"
 	"hash/crc32"
+	"sort"
 	"strings"
+
+	"github.com/hashicorp/go-cty/cty"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 
@@ -49,6 +52,295 @@ func setOfString() *schema.Schema {
 //		},
 //	}
 //}
+
+func resourceAuthenticationPolicyTreeSchema() *schema.Schema {
+	return &schema.Schema{
+		Type:     schema.TypeSet,
+		Optional: true,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"name": {
+					Type:     schema.TypeString,
+					Required: true,
+				},
+				"description": {
+					Type:     schema.TypeString,
+					Optional: true,
+				},
+				"authentication_api_application_ref": resourceLinkSchema(),
+				"enabled": {
+					Type:     schema.TypeBool,
+					Optional: true,
+					Default:  true,
+				},
+				"root_node": {
+					Type:     schema.TypeSet,
+					Optional: true,
+					MaxItems: 1,
+					Elem: &schema.Resource{
+						Schema: map[string]*schema.Schema{
+							"action": resourcePolicyActionSchema(),
+							"children": {
+								Type:     schema.TypeSet,
+								Optional: true,
+								Elem:     resourceAuthenticationPolicyTreeNodeSchemaBuilder(5),
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+}
+
+// https://github.com/hashicorp/terraform-plugin-sdk/issues/112
+// the terraform sdk does not support tree like structure
+// to work around this limitation we generate a depth limited
+// tree structure, allowing the terraform recursive validators to work
+// whilst giving hopefully enough 'depth' to handle our use cases
+func resourceAuthenticationPolicyTreeNodeSchemaBuilder(depth int) *schema.Resource {
+	if depth <= 0 {
+		return &schema.Resource{}
+	}
+	r := &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"action": resourcePolicyActionSchema(),
+			"children": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem:     resourceAuthenticationPolicyTreeNodeSchemaBuilder(depth - 1),
+			},
+		},
+	}
+	return r
+}
+
+func resourcePolicyActionSchema() *schema.Schema {
+	return &schema.Schema{
+		Type:     schema.TypeList,
+		Required: true,
+		MaxItems: 1,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"type": {
+					Type:     schema.TypeString,
+					Required: true,
+					ValidateDiagFunc: func(value interface{}, path cty.Path) diag.Diagnostics {
+						v := value.(string)
+						switch v {
+						case
+							"APC_MAPPING",
+							"LOCAL_IDENTITY_MAPPING",
+							"AUTHN_SELECTOR",
+							"AUTHN_SOURCE",
+							"DONE",
+							"CONTINUE",
+							"RESTART":
+							return nil
+						}
+						return diag.Errorf("must be either 'APC_MAPPING' or 'LOCAL_IDENTITY_MAPPING' or 'AUTHN_SELECTOR' or 'AUTHN_SOURCE' or 'DONE' or 'CONTINUE' or 'RESTART' not %s", v)
+					},
+				},
+				"context": {
+					Type:     schema.TypeString,
+					Optional: true,
+				},
+				"authentication_selector_ref": {
+					Type:     schema.TypeList,
+					Optional: true,
+					MaxItems: 1,
+
+					//ConflictsWith: []string{
+					//	"authentication_policy_contract_ref",
+					//	"attribute_mapping",
+					//	"local_identity_ref",
+					//	"inbound_mapping",
+					//	"outbound_attribute_mapping",
+					//	"attribute_rules",
+					//	"authentication_source",
+					//	"input_user_id_mapping",
+					//},
+					Elem: &schema.Resource{
+						Schema: map[string]*schema.Schema{
+							"id": {
+								Type:     schema.TypeString,
+								Required: true,
+							},
+							"location": {
+								Type:     schema.TypeString,
+								Computed: true,
+							},
+						},
+					},
+				},
+				"attribute_mapping": {
+					Type:     schema.TypeList,
+					Optional: true,
+					MaxItems: 1,
+					Elem:     resourceAttributeMapping(),
+					//ConflictsWith: []string{
+					//	"local_identity_ref",
+					//	"inbound_mapping",
+					//	"outbound_attribute_mapping",
+					//	"authentication_selector_ref",
+					//	"attribute_rules",
+					//	"authentication_source",
+					//	"input_user_id_mapping",
+					//},
+				},
+				"authentication_policy_contract_ref": {
+					Type:     schema.TypeList,
+					Optional: true,
+					MaxItems: 1,
+					//ConflictsWith: []string{
+					//	"local_identity_ref",
+					//	"inbound_mapping",
+					//	"outbound_attribute_mapping",
+					//	"attribute_rules",
+					//	"authentication_source",
+					//	"input_user_id_mapping",
+					//},
+					Elem: &schema.Resource{
+						Schema: map[string]*schema.Schema{
+							"id": {
+								Type:     schema.TypeString,
+								Required: true,
+							},
+							"location": {
+								Type:     schema.TypeString,
+								Computed: true,
+							},
+						},
+					},
+				},
+				"local_identity_ref": resourceLinkSchema(),
+				"inbound_mapping": {
+					Type:     schema.TypeList,
+					Optional: true,
+					MaxItems: 1,
+					Elem:     resourceAttributeMapping(),
+				},
+				"outbound_attribute_mapping": {
+					Type:     schema.TypeList,
+					Optional: true,
+					MaxItems: 1,
+					Elem:     resourceAttributeMapping(),
+				},
+				"attribute_rules":       resourceAttributeRulesSchema(),
+				"authentication_source": resourceAuthenticationSourceSchema(),
+				"input_user_id_mapping": {
+					Type:     schema.TypeList,
+					Optional: true,
+					Elem: &schema.Resource{
+						Schema: map[string]*schema.Schema{
+							"source": resourceSourceTypeIdKey(),
+							"value": {
+								Type:     schema.TypeString,
+								Optional: true,
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+}
+
+func resourceAttributeRulesSchema() *schema.Schema {
+	return &schema.Schema{
+		Type:     schema.TypeList,
+		MaxItems: 1,
+		Optional: true,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"fallback_to_success": {
+					Type:     schema.TypeBool,
+					Optional: true,
+					Default:  true,
+				},
+				"items": resourceAttributeRuleSchema(),
+			},
+		},
+	}
+}
+
+func resourceAttributeRuleSchema() *schema.Schema {
+	return &schema.Schema{
+		Type:     schema.TypeSet,
+		Optional: true,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"attribute_name": {
+					Type:     schema.TypeString,
+					Required: true,
+				},
+				"expected_value": {
+					Type:     schema.TypeString,
+					Required: true,
+				},
+				"result": {
+					Type:     schema.TypeString,
+					Required: true,
+				},
+				"condition": {
+					Type:     schema.TypeString,
+					Required: true,
+					ValidateDiagFunc: func(value interface{}, path cty.Path) diag.Diagnostics {
+						v := value.(string)
+						opts := []string{
+							"EQUALS",
+							"EQUALS_CASE_INSENSITIVE",
+							"EQUALS_DN",
+							"NOT_EQUAL",
+							"NOT_EQUAL_CASE_INSENSITIVE",
+							"NOT_EQUAL_DN",
+							"MULTIVALUE_CONTAINS",
+							"MULTIVALUE_CONTAINS_CASE_INSENSITIVE",
+							"MULTIVALUE_CONTAINS_DN",
+							"MULTIVALUE_DOES_NOT_CONTAIN",
+							"MULTIVALUE_DOES_NOT_CONTAIN_CASE_INSENSITIVE",
+							"MULTIVALUE_DOES_NOT_CONTAIN_DN",
+						}
+						sort.Strings(opts)
+
+						i := sort.SearchStrings(opts, v)
+						if !(i < len(opts) && opts[i] == v) {
+							return diag.Errorf("must be one of '%s' not %s", strings.Join(opts, "' or '"), v)
+						}
+						return nil
+					},
+				},
+			},
+		},
+	}
+}
+
+func resourceAuthenticationSourceSchema() *schema.Schema {
+	return &schema.Schema{
+		Type:     schema.TypeList,
+		MaxItems: 1,
+		Optional: true,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"type": {
+					Type:     schema.TypeString,
+					Required: true,
+					ValidateDiagFunc: func(value interface{}, path cty.Path) diag.Diagnostics {
+						v := value.(string)
+						switch v {
+						case
+							"IDP_ADAPTER",
+							"IDP_CONNECTION":
+							return nil
+						}
+						return diag.Errorf("must be either 'IDP_ADAPTER' or 'IDP_CONNECTION' not %s", v)
+					},
+				},
+				"source_ref": resourceLinkSchema(),
+			},
+		},
+	}
+}
 
 func resourceLinkSchema() *schema.Schema {
 	return &schema.Schema{
@@ -1376,9 +1668,9 @@ func expandResourceLink(in []interface{}) *pf.ResourceLink {
 		if val, ok := l["id"]; ok {
 			ca.Id = String(val.(string))
 		}
-		// if val, ok := l["location"]; ok {
-		// 	ca.Location = String(val.(string))
-		// }
+		if val, ok := l["location"]; ok && val.(string) != "" {
+			ca.Location = String(val.(string))
+		}
 	}
 	return ca
 }
@@ -1389,9 +1681,9 @@ func flattenResourceLink(in *pf.ResourceLink) []map[string]interface{} {
 	if in.Id != nil {
 		s["id"] = *in.Id
 	}
-	// if in.Location != nil {
-	// 	s["location"] = *in.Location
-	// }
+	if in.Location != nil {
+		s["location"] = *in.Location
+	}
 	m = append(m, s)
 	return m
 }
@@ -2105,7 +2397,7 @@ func flattenAttributeMapping(in *pf.AttributeMapping) []map[string]interface{} {
 		s["issuance_criteria"] = flattenIssuanceCriteria(in.IssuanceCriteria)
 	}
 
-	if *in.AttributeSources != nil && len(*in.AttributeSources) > 0 {
+	if in.AttributeSources != nil && len(*in.AttributeSources) > 0 {
 		var ldapAttributes []interface{}
 		var jdbcAttributes []interface{}
 		var customAttributes []interface{}
@@ -2156,6 +2448,313 @@ func expandAttributeMapping(in []interface{}) *pf.AttributeMapping {
 
 	}
 	return iac
+}
+
+func flattenAuthenticationSources(in []*pf.AuthenticationSource) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, len(in))
+	for _, v := range in {
+		m = append(m, flattenAuthenticationSource(v)...)
+	}
+	return m
+}
+
+func flattenAuthenticationSource(in *pf.AuthenticationSource) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, 1)
+	s := make(map[string]interface{})
+	s["type"] = in.Type
+	s["source_ref"] = flattenResourceLink(in.SourceRef)
+	m = append(m, s)
+	return m
+}
+
+func expandAuthenticationSources(in []interface{}) *[]*pf.AuthenticationSource {
+	sources := &[]*pf.AuthenticationSource{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		*sources = append(*sources, expandAuthenticationSource(l))
+	}
+	return sources
+}
+
+func expandAuthenticationSource(in map[string]interface{}) *pf.AuthenticationSource {
+	src := &pf.AuthenticationSource{}
+	if v, ok := in["type"]; ok {
+		src.Type = String(v.(string))
+	}
+	if v, ok := in["source_ref"]; ok {
+		src.SourceRef = expandResourceLink(v.([]interface{}))
+	}
+	return src
+}
+
+func flattenAuthenticationPolicyTrees(in []*pf.AuthenticationPolicyTree) *schema.Set {
+	m := make([]interface{}, 0, len(in))
+	for _, v := range in {
+		s := make(map[string]interface{})
+		if v.Name != nil {
+			s["name"] = *v.Name
+		}
+		if v.Description != nil {
+			s["description"] = *v.Description
+		}
+		if v.Enabled != nil {
+			s["enabled"] = *v.Enabled
+		}
+		if v.AuthenticationApiApplicationRef != nil {
+			s["authentication_api_application_ref"] = flattenResourceLink(v.AuthenticationApiApplicationRef)
+		}
+		if v.RootNode != nil {
+			s["root_node"] = flattenAuthenticationPolicyTreeNodes([]*pf.AuthenticationPolicyTreeNode{v.RootNode})
+		}
+		m = append(m, s)
+	}
+
+	return schema.NewSet(authPolicyTreesHash, m)
+}
+
+func authPolicyTreesHash(v interface{}) int {
+	var buf bytes.Buffer
+	m := v.(map[string]interface{})
+	buf.WriteString(m["name"].(string))
+	return hashcodeString(buf.String())
+}
+
+func expandAuthenticationPolicyTrees(in []interface{}) *[]*pf.AuthenticationPolicyTree {
+	trees := &[]*pf.AuthenticationPolicyTree{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		src := &pf.AuthenticationPolicyTree{}
+		if v, ok := l["name"]; ok {
+			src.Name = String(v.(string))
+		}
+		if v, ok := l["description"]; ok && v.(string) != "" {
+			src.Description = String(v.(string))
+		}
+		if v, ok := l["authentication_api_application_ref"]; ok && len(v.([]interface{})) > 0 {
+			src.AuthenticationApiApplicationRef = expandResourceLink(v.([]interface{}))
+		}
+		if v, ok := l["enabled"]; ok {
+			src.Enabled = Bool(v.(bool))
+		}
+		if v, ok := l["root_node"]; ok && v.(*schema.Set).Len() > 0 {
+			m := v.(*schema.Set).List()[0].(map[string]interface{})
+			src.RootNode = expandAuthenticationPolicyTreeNode(m)
+		}
+		*trees = append(*trees, src)
+	}
+	return trees
+}
+
+func flattenAuthenticationPolicyTreeNodes(in []*pf.AuthenticationPolicyTreeNode) *schema.Set {
+	m := make([]interface{}, 0, len(in))
+	for _, v := range in {
+		m = append(m, flattenAuthenticationPolicyTreeNode(v))
+	}
+	return schema.NewSet(authenticationPolicyTreeNodesHash, m)
+}
+
+func authenticationPolicyTreeNodesHash(v interface{}) int {
+	var buf bytes.Buffer
+	n := v.(map[string]interface{})
+	m := n["action"].([]map[string]interface{})
+	buf.WriteString(m[0]["type"].(string))
+	if d, ok := m[0]["context"]; ok && d.(string) != "" {
+		buf.WriteString(fmt.Sprintf("%s-", d.(string)))
+	}
+
+	//TODO add the other action types to this
+	return hashcodeString(buf.String())
+}
+
+func flattenAuthenticationPolicyTreeNode(in *pf.AuthenticationPolicyTreeNode) map[string]interface{} {
+	s := make(map[string]interface{})
+	if in.Action != nil {
+		s["action"] = flattenPolicyAction(in.Action)
+	}
+	if in.Children != nil {
+		s["children"] = flattenAuthenticationPolicyTreeNodes(*in.Children)
+	}
+	return s
+}
+
+func expandAuthenticationPolicyTreeNodes(in []interface{}) *[]*pf.AuthenticationPolicyTreeNode {
+	nodes := &[]*pf.AuthenticationPolicyTreeNode{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		*nodes = append(*nodes, expandAuthenticationPolicyTreeNode(l))
+	}
+	return nodes
+}
+
+func expandAuthenticationPolicyTreeNode(in map[string]interface{}) *pf.AuthenticationPolicyTreeNode {
+	node := &pf.AuthenticationPolicyTreeNode{}
+	if v, ok := in["action"]; ok {
+		node.Action = expandPolicyAction(v.([]interface{}))
+	}
+	if v, ok := in["children"]; ok && v.(*schema.Set).Len() > 0 {
+		node.Children = expandAuthenticationPolicyTreeNodes(v.(*schema.Set).List())
+	}
+	return node
+}
+
+func flattenPolicyAction(in *pf.PolicyAction) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, 1)
+	s := make(map[string]interface{})
+	if in.Type != nil {
+		s["type"] = *in.Type
+	}
+	if in.Context != nil {
+		s["context"] = *in.Context
+	}
+	if in.AttributeMapping != nil {
+		s["attribute_mapping"] = flattenAttributeMapping(in.AttributeMapping)
+	}
+	if in.AuthenticationPolicyContractRef != nil {
+		s["authentication_policy_contract_ref"] = flattenResourceLink(in.AuthenticationPolicyContractRef)
+	}
+	if in.AuthenticationSelectorRef != nil {
+		s["authentication_selector_ref"] = flattenResourceLink(in.AuthenticationSelectorRef)
+	}
+	if in.LocalIdentityRef != nil {
+		s["local_identity_ref"] = flattenResourceLink(in.LocalIdentityRef)
+	}
+	if in.InboundMapping != nil {
+		s["inbound_mapping"] = flattenAttributeMapping(in.InboundMapping)
+	}
+	if in.OutboundAttributeMapping != nil {
+		s["outbound_attribute_mapping"] = flattenAttributeMapping(in.OutboundAttributeMapping)
+	}
+	if in.AuthenticationSource != nil {
+		s["authentication_source"] = flattenAuthenticationSource(in.AuthenticationSource)
+	}
+	if in.InputUserIdMapping != nil {
+		m := make([]interface{}, 0, 1)
+		s["input_user_id_mapping"] = append(m, flattenAttributeFulfillmentValue(in.InputUserIdMapping))
+	}
+	if in.AttributeRules != nil {
+		s["attribute_rules"] = flattenAttributeRules(in.AttributeRules)
+	}
+	return append(m, s)
+}
+
+func expandPolicyAction(in []interface{}) *pf.PolicyAction {
+	action := &pf.PolicyAction{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		if v, ok := l["type"]; ok {
+			action.Type = String(v.(string))
+		}
+		if v, ok := l["context"]; ok && v.(string) != "" {
+			action.Context = String(v.(string))
+		}
+		if v, ok := l["attribute_mapping"]; ok && len(v.([]interface{})) > 0 {
+			action.AttributeMapping = expandAttributeMapping(v.([]interface{}))
+		}
+		if v, ok := l["authentication_policy_contract_ref"]; ok && len(v.([]interface{})) > 0 {
+			action.AuthenticationPolicyContractRef = expandResourceLink(v.([]interface{}))
+		}
+		if v, ok := l["authentication_selector_ref"]; ok && len(v.([]interface{})) > 0 {
+			action.AuthenticationSelectorRef = expandResourceLink(v.([]interface{}))
+		}
+		if v, ok := l["local_identity_ref"]; ok && len(v.([]interface{})) > 0 {
+			action.LocalIdentityRef = expandResourceLink(v.([]interface{}))
+		}
+		if v, ok := l["inbound_mapping"]; ok && len(v.([]interface{})) > 0 {
+			action.InboundMapping = expandAttributeMapping(v.([]interface{}))
+		}
+		if v, ok := l["outbound_attribute_mapping"]; ok && len(v.([]interface{})) > 0 {
+			action.OutboundAttributeMapping = expandAttributeMapping(v.([]interface{}))
+		}
+		if v, ok := l["authentication_source"]; ok && len(v.([]interface{})) > 0 {
+			action.AuthenticationSource = expandAuthenticationSource(v.([]interface{})[0].(map[string]interface{}))
+		}
+		if v, ok := l["input_user_id_mapping"]; ok && len(v.([]interface{})) > 0 {
+			action.InputUserIdMapping = expandAttributeFulfillmentValue(v.([]interface{})[0].(map[string]interface{}))
+		}
+		if v, ok := l["attribute_rules"]; ok && len(v.([]interface{})) > 0 {
+			action.AttributeRules = expandAttributeRules(v.([]interface{}))
+		}
+	}
+	return action
+}
+
+func flattenAttributeRules(in *pf.AttributeRules) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, 1)
+	s := make(map[string]interface{})
+	if in.FallbackToSuccess != nil {
+		s["fallback_to_success"] = *in.FallbackToSuccess
+	}
+	if in.Items != nil {
+		s["items"] = flattenAttributeRuleSlice(in.Items)
+	}
+	return append(m, s)
+}
+
+func expandAttributeRules(in []interface{}) *pf.AttributeRules {
+	rules := &pf.AttributeRules{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		if v, ok := l["fallback_to_success"]; ok {
+			rules.FallbackToSuccess = Bool(v.(bool))
+		}
+		if v, ok := l["items"]; ok && v.(*schema.Set).Len() > 0 {
+			rules.Items = expandAttributeRuleSlice(v.(*schema.Set).List())
+		}
+	}
+	return rules
+}
+
+func flattenAttributeRuleSlice(in *[]*pf.AttributeRule) *schema.Set {
+	m := make([]interface{}, 0, len(*in))
+	for _, r := range *in {
+		s := make(map[string]interface{})
+		if r.Condition != nil {
+			s["condition"] = *r.Condition
+		}
+		if r.AttributeName != nil {
+			s["attribute_name"] = *r.AttributeName
+		}
+		if r.ExpectedValue != nil {
+			s["expected_value"] = *r.ExpectedValue
+		}
+		if r.Result != nil {
+			s["result"] = *r.Result
+		}
+		m = append(m, s)
+	}
+	return schema.NewSet(attributeRuleSliceHash, m)
+}
+
+func attributeRuleSliceHash(v interface{}) int {
+	var buf bytes.Buffer
+	m := v.(map[string]interface{})
+	buf.WriteString(m["condition"].(string))
+	buf.WriteString(m["attribute_name"].(string))
+	buf.WriteString(m["expected_value"].(string))
+	buf.WriteString(m["result"].(string))
+	return hashcodeString(buf.String())
+}
+
+func expandAttributeRuleSlice(in []interface{}) *[]*pf.AttributeRule {
+	rules := &[]*pf.AttributeRule{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		r := &pf.AttributeRule{}
+		if v, ok := l["attribute_name"]; ok && v.(string) != "" {
+			r.AttributeName = String(v.(string))
+		}
+		if v, ok := l["expected_value"]; ok && v.(string) != "" {
+			r.ExpectedValue = String(v.(string))
+		}
+		if v, ok := l["result"]; ok && v.(string) != "" {
+			r.Result = String(v.(string))
+		}
+		if v, ok := l["condition"]; ok && v.(string) != "" {
+			r.Condition = String(v.(string))
+		}
+		*rules = append(*rules, r)
+	}
+	return rules
 }
 
 //func flattenScopeAttributeMappings(in map[string]*pf.ParameterValues) map[string][]interface{} {
