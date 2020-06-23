@@ -1,0 +1,24 @@
+site_name: Terraform PingFederate Provider
+
+# Repository
+repo_name: iwarapter/terraform-provider-pingfederate
+repo_url: https://github.com/iwarapter/terraform-provider-pingfederate
+
+nav:
+  - Home:
+    - PingFederate Provider: index.md
+    - Supported Resources:
+      - pingfederate_authentication_policy_contract: resources/pingfederate_authentication_policy_contract.md
+  - Releases:
+    - Changelog: releases/changelog.md
+
+theme:
+  name: material
+  features:
+    - tabs
+markdown_extensions:
+  - codehilite
+  - meta
+  - admonition
+  - markdown_include.include:
+      base_path: docs

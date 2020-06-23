@@ -32,8 +32,7 @@ func resourcePingFederateAuthenticationPolicyContractResourceSchema() map[string
 		},
 		"core_attributes": {
 			Type:     schema.TypeSet,
-			Required: true,
-			MinItems: 1,
+			Computed: true,
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
