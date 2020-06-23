@@ -11,3 +11,4 @@ report.json
 pingfederate/terraform.log
 terraform.log
 terraform-provider-pingfederate_vlocal
+dist
