@@ -12,7 +12,7 @@ checks:
 	@goimports -w pingfederate
 
 unit-test:
-	@go test -mod=vendor ./... -v 
+	@go test -mod=vendor ./... -v
 
 test:
 	@rm -f pingfederate/terraform.log && TF_LOG=TRACE TF_LOG_PATH=./terraform.log TF_ACC=1 go test -mod=vendor ./... -v
@@ -38,7 +38,7 @@ release:
 	# GOOS=solaris GOARCH=amd64 go build -o -mod=vendor build/solaris_amd64/${NAME} -gcflags "all=-trimpath=$GOPATH" .
 	# GOOS=windows GOARCH=386 go build -o -mod=vendor build/windows_386/${NAME} -gcflags "all=-trimpath=$GOPATH" .
 	GOOS=windows GOARCH=amd64 go build -o -mod=vendor build/windows_amd64/${NAME} -gcflags "all=-trimpath=$GOPATH" . && zip -j build/windows_amd64.zip build/windows_amd64/${NAME}
-	
+
 deploy-local:
 	@mkdir -p ~/.terraform.d/plugins
 	@cp ${NAME} ~/.terraform.d/plugins/
@@ -57,7 +57,7 @@ func-apply:
 
 func-destroy:
 	@cd func-tests && terraform destroy -auto-approve
-	
+
 func-cli-gen:
 	@cd ../pingfederate-sdk-go-gen-cli/ && make generate
 
@@ -72,4 +72,3 @@ sonar:
 		-Dsonar.exclusions=vendor/**/* \
 		-Dsonar.tests="." \
 		-Dsonar.test.inclusions="**/*_test.go"
-		

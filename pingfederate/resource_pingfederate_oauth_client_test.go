@@ -47,7 +47,7 @@ func testAccPingFederateOauthClientConfig(configUpdate string) string {
 	resource "pingfederate_oauth_client" "my_client" {
 		client_id = "tf-acc-woot"
 		name      = "tf-acc-woot"
-		
+
 		grant_types = [
 			"EXTENSION",
 		]
@@ -55,7 +55,7 @@ func testAccPingFederateOauthClientConfig(configUpdate string) string {
 		default_access_token_manager_ref {
 			id = "${pingfederate_oauth_access_token_manager.my_atm.name}"
 		}
-	
+
 		oidc_policy {
 			grant_access_session_revocation_api = false
 			logout_uris = [

@@ -170,7 +170,7 @@ resource "pingfederate_sp_adapter" "demo" {
   attribute_contract {
     core_attributes = [ "subject" ]
   }
-  
+
   target_application_info {
 	application_name = "foo"
 	application_icon_url = "https://bar"

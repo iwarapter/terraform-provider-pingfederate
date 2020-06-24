@@ -53,7 +53,7 @@ func testAccPingFederatePasswordCredentialValidatorResourceConfig(configUpdate s
 	  plugin_descriptor_ref {
 		id = "org.sourceid.saml20.domain.SimpleUsernamePasswordCredentialValidator"
 	  }
-	
+
 	  configuration {
 		tables {
 		  name = "Users"
@@ -62,17 +62,17 @@ func testAccPingFederatePasswordCredentialValidatorResourceConfig(configUpdate s
 			  name  = "Username"
 			  value = "%s"
 			}
-	
+
 			sensitive_fields {
 			  name  = "Password"
 			  value = "demo"
 			}
-	
+
 			sensitive_fields {
 			  name  = "Confirm Password"
 			  value = "demo"
 			}
-	
+
 			fields {
 			  name  = "Relax Password Requirements"
 			  value = "true"

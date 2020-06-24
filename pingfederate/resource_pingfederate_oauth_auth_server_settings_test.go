@@ -43,22 +43,22 @@ func testAccPingFederateOauthAuthServerSettingsConfig(name, configUpdate string)
 			name        = "address"
 			description = "address"
 		}
-	
+
 		scopes {
 			name        = "mail"
 			description = "mail"
 		}
-	
+
 		scopes {
 			name        = "openid"
 			description = "openid"
 		}
-	
+
 		scopes {
 			name        = "phone"
 			description = "phone"
 		}
-	
+
 		scopes {
 			name        = "profile"
 			description = "profile"
@@ -67,7 +67,7 @@ func testAccPingFederateOauthAuthServerSettingsConfig(name, configUpdate string)
 		scope_groups {
 			name        = "group1"
 			description = "group1"
-	
+
 			scopes = [
 				"address",
 				"mail",

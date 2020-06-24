@@ -3,9 +3,10 @@ package main
 import (
 	"context"
 	"flag"
+	"log"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
 	"github.com/iwarapter/terraform-provider-pingfederate/pingfederate"
-	"log"
 )
 
 func main() {

@@ -6,7 +6,7 @@ resource "pingfederate_authentication_selector" "demo" {
 
   configuration {
     fields {
-      name = "Result Attribute Name"
+      name  = "Result Attribute Name"
       value = ""
     }
     tables {

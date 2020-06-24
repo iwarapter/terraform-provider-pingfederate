@@ -481,7 +481,7 @@ resource "pingfederate_oauth_openid_connect_policy" "demo" {
     }
   }
 
-//  scope_attribute_mappings = { //TODO hoping the new TF 2.0.0 SDK will finally support sensible maps
-//    address = ["foo", "bar"]
-//  }
+  //  scope_attribute_mappings = { //TODO hoping the new TF 2.0.0 SDK will finally support sensible maps
+  //    address = ["foo", "bar"]
+  //  }
 }

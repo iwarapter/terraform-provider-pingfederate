@@ -42,4 +42,3 @@ jobs:
       run: |
         TF_ACC=1 go test -mod=vendor ./... -v -trimpath -coverprofile=coverage.out
         go tool cover -func=coverage.out
-

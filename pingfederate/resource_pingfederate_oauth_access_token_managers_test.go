@@ -55,38 +55,38 @@ func testAccPingFederateOauthAccessTokenManagerConfig(name, configUpdate string)
 		plugin_descriptor_ref {
 			id = "org.sourceid.oauth20.token.plugin.impl.ReferenceBearerAccessTokenManagementPlugin"
 		}
-	
+
 		configuration {
 			fields {
 				name  = "Token Length"
 				value = "28"
 			}
-	
+
 			fields {
 				name  = "Token Lifetime"
 				value = "%s"
 			}
-	
+
 			fields {
 				name  = "Lifetime Extension Policy"
 				value = "ALL"
 			}
-	
+
 			fields {
 				name  = "Maximum Token Lifetime"
 				value = "3000"
 			}
-	
+
 			fields {
 				name  = "Lifetime Extension Threshold Percentage"
 				value = "30"
 			}
-	
+
 			fields {
 				name  = "Mode for Synchronous RPC"
 				value = "3"
 			}
-	
+
 			fields {
 				name  = "RPC Timeout"
 				value = "500"
@@ -97,7 +97,7 @@ func testAccPingFederateOauthAccessTokenManagerConfig(name, configUpdate string)
 				value = "false"
 			}
 		}
-	
+
 		attribute_contract {
 			extended_attributes = ["sub"]
 		}
