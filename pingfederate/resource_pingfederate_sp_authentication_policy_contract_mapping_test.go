@@ -57,7 +57,6 @@ func testAccPingFederateSpAuthenticationPolicyContractMappingConfig(configUpdate
 
 resource "pingfederate_authentication_policy_contract" "demo" {
   name = "spadaptertest2"
-  core_attributes = ["subject"]
   extended_attributes = ["foo", "email"]
 }
 

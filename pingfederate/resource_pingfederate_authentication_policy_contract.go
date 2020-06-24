@@ -119,10 +119,13 @@ func resourcePingFederateAuthenticationPolicyContractResourceReadResult(d *schem
 }
 
 func resourcePingFederateAuthenticationPolicyContractResourceReadData(d *schema.ResourceData) *pf.AuthenticationPolicyContract {
-	core := expandAuthenticationPolicyContractAttribute(d.Get("core_attributes").(*schema.Set).List())
 	contract := &pf.AuthenticationPolicyContract{
-		Name:           String(d.Get("name").(string)),
-		CoreAttributes: core,
+		Name: String(d.Get("name").(string)),
+		CoreAttributes: &[]*pf.AuthenticationPolicyContractAttribute{
+			{
+				Name: String("subject"),
+			},
+		},
 	}
 
 	if _, ok := d.GetOk("extended_attributes"); ok {

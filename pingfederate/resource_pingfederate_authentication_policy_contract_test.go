@@ -44,7 +44,6 @@ func testAccPingFederateAuthenticationPolicyContractResourceConfig(configUpdate 
 	return fmt.Sprintf(`
 	resource "pingfederate_authentication_policy_contract" "demo" {
 		name = "testing"
-		core_attributes = ["subject"]
 		extended_attributes = ["foo", "%s"]
 	}`, configUpdate)
 }

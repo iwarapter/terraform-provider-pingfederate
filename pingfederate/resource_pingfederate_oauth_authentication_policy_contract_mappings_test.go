@@ -71,7 +71,6 @@ resource "pingfederate_oauth_authentication_policy_contract_mapping" "demo" {
 
 resource "pingfederate_authentication_policy_contract" "demo" {
   name = "test3"
-  core_attributes = ["subject"]
   extended_attributes = ["foo", "email"]
 }`
 }
