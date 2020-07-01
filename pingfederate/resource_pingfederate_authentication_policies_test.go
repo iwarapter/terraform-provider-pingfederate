@@ -429,3 +429,113 @@ func Test_resourcePingFederateAuthenticationPoliciesResourceReadData(t *testing.
 		})
 	}
 }
+
+func Test_inconsistentSetElementsPanicReproducer(t *testing.T) {
+	policy1 := pf.AuthenticationPolicy{
+		FailIfNoSelection: Bool(false),
+		TrackedHttpParameters: &[]*string{
+			String("foo"),
+		},
+		DefaultAuthenticationSources: &[]*pf.AuthenticationSource{
+			{
+				Type: String("IDP_ADAPTER"),
+				SourceRef: &pf.ResourceLink{
+					Id:       String("bar"),
+					Location: String("https://foo.bar"),
+				},
+			},
+		},
+		AuthnSelectionTrees: &[]*pf.AuthenticationPolicyTree{
+			{
+				Name:    String("bar"),
+				Enabled: Bool(true),
+				RootNode: &pf.AuthenticationPolicyTreeNode{
+					Action: &pf.PolicyAction{
+						Context: String("Success"),
+						Type:    String("DONE"),
+					},
+				},
+			},
+		},
+	}
+	policy2 := pf.AuthenticationPolicy{
+		FailIfNoSelection: Bool(false),
+		TrackedHttpParameters: &[]*string{
+			String("foo"),
+		},
+		DefaultAuthenticationSources: &[]*pf.AuthenticationSource{
+			{
+				Type: String("IDP_ADAPTER"),
+				SourceRef: &pf.ResourceLink{
+					Id:       String("bar"),
+					Location: String("https://foo.bar"),
+				},
+			},
+		},
+		AuthnSelectionTrees: &[]*pf.AuthenticationPolicyTree{
+			{
+				Name:    String("bar"),
+				Enabled: Bool(true),
+				RootNode: &pf.AuthenticationPolicyTreeNode{
+					Action: &pf.PolicyAction{
+						ApcMappingPolicyAction: pf.ApcMappingPolicyAction{
+							AttributeMapping: &pf.AttributeMapping{
+								AttributeContractFulfillment: map[string]*pf.AttributeFulfillmentValue{
+									"subject": {
+										Source: &pf.SourceTypeIdKey{
+											Id:   String("basicadptr"),
+											Type: String("ADAPTER"),
+										},
+										Value: String("username"),
+									},
+									"family_name": {
+										Source: &pf.SourceTypeIdKey{
+											Id:   String("basicadptr"),
+											Type: String("ADAPTER"),
+										},
+										Value: String("family_name"),
+									},
+									"first_name": {
+										Source: &pf.SourceTypeIdKey{
+											Id:   String("basicadptr"),
+											Type: String("ADAPTER"),
+										},
+										Value: String("first_name"),
+									},
+									"email": {
+										Source: &pf.SourceTypeIdKey{
+											Id:   String("basicadptr"),
+											Type: String("ADAPTER"),
+										},
+										Value: String("email"),
+									},
+								},
+								AttributeSources: &[]*pf.AttributeSource{},
+							},
+							AuthenticationPolicyContractRef: &pf.ResourceLink{
+								Id:       String("foo"),
+								Location: String("foo"),
+							},
+						},
+						Context: String("Success"),
+						Type:    String("APC_MAPPING"),
+					},
+				},
+			},
+		},
+	}
+
+	resourceSchema := resourcePingFederateAuthenticationPoliciesResourceSchema()
+	resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})
+	d := resourcePingFederateAuthenticationPoliciesResourceReadResult(resourceLocalData, &policy1)
+
+	if d.HasError() {
+		t.Errorf("Unexpected error saving state %v", d)
+	}
+
+	d = resourcePingFederateAuthenticationPoliciesResourceReadResult(resourceLocalData, &policy2)
+
+	if d.HasError() {
+		t.Errorf("Unexpected error saving state %v", d)
+	}
+}

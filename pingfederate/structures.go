@@ -74,14 +74,14 @@ func resourceAuthenticationPolicyTreeSchema() *schema.Schema {
 					Default:  true,
 				},
 				"root_node": {
-					Type:     schema.TypeSet,
+					Type:     schema.TypeList,
 					Optional: true,
 					MaxItems: 1,
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
 							"action": resourcePolicyActionSchema(),
 							"children": {
-								Type:     schema.TypeSet,
+								Type:     schema.TypeList,
 								Optional: true,
 								Elem:     resourceAuthenticationPolicyTreeNodeSchemaBuilder(5),
 							},
@@ -106,7 +106,7 @@ func resourceAuthenticationPolicyTreeNodeSchemaBuilder(depth int) *schema.Resour
 		Schema: map[string]*schema.Schema{
 			"action": resourcePolicyActionSchema(),
 			"children": {
-				Type:     schema.TypeSet,
+				Type:     schema.TypeList,
 				Optional: true,
 				Elem:     resourceAuthenticationPolicyTreeNodeSchemaBuilder(depth - 1),
 			},
@@ -2536,8 +2536,8 @@ func expandAuthenticationPolicyTrees(in []interface{}) *[]*pf.AuthenticationPoli
 		if v, ok := l["enabled"]; ok {
 			src.Enabled = Bool(v.(bool))
 		}
-		if v, ok := l["root_node"]; ok && v.(*schema.Set).Len() > 0 {
-			m := v.(*schema.Set).List()[0].(map[string]interface{})
+		if v, ok := l["root_node"]; ok && len(v.([]interface{})) > 0 {
+			m := v.([]interface{})[0].(map[string]interface{})
 			src.RootNode = expandAuthenticationPolicyTreeNode(m)
 		}
 		*trees = append(*trees, src)
@@ -2545,25 +2545,12 @@ func expandAuthenticationPolicyTrees(in []interface{}) *[]*pf.AuthenticationPoli
 	return trees
 }
 
-func flattenAuthenticationPolicyTreeNodes(in []*pf.AuthenticationPolicyTreeNode) *schema.Set {
+func flattenAuthenticationPolicyTreeNodes(in []*pf.AuthenticationPolicyTreeNode) []interface{} {
 	m := make([]interface{}, 0, len(in))
 	for _, v := range in {
 		m = append(m, flattenAuthenticationPolicyTreeNode(v))
 	}
-	return schema.NewSet(authenticationPolicyTreeNodesHash, m)
-}
-
-func authenticationPolicyTreeNodesHash(v interface{}) int {
-	var buf bytes.Buffer
-	n := v.(map[string]interface{})
-	m := n["action"].([]map[string]interface{})
-	buf.WriteString(m[0]["type"].(string))
-	if d, ok := m[0]["context"]; ok && d.(string) != "" {
-		buf.WriteString(fmt.Sprintf("%s-", d.(string)))
-	}
-
-	//TODO add the other action types to this
-	return hashcodeString(buf.String())
+	return m
 }
 
 func flattenAuthenticationPolicyTreeNode(in *pf.AuthenticationPolicyTreeNode) map[string]interface{} {
@@ -2591,8 +2578,8 @@ func expandAuthenticationPolicyTreeNode(in map[string]interface{}) *pf.Authentic
 	if v, ok := in["action"]; ok {
 		node.Action = expandPolicyAction(v.([]interface{}))
 	}
-	if v, ok := in["children"]; ok && v.(*schema.Set).Len() > 0 {
-		node.Children = expandAuthenticationPolicyTreeNodes(v.(*schema.Set).List())
+	if v, ok := in["children"]; ok && len(v.([]interface{})) > 0 {
+		node.Children = expandAuthenticationPolicyTreeNodes(v.([]interface{}))
 	}
 	return node
 }
@@ -2757,35 +2744,62 @@ func expandAttributeRuleSlice(in []interface{}) *[]*pf.AttributeRule {
 	return rules
 }
 
-//func flattenScopeAttributeMappings(in map[string]*pf.ParameterValues) map[string][]interface{} {
-//	s := make(map[string][]interface{})
-//	for key, val := range in {
-//		s[key] = flattenStringList(*val.Values)
-//	}
-//	return s
-//}
-//
-//func expandScopeAttributeMappings(in map[string]interface{}) map[string]*pf.ParameterValues {
-//	mappings := map[string]*pf.ParameterValues{}
-//	m := expandMapOfLists(in)
-//	for key, val := range m {
-//		mappings[key] = &pf.ParameterValues{Values: &val}
-//	}
-//	return mappings
-//}
-//
-//func expandMapOfLists(in map[string]interface{}) map[string][]*string {
-//	m := map[string][]*string{}
-//	for s := range in {
-//		i := strings.LastIndex(s, ".")
-//		first := s[0:i]
-//		last := s[i+1:]
-//		if last != "#" {
-//			m[first] = append(m[first], String(in[s].(string)))
-//		}
-//	}
-//	return m
-//}
+func resourceScopeAttributeMappings() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"key_name": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"values": setOfString(),
+		},
+	}
+}
+
+func expandMapOfScopeAttributeMappings(in []interface{}) map[string]*pf.ParameterValues {
+	ca := map[string]*pf.ParameterValues{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		if v, ok := l["key_name"]; ok {
+			ca[v.(string)] = expandScopeAttributeMappings(l)
+		}
+	}
+	return ca
+}
+
+func expandScopeAttributeMappings(in map[string]interface{}) *pf.ParameterValues {
+	ca := &pf.ParameterValues{}
+	if v, ok := in["values"]; ok && v != "" {
+		strs := expandStringList(v.(*schema.Set).List())
+		ca.Values = &strs
+	}
+	return ca
+}
+
+func flattenMapOfScopeAttributeMappings(in map[string]*pf.ParameterValues) *schema.Set {
+	m := make([]interface{}, 0, len(in))
+	for s2 := range in {
+		s := flattenParameterValues(in[s2])
+		s["key_name"] = s2
+		m = append(m, s)
+	}
+	return schema.NewSet(scopeAttributeMappingsHash, m)
+}
+
+func scopeAttributeMappingsHash(v interface{}) int {
+	var buf bytes.Buffer
+	m := v.(map[string]interface{})
+	buf.WriteString(m["key_name"].(string))
+	return hashcodeString(buf.String())
+}
+
+func flattenParameterValues(in *pf.ParameterValues) map[string]interface{} {
+	s := make(map[string]interface{})
+	if in.Values != nil {
+		s["values"] = *in.Values
+	}
+	return s
+}
 
 //func expandPluginConfigurationWithDescriptor(in []interface{}, desc *pf.PluginConfigDescriptor) *pf.PluginConfiguration {
 //	log.Printf("[INFO] Expanding config with descriptor")

@@ -65,6 +65,11 @@ resource "pingfederate_oauth_openid_connect_policy" "demo" {
       }
     }
   }
+
+  scope_attribute_mappings {
+    key_name = "address"
+	values = ["name"]
+  }
 }
 
 resource "pingfederate_oauth_access_token_manager" "demo" {
@@ -278,16 +283,16 @@ func Test_resourcePingFederateOauthOpenIdConnectPolicyResourceReadData(t *testin
 						},
 					},
 				},
-				//ScopeAttributeMappings: map[string]*pf.ParameterValues{
-				//	"Content-Type": {Values: &[]*string{
-				//		String("text/html"),
-				//		String("charset=utf-8"),
-				//	}},
-				//	"abc": {Values: &[]*string{
-				//		String("123"),
-				//		String("456"),
-				//	}},
-				//},
+				ScopeAttributeMappings: map[string]*pf.ParameterValues{
+					"Content-Type": {Values: &[]*string{
+						String("charset=utf-8"),
+						String("text/html"),
+					}},
+					"abc": {Values: &[]*string{
+						String("456"),
+						String("123"),
+					}},
+				},
 			},
 		},
 	}
