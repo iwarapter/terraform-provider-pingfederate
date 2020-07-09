@@ -1,6 +1,28 @@
 provider "pingfederate" {
   password = "2Federate"
 }
+
+resource "pingfederate_server_settings" "settings" {
+  federation_info {
+    base_url        = "https://localhost:9031"
+    saml2_entity_id = "testing"
+  }
+  roles_and_protocols {
+    idp_role {
+      enable = true
+      saml20_profile {
+        enable = true
+      }
+    }
+    oauth_role {
+      enable_oauth          = true
+      enable_openid_connect = true
+    }
+    sp_role {
+      enable = true
+    }
+  }
+}
 //
 resource "pingfederate_oauth_auth_server_settings" "settings" {
   scopes {

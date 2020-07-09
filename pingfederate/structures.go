@@ -2802,6 +2802,297 @@ func flattenParameterValues(in *pf.ParameterValues) map[string]interface{} {
 	return s
 }
 
+func flattenRolesAndProtocols(in *pf.RolesAndProtocols) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, 1)
+	s := make(map[string]interface{})
+	if in.EnableIdpDiscovery != nil {
+		s["enable_idp_discovery"] = *in.EnableIdpDiscovery
+	}
+	if in.OauthRole != nil {
+		s["oauth_role"] = flattenOauthRole(in.OauthRole)
+	}
+	if in.IdpRole != nil {
+		s["idp_role"] = flattenIdpRole(in.IdpRole)
+	}
+	if in.SpRole != nil {
+		s["sp_role"] = flattenSpRole(in.SpRole)
+	}
+	m = append(m, s)
+	return m
+}
+
+func flattenOauthRole(in *pf.OAuthRole) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, 1)
+	s := make(map[string]interface{})
+	if in.EnableOauth != nil {
+		s["enable_oauth"] = *in.EnableOauth
+	}
+	if in.EnableOpenIdConnect != nil {
+		s["enable_openid_connect"] = *in.EnableOpenIdConnect
+	}
+	m = append(m, s)
+	return m
+}
+
+func flattenIdpRole(in *pf.IdpRole) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, 1)
+	s := make(map[string]interface{})
+	if in.Enable != nil {
+		s["enable"] = *in.Enable
+	}
+	if in.Saml20Profile != nil {
+		s["saml20_profile"] = flattenSaml20Profile(in.Saml20Profile)
+	}
+	if in.EnableOutboundProvisioning != nil {
+		s["enable_outbound_provisioning"] = *in.EnableOutboundProvisioning
+	}
+	if in.EnableSaml11 != nil {
+		s["enable_saml11"] = *in.EnableSaml11
+	}
+	if in.EnableSaml10 != nil {
+		s["enable_saml10"] = *in.EnableSaml10
+	}
+	if in.EnableWsFed != nil {
+		s["enable_ws_fed"] = *in.EnableWsFed
+	}
+	if in.EnableWsTrust != nil {
+		s["enable_ws_trust"] = *in.EnableWsTrust
+	}
+	m = append(m, s)
+	return m
+}
+
+func flattenSpRole(in *pf.SpRole) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, 1)
+	s := make(map[string]interface{})
+	if in.Enable != nil {
+		s["enable"] = *in.Enable
+	}
+	if in.Saml20Profile != nil {
+		s["saml20_profile"] = flattenSpSAML20Profile(in.Saml20Profile)
+	}
+	if in.EnableInboundProvisioning != nil {
+		s["enable_inbound_provisioning"] = *in.EnableInboundProvisioning
+	}
+	if in.EnableSaml11 != nil {
+		s["enable_saml11"] = *in.EnableSaml11
+	}
+	if in.EnableSaml10 != nil {
+		s["enable_saml10"] = *in.EnableSaml10
+	}
+	if in.EnableWsFed != nil {
+		s["enable_ws_fed"] = *in.EnableWsFed
+	}
+	if in.EnableWsTrust != nil {
+		s["enable_ws_trust"] = *in.EnableWsTrust
+	}
+	if in.EnableOpenIDConnect != nil {
+		s["enable_openid_connect"] = *in.EnableOpenIDConnect
+	}
+	m = append(m, s)
+	return m
+}
+
+func flattenSaml20Profile(in *pf.SAML20Profile) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, 1)
+	s := make(map[string]interface{})
+	if in.Enable != nil {
+		s["enable"] = *in.Enable
+	}
+	if in.EnableAutoConnect != nil {
+		s["enable_auto_connect"] = *in.EnableAutoConnect
+	}
+	m = append(m, s)
+	return m
+}
+
+func flattenSpSAML20Profile(in *pf.SpSAML20Profile) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, 1)
+	s := make(map[string]interface{})
+	if in.Enable != nil {
+		s["enable"] = *in.Enable
+	}
+	if in.EnableAutoConnect != nil {
+		s["enable_auto_connect"] = *in.EnableAutoConnect
+	}
+	if in.EnableXASP != nil {
+		s["enable_xasp"] = *in.EnableXASP
+	}
+	m = append(m, s)
+	return m
+}
+
+func expandRolesAndProtcols(in []interface{}) *pf.RolesAndProtocols {
+	roles := &pf.RolesAndProtocols{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		if v, ok := l["enable_idp_discovery"]; ok {
+			roles.EnableIdpDiscovery = Bool(v.(bool)) //expandAttributeRuleSlice(v.(*schema.Set).List())
+		}
+		if v, ok := l["oauth_role"]; ok {
+			roles.OauthRole = expandOauthRole(v.([]interface{}))
+		}
+		if v, ok := l["idp_role"]; ok {
+			roles.IdpRole = expandIdpRole(v.([]interface{}))
+		}
+		if v, ok := l["sp_role"]; ok {
+			roles.SpRole = expandSpRole(v.([]interface{}))
+		}
+	}
+	return roles
+}
+
+func expandOauthRole(in []interface{}) *pf.OAuthRole {
+	roles := &pf.OAuthRole{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		if v, ok := l["enable_oauth"]; ok {
+			roles.EnableOauth = Bool(v.(bool))
+		}
+		if v, ok := l["enable_openid_connect"]; ok {
+			roles.EnableOpenIdConnect = Bool(v.(bool))
+		}
+	}
+	return roles
+}
+
+func expandIdpRole(in []interface{}) *pf.IdpRole {
+	roles := &pf.IdpRole{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		if v, ok := l["enable"]; ok {
+			roles.Enable = Bool(v.(bool))
+		}
+		if v, ok := l["saml20_profile"]; ok {
+			roles.Saml20Profile = expandSaml20Profile(v.([]interface{}))
+		}
+		if v, ok := l["enable_outbound_provisioning"]; ok {
+			roles.EnableOutboundProvisioning = Bool(v.(bool))
+		}
+		if v, ok := l["enable_saml11"]; ok {
+			roles.EnableSaml11 = Bool(v.(bool))
+		}
+		if v, ok := l["enable_saml10"]; ok {
+			roles.EnableSaml10 = Bool(v.(bool))
+		}
+		if v, ok := l["enable_ws_fed"]; ok {
+			roles.EnableWsFed = Bool(v.(bool))
+		}
+		if v, ok := l["enable_ws_trust"]; ok {
+			roles.EnableWsTrust = Bool(v.(bool))
+		}
+	}
+	return roles
+}
+
+func expandSpRole(in []interface{}) *pf.SpRole {
+	roles := &pf.SpRole{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		if v, ok := l["enable"]; ok {
+			roles.Enable = Bool(v.(bool))
+		}
+		if v, ok := l["saml20_profile"]; ok {
+			roles.Saml20Profile = expandSpSaml20Profile(v.([]interface{}))
+		}
+		if v, ok := l["enable_inbound_provisioning"]; ok {
+			roles.EnableInboundProvisioning = Bool(v.(bool))
+		}
+		if v, ok := l["enable_saml11"]; ok {
+			roles.EnableSaml11 = Bool(v.(bool))
+		}
+		if v, ok := l["enable_saml10"]; ok {
+			roles.EnableSaml10 = Bool(v.(bool))
+		}
+		if v, ok := l["enable_ws_fed"]; ok {
+			roles.EnableWsFed = Bool(v.(bool))
+		}
+		if v, ok := l["enable_ws_trust"]; ok {
+			roles.EnableWsTrust = Bool(v.(bool))
+		}
+		if v, ok := l["enable_openid_connect"]; ok {
+			roles.EnableOpenIDConnect = Bool(v.(bool))
+		}
+	}
+	return roles
+}
+
+func expandSpSaml20Profile(in []interface{}) *pf.SpSAML20Profile {
+	roles := &pf.SpSAML20Profile{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		if v, ok := l["enable"]; ok {
+			roles.Enable = Bool(v.(bool))
+		}
+		if v, ok := l["enable_xasp"]; ok {
+			roles.EnableXASP = Bool(v.(bool))
+		}
+		if v, ok := l["enable_auto_connect"]; ok {
+			roles.EnableAutoConnect = Bool(v.(bool))
+		}
+	}
+	return roles
+}
+
+func expandSaml20Profile(in []interface{}) *pf.SAML20Profile {
+	roles := &pf.SAML20Profile{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		if v, ok := l["enable"]; ok {
+			roles.Enable = Bool(v.(bool))
+		}
+		if v, ok := l["enable_auto_connect"]; ok {
+			roles.EnableAutoConnect = Bool(v.(bool))
+		}
+	}
+	return roles
+}
+
+func flattenFederationInfo(in *pf.FederationInfo) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, 1)
+	s := make(map[string]interface{})
+	if in.BaseUrl != nil {
+		s["base_url"] = *in.BaseUrl
+	}
+	if in.Saml2EntityId != nil {
+		s["saml2_entity_id"] = *in.Saml2EntityId
+	}
+	if in.Saml1xIssuerId != nil {
+		s["saml1x_issuer_id"] = *in.Saml1xIssuerId
+	}
+	if in.Saml1xSourceId != nil {
+		s["saml1x_source_id"] = *in.Saml1xSourceId
+	}
+	if in.WsfedRealm != nil {
+		s["wsfed_realm"] = *in.WsfedRealm
+	}
+	m = append(m, s)
+	return m
+}
+
+func expandFederationInfo(in []interface{}) *pf.FederationInfo {
+	info := &pf.FederationInfo{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		if v, ok := l["base_url"]; ok {
+			info.BaseUrl = String(v.(string))
+		}
+		if v, ok := l["saml2_entity_id"]; ok {
+			info.Saml2EntityId = String(v.(string))
+		}
+		if v, ok := l["saml1x_issuer_id"]; ok {
+			info.Saml1xIssuerId = String(v.(string))
+		}
+		if v, ok := l["saml1x_source_id"]; ok {
+			info.Saml1xSourceId = String(v.(string))
+		}
+		if v, ok := l["wsfed_realm"]; ok {
+			info.WsfedRealm = String(v.(string))
+		}
+	}
+	return info
+}
+
 //func expandPluginConfigurationWithDescriptor(in []interface{}, desc *pf.PluginConfigDescriptor) *pf.PluginConfiguration {
 //	log.Printf("[INFO] Expanding config with descriptor")
 //	config := expandPluginConfiguration(in)
