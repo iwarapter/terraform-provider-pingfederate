@@ -121,6 +121,7 @@ func resourcePingFederateOauthAuthServerSettingsResource() *schema.Resource {
 			"persistent_grant_contract": {
 				Type:     schema.TypeSet,
 				Optional: true,
+				Computed: true,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -128,6 +129,13 @@ func resourcePingFederateOauthAuthServerSettingsResource() *schema.Resource {
 							Type:     schema.TypeList,
 							Optional: true,
 							MinItems: 1,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"core_attributes": {
+							Type:     schema.TypeList,
+							Computed: true,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
@@ -222,8 +230,8 @@ func resourcePingFederateOauthAuthServerSettingsResourceUpdate(_ context.Context
 		authSettings.ExclusiveScopes = expandScopes(d.Get("exclusive_scopes").(*schema.Set).List())
 	}
 
-	if _, ok := d.GetOk("persistent_grant_contract"); ok {
-		authSettings.PersistentGrantContract = expandPersistentGrantContract(d.Get("persistent_grant_contract").(*schema.Set).List())
+	if v, ok := d.GetOk("persistent_grant_contract"); ok && v.(*schema.Set).Len() > 0 {
+		authSettings.PersistentGrantContract = expandPersistentGrantContract(v.(*schema.Set).List())
 	}
 
 	if _, ok := d.GetOk("persistent_grant_lifetime"); ok {

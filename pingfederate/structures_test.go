@@ -11,19 +11,19 @@ import (
 
 func Test_weCanFlattenScopes(t *testing.T) {
 	initialScopes := []*pf.ScopeEntry{
-		&pf.ScopeEntry{Name: String("mail"), Description: String("mail")},
-		&pf.ScopeEntry{Name: String("profile"), Description: String("profile")},
-		&pf.ScopeEntry{Name: String("openid"), Description: String("openid")},
-		&pf.ScopeEntry{Name: String("address"), Description: String("address")},
-		&pf.ScopeEntry{Name: String("phone"), Description: String("phone")},
+		{Name: String("mail"), Description: String("mail")},
+		{Name: String("profile"), Description: String("profile")},
+		{Name: String("openid"), Description: String("openid")},
+		{Name: String("address"), Description: String("address")},
+		{Name: String("phone"), Description: String("phone")},
 	}
 
 	output := []map[string]interface{}{
-		map[string]interface{}{"name": "mail", "description": "mail"},
-		map[string]interface{}{"name": "profile", "description": "profile"},
-		map[string]interface{}{"name": "openid", "description": "openid"},
-		map[string]interface{}{"name": "address", "description": "address"},
-		map[string]interface{}{"name": "phone", "description": "phone"}}
+		{"name": "mail", "description": "mail"},
+		{"name": "profile", "description": "profile"},
+		{"name": "openid", "description": "openid"},
+		{"name": "address", "description": "address"},
+		{"name": "phone", "description": "phone"}}
 
 	flattened := flattenScopes(initialScopes)
 
@@ -32,11 +32,11 @@ func Test_weCanFlattenScopes(t *testing.T) {
 
 func Test_weCanFlattenScopeGroups(t *testing.T) {
 	initialScopeGroups := []*pf.ScopeGroupEntry{
-		&pf.ScopeGroupEntry{Name: String("mail"), Description: String("mail"), Scopes: &[]*string{String("mail"), String("profile"), String("openid"), String("address"), String("phone")}},
+		{Name: String("mail"), Description: String("mail"), Scopes: &[]*string{String("mail"), String("profile"), String("openid"), String("address"), String("phone")}},
 	}
 
 	output := []map[string]interface{}{
-		map[string]interface{}{"name": "mail", "description": "mail", "scopes": []interface{}{
+		{"name": "mail", "description": "mail", "scopes": []interface{}{
 			"mail", "profile", "openid", "address", "phone",
 		}}}
 
@@ -48,13 +48,18 @@ func Test_weCanFlattenScopeGroups(t *testing.T) {
 func Test_weCanFlattenPersistentGrantContract(t *testing.T) {
 	initialPersistentGrantContract := &pf.PersistentGrantContract{
 		ExtendedAttributes: &[]*pf.PersistentGrantAttribute{
-			&pf.PersistentGrantAttribute{
+			{
+				Name: String("woot"),
+			},
+		},
+		CoreAttributes: &[]*pf.PersistentGrantAttribute{
+			{
 				Name: String("woot"),
 			},
 		},
 	}
 
-	output := []map[string]interface{}{map[string]interface{}{"extended_attributes": []interface{}{"woot"}}}
+	output := []map[string]interface{}{{"core_attributes": []interface{}{"woot"}, "extended_attributes": []interface{}{"woot"}}}
 
 	flattened := flattenPersistentGrantContract(initialPersistentGrantContract)
 
@@ -68,7 +73,7 @@ func Test_weCanFlattenClientAuth(t *testing.T) {
 		ClientCertSubjectDn: String(""),
 	}
 
-	output := []map[string]interface{}{map[string]interface{}{"type": "CERTIFICATE", "client_cert_issuer_dn": "", "client_cert_subject_dn": ""}}
+	output := []map[string]interface{}{{"type": "CERTIFICATE", "client_cert_issuer_dn": "", "client_cert_subject_dn": ""}}
 
 	flattened := flattenClientAuth(initialClientAuth, initialClientAuth)
 
@@ -80,7 +85,7 @@ func Test_weCanFlattenJwksSettings(t *testing.T) {
 		JwksUrl: String("https://foo/bar.jwks"),
 	}
 
-	output := []map[string]interface{}{map[string]interface{}{"jwks_url": "https://foo/bar.jwks"}}
+	output := []map[string]interface{}{{"jwks_url": "https://foo/bar.jwks"}}
 
 	flattened := flattenJwksSettings(initialJwksSettings)
 
@@ -92,7 +97,7 @@ func Test_weCanFlattenResourceLink(t *testing.T) {
 		Id: String("atat"),
 	}
 
-	output := []map[string]interface{}{map[string]interface{}{"id": "atat"}}
+	output := []map[string]interface{}{{"id": "atat"}}
 
 	flattened := flattenResourceLink(initialResourceLink)
 
@@ -109,7 +114,7 @@ func Test_weCanFlattenClientOIDCPolicy(t *testing.T) {
 		},
 	}
 
-	output := []map[string]interface{}{map[string]interface{}{"grant_access_session_revocation_api": true, "logout_uris": []interface{}{"https://logout"}, "ping_access_logout_capable": true, "policy_group": []map[string]interface{}{map[string]interface{}{"id": "atat"}}}}
+	output := []map[string]interface{}{{"grant_access_session_revocation_api": true, "logout_uris": []interface{}{"https://logout"}, "ping_access_logout_capable": true, "policy_group": []map[string]interface{}{{"id": "atat"}}}}
 
 	flattened := flattenClientOIDCPolicy(initialClientOIDCPolicy)
 
@@ -123,12 +128,12 @@ func testPluginConfiguration() []interface{} {
 func Test_weCanFlattenPluginConfiguration(t *testing.T) {
 	initialPluginConfiguration := &pf.PluginConfiguration{
 		Tables: &[]*pf.ConfigTable{
-			&pf.ConfigTable{
+			{
 				Name: String("Users"),
 				Rows: &[]*pf.ConfigRow{
-					&pf.ConfigRow{
+					{
 						Fields: &[]*pf.ConfigField{
-							&pf.ConfigField{
+							{
 								Name:  String("Username"),
 								Value: String("test"),
 							},
@@ -138,7 +143,7 @@ func Test_weCanFlattenPluginConfiguration(t *testing.T) {
 			},
 		},
 		Fields: &[]*pf.ConfigField{
-			&pf.ConfigField{
+			{
 				Name:      String("Token Length"),
 				Value:     String("28"),
 				Inherited: Bool(false),
@@ -146,7 +151,6 @@ func Test_weCanFlattenPluginConfiguration(t *testing.T) {
 		},
 	}
 
-	// output := []interface{}{map[string]interface{}{"fields": schema.NewSet(configFieldHash, []interface{}{map[string]interface{}{"name": "Token Length", "value": "28", "inherited": false}})}}
 	output := testPluginConfiguration()
 
 	flattened := flattenPluginConfiguration(initialPluginConfiguration)
@@ -155,7 +159,6 @@ func Test_weCanFlattenPluginConfiguration(t *testing.T) {
 }
 
 func Test_expandPluginConfiguration(t *testing.T) {
-	// expanded := flatmap.Expand(testPluginConfiguration(), "configuration").([]interface{})
 	expandPluginConfiguration := expandPluginConfiguration(testPluginConfiguration())
 
 	equals(t, 1, len(*(*expandPluginConfiguration).Fields))
@@ -163,7 +166,7 @@ func Test_expandPluginConfiguration(t *testing.T) {
 
 func Test_weCanFlattenAuthenticationPolicyContractAttribute(t *testing.T) {
 	attributes := &[]*pf.AuthenticationPolicyContractAttribute{
-		&pf.AuthenticationPolicyContractAttribute{
+		{
 			Name: String("woot"),
 		},
 	}
@@ -233,7 +236,7 @@ func Test_maskPluginConfigurationFromDescriptor(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var descripter pf.PluginConfigDescriptor
-			json.Unmarshal(tt.args.desc, &descripter)
+			_ = json.Unmarshal(tt.args.desc, &descripter)
 			maskPluginConfigurationFromDescriptor(&descripter, tt.args.origConf, tt.args.conf)
 
 			if got := tt.args.conf; !reflect.DeepEqual(got, tt.args.origConf) {

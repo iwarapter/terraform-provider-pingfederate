@@ -41,9 +41,9 @@ resource "pingfederate_oauth_auth_server_settings" "settings" {
     ]
   }
 
-  persistent_grant_contract {
-    extended_attributes = ["woot"]
-  }
+  //  persistent_grant_contract {
+  //    extended_attributes = ["woot"]
+  //  }
 
   allowed_origins = [
     "http://localhost",
@@ -428,9 +428,6 @@ resource "pingfederate_oauth_openid_connect_policy" "demo" {
     id = pingfederate_oauth_access_token_manager.my_atm.id
   }
   attribute_contract {
-    core_attributes {
-      name = "sub"
-    }
     extended_attributes {
       name                 = "email"
       include_in_user_info = true

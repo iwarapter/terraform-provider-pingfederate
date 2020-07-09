@@ -1568,6 +1568,7 @@ func flattenPersistentGrantContract(in *pf.PersistentGrantContract) []map[string
 	m := make([]map[string]interface{}, 0, 1)
 	s := make(map[string]interface{})
 	s["extended_attributes"] = flattenPersistentGrantAttributes(*in.ExtendedAttributes)
+	s["core_attributes"] = flattenPersistentGrantAttributes(*in.CoreAttributes)
 	m = append(m, s)
 	return m
 }
