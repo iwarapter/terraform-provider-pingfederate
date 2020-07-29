@@ -13,8 +13,8 @@ provider "pingfederate" {
   context  = "/pf-admin-api/v1"
 }
 
-# Create a site
-resource "pingaccess_site" "site" {
+# Create a authentication policy contract
+resource "pingfederate_authentication_policy_contract" "demo" {
   # ...
 }
 ```

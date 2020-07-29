@@ -4,7 +4,10 @@ Provides a access token validator.
 
 ## Example Usage
 ```terraform
-{!../pingfederate/test_cases/authentication_policy_contract.tf!}
+resource "pingfederate_authentication_policy_contract" "demo" {
+  name                = "demo"
+  extended_attributes = ["foo", "bar"]
+}
 ```
 
 ## Argument Attributes
