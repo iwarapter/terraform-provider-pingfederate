@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'docs/**'
+      - '.github/workflows/docs.yaml'
 
 jobs:
   build:
@@ -26,6 +29,6 @@ jobs:
           git remote add origin https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
           git config --global user.name "${GITHUB_ACTOR}"
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-          mkdocs gh-deploy
+          mkdocs gh-deploy --force
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
