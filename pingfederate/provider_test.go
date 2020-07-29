@@ -64,12 +64,13 @@ func TestMain(m *testing.M) {
 		}
 		pool.MaxWait = time.Minute * 2
 
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+		pfUrl, _ := url.Parse(fmt.Sprintf("https://localhost:%s/pf-admin-api/v1", resource.GetPort("9999/tcp")))
+		cfg := config.NewConfig().WithUsername("Administrator").WithPassword("2Federate").WithEndpoint(pfUrl.String())
+		client := version.New(cfg)
+
 		// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
 		if err := pool.Retry(func() error {
-			var err error
-			http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-			pfUrl, _ := url.Parse(fmt.Sprintf("https://localhost:%s/pf-admin-api/v1", resource.GetPort("9999/tcp")))
-			client := version.New(config.NewConfig().WithUsername("Administrator").WithPassword("2Federate").WithEndpoint(pfUrl.String()))
 
 			log.Println("Attempting to connect to PingFederate admin API....")
 			_, _, err = client.GetVersion()

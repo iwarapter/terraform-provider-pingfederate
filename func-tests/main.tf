@@ -20,6 +20,9 @@ resource "pingfederate_server_settings" "settings" {
     }
     sp_role {
       enable = true
+      saml20_profile {
+        enable = true
+      }
     }
   }
 }

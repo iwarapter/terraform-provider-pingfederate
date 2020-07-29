@@ -2,11 +2,12 @@ package pingfederate
 
 import (
 	"fmt"
+	"strconv"
+	"testing"
+
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
-	"strconv"
-	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -19,19 +20,19 @@ func TestAccPingFederateServerSettingsResource(t *testing.T) {
 		CheckDestroy: testAccCheckPingFederateServerSettingsResourceDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccPingFederateServerSettingsResourceConfig("false"),
+				Config: testAccPingFederateServerSettingsResourceConfig("testing1"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateServerSettingsResourceExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "roles_and_protocols.0.oauth_role.0.enable_oauth", "false"),
-					resource.TestCheckResourceAttr(resourceName, "roles_and_protocols.0.sp_role.0.enable", "false"),
+					resource.TestCheckResourceAttr(resourceName, "federation_info.0.saml2_entity_id", "testing1"),
+					resource.TestCheckResourceAttr(resourceName, "roles_and_protocols.0.sp_role.0.enable", "true"),
 				),
 			},
 			{
-				Config: testAccPingFederateServerSettingsResourceConfig("true"),
+				Config: testAccPingFederateServerSettingsResourceConfig("testing2"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateServerSettingsResourceExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "roles_and_protocols.0.oauth_role.0.enable_oauth", "true"),
-					resource.TestCheckResourceAttr(resourceName, "roles_and_protocols.0.sp_role.0.enable", "false"),
+					resource.TestCheckResourceAttr(resourceName, "federation_info.0.saml2_entity_id", "testing2"),
+					resource.TestCheckResourceAttr(resourceName, "roles_and_protocols.0.sp_role.0.enable", "true"),
 				),
 			},
 		},
@@ -47,20 +48,24 @@ func testAccPingFederateServerSettingsResourceConfig(first string) string {
 resource "pingfederate_server_settings" "demo" {
   federation_info {
 	base_url = "https://localhost:9031"
-	saml2_entity_id = "testing"
+	saml2_entity_id = "%s"
   }
   roles_and_protocols {
     idp_role {
       enable = true
-	  saml20_profile {
-		enable = true
-	  }
+      saml20_profile {
+        enable = true
+      }
     }
     oauth_role {
-      enable_oauth = %s
+      enable_oauth          = true
+      enable_openid_connect = true
     }
     sp_role {
-      enable = false
+      enable = true
+	  saml20_profile {
+        enable = true
+      }
     }
   }
 }
@@ -146,6 +151,13 @@ func Test_resourcePingFederateServerSettinsResourceReadData(t *testing.T) {
 		},
 		{
 			Resource: pf.ServerSettings{
+				FederationInfo: &pf.FederationInfo{
+					BaseUrl:        String("foo"),
+					Saml1xIssuerId: String("foo"),
+					Saml1xSourceId: String("foo"),
+					Saml2EntityId:  String("foo"),
+					WsfedRealm:     String("foo"),
+				},
 				RolesAndProtocols: &pf.RolesAndProtocols{
 					EnableIdpDiscovery: Bool(false),
 					OauthRole: &pf.OAuthRole{
