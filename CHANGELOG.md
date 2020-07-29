@@ -1,4 +1,16 @@
-## 0.0.1 Unreleased
+## 0.0.2 Unreleased
+
+NOTES:
+
+* This is an early release experimental build for PingFederate 10.x
+
+FEATURES:
+
+* **New Resource:** `pingfederate_authentication_policies_settings`
+* **New Resource:** `pingfederate_authentication_policies`
+* **New Resource:** `pingfederate_server_settings`
+
+## 0.0.1 (June 24th, 2020)
 
 NOTES:
 
