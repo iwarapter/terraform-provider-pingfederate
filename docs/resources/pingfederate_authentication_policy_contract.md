@@ -1,6 +1,6 @@
 #Resource: pingfederate_authentication_policy_contract
 
-Provides a access token validator.
+Provides a authentication policy contract.
 
 ## Example Usage
 ```terraform
