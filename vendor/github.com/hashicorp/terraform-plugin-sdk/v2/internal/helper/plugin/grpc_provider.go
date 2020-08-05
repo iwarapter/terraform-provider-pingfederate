@@ -1,6 +1,7 @@
 package plugin
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -10,11 +11,11 @@ import (
 	"github.com/hashicorp/go-cty/cty"
 	ctyconvert "github.com/hashicorp/go-cty/cty/convert"
 	"github.com/hashicorp/go-cty/cty/msgpack"
-	context "golang.org/x/net/context"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/internal/configs/configschema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/internal/configs/hcl2shim"
+	c "github.com/hashicorp/terraform-plugin-sdk/v2/internal/helper/plugin/context"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/internal/plans/objchange"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/internal/plugin/convert"
 	proto "github.com/hashicorp/terraform-plugin-sdk/v2/internal/tfplugin5"
@@ -37,9 +38,16 @@ type GRPCProviderServer struct {
 	stopMu   sync.Mutex
 }
 
-func mergeStop(stopCh chan struct{}, cancel context.CancelFunc) {
-	<-stopCh
-	cancel()
+// mergeStop is called in a goroutine and waits for the global stop signal
+// and propagates cancellation to the passed in ctx/cancel func. The ctx is
+// also passed to this function and waited upon so no goroutine leak is caused.
+func mergeStop(ctx context.Context, cancel context.CancelFunc, stopCh chan struct{}) {
+	select {
+	case <-ctx.Done():
+		return
+	case <-stopCh:
+		cancel()
+	}
 }
 
 // StopContext derives a new context from the passed in grpc context.
@@ -50,10 +58,7 @@ func (s *GRPCProviderServer) StopContext(ctx context.Context) context.Context {
 	defer s.stopMu.Unlock()
 
 	stoppable, cancel := context.WithCancel(ctx)
-	// It's important to pass the reference to the current stopCh.
-	// Closing over with an anonymous function and referencing s.stopCh
-	// across a goroutine is unsafe, given a new stopCh is set in Stop()
-	go mergeStop(s.stopCh, cancel)
+	go mergeStop(stoppable, cancel, s.stopCh)
 	return stoppable
 }
 
@@ -506,7 +511,13 @@ func (s *GRPCProviderServer) Configure(ctx context.Context, req *proto.Configure
 	}
 
 	config := terraform.NewResourceConfigShimmed(configVal, schemaBlock)
-	diags := s.provider.Configure(ctx, config)
+	// TODO: remove global stop context hack
+	// This attaches a global stop synchro'd context onto the provider.Configure
+	// request scoped context. This provides a substitute for the removed provider.StopContext()
+	// function. Ideally a provider should migrate to the context aware API that receives
+	// request scoped contexts, however this is a large undertaking for very large providers.
+	ctxHack := context.WithValue(ctx, c.StopContextKey, s.StopContext(context.Background()))
+	diags := s.provider.Configure(ctxHack, config)
 	resp.Diagnostics = convert.AppendProtoDiag(resp.Diagnostics, diags)
 
 	return resp, nil

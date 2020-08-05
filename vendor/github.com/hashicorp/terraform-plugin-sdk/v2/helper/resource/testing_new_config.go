@@ -3,13 +3,15 @@ package resource
 import (
 	"github.com/davecgh/go-spew/spew"
 	tfjson "github.com/hashicorp/terraform-json"
-	tftest "github.com/hashicorp/terraform-plugin-test"
+	tftest "github.com/hashicorp/terraform-plugin-test/v2"
 	testing "github.com/mitchellh/go-testing-interface"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func testStepNewConfig(t testing.T, c TestCase, wd *tftest.WorkingDir, step TestStep) error {
+	t.Helper()
+
 	spewConf := spew.NewDefaultConfig()
 	spewConf.SortKeys = true
 
@@ -18,10 +20,10 @@ func testStepNewConfig(t testing.T, c TestCase, wd *tftest.WorkingDir, step Test
 
 	if !step.Destroy {
 		var state *terraform.State
-		err := runProviderCommand(func() error {
+		err := runProviderCommand(t, func() error {
 			state = getState(t, wd)
 			return nil
-		}, wd, defaultPluginServeOpts(wd, step.providers))
+		}, wd, c.ProviderFactories)
 		if err != nil {
 			return err
 		}
@@ -32,19 +34,28 @@ func testStepNewConfig(t testing.T, c TestCase, wd *tftest.WorkingDir, step Test
 
 	wd.RequireSetConfig(t, step.Config)
 
+	// require a refresh before applying
+	// failing to do this will result in data sources not being updated
+	err := runProviderCommand(t, func() error {
+		return wd.Refresh()
+	}, wd, c.ProviderFactories)
+	if err != nil {
+		return err
+	}
+
 	if !step.PlanOnly {
-		err := runProviderCommand(func() error {
+		err := runProviderCommand(t, func() error {
 			return wd.Apply()
-		}, wd, defaultPluginServeOpts(wd, step.providers))
+		}, wd, c.ProviderFactories)
 		if err != nil {
 			return err
 		}
 
 		var state *terraform.State
-		err = runProviderCommand(func() error {
+		err = runProviderCommand(t, func() error {
 			state = getState(t, wd)
 			return nil
-		}, wd, defaultPluginServeOpts(wd, step.providers))
+		}, wd, c.ProviderFactories)
 		if err != nil {
 			return err
 		}
@@ -59,19 +70,18 @@ func testStepNewConfig(t testing.T, c TestCase, wd *tftest.WorkingDir, step Test
 	// Test for perpetual diffs by performing a plan, a refresh, and another plan
 
 	// do a plan
-	err := runProviderCommand(func() error {
-		wd.RequireCreatePlan(t)
-		return nil
-	}, wd, defaultPluginServeOpts(wd, step.providers))
+	err = runProviderCommand(t, func() error {
+		return wd.CreatePlan()
+	}, wd, c.ProviderFactories)
 	if err != nil {
 		return err
 	}
 
 	var plan *tfjson.Plan
-	err = runProviderCommand(func() error {
+	err = runProviderCommand(t, func() error {
 		plan = wd.RequireSavedPlan(t)
 		return nil
-	}, wd, defaultPluginServeOpts(wd, step.providers))
+	}, wd, c.ProviderFactories)
 	if err != nil {
 		return err
 	}
@@ -87,28 +97,26 @@ func testStepNewConfig(t testing.T, c TestCase, wd *tftest.WorkingDir, step Test
 
 	// do a refresh
 	if !c.PreventPostDestroyRefresh {
-		err := runProviderCommand(func() error {
-			wd.RequireRefresh(t)
-			return nil
-		}, wd, defaultPluginServeOpts(wd, step.providers))
+		err := runProviderCommand(t, func() error {
+			return wd.Refresh()
+		}, wd, c.ProviderFactories)
 		if err != nil {
 			return err
 		}
 	}
 
 	// do another plan
-	err = runProviderCommand(func() error {
-		wd.RequireCreatePlan(t)
-		return nil
-	}, wd, defaultPluginServeOpts(wd, step.providers))
+	err = runProviderCommand(t, func() error {
+		return wd.CreatePlan()
+	}, wd, c.ProviderFactories)
 	if err != nil {
 		return err
 	}
 
-	err = runProviderCommand(func() error {
+	err = runProviderCommand(t, func() error {
 		plan = wd.RequireSavedPlan(t)
 		return nil
-	}, wd, defaultPluginServeOpts(wd, step.providers))
+	}, wd, c.ProviderFactories)
 	if err != nil {
 		return err
 	}
@@ -127,10 +135,10 @@ func testStepNewConfig(t testing.T, c TestCase, wd *tftest.WorkingDir, step Test
 	// If we've never checked an id-only refresh and our state isn't
 	// empty, find the first resource and test it.
 	var state *terraform.State
-	err = runProviderCommand(func() error {
+	err = runProviderCommand(t, func() error {
 		state = getState(t, wd)
 		return nil
-	}, wd, defaultPluginServeOpts(wd, step.providers))
+	}, wd, c.ProviderFactories)
 	if err != nil {
 		return err
 	}
