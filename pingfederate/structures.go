@@ -2513,13 +2513,6 @@ func flattenAuthenticationPolicyTrees(in []*pf.AuthenticationPolicyTree) []inter
 	return m
 }
 
-func authPolicyTreesHash(v interface{}) int {
-	var buf bytes.Buffer
-	m := v.(map[string]interface{})
-	buf.WriteString(m["name"].(string))
-	return hashcodeString(buf.String())
-}
-
 func expandAuthenticationPolicyTrees(in []interface{}) *[]*pf.AuthenticationPolicyTree {
 	trees := &[]*pf.AuthenticationPolicyTree{}
 	for _, raw := range in {
