@@ -99,7 +99,15 @@ func resourcePingFederateAuthenticationPoliciesResourceUpdate(_ context.Context,
 	return resourcePingFederateAuthenticationPoliciesResourceReadResult(d, result)
 }
 
-func resourcePingFederateAuthenticationPoliciesResourceDelete(_ context.Context, _ *schema.ResourceData, _ interface{}) diag.Diagnostics {
+func resourcePingFederateAuthenticationPoliciesResourceDelete(_ context.Context, _ *schema.ResourceData, m interface{}) diag.Diagnostics {
+	svc := m.(pfClient).AuthenticationPolicies
+	input := authenticationPolicies.UpdateDefaultAuthenticationPolicyInput{
+		Body: pf.AuthenticationPolicy{},
+	}
+	_, _, err := svc.UpdateDefaultAuthenticationPolicy(&input)
+	if err != nil {
+		return diag.Errorf("unable to reset AuthenticationPolicies: %s", err)
+	}
 	return nil
 }
 
@@ -133,7 +141,7 @@ func resourcePingFederateAuthenticationPoliciesResourceReadData(d *schema.Resour
 		FailIfNoSelection:            Bool(d.Get("fail_if_no_selection").(bool)),
 		TrackedHttpParameters:        &strs,
 		DefaultAuthenticationSources: expandAuthenticationSources(d.Get("default_authentication_sources").(*schema.Set).List()),
-		AuthnSelectionTrees:          expandAuthenticationPolicyTrees(d.Get("authn_selection_trees").(*schema.Set).List()),
+		AuthnSelectionTrees:          expandAuthenticationPolicyTrees(d.Get("authn_selection_trees").([]interface{})),
 	}
 	return policy
 }

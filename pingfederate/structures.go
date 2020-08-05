@@ -55,7 +55,7 @@ func setOfString() *schema.Schema {
 
 func resourceAuthenticationPolicyTreeSchema() *schema.Schema {
 	return &schema.Schema{
-		Type:     schema.TypeSet,
+		Type:     schema.TypeList,
 		Optional: true,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
@@ -2100,29 +2100,30 @@ func expandJdbcTagConfigs(in []interface{}) *[]*pf.JdbcTagConfig {
 
 func maskPluginConfigurationFromDescriptor(desc *pf.PluginConfigDescriptor, origConf, conf *pf.PluginConfiguration) []interface{} {
 
-	//if origConf.Fields != nil {
-	for _, f := range *desc.Fields {
-		if *f.Type == "HASHED_TEXT" || ((*f).Encrypted != nil && *f.Encrypted) {
-			for _, i := range *conf.Fields {
-				if *i.Name == *f.Name {
-					s, _ := getConfigFieldValueByName(*i.Name, origConf.Fields)
-					i.Value = String(s)
+	if origConf.Fields != nil {
+		for _, f := range *desc.Fields {
+			if *f.Type == "HASHED_TEXT" || ((*f).Encrypted != nil && *f.Encrypted) {
+				for _, i := range *conf.Fields {
+					if *i.Name == *f.Name {
+						s, _ := getConfigFieldValueByName(*i.Name, origConf.Fields)
+						i.Value = String(s)
+					}
 				}
 			}
 		}
 	}
-	//}
 
-	//if origConf.Tables != nil {
-	for _, dt := range *desc.Tables {
-		for _, dc := range *dt.Columns {
-			if *dc.Type == "HASHED_TEXT" || ((*dc).Encrypted != nil && *dc.Encrypted) {
-				for ctIndex, ct := range *conf.Tables {
-					for crIndex, cr := range *ct.Rows {
-						for _, f := range *cr.Fields {
-							if *f.Name == *dc.Name {
-								val, _ := getConfigFieldValueByName(*f.Name, (*(*origConf.Tables)[ctIndex].Rows)[crIndex].Fields)
-								f.Value = &val
+	if origConf.Tables != nil {
+		for _, dt := range *desc.Tables {
+			for _, dc := range *dt.Columns {
+				if *dc.Type == "HASHED_TEXT" || ((*dc).Encrypted != nil && *dc.Encrypted) {
+					for ctIndex, ct := range *conf.Tables {
+						for crIndex, cr := range *ct.Rows {
+							for _, f := range *cr.Fields {
+								if *f.Name == *dc.Name {
+									val, _ := getConfigFieldValueByName(*f.Name, (*(*origConf.Tables)[ctIndex].Rows)[crIndex].Fields)
+									f.Value = &val
+								}
 							}
 						}
 					}
@@ -2488,7 +2489,7 @@ func expandAuthenticationSource(in map[string]interface{}) *pf.AuthenticationSou
 	return src
 }
 
-func flattenAuthenticationPolicyTrees(in []*pf.AuthenticationPolicyTree) *schema.Set {
+func flattenAuthenticationPolicyTrees(in []*pf.AuthenticationPolicyTree) []interface{} {
 	m := make([]interface{}, 0, len(in))
 	for _, v := range in {
 		s := make(map[string]interface{})
@@ -2509,8 +2510,7 @@ func flattenAuthenticationPolicyTrees(in []*pf.AuthenticationPolicyTree) *schema
 		}
 		m = append(m, s)
 	}
-
-	return schema.NewSet(authPolicyTreesHash, m)
+	return m
 }
 
 func authPolicyTreesHash(v interface{}) int {

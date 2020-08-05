@@ -156,6 +156,7 @@ func resourcePingFederateOauthAccessTokenMappingsResourceReadData(d *schema.Reso
 		Context:                      expandAccessTokenMappingContext(d.Get("context").([]interface{})),
 		AccessTokenManagerRef:        expandResourceLink(d.Get("access_token_manager_ref").([]interface{})),
 		AttributeContractFulfillment: expandMapOfAttributeFulfillmentValue(d.Get("attribute_contract_fulfillment").(*schema.Set).List()),
+		AttributeSources:             &[]*pf.AttributeSource{},
 	}
 	if v, ok := d.GetOk("issuance_criteria"); ok {
 		mapping.IssuanceCriteria = expandIssuanceCriteria(v.([]interface{}))
