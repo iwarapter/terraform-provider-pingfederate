@@ -78,7 +78,7 @@ func TestMain(m *testing.M) {
 		}); err != nil {
 			log.Fatalf("Could not connect to docker: %s", err)
 		}
-		resource.Expire(180)
+		resource.Expire(300)
 		os.Setenv("PINGFEDERATE_BASEURL", fmt.Sprintf("https://localhost:%s", resource.GetPort("9999/tcp")))
 		log.Println("Connected to PingFederate admin API....")
 		code := m.Run()
