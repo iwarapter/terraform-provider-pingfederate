@@ -59,7 +59,7 @@ func resourcePingFederateIdpAdapterResourceSchema() map[string]*schema.Schema {
 			Type:     schema.TypeString,
 			Required: true,
 		},
-		"plugin_descriptor_ref": resourceRequiredLinkSchema(),
+		"plugin_descriptor_ref": resourcePluginDescriptorRefSchema(),
 		"parent_ref":            resourceLinkSchema(),
 		"configuration":         resourcePluginConfiguration(),
 		"authn_ctx_class_ref": {
