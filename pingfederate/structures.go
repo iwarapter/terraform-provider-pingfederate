@@ -362,6 +362,27 @@ func resourceLinkSchema() *schema.Schema {
 	}
 }
 
+func resourcePluginDescriptorRefSchema() *schema.Schema {
+	return &schema.Schema{
+		Type:     schema.TypeList,
+		Required: true,
+		MaxItems: 1,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"id": {
+					Type:     schema.TypeString,
+					Required: true,
+					ForceNew: true,
+				},
+				"location": {
+					Type:     schema.TypeString,
+					Computed: true,
+				},
+			},
+		},
+	}
+}
+
 func resourceRequiredLinkSchema() *schema.Schema {
 	s := resourceLinkSchema()
 	s.Required = true
