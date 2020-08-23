@@ -5,6 +5,7 @@ on:
       - master
     paths:
       - 'docs/**'
+      - 'mkdocs.yml'
       - '.github/workflows/docs.yaml'
 
 jobs:
