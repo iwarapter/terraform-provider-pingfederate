@@ -1,4 +1,14 @@
-## 0.0.2 Unreleased
+## 0.0.3 (Aug 24th, 2020)
+
+NOTES:
+
+* This is an early release experimental build for PingFederate 10.x
+
+FEATURES:
+
+* **New Resource:** `resource_pingfederate_notification_publisher`
+
+## 0.0.2 (Aug 6th, 2020)
 
 NOTES:
 

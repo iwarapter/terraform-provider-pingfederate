@@ -132,8 +132,8 @@ func resourcePingFederateOpenIdConnectPolicyResourceDelete(_ context.Context, d 
 
 func resourcePingFederateOpenIdConnectPolicyResourceReadResult(d *schema.ResourceData, rv *pf.OpenIdConnectPolicy) diag.Diagnostics {
 	var diags diag.Diagnostics
-	setResourceDataStringithDiagnostic(d, "name", rv.Name, &diags)
-	setResourceDataStringithDiagnostic(d, "policy_id", rv.Id, &diags)
+	setResourceDataStringWithDiagnostic(d, "name", rv.Name, &diags)
+	setResourceDataStringWithDiagnostic(d, "policy_id", rv.Id, &diags)
 	if rv.AccessTokenManagerRef != nil {
 		if err := d.Set("access_token_manager_ref", flattenResourceLink(rv.AccessTokenManagerRef)); err != nil {
 			diags = append(diags, diag.FromErr(err)...)

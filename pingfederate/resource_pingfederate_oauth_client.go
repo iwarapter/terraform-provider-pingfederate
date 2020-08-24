@@ -255,15 +255,15 @@ func resourcePingFederateOauthClientResourceDelete(_ context.Context, d *schema.
 func resourcePingFederateOauthClientResourceReadResult(d *schema.ResourceData, rv *pf.Client) diag.Diagnostics {
 	//TODO
 	var diags diag.Diagnostics
-	setResourceDataStringithDiagnostic(d, "name", rv.Name, &diags)
-	setResourceDataStringithDiagnostic(d, "client_id", rv.ClientId, &diags)
+	setResourceDataStringWithDiagnostic(d, "name", rv.Name, &diags)
+	setResourceDataStringWithDiagnostic(d, "client_id", rv.ClientId, &diags)
 	setResourceDataBoolWithDiagnostic(d, "bypass_approval_page", rv.BypassApprovalPage, &diags)
-	setResourceDataStringithDiagnostic(d, "description", rv.Description, &diags)
-	setResourceDataStringithDiagnostic(d, "logo_url", rv.LogoUrl, &diags)
+	setResourceDataStringWithDiagnostic(d, "description", rv.Description, &diags)
+	setResourceDataStringWithDiagnostic(d, "logo_url", rv.LogoUrl, &diags)
 	setResourceDataIntWithDiagnostic(d, "persistent_grant_expiration_time", rv.PersistentGrantExpirationTime, &diags)
-	setResourceDataStringithDiagnostic(d, "persistent_grant_expiration_time_unit", rv.PersistentGrantExpirationTimeUnit, &diags)
-	setResourceDataStringithDiagnostic(d, "persistent_grant_expiration_type", rv.PersistentGrantExpirationType, &diags)
-	setResourceDataStringithDiagnostic(d, "refresh_rolling", rv.RefreshRolling, &diags)
+	setResourceDataStringWithDiagnostic(d, "persistent_grant_expiration_time_unit", rv.PersistentGrantExpirationTimeUnit, &diags)
+	setResourceDataStringWithDiagnostic(d, "persistent_grant_expiration_type", rv.PersistentGrantExpirationType, &diags)
+	setResourceDataStringWithDiagnostic(d, "refresh_rolling", rv.RefreshRolling, &diags)
 	setResourceDataBoolWithDiagnostic(d, "require_signed_requests", rv.RequireSignedRequests, &diags)
 	setResourceDataBoolWithDiagnostic(d, "restrict_scopes", rv.RestrictScopes, &diags)
 	setResourceDataBoolWithDiagnostic(d, "validate_using_all_eligible_atms", rv.ValidateUsingAllEligibleAtms, &diags)

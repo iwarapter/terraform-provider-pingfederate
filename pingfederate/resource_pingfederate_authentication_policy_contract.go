@@ -101,7 +101,7 @@ func resourcePingFederateAuthenticationPolicyContractResourceDelete(_ context.Co
 
 func resourcePingFederateAuthenticationPolicyContractResourceReadResult(d *schema.ResourceData, rv *pf.AuthenticationPolicyContract) diag.Diagnostics {
 	var diags diag.Diagnostics
-	setResourceDataStringithDiagnostic(d, "name", rv.Name, &diags)
+	setResourceDataStringWithDiagnostic(d, "name", rv.Name, &diags)
 	if rv.ExtendedAttributes != nil && len(*rv.ExtendedAttributes) > 0 {
 		if err := d.Set("extended_attributes", flattenAuthenticationPolicyContractAttribute(*rv.ExtendedAttributes)); err != nil {
 			diags = append(diags, diag.FromErr(err)...)

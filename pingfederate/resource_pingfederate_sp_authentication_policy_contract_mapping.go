@@ -131,10 +131,10 @@ func resourcePingFederateSpAuthenticationPolicyContractMappingResourceDelete(ctx
 
 func resourcePingFederateSpAuthenticationPolicyContractMappingResourceReadResult(d *schema.ResourceData, rv *pf.ApcToSpAdapterMapping) diag.Diagnostics {
 	var diags diag.Diagnostics
-	setResourceDataStringithDiagnostic(d, "source_id", rv.SourceId, &diags)
-	setResourceDataStringithDiagnostic(d, "target_id", rv.TargetId, &diags)
-	setResourceDataStringithDiagnostic(d, "default_target_resource", rv.DefaultTargetResource, &diags)
-	setResourceDataStringithDiagnostic(d, "license_connection_group_assignment", rv.LicenseConnectionGroupAssignment, &diags)
+	setResourceDataStringWithDiagnostic(d, "source_id", rv.SourceId, &diags)
+	setResourceDataStringWithDiagnostic(d, "target_id", rv.TargetId, &diags)
+	setResourceDataStringWithDiagnostic(d, "default_target_resource", rv.DefaultTargetResource, &diags)
+	setResourceDataStringWithDiagnostic(d, "license_connection_group_assignment", rv.LicenseConnectionGroupAssignment, &diags)
 
 	if rv.AttributeContractFulfillment != nil {
 		if err := d.Set("attribute_contract_fulfillment", flattenMapOfAttributeFulfillmentValue(rv.AttributeContractFulfillment)); err != nil {

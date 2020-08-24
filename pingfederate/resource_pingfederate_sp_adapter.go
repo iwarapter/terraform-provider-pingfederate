@@ -133,8 +133,8 @@ func resourcePingFederateSpAdapterResourceReadResult(d *schema.ResourceData, rv 
 		return diag.Errorf("unable to retrieve SpAdapters descriptor: %s", err)
 	}
 	var diags diag.Diagnostics
-	setResourceDataStringithDiagnostic(d, "name", rv.Name, &diags)
-	setResourceDataStringithDiagnostic(d, "sp_adapter_id", rv.Id, &diags)
+	setResourceDataStringWithDiagnostic(d, "name", rv.Name, &diags)
+	setResourceDataStringWithDiagnostic(d, "sp_adapter_id", rv.Id, &diags)
 	if rv.PluginDescriptorRef != nil {
 		if err = d.Set("plugin_descriptor_ref", flattenResourceLink(rv.PluginDescriptorRef)); err != nil {
 			diags = append(diags, diag.FromErr(err)...)
