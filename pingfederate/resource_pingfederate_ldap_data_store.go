@@ -219,12 +219,12 @@ func resourcePingFederateLdapDataStoreResourceDelete(_ context.Context, d *schem
 func resourcePingFederateLdapDataStoreResourceReadResult(d *schema.ResourceData, rv *pf.LdapDataStore) diag.Diagnostics {
 	var diags diag.Diagnostics
 	setResourceDataBoolWithDiagnostic(d, "mask_attribute_values", rv.MaskAttributeValues, &diags)
-	setResourceDataStringithDiagnostic(d, "name", rv.Name, &diags)
-	setResourceDataStringithDiagnostic(d, "ldap_type", rv.LdapType, &diags)
+	setResourceDataStringWithDiagnostic(d, "name", rv.Name, &diags)
+	setResourceDataStringWithDiagnostic(d, "ldap_type", rv.LdapType, &diags)
 	setResourceDataBoolWithDiagnostic(d, "bind_anonymously", rv.BindAnonymously, &diags)
-	setResourceDataStringithDiagnostic(d, "user_dn", rv.UserDN, &diags)
-	setResourceDataStringithDiagnostic(d, "password", rv.Password, &diags)
-	setResourceDataStringithDiagnostic(d, "encrypted_password", rv.EncryptedPassword, &diags)
+	setResourceDataStringWithDiagnostic(d, "user_dn", rv.UserDN, &diags)
+	setResourceDataStringWithDiagnostic(d, "password", rv.Password, &diags)
+	setResourceDataStringWithDiagnostic(d, "encrypted_password", rv.EncryptedPassword, &diags)
 	setResourceDataBoolWithDiagnostic(d, "use_ssl", rv.UseSsl, &diags)
 	setResourceDataBoolWithDiagnostic(d, "use_dns_srv_records", rv.UseDnsSrvRecords, &diags)
 	setResourceDataBoolWithDiagnostic(d, "follow_ldap_referrals", rv.FollowLDAPReferrals, &diags)
@@ -239,8 +239,8 @@ func resourcePingFederateLdapDataStoreResourceReadResult(d *schema.ResourceData,
 	setResourceDataIntWithDiagnostic(d, "read_timeout", rv.ReadTimeout, &diags)
 	setResourceDataIntWithDiagnostic(d, "connection_timeout", rv.ConnectionTimeout, &diags)
 	setResourceDataIntWithDiagnostic(d, "dns_ttl", rv.DnsTtl, &diags)
-	setResourceDataStringithDiagnostic(d, "ldap_dns_srv_prefix", rv.LdapDnsSrvPrefix, &diags)
-	setResourceDataStringithDiagnostic(d, "ldaps_dns_srv_prefix", rv.LdapsDnsSrvPrefix, &diags)
+	setResourceDataStringWithDiagnostic(d, "ldap_dns_srv_prefix", rv.LdapDnsSrvPrefix, &diags)
+	setResourceDataStringWithDiagnostic(d, "ldaps_dns_srv_prefix", rv.LdapsDnsSrvPrefix, &diags)
 
 	//if rv.HostnamesTags != nil && len(*rv.HostnamesTags) != 0 {
 	//	//TODO connection_url_tags

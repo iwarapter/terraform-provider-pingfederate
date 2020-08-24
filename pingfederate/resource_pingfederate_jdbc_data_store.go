@@ -179,14 +179,14 @@ func resourcePingFederateJdbcDataStoreResourceReadResult(d *schema.ResourceData,
 			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
-	setResourceDataStringithDiagnostic(d, "connection_url", rv.ConnectionUrl, &diags)
-	setResourceDataStringithDiagnostic(d, "name", rv.Name, &diags)
-	setResourceDataStringithDiagnostic(d, "driver_class", rv.DriverClass, &diags)
-	setResourceDataStringithDiagnostic(d, "user_name", rv.UserName, &diags)
+	setResourceDataStringWithDiagnostic(d, "connection_url", rv.ConnectionUrl, &diags)
+	setResourceDataStringWithDiagnostic(d, "name", rv.Name, &diags)
+	setResourceDataStringWithDiagnostic(d, "driver_class", rv.DriverClass, &diags)
+	setResourceDataStringWithDiagnostic(d, "user_name", rv.UserName, &diags)
 	//TODO i need to handle this not being set
-	setResourceDataStringithDiagnostic(d, "password", rv.Password, &diags)
-	setResourceDataStringithDiagnostic(d, "encrypted_password", rv.EncryptedPassword, &diags)
-	setResourceDataStringithDiagnostic(d, "validate_connection_sql", rv.ValidateConnectionSql, &diags)
+	setResourceDataStringWithDiagnostic(d, "password", rv.Password, &diags)
+	setResourceDataStringWithDiagnostic(d, "encrypted_password", rv.EncryptedPassword, &diags)
+	setResourceDataStringWithDiagnostic(d, "validate_connection_sql", rv.ValidateConnectionSql, &diags)
 	setResourceDataBoolWithDiagnostic(d, "allow_multi_value_attributes", rv.AllowMultiValueAttributes, &diags)
 	setResourceDataIntWithDiagnostic(d, "min_pool_size", rv.MinPoolSize, &diags)
 	setResourceDataIntWithDiagnostic(d, "max_pool_size", rv.MaxPoolSize, &diags)

@@ -122,7 +122,7 @@ func resourcePingFederatePasswordCredentialValidatorResourceReadResult(d *schema
 		return diag.Errorf("unable to retrieve PasswordCredentialValidators descriptor: %s", err)
 	}
 	var diags diag.Diagnostics
-	setResourceDataStringithDiagnostic(d, "name", rv.Name, &diags)
+	setResourceDataStringWithDiagnostic(d, "name", rv.Name, &diags)
 	if rv.PluginDescriptorRef != nil {
 		if err = d.Set("plugin_descriptor_ref", flattenResourceLink(rv.PluginDescriptorRef)); err != nil {
 			diags = append(diags, diag.FromErr(err)...)

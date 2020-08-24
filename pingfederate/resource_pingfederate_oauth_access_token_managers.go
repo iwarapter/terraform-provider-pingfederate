@@ -215,8 +215,8 @@ func resourcePingFederateOauthAccessTokenManagersResourceReadResult(d *schema.Re
 
 	}
 	var diags diag.Diagnostics
-	setResourceDataStringithDiagnostic(d, "name", rv.Name, &diags)
-	setResourceDataStringithDiagnostic(d, "instance_id", rv.Id, &diags)
+	setResourceDataStringWithDiagnostic(d, "name", rv.Name, &diags)
+	setResourceDataStringWithDiagnostic(d, "instance_id", rv.Id, &diags)
 	if rv.PluginDescriptorRef != nil {
 		if err := d.Set("plugin_descriptor_ref", flattenResourceLink(rv.PluginDescriptorRef)); err != nil {
 			diags = append(diags, diag.FromErr(err)...)

@@ -42,6 +42,7 @@ func Provider() *schema.Provider {
 			"pingfederate_authentication_policies":                      resourcePingFederateAuthenticationPoliciesResource(),
 			"pingfederate_authentication_policy_contract":               resourcePingFederateAuthenticationPolicyContractResource(),
 			"pingfederate_authentication_selector":                      resourcePingFederateAuthenticationSelectorResource(),
+			"pingfederate_certificates_ca":                              resourcePingFederateCertificatesCaResource(),
 			"pingfederate_jdbc_data_store":                              resourcePingFederateJdbcDataStoreResource(),
 			"pingfederate_ldap_data_store":                              resourcePingFederateLdapDataStoreResource(),
 			"pingfederate_idp_adapter":                                  resourcePingFederateIdpAdapterResource(),
@@ -72,7 +73,7 @@ func init() {
 	}
 }
 
-func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	config := &Config{
 		Username: d.Get("username").(string),
 		Password: d.Get("password").(string),
@@ -108,7 +109,7 @@ func Int(v int) *int { return &v }
 // to store v and returns a pointer to it.
 func String(v string) *string { return &v }
 
-func setResourceDataStringithDiagnostic(d *schema.ResourceData, name string, data *string, diags *diag.Diagnostics) {
+func setResourceDataStringWithDiagnostic(d *schema.ResourceData, name string, data *string, diags *diag.Diagnostics) {
 	if data != nil {
 		if err := d.Set(name, *data); err != nil {
 			*diags = append(*diags, diag.FromErr(err)...)

@@ -137,8 +137,8 @@ func resourcePingFederateIdpAdapterResourceDelete(_ context.Context, d *schema.R
 
 func resourcePingFederateIdpAdapterResourceReadResult(d *schema.ResourceData, rv *pf.IdpAdapter) diag.Diagnostics {
 	var diags diag.Diagnostics
-	setResourceDataStringithDiagnostic(d, "name", rv.Name, &diags)
-	setResourceDataStringithDiagnostic(d, "authn_ctx_class_ref", rv.AuthnCtxClassRef, &diags)
+	setResourceDataStringWithDiagnostic(d, "name", rv.Name, &diags)
+	setResourceDataStringWithDiagnostic(d, "authn_ctx_class_ref", rv.AuthnCtxClassRef, &diags)
 	if rv.PluginDescriptorRef != nil {
 		if err := d.Set("plugin_descriptor_ref", flattenResourceLink(rv.PluginDescriptorRef)); err != nil {
 			diags = append(diags, diag.FromErr(err)...)

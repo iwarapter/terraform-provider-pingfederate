@@ -121,7 +121,7 @@ func resourcePingFederateAuthenticationSelectorResourceReadResult(d *schema.Reso
 		return diag.Errorf("unable to retrieve AuthenticationSelectors descriptor: %s", err)
 	}
 	var diags diag.Diagnostics
-	setResourceDataStringithDiagnostic(d, "name", rv.Name, &diags)
+	setResourceDataStringWithDiagnostic(d, "name", rv.Name, &diags)
 	if rv.PluginDescriptorRef != nil {
 		if err = d.Set("plugin_descriptor_ref", flattenResourceLink(rv.PluginDescriptorRef)); err != nil {
 			diags = append(diags, diag.FromErr(err)...)
