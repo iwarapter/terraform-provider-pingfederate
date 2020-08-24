@@ -10,7 +10,7 @@ nav:
     - Supported Resources:
       - pingfederate_authentication_policy_contract: resources/pingfederate_authentication_policy_contract.md
       - pingfederate_notification_publisher: resources/pingfederate_notification_publisher.md
-      - pingfederate_certificate_ca: resources/pingfederate_certificate_ca.md
+      - pingfederate_certificates_ca: resources/pingfederate_certificate_ca.md
   - Releases:
     - Changelog: releases/changelog.md
 
