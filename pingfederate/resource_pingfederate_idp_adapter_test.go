@@ -2,6 +2,7 @@ package pingfederate
 
 import (
 	"fmt"
+	"net/http"
 	"regexp"
 	"testing"
 
@@ -80,9 +81,12 @@ func testAccPingFederateIdpAdapterConfig(configUpdate string) string {
     core_attributes {
       name      = "username"
       pseudonym = true
+	  masked	= false
     }
     extended_attributes {
       name = "sub"
+	  pseudonym = false
+	  masked	= false
     }
   }
   attribute_mapping {
@@ -222,7 +226,41 @@ func testAccCheckPingFederateIdpAdapterExists(n string) resource.TestCheckFunc {
 	}
 }
 
+type idpAdaptersMock struct {
+	idpAdapters.IdpAdaptersAPI
+}
+
+func (s idpAdaptersMock) GetIdpAdapterDescriptorsById(input *idpAdapters.GetIdpAdapterDescriptorsByIdInput) (output *pf.IdpAdapterDescriptor, resp *http.Response, err error) {
+	return &pf.IdpAdapterDescriptor{
+		AttributeContract: nil,
+		ClassName:         String("com.pingidentity.adapters.httpbasic.idp.HttpBasicIdpAuthnAdapter"),
+		ConfigDescriptor: &pf.PluginConfigDescriptor{
+			ActionDescriptors: nil,
+			Description:       nil,
+			Fields:            &[]*pf.FieldDescriptor{},
+			Tables: &[]*pf.TableDescriptor{
+				{
+					Columns: &[]*pf.FieldDescriptor{
+						{
+							Type: String("TEXT"),
+							Name: String("Username"),
+						},
+					},
+					Description:       nil,
+					Label:             nil,
+					Name:              String("Networks"),
+					RequireDefaultRow: nil,
+				},
+			},
+		},
+		Id:                       String("com.pingidentity.pf.selectors.cidr.CIDRAdapterSelector"),
+		Name:                     String("CIDR Authentication Selector"),
+		SupportsExtendedContract: nil,
+	}, nil, nil
+}
+
 func Test_resourcePingFederateIdpAdapterResourceReadData(t *testing.T) {
+	m := &idpAdaptersMock{}
 	cases := []struct {
 		Resource pf.IdpAdapter
 	}{
@@ -230,6 +268,9 @@ func Test_resourcePingFederateIdpAdapterResourceReadData(t *testing.T) {
 			Resource: pf.IdpAdapter{
 				Name: String("foo"),
 				PluginDescriptorRef: &pf.ResourceLink{
+					Id: String("com.pingidentity.adapters.httpbasic.idp.HttpBasicIdpAuthnAdapter"),
+				},
+				ParentRef: &pf.ResourceLink{
 					Id: String("com.pingidentity.adapters.httpbasic.idp.HttpBasicIdpAuthnAdapter"),
 				},
 				Configuration: &pf.PluginConfiguration{
@@ -398,6 +439,24 @@ func Test_resourcePingFederateIdpAdapterResourceReadData(t *testing.T) {
 						},
 					},
 				},
+				AttributeContract: &pf.IdpAdapterAttributeContract{
+					CoreAttributes: &[]*pf.IdpAdapterAttribute{
+						{
+							Masked:    Bool(true),
+							Name:      String("foo"),
+							Pseudonym: Bool(true),
+						},
+					},
+					ExtendedAttributes: &[]*pf.IdpAdapterAttribute{
+						{
+							Masked:    Bool(true),
+							Name:      String("foo"),
+							Pseudonym: Bool(true),
+						},
+					},
+					Inherited:      Bool(true),
+					MaskOgnlValues: Bool(true),
+				},
 			},
 		},
 	}
@@ -406,7 +465,7 @@ func Test_resourcePingFederateIdpAdapterResourceReadData(t *testing.T) {
 
 			resourceSchema := resourcePingFederateIdpAdapterResourceSchema()
 			resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})
-			resourcePingFederateIdpAdapterResourceReadResult(resourceLocalData, &tc.Resource)
+			resourcePingFederateIdpAdapterResourceReadResult(resourceLocalData, &tc.Resource, m)
 
 			if got := *resourcePingFederateIdpAdapterResourceReadData(resourceLocalData); !cmp.Equal(got, tc.Resource) {
 				t.Errorf("resourcePingFederateIdpAdapterResourceReadData() = %v", cmp.Diff(got, tc.Resource))

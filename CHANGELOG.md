@@ -1,3 +1,13 @@
+## 0.0.4 (Aug 24th, 2020)
+
+NOTES:
+
+* This is an early release experimental build for PingFederate 10.x
+
+FEATURES:
+
+* **New Resource:** `resource_pingfederate_certificates_ca`
+
 ## 0.0.3 (Aug 24th, 2020)
 
 NOTES:

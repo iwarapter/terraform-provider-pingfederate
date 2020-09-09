@@ -45,6 +45,7 @@ func Provider() *schema.Provider {
 			"pingfederate_certificates_ca":                              resourcePingFederateCertificatesCaResource(),
 			"pingfederate_jdbc_data_store":                              resourcePingFederateJdbcDataStoreResource(),
 			"pingfederate_ldap_data_store":                              resourcePingFederateLdapDataStoreResource(),
+			"pingfederate_idp_sp_connection":                            resourcePingFederateIdpSpConnectionResource(),
 			"pingfederate_idp_adapter":                                  resourcePingFederateIdpAdapterResource(),
 			"pingfederate_notification_publisher":                       resourcePingFederateNotificationPublisherResource(),
 			"pingfederate_oauth_auth_server_settings":                   resourcePingFederateOauthAuthServerSettingsResource(),

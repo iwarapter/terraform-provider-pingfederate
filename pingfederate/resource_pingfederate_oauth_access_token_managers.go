@@ -245,7 +245,7 @@ func resourcePingFederateOauthAccessTokenManagersResourceReadData(d *schema.Reso
 	atm := &pf.AccessTokenManager{
 		Name:                String(d.Get("name").(string)),
 		Id:                  String(d.Get("instance_id").(string)),
-		PluginDescriptorRef: expandResourceLink(d.Get("plugin_descriptor_ref").([]interface{})),
+		PluginDescriptorRef: expandResourceLink(d.Get("plugin_descriptor_ref").([]interface{})[0].(map[string]interface{})),
 		//Configuration:       expandPluginConfigurationWithDescriptor(d.Get("configuration").([]interface{}), desc.ConfigDescriptor),
 		Configuration:     expandPluginConfiguration(d.Get("configuration").([]interface{})),
 		AttributeContract: expandAccessTokenAttributeContract(d.Get("attribute_contract").([]interface{})),

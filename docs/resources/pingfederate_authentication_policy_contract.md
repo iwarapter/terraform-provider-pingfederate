@@ -1,4 +1,4 @@
-#Resource: pingfederate_authentication_policy_contract
+# Resource: pingfederate_authentication_policy_contract
 
 Provides a authentication policy contract.
 

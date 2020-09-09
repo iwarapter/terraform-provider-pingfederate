@@ -1,4 +1,4 @@
-#Resource: pingfederate_certificates_ca
+# Resource: pingfederate_certificates_ca
 
 Provides a certificate ca.
 

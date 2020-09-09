@@ -147,38 +147,51 @@ func resourcePingFederateSpAuthenticationPolicyContractMappingResourceReadResult
 		}
 	}
 
-	if err := flattenAttributeSources(d, rv.AttributeSources); err != nil {
-		diags = append(diags, diag.FromErr(err)...)
+	if rv.AttributeSources != nil {
+		if m := flattenLdapAttributeSources(rv.AttributeSources); len(m) > 0 {
+			if err := d.Set("ldap_attribute_source", m); err != nil {
+				diags = append(diags, diag.FromErr(err)...)
+			}
+		}
+		if m := flattenJdbcAttributeSources(rv.AttributeSources); len(m) > 0 {
+			if err := d.Set("jdbc_attribute_source", m); err != nil {
+				diags = append(diags, diag.FromErr(err)...)
+			}
+		}
+		if m := flattenCustomAttributeSources(rv.AttributeSources); len(m) > 0 {
+			if err := d.Set("custom_attribute_source", m); err != nil {
+				diags = append(diags, diag.FromErr(err)...)
+			}
+		}
 	}
-
 	return diags
 }
 
 func resourcePingFederateSpAuthenticationPolicyContractMappingResourceReadData(d *schema.ResourceData) *pf.ApcToSpAdapterMapping {
-	mapping := &pf.ApcToSpAdapterMapping{
+	result := &pf.ApcToSpAdapterMapping{
 		Id:                           String(d.Id()),
 		SourceId:                     String(d.Get("source_id").(string)),
 		TargetId:                     String(d.Get("target_id").(string)),
 		AttributeContractFulfillment: expandMapOfAttributeFulfillmentValue(d.Get("attribute_contract_fulfillment").(*schema.Set).List()),
 		AttributeSources:             &[]*pf.AttributeSource{},
 	}
-	if v, ok := d.GetOk("issuance_criteria"); ok {
-		mapping.IssuanceCriteria = expandIssuanceCriteria(v.([]interface{}))
+	if v, ok := d.GetOk("issuance_criteria"); ok && len(v.([]interface{})) > 0 {
+		result.IssuanceCriteria = expandIssuanceCriteria(v.([]interface{})[0].(map[string]interface{}))
 	}
 	if v, ok := d.GetOk("ldap_attribute_source"); ok && len(v.([]interface{})) > 0 {
-		*mapping.AttributeSources = append(*mapping.AttributeSources, *expandLdapAttributeSource(v.([]interface{}))...)
+		*result.AttributeSources = append(*result.AttributeSources, *expandLdapAttributeSourceList(v.([]interface{}))...)
 	}
 	if v, ok := d.GetOk("jdbc_attribute_source"); ok && len(v.([]interface{})) > 0 {
-		*mapping.AttributeSources = append(*mapping.AttributeSources, *expandJdbcAttributeSource(v.([]interface{}))...)
+		*result.AttributeSources = append(*result.AttributeSources, *expandJdbcAttributeSourceList(v.([]interface{}))...)
 	}
 	if v, ok := d.GetOk("custom_attribute_source"); ok && len(v.([]interface{})) > 0 {
-		*mapping.AttributeSources = append(*mapping.AttributeSources, *expandCustomAttributeSource(v.([]interface{}))...)
+		*result.AttributeSources = append(*result.AttributeSources, *expandCustomAttributeSourceList(v.([]interface{}))...)
 	}
 	if v, ok := d.GetOk("default_target_resource"); ok {
-		mapping.DefaultTargetResource = String(v.(string))
+		result.DefaultTargetResource = String(v.(string))
 	}
 	if v, ok := d.GetOk("license_connection_group_assignment"); ok {
-		mapping.LicenseConnectionGroupAssignment = String(v.(string))
+		result.LicenseConnectionGroupAssignment = String(v.(string))
 	}
-	return mapping
+	return result
 }

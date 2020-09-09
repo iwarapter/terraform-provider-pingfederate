@@ -25,6 +25,12 @@ func resourcePingFederateAuthenticationPoliciesResource() *schema.Resource {
 
 func resourcePingFederateAuthenticationPoliciesResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
+		"bypass_external_validation": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "External validation will be bypassed when set to true. Default to false.",
+			Default:     false,
+		},
 		"fail_if_no_selection": {
 			Type:     schema.TypeBool,
 			Optional: true,
@@ -67,7 +73,8 @@ func resourcePingFederateAuthenticationPoliciesResourceSchema() map[string]*sche
 func resourcePingFederateAuthenticationPoliciesResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).AuthenticationPolicies
 	input := authenticationPolicies.UpdateDefaultAuthenticationPolicyInput{
-		Body: *resourcePingFederateAuthenticationPoliciesResourceReadData(d),
+		BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool)),
+		Body:                     *resourcePingFederateAuthenticationPoliciesResourceReadData(d),
 	}
 	result, _, err := svc.UpdateDefaultAuthenticationPolicy(&input)
 	if err != nil {
@@ -89,7 +96,8 @@ func resourcePingFederateAuthenticationPoliciesResourceRead(_ context.Context, d
 func resourcePingFederateAuthenticationPoliciesResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).AuthenticationPolicies
 	input := authenticationPolicies.UpdateDefaultAuthenticationPolicyInput{
-		Body: *resourcePingFederateAuthenticationPoliciesResourceReadData(d),
+		BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool)),
+		Body:                     *resourcePingFederateAuthenticationPoliciesResourceReadData(d),
 	}
 	result, _, err := svc.UpdateDefaultAuthenticationPolicy(&input)
 	if err != nil {

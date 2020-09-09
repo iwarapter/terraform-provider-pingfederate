@@ -213,6 +213,9 @@ func Test_resourcePingFederateNotificationPublisherResourceReadData(t *testing.T
 						},
 					},
 				},
+				ParentRef: &pf.ResourceLink{
+					Id: String("foo"),
+				},
 			},
 		},
 	}

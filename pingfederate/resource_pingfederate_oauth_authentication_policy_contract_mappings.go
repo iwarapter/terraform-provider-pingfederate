@@ -126,31 +126,44 @@ func resourcePingFederateOauthAuthenticationPolicyContractMappingsResourceReadRe
 		}
 	}
 
-	if err := flattenAttributeSources(d, rv.AttributeSources); err != nil {
-		diags = append(diags, diag.FromErr(err)...)
+	if rv.AttributeSources != nil {
+		if m := flattenLdapAttributeSources(rv.AttributeSources); len(m) > 0 {
+			if err := d.Set("ldap_attribute_source", m); err != nil {
+				diags = append(diags, diag.FromErr(err)...)
+			}
+		}
+		if m := flattenJdbcAttributeSources(rv.AttributeSources); len(m) > 0 {
+			if err := d.Set("jdbc_attribute_source", m); err != nil {
+				diags = append(diags, diag.FromErr(err)...)
+			}
+		}
+		if m := flattenCustomAttributeSources(rv.AttributeSources); len(m) > 0 {
+			if err := d.Set("custom_attribute_source", m); err != nil {
+				diags = append(diags, diag.FromErr(err)...)
+			}
+		}
 	}
-
 	return diags
 }
 
 func resourcePingFederateOauthAuthenticationPolicyContractMappingsResourceReadData(d *schema.ResourceData) *pf.ApcToPersistentGrantMapping {
 	mapping := &pf.ApcToPersistentGrantMapping{
 		Id:                              String(d.Id()),
-		AuthenticationPolicyContractRef: expandResourceLink(d.Get("authentication_policy_contract_ref").([]interface{})),
+		AuthenticationPolicyContractRef: expandResourceLink(d.Get("authentication_policy_contract_ref").([]interface{})[0].(map[string]interface{})),
 		AttributeContractFulfillment:    expandMapOfAttributeFulfillmentValue(d.Get("attribute_contract_fulfillment").(*schema.Set).List()),
 		AttributeSources:                &[]*pf.AttributeSource{},
 	}
-	if v, ok := d.GetOk("issuance_criteria"); ok {
-		mapping.IssuanceCriteria = expandIssuanceCriteria(v.([]interface{}))
+	if v, ok := d.GetOk("issuance_criteria"); ok && len(v.([]interface{})) > 0 {
+		mapping.IssuanceCriteria = expandIssuanceCriteria(v.([]interface{})[0].(map[string]interface{}))
 	}
 	if v, ok := d.GetOk("ldap_attribute_source"); ok && len(v.([]interface{})) > 0 {
-		*mapping.AttributeSources = append(*mapping.AttributeSources, *expandLdapAttributeSource(v.([]interface{}))...)
+		*mapping.AttributeSources = append(*mapping.AttributeSources, *expandLdapAttributeSourceList(v.([]interface{}))...)
 	}
 	if v, ok := d.GetOk("jdbc_attribute_source"); ok && len(v.([]interface{})) > 0 {
-		*mapping.AttributeSources = append(*mapping.AttributeSources, *expandJdbcAttributeSource(v.([]interface{}))...)
+		*mapping.AttributeSources = append(*mapping.AttributeSources, *expandJdbcAttributeSourceList(v.([]interface{}))...)
 	}
 	if v, ok := d.GetOk("custom_attribute_source"); ok && len(v.([]interface{})) > 0 {
-		*mapping.AttributeSources = append(*mapping.AttributeSources, *expandCustomAttributeSource(v.([]interface{}))...)
+		*mapping.AttributeSources = append(*mapping.AttributeSources, *expandCustomAttributeSourceList(v.([]interface{}))...)
 	}
 	return mapping
 }

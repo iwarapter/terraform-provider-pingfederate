@@ -1,4 +1,4 @@
-#Resource: pingfederate_notification_publisher
+# Resource: pingfederate_notification_publisher
 
 Provides a notification publisher.
 
