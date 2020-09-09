@@ -4,11 +4,6 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
-	"github.com/iwarapter/pingfederate-sdk-go/services/version"
-	"github.com/ory/dockertest"
 	"log"
 	"net/http"
 	"net/url"
@@ -18,6 +13,12 @@ import (
 	"runtime"
 	"testing"
 	"time"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
+	"github.com/iwarapter/pingfederate-sdk-go/services/version"
+	"github.com/ory/dockertest"
 )
 
 func TestMain(m *testing.M) {
