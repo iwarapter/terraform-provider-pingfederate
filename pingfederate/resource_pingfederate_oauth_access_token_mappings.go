@@ -173,7 +173,7 @@ func resourcePingFederateOauthAccessTokenMappingsResourceReadResult(d *schema.Re
 }
 
 func resourcePingFederateOauthAccessTokenMappingsResourceReadData(d *schema.ResourceData) *pf.AccessTokenMapping {
-	mapping := &pf.AccessTokenMapping{
+	result := &pf.AccessTokenMapping{
 		Id:                           String(d.Id()),
 		Context:                      expandAccessTokenMappingContext(d.Get("context").([]interface{})),
 		AccessTokenManagerRef:        expandResourceLink(d.Get("access_token_manager_ref").([]interface{})[0].(map[string]interface{})),
@@ -181,16 +181,16 @@ func resourcePingFederateOauthAccessTokenMappingsResourceReadData(d *schema.Reso
 		AttributeSources:             &[]*pf.AttributeSource{},
 	}
 	if v, ok := d.GetOk("issuance_criteria"); ok {
-		mapping.IssuanceCriteria = expandIssuanceCriteria(v.(map[string]interface{}))
+		result.IssuanceCriteria = expandIssuanceCriteria(v.(map[string]interface{}))
 	}
 	if v, ok := d.GetOk("ldap_attribute_source"); ok && len(v.([]interface{})) > 0 {
-		*mapping.AttributeSources = append(*mapping.AttributeSources, expandLdapAttributeSource(v.(map[string]interface{})))
+		*result.AttributeSources = append(*result.AttributeSources, *expandLdapAttributeSourceList(v.([]interface{}))...)
 	}
 	if v, ok := d.GetOk("jdbc_attribute_source"); ok && len(v.([]interface{})) > 0 {
-		*mapping.AttributeSources = append(*mapping.AttributeSources, expandJdbcAttributeSource(v.(map[string]interface{})))
+		*result.AttributeSources = append(*result.AttributeSources, *expandJdbcAttributeSourceList(v.([]interface{}))...)
 	}
 	if v, ok := d.GetOk("custom_attribute_source"); ok && len(v.([]interface{})) > 0 {
-		*mapping.AttributeSources = append(*mapping.AttributeSources, expandCustomAttributeSource(v.(map[string]interface{})))
+		*result.AttributeSources = append(*result.AttributeSources, *expandCustomAttributeSourceList(v.([]interface{}))...)
 	}
-	return mapping
+	return result
 }

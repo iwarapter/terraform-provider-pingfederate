@@ -1067,23 +1067,6 @@ func expandChannelSourceLocation(in map[string]interface{}) *pf.ChannelSourceLoc
 	return &result
 }
 
-func expandApiResult(in map[string]interface{}) *pf.ApiResult {
-	var result pf.ApiResult
-	if val, ok := in["message"]; ok {
-		result.Message = String(val.(string))
-	}
-	if val, ok := in["developer_message"]; ok {
-		result.DeveloperMessage = String(val.(string))
-	}
-	if val, ok := in["validation_errors"]; ok {
-		result.ValidationErrors = expandValidationErrorList(val.([]interface{}))
-	}
-	if val, ok := in["result_id"]; ok {
-		result.ResultId = String(val.(string))
-	}
-	return &result
-}
-
 func expandConnectionCredentials(in map[string]interface{}) *pf.ConnectionCredentials {
 	var result pf.ConnectionCredentials
 	if val, ok := in["signing_settings"]; ok && len(val.([]interface{})) > 0 {
@@ -1156,75 +1139,6 @@ func expandSpAdapterAttributeContract(in map[string]interface{}) *pf.SpAdapterAt
 	return &result
 }
 
-func expandSpConnection(in map[string]interface{}) *pf.SpConnection {
-	var result pf.SpConnection
-	if val, ok := in["extended_properties"]; ok {
-		result.ExtendedProperties = expandMapOfParameterValues(val.(*schema.Set).List())
-	}
-	if val, ok := in["id"]; ok {
-		result.Id = String(val.(string))
-	}
-	if val, ok := in["entity_id"]; ok {
-		result.EntityId = String(val.(string))
-	}
-	if val, ok := in["base_url"]; ok {
-		result.BaseUrl = String(val.(string))
-	}
-	if val, ok := in["default_virtual_entity_id"]; ok {
-		result.DefaultVirtualEntityId = String(val.(string))
-	}
-	if val, ok := in["sp_browser_sso"]; ok {
-		result.SpBrowserSso = expandSpBrowserSso(val.(map[string]interface{}))
-	}
-	if val, ok := in["metadata_reload_settings"]; ok {
-		result.MetadataReloadSettings = expandConnectionMetadataUrl(val.(map[string]interface{}))
-	}
-	if val, ok := in["credentials"]; ok {
-		result.Credentials = expandConnectionCredentials(val.(map[string]interface{}))
-	}
-	if val, ok := in["name"]; ok {
-		result.Name = String(val.(string))
-	}
-	if val, ok := in["active"]; ok {
-		result.Active = Bool(val.(bool))
-	}
-	if val, ok := in["virtual_entity_ids"]; ok {
-		strs := expandStringList(val.([]interface{}))
-		result.VirtualEntityIds = &strs
-	}
-	if val, ok := in["contact_info"]; ok {
-		result.ContactInfo = expandContactInfo(val.(map[string]interface{}))
-	}
-	if val, ok := in["license_connection_group"]; ok {
-		result.LicenseConnectionGroup = String(val.(string))
-	}
-	if val, ok := in["application_name"]; ok {
-		result.ApplicationName = String(val.(string))
-	}
-	if val, ok := in["additional_allowed_entities_configuration"]; ok {
-		result.AdditionalAllowedEntitiesConfiguration = expandAdditionalAllowedEntitiesConfiguration(val.(map[string]interface{}))
-	}
-	if val, ok := in["type"]; ok {
-		result.Type = String(val.(string))
-	}
-	if val, ok := in["attribute_query"]; ok {
-		result.AttributeQuery = expandSpAttributeQuery(val.(map[string]interface{}))
-	}
-	if val, ok := in["application_icon_url"]; ok {
-		result.ApplicationIconUrl = String(val.(string))
-	}
-	if val, ok := in["outbound_provision"]; ok {
-		result.OutboundProvision = expandOutboundProvision(val.(map[string]interface{}))
-	}
-	if val, ok := in["ws_trust"]; ok {
-		result.WsTrust = expandSpWsTrust(val.(map[string]interface{}))
-	}
-	if val, ok := in["logging_mode"]; ok {
-		result.LoggingMode = String(val.(string))
-	}
-	return &result
-}
-
 func expandSaasAttributeMapping(in map[string]interface{}) *pf.SaasAttributeMapping {
 	var result pf.SaasAttributeMapping
 	if val, ok := in["field_name"]; ok {
@@ -1291,26 +1205,6 @@ func expandAdditionalAllowedEntitiesConfiguration(in map[string]interface{}) *pf
 	return &result
 }
 
-func expandAttributeSource(in map[string]interface{}) *pf.AttributeSource {
-	var result pf.AttributeSource
-	if val, ok := in["type"]; ok {
-		result.Type = String(val.(string))
-	}
-	if val, ok := in["data_store_ref"]; ok {
-		result.DataStoreRef = expandResourceLink(val.([]interface{})[0].(map[string]interface{}))
-	}
-	if val, ok := in["id"]; ok {
-		result.Id = String(val.(string))
-	}
-	if val, ok := in["description"]; ok {
-		result.Description = String(val.(string))
-	}
-	if val, ok := in["attribute_contract_fulfillment"]; ok {
-		result.AttributeContractFulfillment = expandMapOfAttributeFulfillmentValue(val.(*schema.Set).List())
-	}
-	return &result
-}
-
 func expandArtifactResolverLocation(in map[string]interface{}) *pf.ArtifactResolverLocation {
 	var result pf.ArtifactResolverLocation
 	if val, ok := in["url"]; ok {
@@ -1370,28 +1264,14 @@ func expandConnectionCert(in map[string]interface{}) *pf.ConnectionCert {
 	return &result
 }
 
-func expandBackChannelAuth(in map[string]interface{}) *pf.BackChannelAuth {
-	var result pf.BackChannelAuth
-	if val, ok := in["type"]; ok {
-		result.Type = String(val.(string))
-	}
-	if val, ok := in["http_basic_credentials"]; ok {
-		result.HttpBasicCredentials = expandUsernamePasswordCredentials(val.(map[string]interface{}))
-	}
-	if val, ok := in["digital_signature"]; ok {
-		result.DigitalSignature = Bool(val.(bool))
-	}
-	return &result
-}
-
 func expandIdpBrowserSso(in map[string]interface{}) *pf.IdpBrowserSso {
 	var result pf.IdpBrowserSso
 	if val, ok := in["incoming_bindings"]; ok {
 		strs := expandStringList(val.([]interface{}))
 		result.IncomingBindings = &strs
 	}
-	if val, ok := in["attribute_contract"]; ok {
-		result.AttributeContract = expandIdpBrowserSsoAttributeContract(val.(map[string]interface{}))
+	if val, ok := in["attribute_contract"]; ok && len(val.([]interface{})) > 0 {
+		result.AttributeContract = expandIdpBrowserSsoAttributeContract(val.([]interface{})[0].(map[string]interface{}))
 	}
 	if val, ok := in["message_customizations"]; ok {
 		result.MessageCustomizations = expandProtocolMessageCustomizationList(val.([]interface{}))
@@ -1411,8 +1291,8 @@ func expandIdpBrowserSso(in map[string]interface{}) *pf.IdpBrowserSso {
 	if val, ok := in["idp_identity_mapping"]; ok {
 		result.IdpIdentityMapping = String(val.(string))
 	}
-	if val, ok := in["artifact"]; ok {
-		result.Artifact = expandArtifactSettings(val.(map[string]interface{}))
+	if val, ok := in["artifact"]; ok && len(val.([]interface{})) > 0 {
+		result.Artifact = expandArtifactSettings(val.([]interface{})[0].(map[string]interface{}))
 	}
 	if val, ok := in["adapter_mappings"]; ok {
 		result.AdapterMappings = expandSpAdapterMappingList(val.([]interface{}))
@@ -1420,8 +1300,8 @@ func expandIdpBrowserSso(in map[string]interface{}) *pf.IdpBrowserSso {
 	if val, ok := in["authentication_policy_contract_mappings"]; ok {
 		result.AuthenticationPolicyContractMappings = expandAuthenticationPolicyContractMappingList(val.([]interface{}))
 	}
-	if val, ok := in["sso_o_auth_mapping"]; ok {
-		result.SsoOAuthMapping = expandSsoOAuthMapping(val.(map[string]interface{}))
+	if val, ok := in["sso_o_auth_mapping"]; ok && len(val.([]interface{})) > 0 {
+		result.SsoOAuthMapping = expandSsoOAuthMapping(val.([]interface{})[0].(map[string]interface{}))
 	}
 	if val, ok := in["oauth_authentication_policy_contract_ref"]; ok {
 		result.OauthAuthenticationPolicyContractRef = expandResourceLink(val.([]interface{})[0].(map[string]interface{}))
@@ -1429,11 +1309,11 @@ func expandIdpBrowserSso(in map[string]interface{}) *pf.IdpBrowserSso {
 	if val, ok := in["assertions_signed"]; ok {
 		result.AssertionsSigned = Bool(val.(bool))
 	}
-	if val, ok := in["decryption_policy"]; ok {
-		result.DecryptionPolicy = expandDecryptionPolicy(val.(map[string]interface{}))
+	if val, ok := in["decryption_policy"]; ok && len(val.([]interface{})) > 0 {
+		result.DecryptionPolicy = expandDecryptionPolicy(val.([]interface{})[0].(map[string]interface{}))
 	}
-	if val, ok := in["oidc_provider_settings"]; ok {
-		result.OidcProviderSettings = expandOIDCProviderSettings(val.(map[string]interface{}))
+	if val, ok := in["oidc_provider_settings"]; ok && len(val.([]interface{})) > 0 {
+		result.OidcProviderSettings = expandOIDCProviderSettings(val.([]interface{})[0].(map[string]interface{}))
 	}
 	if val, ok := in["enabled_profiles"]; ok {
 		strs := expandStringList(val.([]interface{}))
@@ -1570,8 +1450,8 @@ func expandSpAdapterMapping(in map[string]interface{}) *pf.SpAdapterMapping {
 		strs := expandStringList(val.([]interface{}))
 		result.RestrictedVirtualEntityIds = &strs
 	}
-	if val, ok := in["adapter_override_settings"]; ok {
-		result.AdapterOverrideSettings = expandSpAdapter(val.(map[string]interface{}))
+	if val, ok := in["adapter_override_settings"]; ok && len(val.([]interface{})) > 0 {
+		result.AdapterOverrideSettings = expandSpAdapter(val.([]interface{})[0].(map[string]interface{}))
 	}
 	if v, ok := in["ldap_attribute_source"]; ok && len(v.([]interface{})) > 0 {
 		*result.AttributeSources = append(*result.AttributeSources, *expandLdapAttributeSourceList(v.([]interface{}))...)
@@ -1622,83 +1502,6 @@ func expandInboundBackChannelAuth(in map[string]interface{}) *pf.InboundBackChan
 	return &result
 }
 
-func expandSpConnections(in map[string]interface{}) *pf.SpConnections {
-	var result pf.SpConnections
-	if val, ok := in["items"]; ok {
-		result.Items = expandSpConnectionList(val.([]interface{}))
-	}
-	return &result
-}
-
-func expandIdpConnection(in map[string]interface{}) *pf.IdpConnection {
-	var result pf.IdpConnection
-	if val, ok := in["entity_id"]; ok {
-		result.EntityId = String(val.(string))
-	}
-	if val, ok := in["default_virtual_entity_id"]; ok {
-		result.DefaultVirtualEntityId = String(val.(string))
-	}
-	if val, ok := in["oidc_client_credentials"]; ok {
-		result.OidcClientCredentials = expandOIDCClientCredentials(val.(map[string]interface{}))
-	}
-	if val, ok := in["idp_browser_sso"]; ok {
-		result.IdpBrowserSso = expandIdpBrowserSso(val.(map[string]interface{}))
-	}
-	if val, ok := in["type"]; ok {
-		result.Type = String(val.(string))
-	}
-	if val, ok := in["attribute_query"]; ok {
-		result.AttributeQuery = expandIdpAttributeQuery(val.(map[string]interface{}))
-	}
-	if val, ok := in["contact_info"]; ok {
-		result.ContactInfo = expandContactInfo(val.(map[string]interface{}))
-	}
-	if val, ok := in["additional_allowed_entities_configuration"]; ok {
-		result.AdditionalAllowedEntitiesConfiguration = expandAdditionalAllowedEntitiesConfiguration(val.(map[string]interface{}))
-	}
-	if val, ok := in["id"]; ok {
-		result.Id = String(val.(string))
-	}
-	if val, ok := in["base_url"]; ok {
-		result.BaseUrl = String(val.(string))
-	}
-	if val, ok := in["idp_o_auth_grant_attribute_mapping"]; ok {
-		result.IdpOAuthGrantAttributeMapping = expandIdpOAuthGrantAttributeMapping(val.(map[string]interface{}))
-	}
-	if val, ok := in["metadata_reload_settings"]; ok {
-		result.MetadataReloadSettings = expandConnectionMetadataUrl(val.(map[string]interface{}))
-	}
-	if val, ok := in["logging_mode"]; ok {
-		result.LoggingMode = String(val.(string))
-	}
-	if val, ok := in["name"]; ok {
-		result.Name = String(val.(string))
-	}
-	if val, ok := in["ws_trust"]; ok {
-		result.WsTrust = expandIdpWsTrust(val.(map[string]interface{}))
-	}
-	if val, ok := in["virtual_entity_ids"]; ok {
-		strs := expandStringList(val.([]interface{}))
-		result.VirtualEntityIds = &strs
-	}
-	if val, ok := in["credentials"]; ok {
-		result.Credentials = expandConnectionCredentials(val.(map[string]interface{}))
-	}
-	if val, ok := in["license_connection_group"]; ok {
-		result.LicenseConnectionGroup = String(val.(string))
-	}
-	if val, ok := in["extended_properties"]; ok {
-		result.ExtendedProperties = expandMapOfParameterValues(val.(*schema.Set).List())
-	}
-	if val, ok := in["error_page_msg_id"]; ok {
-		result.ErrorPageMsgId = String(val.(string))
-	}
-	if val, ok := in["active"]; ok {
-		result.Active = Bool(val.(bool))
-	}
-	return &result
-}
-
 func expandSpWsTrustAttributeContract(in map[string]interface{}) *pf.SpWsTrustAttributeContract {
 	var result pf.SpWsTrustAttributeContract
 	if val, ok := in["extended_attributes"]; ok {
@@ -1732,17 +1535,6 @@ func expandIdpOAuthAttributeContract(in map[string]interface{}) *pf.IdpOAuthAttr
 	return &result
 }
 
-func expandDecryptionKeys(in map[string]interface{}) *pf.DecryptionKeys {
-	var result pf.DecryptionKeys
-	if val, ok := in["secondary_key_pair_ref"]; ok {
-		result.SecondaryKeyPairRef = expandResourceLink(val.([]interface{})[0].(map[string]interface{}))
-	}
-	if val, ok := in["primary_key_ref"]; ok {
-		result.PrimaryKeyRef = expandResourceLink(val.([]interface{})[0].(map[string]interface{}))
-	}
-	return &result
-}
-
 func expandOutboundBackChannelAuth(in map[string]interface{}) *pf.OutboundBackChannelAuth {
 	var result pf.OutboundBackChannelAuth
 	if val, ok := in["validate_partner_cert"]; ok {
@@ -1757,7 +1549,7 @@ func expandOutboundBackChannelAuth(in map[string]interface{}) *pf.OutboundBackCh
 	if val, ok := in["digital_signature"]; ok {
 		result.DigitalSignature = Bool(val.(bool))
 	}
-	if val, ok := in["ssl_auth_key_pair_ref"]; ok {
+	if val, ok := in["ssl_auth_key_pair_ref"]; ok && len(val.([]interface{})) > 0 {
 		result.SslAuthKeyPairRef = expandResourceLink(val.([]interface{})[0].(map[string]interface{}))
 	}
 	return &result
@@ -1770,22 +1562,6 @@ func expandSpWsTrustAttribute(in map[string]interface{}) *pf.SpWsTrustAttribute 
 	}
 	if val, ok := in["name"]; ok {
 		result.Name = String(val.(string))
-	}
-	return &result
-}
-
-func expandConnectionCerts(in map[string]interface{}) *pf.ConnectionCerts {
-	var result pf.ConnectionCerts
-	if val, ok := in["items"]; ok {
-		result.Items = expandConnectionCertList(val.([]interface{}))
-	}
-	return &result
-}
-
-func expandBinaryLdapAttributeSettings(in map[string]interface{}) *pf.BinaryLdapAttributeSettings {
-	var result pf.BinaryLdapAttributeSettings
-	if val, ok := in["binary_encoding"]; ok {
-		result.BinaryEncoding = String(val.(string))
 	}
 	return &result
 }
@@ -1975,61 +1751,10 @@ func expandSpAdapter(in map[string]interface{}) *pf.SpAdapter {
 	return &result
 }
 
-func expandConnection(in map[string]interface{}) *pf.Connection {
-	var result pf.Connection
-	if val, ok := in["type"]; ok {
-		result.Type = String(val.(string))
-	}
-	if val, ok := in["base_url"]; ok {
-		result.BaseUrl = String(val.(string))
-	}
-	if val, ok := in["license_connection_group"]; ok {
-		result.LicenseConnectionGroup = String(val.(string))
-	}
-	if val, ok := in["additional_allowed_entities_configuration"]; ok {
-		result.AdditionalAllowedEntitiesConfiguration = expandAdditionalAllowedEntitiesConfiguration(val.(map[string]interface{}))
-	}
-	if val, ok := in["id"]; ok {
-		result.Id = String(val.(string))
-	}
-	if val, ok := in["entity_id"]; ok {
-		result.EntityId = String(val.(string))
-	}
-	if val, ok := in["active"]; ok {
-		result.Active = Bool(val.(bool))
-	}
-	if val, ok := in["credentials"]; ok {
-		result.Credentials = expandConnectionCredentials(val.(map[string]interface{}))
-	}
-	if val, ok := in["logging_mode"]; ok {
-		result.LoggingMode = String(val.(string))
-	}
-	if val, ok := in["extended_properties"]; ok {
-		result.ExtendedProperties = expandMapOfParameterValues(val.(*schema.Set).List())
-	}
-	if val, ok := in["name"]; ok {
-		result.Name = String(val.(string))
-	}
-	if val, ok := in["virtual_entity_ids"]; ok {
-		strs := expandStringList(val.([]interface{}))
-		result.VirtualEntityIds = &strs
-	}
-	if val, ok := in["default_virtual_entity_id"]; ok {
-		result.DefaultVirtualEntityId = String(val.(string))
-	}
-	if val, ok := in["metadata_reload_settings"]; ok {
-		result.MetadataReloadSettings = expandConnectionMetadataUrl(val.(map[string]interface{}))
-	}
-	if val, ok := in["contact_info"]; ok {
-		result.ContactInfo = expandContactInfo(val.(map[string]interface{}))
-	}
-	return &result
-}
-
 func expandIdpWsTrust(in map[string]interface{}) *pf.IdpWsTrust {
 	var result pf.IdpWsTrust
-	if val, ok := in["attribute_contract"]; ok {
-		result.AttributeContract = expandIdpWsTrustAttributeContract(val.(map[string]interface{}))
+	if val, ok := in["attribute_contract"]; ok && len(val.([]interface{})) > 0 {
+		result.AttributeContract = expandIdpWsTrustAttributeContract(val.([]interface{})[0].(map[string]interface{}))
 	}
 	if val, ok := in["generate_local_token"]; ok {
 		result.GenerateLocalToken = Bool(val.(bool))
@@ -2104,19 +1829,11 @@ func expandSigningSettings(in map[string]interface{}) *pf.SigningSettings {
 
 func expandIdpOAuthGrantAttributeMapping(in map[string]interface{}) *pf.IdpOAuthGrantAttributeMapping {
 	var result pf.IdpOAuthGrantAttributeMapping
-	if val, ok := in["idp_o_auth_attribute_contract"]; ok {
-		result.IdpOAuthAttributeContract = expandIdpOAuthAttributeContract(val.(map[string]interface{}))
+	if val, ok := in["idp_o_auth_attribute_contract"]; ok && len(val.([]interface{})) > 0 {
+		result.IdpOAuthAttributeContract = expandIdpOAuthAttributeContract(val.([]interface{})[0].(map[string]interface{}))
 	}
 	if val, ok := in["access_token_manager_mappings"]; ok {
 		result.AccessTokenManagerMappings = expandAccessTokenManagerMappingList(val.([]interface{}))
-	}
-	return &result
-}
-
-func expandSpAdapterAttribute(in map[string]interface{}) *pf.SpAdapterAttribute {
-	var result pf.SpAdapterAttribute
-	if val, ok := in["name"]; ok {
-		result.Name = String(val.(string))
 	}
 	return &result
 }
@@ -2729,7 +2446,7 @@ func expandCertView(in map[string]interface{}) *pf.CertView {
 func expandSpBrowserSso(in map[string]interface{}) *pf.SpBrowserSso {
 	var result pf.SpBrowserSso
 	if val, ok := in["enabled_profiles"]; ok {
-		strs := expandStringList(val.([]interface{}))
+		strs := expandStringList(val.(*schema.Set).List())
 		result.EnabledProfiles = &strs
 	}
 	if val, ok := in["default_target_url"]; ok && val.(string) != "" {
@@ -2781,7 +2498,7 @@ func expandSpBrowserSso(in map[string]interface{}) *pf.SpBrowserSso {
 		result.EncryptionPolicy = expandEncryptionPolicy(val.([]interface{})[0].(map[string]interface{}))
 	}
 	if val, ok := in["incoming_bindings"]; ok {
-		strs := expandStringList(val.([]interface{}))
+		strs := expandStringList(val.(*schema.Set).List())
 		result.IncomingBindings = &strs
 	}
 	if val, ok := in["ws_fed_token_type"]; ok && val.(string) != "" {
@@ -2939,8 +2656,8 @@ func expandIdpAttributeQuery(in map[string]interface{}) *pf.IdpAttributeQuery {
 	if val, ok := in["name_mappings"]; ok {
 		result.NameMappings = expandAttributeQueryNameMappingList(val.([]interface{}))
 	}
-	if val, ok := in["policy"]; ok {
-		result.Policy = expandIdpAttributeQueryPolicy(val.(map[string]interface{}))
+	if val, ok := in["policy"]; ok && len(val.([]interface{})) > 0 {
+		result.Policy = expandIdpAttributeQueryPolicy(val.([]interface{})[0].(map[string]interface{}))
 	}
 	if val, ok := in["url"]; ok {
 		result.Url = String(val.(string))
@@ -2984,43 +2701,6 @@ func expandArtifactSettings(in map[string]interface{}) *pf.ArtifactSettings {
 	}
 	if val, ok := in["lifetime"]; ok {
 		result.Lifetime = Int(val.(int))
-	}
-	return &result
-}
-
-func expandValidationError(in map[string]interface{}) *pf.ValidationError {
-	var result pf.ValidationError
-	if val, ok := in["error_id"]; ok {
-		result.ErrorId = String(val.(string))
-	}
-	if val, ok := in["message"]; ok {
-		result.Message = String(val.(string))
-	}
-	if val, ok := in["developer_message"]; ok {
-		result.DeveloperMessage = String(val.(string))
-	}
-	if val, ok := in["field_path"]; ok {
-		result.FieldPath = String(val.(string))
-	}
-	return &result
-}
-
-func expandPluginInstance(in map[string]interface{}) *pf.PluginInstance {
-	var result pf.PluginInstance
-	if val, ok := in["id"]; ok {
-		result.Id = String(val.(string))
-	}
-	if val, ok := in["name"]; ok {
-		result.Name = String(val.(string))
-	}
-	if val, ok := in["plugin_descriptor_ref"]; ok {
-		result.PluginDescriptorRef = expandResourceLink(val.([]interface{})[0].(map[string]interface{}))
-	}
-	if val, ok := in["parent_ref"]; ok {
-		result.ParentRef = expandResourceLink(val.([]interface{})[0].(map[string]interface{}))
-	}
-	if val, ok := in["configuration"]; ok {
-		result.Configuration = expandPluginConfiguration(val.([]interface{}))
 	}
 	return &result
 }
@@ -3077,13 +2757,6 @@ func expandSpSsoServiceEndpointList(in []interface{}) *[]*pf.SpSsoServiceEndpoin
 	return &result
 }
 
-//func expandSpAdapterAttributeList(in []interface{}) *[]*pf.SpAdapterAttribute {
-//	var result []*pf.SpAdapterAttribute
-//	for _, v := range in {
-//		result = append(result, expandSpAdapterAttribute(v.(map[string]interface{})))
-//	}
-//	return &result
-//}
 func expandSpAdapterAttributeList(in []interface{}) *[]*pf.SpAdapterAttribute {
 	var contractList []*pf.SpAdapterAttribute
 	for _, raw := range in {
@@ -3290,13 +2963,6 @@ func expandCustomAttributeSourceList(in []interface{}) *[]*pf.AttributeSource {
 	return &result
 }
 
-func expandSpConnectionList(in []interface{}) *[]*pf.SpConnection {
-	var result []*pf.SpConnection
-	for _, v := range in {
-		result = append(result, expandSpConnection(v.(map[string]interface{})))
-	}
-	return &result
-}
 func expandConfigRowList(in []interface{}) *[]*pf.ConfigRow {
 	var result []*pf.ConfigRow
 	for _, v := range in {
@@ -3304,13 +2970,7 @@ func expandConfigRowList(in []interface{}) *[]*pf.ConfigRow {
 	}
 	return &result
 }
-func expandValidationErrorList(in []interface{}) *[]*pf.ValidationError {
-	var result []*pf.ValidationError
-	for _, v := range in {
-		result = append(result, expandValidationError(v.(map[string]interface{})))
-	}
-	return &result
-}
+
 func expandSpBrowserSsoAttributeList(in []interface{}) *[]*pf.SpBrowserSsoAttribute {
 	var result []*pf.SpBrowserSsoAttribute
 	for _, v := range in {

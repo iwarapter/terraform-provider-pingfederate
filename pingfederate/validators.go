@@ -66,3 +66,14 @@ func validateTokenSigningAlgorithm(value interface{}, _ cty.Path) diag.Diagnosti
 	}
 	return diag.Errorf("must be either 'NONE' or 'HS256' or 'HS384' or 'HS512' or 'RS256' or 'RS384' or 'RS512' or 'ES256' or 'ES384' or 'ES512' or 'PS256' or 'PS384' or 'PS512' not %s", v)
 }
+
+func validateCryptoProvider(value interface{}, _ cty.Path) diag.Diagnostics {
+	v := value.(string)
+	switch v {
+	case
+		"LOCAL",
+		"HSM":
+		return nil
+	}
+	return diag.Errorf("must be either 'LOCAL' or 'HSM' not %s", v)
+}

@@ -41,16 +41,6 @@ func setOfString() *schema.Schema {
 	}
 }
 
-func requiredSetOfString() *schema.Schema {
-	return &schema.Schema{
-		Type:     schema.TypeList,
-		Required: true,
-		Elem: &schema.Schema{
-			Type: schema.TypeString,
-		},
-	}
-}
-
 func resourceAuthenticationPolicyTreeSchema() *schema.Schema {
 	return &schema.Schema{
 		Type:     schema.TypeList,
@@ -1244,22 +1234,6 @@ func resourceX509File() *schema.Resource {
 	}
 }
 
-//ResourceLink - A reference to a resource.
-func resourceResourceLink() *schema.Resource {
-	return &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			"id": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"location": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-		},
-	}
-}
-
 //AdditionalAllowedEntitiesConfiguration - Additional allowed entities or issuers configuration. Currently only used in OIDC IdP (RP) connection.
 func resourceAdditionalAllowedEntitiesConfiguration() *schema.Resource {
 	return &schema.Resource{
@@ -1528,31 +1502,6 @@ func resourceSpAdapterMapping() *schema.Resource {
 	}
 }
 
-//ApiResult - Details on the result of the operation.
-func resourceApiResult() *schema.Resource {
-	return &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			"developer_message": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"message": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"result_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"validation_errors": {
-				Type:     schema.TypeList,
-				Elem:     resourceValidationError(),
-				Optional: true,
-			},
-		},
-	}
-}
-
 //ChangeDetectionSettings - Setting to detect changes to a user or a group.
 func resourceChangeDetectionSettings() *schema.Resource {
 	return &schema.Resource{
@@ -1594,37 +1543,6 @@ func resourceSchema() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-		},
-	}
-}
-
-//BackChannelAuth - The SOAP authentication methods when sending or receiving a message using SOAP back channel.
-func resourceBackChannelAuth() *schema.Resource {
-	return &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			"digital_signature": {
-				Type:     schema.TypeBool,
-				Optional: true,
-			},
-			"http_basic_credentials": {
-				Type:     schema.TypeList,
-				Elem:     resourceUsernamePasswordCredentials(),
-				Optional: true,
-			},
-			"type": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-		},
-	}
-}
-
-//DecryptionKeys - Decryption keys used to decrypt message content received from the partner.
-func resourceDecryptionKeys() *schema.Resource {
-	return &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			"primary_key_ref":        resourceRequiredLinkSchema(),
-			"secondary_key_pair_ref": resourceRequiredLinkSchema(),
 		},
 	}
 }
@@ -1695,111 +1613,6 @@ func resourceSaasAttributeMapping() *schema.Resource {
 	}
 }
 
-//IdpConnection - The set of attributes used to configure an IdP connection.
-func resourceIdpConnection() *schema.Resource {
-	return &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			"active": {
-				Type:     schema.TypeBool,
-				Optional: true,
-			},
-			"additional_allowed_entities_configuration": {
-				Type:     schema.TypeList,
-				Elem:     resourceAdditionalAllowedEntitiesConfiguration(),
-				Optional: true,
-			},
-			"attribute_query": {
-				Type:     schema.TypeList,
-				Elem:     resourceIdpAttributeQuery(),
-				Optional: true,
-			},
-			"base_url": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"contact_info": {
-				Type:     schema.TypeList,
-				Elem:     resourceContactInfo(),
-				Optional: true,
-			},
-			"credentials": {
-				Type:     schema.TypeList,
-				Elem:     resourceConnectionCredentials(),
-				Optional: true,
-			},
-			"default_virtual_entity_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"entity_id": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"error_page_msg_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"extended_properties": {
-				Type:     schema.TypeList,
-				Elem:     resourceParameterValues(),
-				Optional: true,
-			},
-			"id": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"idp_browser_sso": {
-				Type:     schema.TypeList,
-				Elem:     resourceIdpBrowserSso(),
-				Optional: true,
-			},
-			"idp_o_auth_grant_attribute_mapping": {
-				Type:     schema.TypeList,
-				Elem:     resourceIdpOAuthGrantAttributeMapping(),
-				Optional: true,
-			},
-			"license_connection_group": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"logging_mode": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"metadata_reload_settings": {
-				Type:     schema.TypeList,
-				Elem:     resourceConnectionMetadataUrl(),
-				Optional: true,
-			},
-			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"oidc_client_credentials": {
-				Type:     schema.TypeList,
-				Elem:     resourceOIDCClientCredentials(),
-				Optional: true,
-			},
-			"type": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"virtual_entity_ids": {
-				Type: schema.TypeList,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-				Optional: true,
-			},
-			"ws_trust": {
-				Type:     schema.TypeList,
-				Elem:     resourceIdpWsTrust(),
-				Optional: true,
-			},
-		},
-	}
-}
-
 //SpAttributeQueryPolicy - The attribute query profile's security policy.
 func resourceSpAttributeQueryPolicy() *schema.Resource {
 	return &schema.Resource{
@@ -1864,26 +1677,14 @@ func resourceSpBrowserSso() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"enabled_profiles": {
-				Type: schema.TypeList,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-				Optional: true,
-			},
+			"enabled_profiles": setOfString(),
 			"encryption_policy": {
 				Type: schema.TypeList,
 				Elem: resourceEncryptionPolicy(),
 				//Required: true,
 				Optional: true,
 			},
-			"incoming_bindings": {
-				Type: schema.TypeList,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-				Optional: true,
-			},
+			"incoming_bindings": setOfString(),
 			"message_customizations": {
 				Type:     schema.TypeList,
 				Elem:     resourceProtocolMessageCustomization(),
@@ -2032,18 +1833,6 @@ func resourceDecryptionPolicy() *schema.Resource {
 			"subject_name_id_encrypted": {
 				Type:     schema.TypeBool,
 				Optional: true,
-			},
-		},
-	}
-}
-
-//SpAdapterAttribute - An attribute for the SP adapter attribute contract.
-func resourceSpAdapterAttribute() *schema.Resource {
-	return &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			"name": {
-				Type:     schema.TypeString,
-				Required: true,
 			},
 		},
 	}
@@ -2581,89 +2370,13 @@ func resourceOutboundBackChannelAuth() *schema.Resource {
 				Elem:     resourceUsernamePasswordCredentials(),
 				Optional: true,
 			},
-			"ssl_auth_key_pair_ref": resourceRequiredLinkSchema(),
+			"ssl_auth_key_pair_ref": resourceLinkSchema(),
 			"type": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"validate_partner_cert": {
 				Type:     schema.TypeBool,
-				Optional: true,
-			},
-		},
-	}
-}
-
-//Connection - Settings shared by SP-side and IdP-side connections.
-func resourceConnection() *schema.Resource {
-	return &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			"active": {
-				Type:     schema.TypeBool,
-				Optional: true,
-			},
-			"additional_allowed_entities_configuration": {
-				Type:     schema.TypeList,
-				Elem:     resourceAdditionalAllowedEntitiesConfiguration(),
-				Optional: true,
-			},
-			"base_url": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"contact_info": {
-				Type:     schema.TypeList,
-				Elem:     resourceContactInfo(),
-				Optional: true,
-			},
-			"credentials": {
-				Type:     schema.TypeList,
-				Elem:     resourceConnectionCredentials(),
-				Optional: true,
-			},
-			"default_virtual_entity_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"entity_id": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"extended_properties": {
-				Type:     schema.TypeList,
-				Elem:     resourceParameterValues(),
-				Optional: true,
-			},
-			"id": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"license_connection_group": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"logging_mode": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"metadata_reload_settings": {
-				Type:     schema.TypeList,
-				Elem:     resourceConnectionMetadataUrl(),
-				Optional: true,
-			},
-			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"type": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"virtual_entity_ids": {
-				Type: schema.TypeList,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
 				Optional: true,
 			},
 		},
@@ -2971,32 +2684,6 @@ func resourceSsoOAuthMapping() *schema.Resource {
 	}
 }
 
-//AttributeSource - The configured settings to look up attributes from an associated data store.
-func resourceAttributeSource() *schema.Resource {
-	return &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			"attribute_contract_fulfillment": {
-				Type:     schema.TypeSet,
-				Elem:     resourceAttributeFulfillmentValue(),
-				Optional: true,
-			},
-			"data_store_ref": resourceRequiredLinkSchema(),
-			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"id": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"type": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-		},
-	}
-}
-
 //IdpTokenProcessorMapping - The IdP Token Processor Mapping.
 func resourceIdpTokenProcessorMapping() *schema.Resource {
 	return &schema.Resource{
@@ -3130,42 +2817,6 @@ func resourceSpAdapter() *schema.Resource {
 			"target_application_info": {
 				Type:     schema.TypeList,
 				Elem:     resourceSpAdapterTargetApplicationInfo(),
-				Optional: true,
-			},
-		},
-	}
-}
-
-//BinaryLdapAttributeSettings - Binary settings for a LDAP attribute.
-func resourceBinaryLdapAttributeSettings() *schema.Resource {
-	return &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			"binary_encoding": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-		},
-	}
-}
-
-//ValidationError - A data input validation error.
-func resourceValidationError() *schema.Resource {
-	return &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			"developer_message": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"error_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"field_path": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"message": {
-				Type:     schema.TypeString,
 				Optional: true,
 			},
 		},

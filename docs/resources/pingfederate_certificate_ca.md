@@ -43,6 +43,6 @@ In addition to all arguments above, the following attributes are exported:
 
 Certificate CA can be imported using the id, e.g.
 
-```bash
-$ terraform import pingfederate_certificates_ca.demo 123
+```
+terraform import pingfederate_certificates_ca.demo 123
 ```

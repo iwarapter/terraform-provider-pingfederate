@@ -184,7 +184,7 @@ func resourcePingFederateIdpAdapterResourceReadData(d *schema.ResourceData) *pf.
 		Configuration:       expandPluginConfiguration(d.Get("configuration").([]interface{})),
 	}
 
-	if v, ok := d.GetOk("parent_ref"); ok {
+	if v, ok := d.GetOk("parent_ref"); ok && len(v.([]interface{})) > 0 {
 		validator.ParentRef = expandResourceLink(v.([]interface{})[0].(map[string]interface{}))
 	}
 	if v, ok := d.GetOk("authn_ctx_class_ref"); ok {

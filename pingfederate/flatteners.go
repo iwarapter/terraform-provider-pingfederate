@@ -1014,8 +1014,7 @@ func flattenFederationInfo(in *pf.FederationInfo) []map[string]interface{} {
 	return m
 }
 
-func flattenIdpWsTrustAttribute(in *pf.IdpWsTrustAttribute) []map[string]interface{} {
-	m := make([]map[string]interface{}, 0, 1)
+func flattenIdpWsTrustAttribute(in *pf.IdpWsTrustAttribute) map[string]interface{} {
 	s := make(map[string]interface{})
 	if in.Name != nil {
 		s["name"] = *in.Name
@@ -1023,7 +1022,7 @@ func flattenIdpWsTrustAttribute(in *pf.IdpWsTrustAttribute) []map[string]interfa
 	if in.Masked != nil {
 		s["masked"] = *in.Masked
 	}
-	return append(m, s)
+	return s
 }
 
 func flattenSpWsTrustAttributeContract(in *pf.SpWsTrustAttributeContract) []map[string]interface{} {
@@ -1051,20 +1050,7 @@ func flattenIdpAttributeQuery(in *pf.IdpAttributeQuery) []map[string]interface{}
 	}
 	return append(m, s)
 }
-func flattenBackChannelAuth(in *pf.BackChannelAuth) []map[string]interface{} {
-	m := make([]map[string]interface{}, 0, 1)
-	s := make(map[string]interface{})
-	if in.Type != nil {
-		s["type"] = *in.Type
-	}
-	if in.HttpBasicCredentials != nil {
-		s["http_basic_credentials"] = flattenUsernamePasswordCredentials(in.HttpBasicCredentials)
-	}
-	if in.DigitalSignature != nil {
-		s["digital_signature"] = *in.DigitalSignature
-	}
-	return append(m, s)
-}
+
 func flattenChannelSourceLocation(in *pf.ChannelSourceLocation) []map[string]interface{} {
 	m := make([]map[string]interface{}, 0, 1)
 	s := make(map[string]interface{})
@@ -1129,59 +1115,7 @@ func flattenIdpAdapterAssertionMapping(in *pf.IdpAdapterAssertionMapping) map[st
 	return s
 }
 
-func flattenConnection(in *pf.Connection) []map[string]interface{} {
-	m := make([]map[string]interface{}, 0, 1)
-	s := make(map[string]interface{})
-	if in.EntityId != nil {
-		s["entity_id"] = *in.EntityId
-	}
-	if in.BaseUrl != nil {
-		s["base_url"] = *in.BaseUrl
-	}
-	if in.VirtualEntityIds != nil {
-		s["virtual_entity_ids"] = *in.VirtualEntityIds
-	}
-	if in.LoggingMode != nil {
-		s["logging_mode"] = *in.LoggingMode
-	}
-	if in.ExtendedProperties != nil {
-		s["extended_properties"] = flattenMapOfParameterValues(in.ExtendedProperties)
-	}
-	if in.Name != nil {
-		s["name"] = *in.Name
-	}
-	if in.Active != nil {
-		s["active"] = *in.Active
-	}
-	if in.MetadataReloadSettings != nil {
-		s["metadata_reload_settings"] = flattenConnectionMetadataUrl(in.MetadataReloadSettings)
-	}
-	if in.Credentials != nil {
-		s["credentials"] = flattenConnectionCredentials(in.Credentials)
-	}
-	if in.ContactInfo != nil {
-		s["contact_info"] = flattenContactInfo(in.ContactInfo)
-	}
-	if in.Id != nil {
-		s["id"] = *in.Id
-	}
-	if in.LicenseConnectionGroup != nil {
-		s["license_connection_group"] = *in.LicenseConnectionGroup
-	}
-	if in.Type != nil {
-		s["type"] = *in.Type
-	}
-	if in.DefaultVirtualEntityId != nil {
-		s["default_virtual_entity_id"] = *in.DefaultVirtualEntityId
-	}
-	if in.AdditionalAllowedEntitiesConfiguration != nil {
-		s["additional_allowed_entities_configuration"] = flattenAdditionalAllowedEntitiesConfiguration(in.AdditionalAllowedEntitiesConfiguration)
-	}
-	return append(m, s)
-}
-
-func flattenOIDCRequestParameter(in *pf.OIDCRequestParameter) []map[string]interface{} {
-	m := make([]map[string]interface{}, 0, 1)
+func flattenOIDCRequestParameter(in *pf.OIDCRequestParameter) map[string]interface{} {
 	s := make(map[string]interface{})
 	if in.Name != nil {
 		s["name"] = *in.Name
@@ -1192,7 +1126,7 @@ func flattenOIDCRequestParameter(in *pf.OIDCRequestParameter) []map[string]inter
 	if in.ApplicationEndpointOverride != nil {
 		s["application_endpoint_override"] = *in.ApplicationEndpointOverride
 	}
-	return append(m, s)
+	return s
 }
 func flattenConnectionCredentials(in *pf.ConnectionCredentials) []map[string]interface{} {
 	m := make([]map[string]interface{}, 0, 1)
@@ -1297,8 +1231,7 @@ func flattenSpBrowserSso(in *pf.SpBrowserSso) []map[string]interface{} {
 	}
 	return append(m, s)
 }
-func flattenAttributeQueryNameMapping(in *pf.AttributeQueryNameMapping) []map[string]interface{} {
-	m := make([]map[string]interface{}, 0, 1)
+func flattenAttributeQueryNameMapping(in *pf.AttributeQueryNameMapping) map[string]interface{} {
 	s := make(map[string]interface{})
 	if in.LocalName != nil {
 		s["local_name"] = *in.LocalName
@@ -1306,7 +1239,7 @@ func flattenAttributeQueryNameMapping(in *pf.AttributeQueryNameMapping) []map[st
 	if in.RemoteName != nil {
 		s["remote_name"] = *in.RemoteName
 	}
-	return append(m, s)
+	return s
 }
 func flattenSchema(in *pf.Schema) []map[string]interface{} {
 	m := make([]map[string]interface{}, 0, 1)
@@ -1378,25 +1311,8 @@ func flattenIdpOAuthGrantAttributeMapping(in *pf.IdpOAuthGrantAttributeMapping) 
 	}
 	return append(m, s)
 }
-func flattenApiResult(in *pf.ApiResult) []map[string]interface{} {
-	m := make([]map[string]interface{}, 0, 1)
-	s := make(map[string]interface{})
-	if in.ResultId != nil {
-		s["result_id"] = *in.ResultId
-	}
-	if in.Message != nil {
-		s["message"] = *in.Message
-	}
-	if in.DeveloperMessage != nil {
-		s["developer_message"] = *in.DeveloperMessage
-	}
-	if in.ValidationErrors != nil {
-		s["validation_errors"] = flattenValidationErrors(in.ValidationErrors)
-	}
-	return append(m, s)
-}
-func flattenIdpSsoServiceEndpoint(in *pf.IdpSsoServiceEndpoint) []map[string]interface{} {
-	m := make([]map[string]interface{}, 0, 1)
+
+func flattenIdpSsoServiceEndpoint(in *pf.IdpSsoServiceEndpoint) map[string]interface{} {
 	s := make(map[string]interface{})
 	if in.Binding != nil {
 		s["binding"] = *in.Binding
@@ -1404,19 +1320,9 @@ func flattenIdpSsoServiceEndpoint(in *pf.IdpSsoServiceEndpoint) []map[string]int
 	if in.Url != nil {
 		s["url"] = *in.Url
 	}
-	return append(m, s)
+	return s
 }
-func flattenDecryptionKeys(in *pf.DecryptionKeys) []map[string]interface{} {
-	m := make([]map[string]interface{}, 0, 1)
-	s := make(map[string]interface{})
-	if in.PrimaryKeyRef != nil {
-		s["primary_key_ref"] = flattenResourceLink(in.PrimaryKeyRef)
-	}
-	if in.SecondaryKeyPairRef != nil {
-		s["secondary_key_pair_ref"] = flattenResourceLink(in.SecondaryKeyPairRef)
-	}
-	return append(m, s)
-}
+
 func flattenSloServiceEndpoint(in *pf.SloServiceEndpoint) map[string]interface{} {
 	s := make(map[string]interface{})
 	if in.Binding != nil {
@@ -1608,8 +1514,7 @@ func flattenChannelSource(in *pf.ChannelSource) []map[string]interface{} {
 	}
 	return append(m, s)
 }
-func flattenSpTokenGeneratorMapping(in *pf.SpTokenGeneratorMapping) []map[string]interface{} {
-	m := make([]map[string]interface{}, 0, 1)
+func flattenSpTokenGeneratorMapping(in *pf.SpTokenGeneratorMapping) map[string]interface{} {
 	s := make(map[string]interface{})
 	if in.IssuanceCriteria != nil && issuanceCriteriaShouldFlatten(in.IssuanceCriteria) {
 		s["issuance_criteria"] = flattenIssuanceCriteria(in.IssuanceCriteria)
@@ -1650,7 +1555,7 @@ func flattenSpTokenGeneratorMapping(in *pf.SpTokenGeneratorMapping) []map[string
 	if in.AttributeContractFulfillment != nil {
 		s["attribute_contract_fulfillment"] = flattenMapOfAttributeFulfillmentValue(in.AttributeContractFulfillment)
 	}
-	return append(m, s)
+	return s
 }
 
 func flattenIdpAttributeQueryPolicy(in *pf.IdpAttributeQueryPolicy) []map[string]interface{} {
@@ -1764,14 +1669,7 @@ func flattenContactInfo(in *pf.ContactInfo) []map[string]interface{} {
 	}
 	return append(m, s)
 }
-func flattenBinaryLdapAttributeSettings(in *pf.BinaryLdapAttributeSettings) []map[string]interface{} {
-	m := make([]map[string]interface{}, 0, 1)
-	s := make(map[string]interface{})
-	if in.BinaryEncoding != nil {
-		s["binary_encoding"] = *in.BinaryEncoding
-	}
-	return append(m, s)
-}
+
 func flattenChangeDetectionSettings(in *pf.ChangeDetectionSettings) []map[string]interface{} {
 	m := make([]map[string]interface{}, 0, 1)
 	s := make(map[string]interface{})
@@ -1844,8 +1742,7 @@ func flattenIdpAdapterAttributeContract(in *pf.IdpAdapterAttributeContract) []ma
 	}
 	return append(m, s)
 }
-func flattenSpAdapterMapping(in *pf.SpAdapterMapping) []map[string]interface{} {
-	m := make([]map[string]interface{}, 0, 1)
+func flattenSpAdapterMapping(in *pf.SpAdapterMapping) map[string]interface{} {
 	s := make(map[string]interface{})
 	if in.AttributeContractFulfillment != nil {
 		s["attribute_contract_fulfillment"] = flattenMapOfAttributeFulfillmentValue(in.AttributeContractFulfillment)
@@ -1889,7 +1786,7 @@ func flattenSpAdapterMapping(in *pf.SpAdapterMapping) []map[string]interface{} {
 			s["custom_attribute_source"] = customAttributes
 		}
 	}
-	return append(m, s)
+	return s
 }
 func flattenOIDCClientCredentials(in *pf.OIDCClientCredentials) []map[string]interface{} {
 	m := make([]map[string]interface{}, 0, 1)
@@ -1947,74 +1844,6 @@ func flattenEncryptionPolicy(in *pf.EncryptionPolicy) []map[string]interface{} {
 	}
 	return append(m, s)
 }
-func flattenIdpConnection(in *pf.IdpConnection) []map[string]interface{} {
-	m := make([]map[string]interface{}, 0, 1)
-	s := make(map[string]interface{})
-	if in.EntityId != nil {
-		s["entity_id"] = *in.EntityId
-	}
-	if in.IdpOAuthGrantAttributeMapping != nil {
-		s["idp_o_auth_grant_attribute_mapping"] = flattenIdpOAuthGrantAttributeMapping(in.IdpOAuthGrantAttributeMapping)
-	}
-	if in.WsTrust != nil {
-		s["ws_trust"] = flattenIdpWsTrust(in.WsTrust)
-	}
-	if in.Credentials != nil {
-		s["credentials"] = flattenConnectionCredentials(in.Credentials)
-	}
-	if in.ContactInfo != nil {
-		s["contact_info"] = flattenContactInfo(in.ContactInfo)
-	}
-	if in.ErrorPageMsgId != nil {
-		s["error_page_msg_id"] = *in.ErrorPageMsgId
-	}
-	if in.Id != nil {
-		s["id"] = *in.Id
-	}
-	if in.LoggingMode != nil {
-		s["logging_mode"] = *in.LoggingMode
-	}
-	if in.AdditionalAllowedEntitiesConfiguration != nil {
-		s["additional_allowed_entities_configuration"] = flattenAdditionalAllowedEntitiesConfiguration(in.AdditionalAllowedEntitiesConfiguration)
-	}
-	if in.ExtendedProperties != nil {
-		s["extended_properties"] = flattenMapOfParameterValues(in.ExtendedProperties)
-	}
-	if in.Active != nil {
-		s["active"] = *in.Active
-	}
-	if in.DefaultVirtualEntityId != nil {
-		s["default_virtual_entity_id"] = *in.DefaultVirtualEntityId
-	}
-	if in.OidcClientCredentials != nil {
-		s["oidc_client_credentials"] = flattenOIDCClientCredentials(in.OidcClientCredentials)
-	}
-	if in.AttributeQuery != nil {
-		s["attribute_query"] = flattenIdpAttributeQuery(in.AttributeQuery)
-	}
-	if in.VirtualEntityIds != nil {
-		s["virtual_entity_ids"] = *in.VirtualEntityIds
-	}
-	if in.MetadataReloadSettings != nil {
-		s["metadata_reload_settings"] = flattenConnectionMetadataUrl(in.MetadataReloadSettings)
-	}
-	if in.LicenseConnectionGroup != nil {
-		s["license_connection_group"] = *in.LicenseConnectionGroup
-	}
-	if in.Type != nil {
-		s["type"] = *in.Type
-	}
-	if in.Name != nil {
-		s["name"] = *in.Name
-	}
-	if in.BaseUrl != nil {
-		s["base_url"] = *in.BaseUrl
-	}
-	if in.IdpBrowserSso != nil {
-		s["idp_browser_sso"] = flattenIdpBrowserSso(in.IdpBrowserSso)
-	}
-	return append(m, s)
-}
 
 func flattenIdpWsTrust(in *pf.IdpWsTrust) []map[string]interface{} {
 	m := make([]map[string]interface{}, 0, 1)
@@ -2046,74 +1875,6 @@ func flattenSpSsoServiceEndpoint(in *pf.SpSsoServiceEndpoint) map[string]interfa
 	}
 	return s
 }
-func flattenSpConnection(in *pf.SpConnection) []map[string]interface{} {
-	m := make([]map[string]interface{}, 0, 1)
-	s := make(map[string]interface{})
-	if in.ContactInfo != nil {
-		s["contact_info"] = flattenContactInfo(in.ContactInfo)
-	}
-	if in.OutboundProvision != nil {
-		s["outbound_provision"] = flattenOutboundProvision(in.OutboundProvision)
-	}
-	if in.Type != nil {
-		s["type"] = *in.Type
-	}
-	if in.EntityId != nil {
-		s["entity_id"] = *in.EntityId
-	}
-	if in.DefaultVirtualEntityId != nil {
-		s["default_virtual_entity_id"] = *in.DefaultVirtualEntityId
-	}
-	if in.WsTrust != nil {
-		s["ws_trust"] = flattenSpWsTrust(in.WsTrust)
-	}
-	if in.LicenseConnectionGroup != nil {
-		s["license_connection_group"] = *in.LicenseConnectionGroup
-	}
-	if in.AdditionalAllowedEntitiesConfiguration != nil {
-		s["additional_allowed_entities_configuration"] = flattenAdditionalAllowedEntitiesConfiguration(in.AdditionalAllowedEntitiesConfiguration)
-	}
-	if in.ExtendedProperties != nil {
-		s["extended_properties"] = flattenMapOfParameterValues(in.ExtendedProperties)
-	}
-	if in.Name != nil {
-		s["name"] = *in.Name
-	}
-	if in.Active != nil {
-		s["active"] = *in.Active
-	}
-	if in.SpBrowserSso != nil {
-		s["sp_browser_sso"] = flattenSpBrowserSso(in.SpBrowserSso)
-	}
-	if in.AttributeQuery != nil {
-		s["attribute_query"] = flattenSpAttributeQuery(in.AttributeQuery)
-	}
-	if in.MetadataReloadSettings != nil {
-		s["metadata_reload_settings"] = flattenConnectionMetadataUrl(in.MetadataReloadSettings)
-	}
-	if in.Credentials != nil {
-		s["credentials"] = flattenConnectionCredentials(in.Credentials)
-	}
-	if in.ApplicationName != nil {
-		s["application_name"] = *in.ApplicationName
-	}
-	if in.Id != nil {
-		s["id"] = *in.Id
-	}
-	if in.BaseUrl != nil {
-		s["base_url"] = *in.BaseUrl
-	}
-	if in.LoggingMode != nil {
-		s["logging_mode"] = *in.LoggingMode
-	}
-	if in.VirtualEntityIds != nil {
-		s["virtual_entity_ids"] = *in.VirtualEntityIds
-	}
-	if in.ApplicationIconUrl != nil {
-		s["application_icon_url"] = *in.ApplicationIconUrl
-	}
-	return append(m, s)
-}
 
 func flattenInboundBackChannelAuth(in *pf.InboundBackChannelAuth) []map[string]interface{} {
 	m := make([]map[string]interface{}, 0, 1)
@@ -2138,26 +1899,6 @@ func flattenInboundBackChannelAuth(in *pf.InboundBackChannelAuth) []map[string]i
 	}
 	if in.Certs != nil {
 		s["certs"] = flattenConnectionCerts(in.Certs)
-	}
-	return append(m, s)
-}
-func flattenAttributeSource(in *pf.AttributeSource) []map[string]interface{} {
-	m := make([]map[string]interface{}, 0, 1)
-	s := make(map[string]interface{})
-	if in.Type != nil {
-		s["type"] = *in.Type
-	}
-	if in.DataStoreRef != nil {
-		s["data_store_ref"] = flattenResourceLink(in.DataStoreRef)
-	}
-	if in.Id != nil {
-		s["id"] = *in.Id
-	}
-	if in.Description != nil {
-		s["description"] = *in.Description
-	}
-	if in.AttributeContractFulfillment != nil {
-		s["attribute_contract_fulfillment"] = flattenMapOfAttributeFulfillmentValue(in.AttributeContractFulfillment)
 	}
 	return append(m, s)
 }
@@ -2351,8 +2092,7 @@ func flattenChannel(in *pf.Channel) map[string]interface{} {
 	}
 	return s
 }
-func flattenIdpBrowserSsoAttribute(in *pf.IdpBrowserSsoAttribute) []map[string]interface{} {
-	m := make([]map[string]interface{}, 0, 1)
+func flattenIdpBrowserSsoAttribute(in *pf.IdpBrowserSsoAttribute) map[string]interface{} {
 	s := make(map[string]interface{})
 	if in.Masked != nil {
 		s["masked"] = *in.Masked
@@ -2360,7 +2100,7 @@ func flattenIdpBrowserSsoAttribute(in *pf.IdpBrowserSsoAttribute) []map[string]i
 	if in.Name != nil {
 		s["name"] = *in.Name
 	}
-	return append(m, s)
+	return s
 }
 func flattenAccountManagementSettings(in *pf.AccountManagementSettings) []map[string]interface{} {
 	m := make([]map[string]interface{}, 0, 1)
@@ -2438,8 +2178,7 @@ func flattenSpWsTrust(in *pf.SpWsTrust) []map[string]interface{} {
 	return append(m, s)
 }
 
-func flattenAuthnContextMapping(in *pf.AuthnContextMapping) []map[string]interface{} {
-	m := make([]map[string]interface{}, 0, 1)
+func flattenAuthnContextMapping(in *pf.AuthnContextMapping) map[string]interface{} {
 	s := make(map[string]interface{})
 	if in.Local != nil {
 		s["local"] = *in.Local
@@ -2447,7 +2186,7 @@ func flattenAuthnContextMapping(in *pf.AuthnContextMapping) []map[string]interfa
 	if in.Remote != nil {
 		s["remote"] = *in.Remote
 	}
-	return append(m, s)
+	return s
 }
 func flattenSaasAttributeMapping(in *pf.SaasAttributeMapping) map[string]interface{} {
 	s := make(map[string]interface{})
@@ -2589,23 +2328,6 @@ func flattenEntity(in *pf.Entity) map[string]interface{} {
 	return s
 }
 
-func flattenValidationError(in *pf.ValidationError) []map[string]interface{} {
-	m := make([]map[string]interface{}, 0, 1)
-	s := make(map[string]interface{})
-	if in.ErrorId != nil {
-		s["error_id"] = *in.ErrorId
-	}
-	if in.Message != nil {
-		s["message"] = *in.Message
-	}
-	if in.DeveloperMessage != nil {
-		s["developer_message"] = *in.DeveloperMessage
-	}
-	if in.FieldPath != nil {
-		s["field_path"] = *in.FieldPath
-	}
-	return append(m, s)
-}
 func flattenIdpTokenProcessorMapping(in *pf.IdpTokenProcessorMapping) map[string]interface{} {
 	s := make(map[string]interface{})
 	if in.IssuanceCriteria != nil && issuanceCriteriaShouldFlatten(in.IssuanceCriteria) {
@@ -2721,8 +2443,7 @@ func flattenOutboundBackChannelAuth(in *pf.OutboundBackChannelAuth) []map[string
 	return append(m, s)
 }
 
-func flattenAuthenticationPolicyContractMapping(in *pf.AuthenticationPolicyContractMapping) []map[string]interface{} {
-	m := make([]map[string]interface{}, 0, 1)
+func flattenAuthenticationPolicyContractMapping(in *pf.AuthenticationPolicyContractMapping) map[string]interface{} {
 	s := make(map[string]interface{})
 	if in.AuthenticationPolicyContractRef != nil {
 		s["authentication_policy_contract_ref"] = flattenResourceLink(in.AuthenticationPolicyContractRef)
@@ -2763,10 +2484,9 @@ func flattenAuthenticationPolicyContractMapping(in *pf.AuthenticationPolicyContr
 	if in.IssuanceCriteria != nil && issuanceCriteriaShouldFlatten(in.IssuanceCriteria) {
 		s["issuance_criteria"] = flattenIssuanceCriteria(in.IssuanceCriteria)
 	}
-	return append(m, s)
+	return s
 }
-func flattenAccessTokenManagerMapping(in *pf.AccessTokenManagerMapping) []map[string]interface{} {
-	m := make([]map[string]interface{}, 0, 1)
+func flattenAccessTokenManagerMapping(in *pf.AccessTokenManagerMapping) map[string]interface{} {
 	s := make(map[string]interface{})
 	if in.AttributeContractFulfillment != nil {
 		s["attribute_contract_fulfillment"] = flattenMapOfAttributeFulfillmentValue(in.AttributeContractFulfillment)
@@ -2801,7 +2521,7 @@ func flattenAccessTokenManagerMapping(in *pf.AccessTokenManagerMapping) []map[st
 			s["custom_attribute_source"] = customAttributes
 		}
 	}
-	return append(m, s)
+	return s
 }
 func flattenConnectionCerts(in *[]*pf.ConnectionCert) []interface{} {
 	m := make([]interface{}, 0, len(*in))
@@ -2888,13 +2608,7 @@ func flattenOIDCRequestParameters(in *[]*pf.OIDCRequestParameter) []interface{} 
 	}
 	return m
 }
-func flattenSpConnections(in *[]*pf.SpConnection) []interface{} {
-	m := make([]interface{}, 0, len(*in))
-	for _, v := range *in {
-		m = append(m, flattenSpConnection(v))
-	}
-	return m
-}
+
 func flattenAttributeQueryNameMappings(in *[]*pf.AttributeQueryNameMapping) []interface{} {
 	m := make([]interface{}, 0, len(*in))
 	for _, v := range *in {
@@ -2938,43 +2652,6 @@ func flattenConditionalIssuanceCriteriaEntrys(in *[]*pf.ConditionalIssuanceCrite
 	return m
 }
 
-//func flattenSpAdapterAttributes(in *[]*pf.SpAdapterAttribute) []interface{} {
-//	m := make([]interface{}, 0, len(*in))
-//	for _, v := range *in {
-//		m = append(m, flattenSpAdapterAttribute(v))
-//	}
-//	return m
-//}
-func flattenAttributeSources(in *[]*pf.AttributeSource) []map[string]interface{} {
-	//m := make([]interface{}, 0, len(*in))
-	m := make([]map[string]interface{}, 0, 1)
-	s := make(map[string]interface{})
-	var ldapAttributes []interface{}
-	var jdbcAttributes []interface{}
-	var customAttributes []interface{}
-	for _, v := range *in {
-		switch *v.Type {
-		case "LDAP":
-			ldapAttributes = append(ldapAttributes, flattenLdapAttributeSource(v))
-		case "JDBC":
-			jdbcAttributes = append(jdbcAttributes, flattenJdbcAttributeSource(v))
-		case "CUSTOM":
-			customAttributes = append(customAttributes, flattenCustomAttributeSource(v))
-		}
-
-		//m = append(m, flattenAttributeSource(v))
-	}
-	if len(ldapAttributes) > 0 {
-		s["ldap_attribute_source"] = ldapAttributes
-	}
-	if len(jdbcAttributes) > 0 {
-		s["jdbc_attribute_source"] = jdbcAttributes
-	}
-	if len(customAttributes) > 0 {
-		s["custom_attribute_source"] = customAttributes
-	}
-	return m
-}
 func flattenLdapAttributeSources(in *[]*pf.AttributeSource) []interface{} {
 	var m []interface{}
 	for _, v := range *in {
@@ -3062,13 +2739,7 @@ func flattenAccessTokenManagerMappings(in *[]*pf.AccessTokenManagerMapping) []in
 	}
 	return m
 }
-func flattenValidationErrors(in *[]*pf.ValidationError) []interface{} {
-	m := make([]interface{}, 0, len(*in))
-	for _, v := range *in {
-		m = append(m, flattenValidationError(v))
-	}
-	return m
-}
+
 func flattenSpAdapterMappings(in *[]*pf.SpAdapterMapping) []interface{} {
 	m := make([]interface{}, 0, len(*in))
 	for _, v := range *in {
