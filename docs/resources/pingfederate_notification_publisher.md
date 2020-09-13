@@ -1,4 +1,4 @@
-#Resource: pingfederate_notification_publisher
+# Resource: pingfederate_notification_publisher
 
 Provides a notification publisher.
 
@@ -136,6 +136,6 @@ In addition to all arguments above, the following attributes are exported:
 
 Notification Publisher can be imported using the id, e.g.
 
-```bash
-$ terraform import pingfederate_notification_publisher.demo 123
+```
+terraform import pingfederate_notification_publisher.demo 123
 ```

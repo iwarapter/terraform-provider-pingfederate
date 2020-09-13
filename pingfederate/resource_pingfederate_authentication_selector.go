@@ -147,7 +147,7 @@ func resourcePingFederateAuthenticationSelectorResourceReadData(d *schema.Resour
 	selector := &pf.AuthenticationSelector{
 		Name:                String(d.Get("name").(string)),
 		Id:                  String(d.Get("name").(string)),
-		PluginDescriptorRef: expandResourceLink(d.Get("plugin_descriptor_ref").([]interface{})),
+		PluginDescriptorRef: expandResourceLink(d.Get("plugin_descriptor_ref").([]interface{})[0].(map[string]interface{})),
 		Configuration:       expandPluginConfiguration(d.Get("configuration").([]interface{})),
 	}
 

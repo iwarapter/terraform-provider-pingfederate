@@ -93,7 +93,7 @@ func resourcePingFederateIdpAdapterResourceCreate(_ context.Context, d *schema.R
 		return diag.Errorf("unable to create IdpAdapters: %s", err)
 	}
 	d.SetId(*result.Id)
-	return resourcePingFederateIdpAdapterResourceReadResult(d, result)
+	return resourcePingFederateIdpAdapterResourceReadResult(d, result, svc)
 }
 
 func resourcePingFederateIdpAdapterResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -105,7 +105,7 @@ func resourcePingFederateIdpAdapterResourceRead(_ context.Context, d *schema.Res
 	if err != nil {
 		return diag.Errorf("unable to read IdpAdapters: %s", err)
 	}
-	return resourcePingFederateIdpAdapterResourceReadResult(d, result)
+	return resourcePingFederateIdpAdapterResourceReadResult(d, result, svc)
 }
 
 func resourcePingFederateIdpAdapterResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -120,7 +120,7 @@ func resourcePingFederateIdpAdapterResourceUpdate(_ context.Context, d *schema.R
 		return diag.Errorf("unable to update IdpAdapters: %s", err)
 	}
 
-	return resourcePingFederateIdpAdapterResourceReadResult(d, result)
+	return resourcePingFederateIdpAdapterResourceReadResult(d, result, svc)
 }
 
 func resourcePingFederateIdpAdapterResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -135,7 +135,11 @@ func resourcePingFederateIdpAdapterResourceDelete(_ context.Context, d *schema.R
 	return nil
 }
 
-func resourcePingFederateIdpAdapterResourceReadResult(d *schema.ResourceData, rv *pf.IdpAdapter) diag.Diagnostics {
+func resourcePingFederateIdpAdapterResourceReadResult(d *schema.ResourceData, rv *pf.IdpAdapter, svc idpAdapters.IdpAdaptersAPI) diag.Diagnostics {
+	desc, _, err := svc.GetIdpAdapterDescriptorsById(&idpAdapters.GetIdpAdapterDescriptorsByIdInput{Id: *rv.PluginDescriptorRef.Id})
+	if err != nil {
+		return diag.Errorf("unable to retrieve IdpAdapters descriptor: %s", err)
+	}
 	var diags diag.Diagnostics
 	setResourceDataStringWithDiagnostic(d, "name", rv.Name, &diags)
 	setResourceDataStringWithDiagnostic(d, "authn_ctx_class_ref", rv.AuthnCtxClassRef, &diags)
@@ -152,7 +156,9 @@ func resourcePingFederateIdpAdapterResourceReadResult(d *schema.ResourceData, rv
 	}
 
 	if rv.Configuration != nil {
-		if err := d.Set("configuration", flattenPluginConfiguration(rv.Configuration)); err != nil {
+		orig := expandPluginConfiguration(d.Get("configuration").([]interface{}))
+
+		if err = d.Set("configuration", maskPluginConfigurationFromDescriptor(desc.ConfigDescriptor, orig, rv.Configuration)); err != nil {
 			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
@@ -174,21 +180,21 @@ func resourcePingFederateIdpAdapterResourceReadResult(d *schema.ResourceData, rv
 func resourcePingFederateIdpAdapterResourceReadData(d *schema.ResourceData) *pf.IdpAdapter {
 	validator := &pf.IdpAdapter{
 		Name:                String(d.Get("name").(string)),
-		PluginDescriptorRef: expandResourceLink(d.Get("plugin_descriptor_ref").([]interface{})),
+		PluginDescriptorRef: expandResourceLink(d.Get("plugin_descriptor_ref").([]interface{})[0].(map[string]interface{})),
 		Configuration:       expandPluginConfiguration(d.Get("configuration").([]interface{})),
 	}
 
-	if v, ok := d.GetOk("parent_ref"); ok {
-		validator.ParentRef = expandResourceLink(v.([]interface{}))
+	if v, ok := d.GetOk("parent_ref"); ok && len(v.([]interface{})) > 0 {
+		validator.ParentRef = expandResourceLink(v.([]interface{})[0].(map[string]interface{}))
 	}
 	if v, ok := d.GetOk("authn_ctx_class_ref"); ok {
 		validator.AuthnCtxClassRef = String(v.(string))
 	}
-	if v, ok := d.GetOk("attribute_contract"); ok {
-		validator.AttributeContract = expandIdpAdapterAttributeContract(v.([]interface{}))
+	if v, ok := d.GetOk("attribute_contract"); ok && len(v.([]interface{})) > 0 {
+		validator.AttributeContract = expandIdpAdapterAttributeContract(v.([]interface{})[0].(map[string]interface{}))
 	}
-	if v, ok := d.GetOk("attribute_mapping"); ok {
-		validator.AttributeMapping = expandIdpAdapterContractMapping(v.([]interface{}))
+	if v, ok := d.GetOk("attribute_mapping"); ok && len(v.([]interface{})) > 0 {
+		validator.AttributeMapping = expandIdpAdapterContractMapping(v.([]interface{})[0].(map[string]interface{}))
 	}
 
 	return validator

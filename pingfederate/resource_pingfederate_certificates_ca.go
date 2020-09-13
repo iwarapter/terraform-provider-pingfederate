@@ -36,9 +36,10 @@ func resourcePingFederateCertificatesCaResourceSchema() map[string]*schema.Schem
 			ForceNew: true,
 		},
 		"crypto_provider": {
-			Type:     schema.TypeString,
-			Optional: true,
-			ForceNew: true,
+			Type:             schema.TypeString,
+			Optional:         true,
+			ForceNew:         true,
+			ValidateDiagFunc: validateCryptoProvider,
 		},
 		"expires": {
 			Type:     schema.TypeString,

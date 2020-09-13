@@ -84,6 +84,7 @@ func resourcePingFederateLdapDataStoreResourceSchema() map[string]*schema.Schema
 		"encrypted_password": {
 			Type:     schema.TypeString,
 			Optional: true,
+			Computed: true,
 		},
 		"use_ssl": {
 			Type:     schema.TypeBool,
@@ -261,7 +262,10 @@ func resourcePingFederateLdapDataStoreResourceReadResult(d *schema.ResourceData,
 }
 
 func resourcePingFederateLdapDataStoreResourceReadData(d *schema.ResourceData) *pf.LdapDataStore {
-	ds := &pf.LdapDataStore{}
+	ds := &pf.LdapDataStore{
+		CreateIfNecessary: Bool(d.Get("create_if_necessary").(bool)),
+		VerifyHost:        Bool(d.Get("verify_host").(bool)),
+	}
 	if val, ok := d.GetOk("mask_attribute_values"); ok {
 		ds.MaskAttributeValues = Bool(val.(bool))
 	}
@@ -302,12 +306,6 @@ func resourcePingFederateLdapDataStoreResourceReadData(d *schema.ResourceData) *
 	}
 	if val, ok := d.GetOk("test_on_return"); ok {
 		ds.TestOnReturn = Bool(val.(bool))
-	}
-	if val, ok := d.GetOk("create_if_necessary"); ok {
-		ds.CreateIfNecessary = Bool(val.(bool))
-	}
-	if val, ok := d.GetOk("verify_host"); ok {
-		ds.VerifyHost = Bool(val.(bool))
 	}
 	if val, ok := d.GetOk("min_connections"); ok {
 		ds.MinConnections = Int(val.(int))

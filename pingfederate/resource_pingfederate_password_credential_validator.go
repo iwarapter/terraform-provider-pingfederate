@@ -153,12 +153,12 @@ func resourcePingFederatePasswordCredentialValidatorResourceReadResult(d *schema
 func resourcePingFederatePasswordCredentialValidatorResourceReadData(d *schema.ResourceData) *pf.PasswordCredentialValidator {
 	validator := &pf.PasswordCredentialValidator{
 		Name:                String(d.Get("name").(string)),
-		PluginDescriptorRef: expandResourceLink(d.Get("plugin_descriptor_ref").([]interface{})),
+		PluginDescriptorRef: expandResourceLink(d.Get("plugin_descriptor_ref").([]interface{})[0].(map[string]interface{})),
 		Configuration:       expandPluginConfiguration(d.Get("configuration").([]interface{})),
 	}
 
 	if v, ok := d.GetOk("parent_ref"); ok {
-		validator.ParentRef = expandResourceLink(v.([]interface{}))
+		validator.ParentRef = expandResourceLink(v.(map[string]interface{}))
 	}
 
 	if v, ok := d.GetOk("attribute_contract"); ok {

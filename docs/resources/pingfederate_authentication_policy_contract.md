@@ -1,4 +1,4 @@
-#Resource: pingfederate_authentication_policy_contract
+# Resource: pingfederate_authentication_policy_contract
 
 Provides a authentication policy contract.
 
@@ -30,6 +30,6 @@ In addition to all arguments above, the following attributes are exported:
 
 Authentication Policy Contracts can be imported using the id, e.g.
 
-```bash
-$ terraform import pingfederate_authentication_policy_contract.demo 123
+```
+terraform import pingfederate_authentication_policy_contract.demo 123
 ```

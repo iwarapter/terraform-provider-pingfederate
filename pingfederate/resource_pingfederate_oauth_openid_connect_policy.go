@@ -72,7 +72,7 @@ func resourcePingFederateOpenIdConnectPolicyResourceSchema() map[string]*schema.
 		"scope_attribute_mappings": {
 			Type:     schema.TypeSet,
 			Optional: true,
-			Elem:     resourceScopeAttributeMappings(),
+			Elem:     resourceParameterValues(),
 		},
 	}
 }
@@ -156,7 +156,7 @@ func resourcePingFederateOpenIdConnectPolicyResourceReadResult(d *schema.Resourc
 		}
 	}
 	if rv.ScopeAttributeMappings != nil {
-		if err := d.Set("scope_attribute_mappings", flattenMapOfScopeAttributeMappings(rv.ScopeAttributeMappings)); err != nil {
+		if err := d.Set("scope_attribute_mappings", flattenMapOfParameterValues(rv.ScopeAttributeMappings)); err != nil {
 			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
@@ -167,7 +167,7 @@ func resourcePingFederateOpenIdConnectPolicyResourceReadData(d *schema.ResourceD
 	policy := &pf.OpenIdConnectPolicy{
 		Id:                    String(d.Get("policy_id").(string)),
 		Name:                  String(d.Get("name").(string)),
-		AccessTokenManagerRef: expandResourceLink(d.Get("access_token_manager_ref").([]interface{})),
+		AccessTokenManagerRef: expandResourceLink(d.Get("access_token_manager_ref").([]interface{})[0].(map[string]interface{})),
 		AttributeContract:     expandOpenIdConnectAttributeContract(d.Get("attribute_contract").([]interface{})),
 		AttributeMapping:      expandAttributeMapping(d.Get("attribute_mapping").([]interface{})),
 	}
@@ -188,7 +188,7 @@ func resourcePingFederateOpenIdConnectPolicyResourceReadData(d *schema.ResourceD
 		policy.ReturnIdTokenOnRefreshGrant = Bool(v.(bool))
 	}
 	if v, ok := d.GetOk("scope_attribute_mappings"); ok {
-		policy.ScopeAttributeMappings = expandMapOfScopeAttributeMappings(v.(*schema.Set).List())
+		policy.ScopeAttributeMappings = expandMapOfParameterValues(v.(*schema.Set).List())
 	}
 	return policy
 }

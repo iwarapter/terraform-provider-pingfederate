@@ -13,7 +13,6 @@ import (
 
 func TestAccPingFederateAuthenticationPoliciesResource(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		// PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederateAuthenticationPoliciesResourceDestroy,
 		Steps: []resource.TestStep{
@@ -360,7 +359,6 @@ func Test_resourcePingFederateAuthenticationPoliciesResourceReadData(t *testing.
 											},
 										},
 										AttributeSources: &[]*pf.AttributeSource{},
-										IssuanceCriteria: &pf.IssuanceCriteria{},
 									},
 									AuthenticationPolicyContractRef: &pf.ResourceLink{Id: String("foo")},
 								},
@@ -374,7 +372,6 @@ func Test_resourcePingFederateAuthenticationPoliciesResourceReadData(t *testing.
 											},
 										},
 										AttributeSources: &[]*pf.AttributeSource{},
-										IssuanceCriteria: &pf.IssuanceCriteria{},
 									},
 									OutboundAttributeMapping: &pf.AttributeMapping{
 										AttributeContractFulfillment: map[string]*pf.AttributeFulfillmentValue{
@@ -384,7 +381,6 @@ func Test_resourcePingFederateAuthenticationPoliciesResourceReadData(t *testing.
 											},
 										},
 										AttributeSources: &[]*pf.AttributeSource{},
-										IssuanceCriteria: &pf.IssuanceCriteria{},
 									},
 								},
 								AuthnSelectorPolicyAction: pf.AuthnSelectorPolicyAction{

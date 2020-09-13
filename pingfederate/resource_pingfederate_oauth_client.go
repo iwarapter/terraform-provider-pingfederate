@@ -393,8 +393,8 @@ func resourcePingFederateOauthClientResourceReadData(d *schema.ResourceData) *pf
 		client.JwksSettings = expandJwksSettings(d.Get("jwks_settings").(*schema.Set).List())
 	}
 
-	if v, ok := d.GetOk("default_access_token_manager_ref"); ok {
-		client.DefaultAccessTokenManagerRef = expandResourceLink(v.([]interface{}))
+	if v, ok := d.GetOk("default_access_token_manager_ref"); ok && len(v.([]interface{})) > 0 {
+		client.DefaultAccessTokenManagerRef = expandResourceLink(v.([]interface{})[0].(map[string]interface{}))
 	}
 
 	if v, ok := d.GetOk("oidc_policy"); ok && len(v.([]interface{})) > 0 {

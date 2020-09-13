@@ -13,3 +13,4 @@ terraform.log
 terraform-provider-pingfederate_vlocal
 dist
 site/
+tmp/

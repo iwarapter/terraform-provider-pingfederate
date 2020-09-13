@@ -14,12 +14,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
-
-	"github.com/iwarapter/pingfederate-sdk-go/services/version"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
+	"github.com/iwarapter/pingfederate-sdk-go/services/version"
 	"github.com/ory/dockertest"
 )
 

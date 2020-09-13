@@ -150,12 +150,12 @@ func resourcePingFederateNotificationPublisherResourceReadData(d *schema.Resourc
 	validator := &pf.NotificationPublisher{
 		Id:                  String(d.Get("publisher_id").(string)),
 		Name:                String(d.Get("name").(string)),
-		PluginDescriptorRef: expandResourceLink(d.Get("plugin_descriptor_ref").([]interface{})),
+		PluginDescriptorRef: expandResourceLink(d.Get("plugin_descriptor_ref").([]interface{})[0].(map[string]interface{})),
 		Configuration:       expandPluginConfiguration(d.Get("configuration").([]interface{})),
 	}
 
 	if v, ok := d.GetOk("parent_ref"); ok {
-		validator.ParentRef = expandResourceLink(v.([]interface{}))
+		validator.ParentRef = expandResourceLink(v.([]interface{})[0].(map[string]interface{}))
 	}
 	return validator
 }

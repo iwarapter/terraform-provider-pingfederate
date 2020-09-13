@@ -173,18 +173,18 @@ func resourcePingFederateSpAdapterResourceReadData(d *schema.ResourceData) *pf.S
 	validator := &pf.SpAdapter{
 		Id:                  String(d.Get("sp_adapter_id").(string)),
 		Name:                String(d.Get("name").(string)),
-		PluginDescriptorRef: expandResourceLink(d.Get("plugin_descriptor_ref").([]interface{})),
+		PluginDescriptorRef: expandResourceLink(d.Get("plugin_descriptor_ref").([]interface{})[0].(map[string]interface{})),
 		Configuration:       expandPluginConfiguration(d.Get("configuration").([]interface{})),
 	}
 
 	if v, ok := d.GetOk("parent_ref"); ok {
-		validator.ParentRef = expandResourceLink(v.([]interface{}))
+		validator.ParentRef = expandResourceLink(v.(map[string]interface{}))
 	}
-	if v, ok := d.GetOk("attribute_contract"); ok {
-		validator.AttributeContract = expandSpAdapterAttributeContract(v.([]interface{}))
+	if v, ok := d.GetOk("attribute_contract"); ok && len(v.([]interface{})) > 0 {
+		validator.AttributeContract = expandSpAdapterAttributeContract(v.([]interface{})[0].(map[string]interface{}))
 	}
-	if v, ok := d.GetOk("target_application_info"); ok {
-		validator.TargetApplicationInfo = expandSpAdapterTargetApplicationInfo(v.([]interface{}))
+	if v, ok := d.GetOk("target_application_info"); ok && len(v.([]interface{})) > 0 {
+		validator.TargetApplicationInfo = expandSpAdapterTargetApplicationInfo(v.([]interface{})[0].(map[string]interface{}))
 	}
 
 	return validator
