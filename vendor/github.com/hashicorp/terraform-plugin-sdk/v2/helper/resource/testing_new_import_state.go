@@ -71,17 +71,18 @@ func testStepNewImportState(t testing.T, c TestCase, helper *tftest.Helper, wd *
 	}
 
 	err = runProviderCommand(t, func() error {
-		return importWd.Import(step.ResourceName, importId)
+		importWd.RequireImport(t, step.ResourceName, importId)
+		return nil
 	}, importWd, c.ProviderFactories)
 	if err != nil {
-		return err
+		t.Fatalf("Error running import: %s", err)
 	}
 
 	var importState *terraform.State
 	err = runProviderCommand(t, func() error {
-		importState = getState(t, importWd)
+		importState = getState(t, wd)
 		return nil
-	}, importWd, c.ProviderFactories)
+	}, wd, c.ProviderFactories)
 	if err != nil {
 		t.Fatalf("Error getting state: %s", err)
 	}
@@ -109,16 +110,8 @@ func testStepNewImportState(t testing.T, c TestCase, helper *tftest.Helper, wd *
 		for _, r := range new {
 			// Find the existing resource
 			var oldR *terraform.ResourceState
-			for r2Key, r2 := range old {
-				// Ensure that we do not match against data sources as they
-				// cannot be imported and are not what we want to verify.
-				// Mode is not present in ResourceState so we use the
-				// stringified ResourceStateKey for comparison.
-				if strings.HasPrefix(r2Key, "data.") {
-					continue
-				}
-
-				if r2.Primary != nil && r2.Primary.ID == r.Primary.ID && r2.Type == r.Type && r2.Provider == r.Provider {
+			for _, r2 := range old {
+				if r2.Primary != nil && r2.Primary.ID == r.Primary.ID && r2.Type == r.Type {
 					oldR = r2
 					break
 				}
