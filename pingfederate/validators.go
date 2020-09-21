@@ -37,12 +37,13 @@ func validateClientAuthType(value interface{}, _ cty.Path) diag.Diagnostics {
 	v := value.(string)
 	switch v {
 	case
+		"NONE",
 		"SECRET",
 		"CERTIFICATE",
 		"PRIVATE_KEY_JWT":
 		return nil
 	}
-	return diag.Errorf("must be either 'SECRET' or 'CERTIFICATE' or 'PRIVATE_KEY_JWT' not %s", v)
+	return diag.Errorf("must be either 'NONE' or 'SECRET' or 'CERTIFICATE' or 'PRIVATE_KEY_JWT' not %s", v)
 }
 
 func validateTokenSigningAlgorithm(value interface{}, _ cty.Path) diag.Diagnostics {

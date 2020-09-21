@@ -1,3 +1,29 @@
+## 0.0.6 (Unreleased)
+
+NOTES:
+
+* This is an early release experimental build for PingFederate 10.x
+
+BUG FIXES:
+
+* resource/pingfederate_oauth_client: Was missing several configuration fields and didnt support `NONE` client auth types.
+
+
+## 0.0.5 (Sept 14th, 2020)
+
+NOTES:
+
+* This is an early release experimental build for PingFederate 10.x
+
+FEATURES:
+
+* **New Resource:** `pingfederate_authentication_api_application`
+* **New Resource:** `pingfederate_authentication_api_settings`
+* **New Resource:** `pingfederate_idp_sp_connection`
+* **New Resource:** `pingfederate_kerberos_realm`
+* **New Resource:** `pingfederate_keypair_signing`
+* **New Resource:** `pingfederate_sp_idp_connection`
+
 ## 0.0.4 (Aug 24th, 2020)
 
 NOTES:
