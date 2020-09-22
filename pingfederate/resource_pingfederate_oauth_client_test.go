@@ -2,9 +2,10 @@ package pingfederate
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"testing"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthClients"
 

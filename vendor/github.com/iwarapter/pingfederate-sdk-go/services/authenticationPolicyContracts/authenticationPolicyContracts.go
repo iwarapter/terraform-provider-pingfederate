@@ -50,6 +50,11 @@ func (s *AuthenticationPolicyContractsService) GetAuthenticationPolicyContracts(
 		Name:       "GetAuthenticationPolicyContracts",
 		HTTPMethod: "GET",
 		HTTPPath:   path,
+		QueryParams: map[string]string{
+			"page":          input.Page,
+			"numberPerPage": input.NumberPerPage,
+			"filter":        input.Filter,
+		},
 	}
 	output = &models.AuthenticationPolicyContracts{}
 	req := s.newRequest(op, nil, output)

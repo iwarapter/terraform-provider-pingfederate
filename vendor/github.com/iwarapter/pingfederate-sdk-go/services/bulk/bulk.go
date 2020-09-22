@@ -50,6 +50,9 @@ func (s *BulkService) ExportConfiguration(input *ExportConfigurationInput) (outp
 		Name:       "ExportConfiguration",
 		HTTPMethod: "GET",
 		HTTPPath:   path,
+		QueryParams: map[string]string{
+			"includeExternalResources": input.IncludeExternalResources,
+		},
 	}
 	output = &models.BulkConfig{}
 	req := s.newRequest(op, nil, output)
@@ -69,6 +72,9 @@ func (s *BulkService) ImportConfiguration(input *ImportConfigurationInput) (resp
 		Name:       "ImportConfiguration",
 		HTTPMethod: "POST",
 		HTTPPath:   path,
+		QueryParams: map[string]string{
+			"failFast": input.FailFast,
+		},
 	}
 
 	req := s.newRequest(op, input.Body, nil)

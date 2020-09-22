@@ -164,7 +164,7 @@ github.com/hashicorp/terraform-plugin-sdk/v2/terraform
 github.com/hashicorp/terraform-plugin-test/v2
 # github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d
 github.com/hashicorp/yamux
-# github.com/iwarapter/pingfederate-sdk-go v0.0.0-20200617093823-207d4fb6fdc0
+# github.com/iwarapter/pingfederate-sdk-go v0.0.0-20200922173109-6fb132345a6a
 ## explicit
 github.com/iwarapter/pingfederate-sdk-go/pingfederate
 github.com/iwarapter/pingfederate-sdk-go/pingfederate/client

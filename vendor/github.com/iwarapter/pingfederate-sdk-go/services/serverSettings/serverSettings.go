@@ -144,6 +144,10 @@ func (s *ServerSettingsService) UpdateEmailServerSettings(input *UpdateEmailServ
 		Name:       "UpdateEmailServerSettings",
 		HTTPMethod: "PUT",
 		HTTPPath:   path,
+		QueryParams: map[string]string{
+			"validationEmail": input.ValidationEmail,
+			"validateOnly":    input.ValidateOnly,
+		},
 	}
 	output = &models.EmailServerSettings{}
 	req := s.newRequest(op, input.Body, output)
