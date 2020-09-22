@@ -1,5 +1,7 @@
 package models
 
+import "encoding/json"
+
 //AccessTokenAttribute - An attribute for an Access Token's attribute contract.
 type AccessTokenAttribute struct {
 	Name *string `json:"name,omitempty"`
@@ -1077,7 +1079,8 @@ type DataStoreConfig struct {
 
 //DataStores - A collection of data stores.
 type DataStores struct {
-	Items *[]*DataStore `json:"items,omitempty"`
+	Items    *[]interface{}     `json:"-"`
+	RawItems *[]json.RawMessage `json:"items,omitempty"`
 }
 
 //DateLocalIdentityField - A date type field.

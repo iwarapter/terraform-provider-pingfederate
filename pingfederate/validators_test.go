@@ -145,7 +145,7 @@ func Test_validateClientAuthType(t *testing.T) {
 		{
 			name:          "junk does not pass",
 			value:         "other",
-			expectedDiags: diag.Errorf("must be either 'SECRET' or 'CERTIFICATE' or 'PRIVATE_KEY_JWT' not %s", "other"),
+			expectedDiags: diag.Errorf("must be either 'NONE' or 'SECRET' or 'CERTIFICATE' or 'PRIVATE_KEY_JWT' not %s", "other"),
 		},
 	}
 	for _, tc := range tests {

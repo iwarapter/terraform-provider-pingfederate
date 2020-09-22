@@ -20,183 +20,289 @@ func resourcePingFederateOauthClientResource() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 
-		Schema: map[string]*schema.Schema{
-			"name": {
-				Type:     schema.TypeString,
-				Required: true,
+		Schema: resourcePingFederateOauthClientResourceSchema(),
+	}
+}
+
+func resourcePingFederateOauthClientResourceSchema() map[string]*schema.Schema {
+	return map[string]*schema.Schema{
+		"name": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"client_id": {
+			Type:     schema.TypeString,
+			Required: true,
+			ForceNew: true,
+		},
+		"enabled": {
+			Type:     schema.TypeBool,
+			Optional: true,
+			Default:  true,
+		},
+		"grant_types": {
+			Type:     schema.TypeSet,
+			Required: true,
+			MinItems: 1,
+			Elem: &schema.Schema{
+				Type:             schema.TypeString,
+				ValidateDiagFunc: validateGrantTypes,
 			},
-			"client_id": {
-				Type:     schema.TypeString,
-				Required: true,
+		},
+		"bypass_approval_page": {
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		"description": {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		"exclusive_scopes": {
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
 			},
-			"grant_types": {
-				Type:     schema.TypeSet,
-				Required: true,
-				MinItems: 1,
-				Elem: &schema.Schema{
-					Type:             schema.TypeString,
-					ValidateDiagFunc: validateGrantTypes,
-				},
+		},
+		"logo_url": {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		"persistent_grant_expiration_time": {
+			Type:     schema.TypeInt,
+			Optional: true,
+		},
+		"persistent_grant_expiration_time_unit": {
+			Type:     schema.TypeString,
+			Optional: true,
+			Default:  "DAYS",
+		},
+		"persistent_grant_expiration_type": {
+			Type:     schema.TypeString,
+			Optional: true,
+			Default:  "SERVER_DEFAULT",
+		},
+		"redirect_uris": {
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
 			},
-			"bypass_approval_page": {
-				Type:     schema.TypeBool,
-				Optional: true,
+		},
+		"refresh_rolling": {
+			Type:     schema.TypeString,
+			Optional: true,
+			Default:  "SERVER_DEFAULT",
+		},
+		"require_signed_requests": {
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		"restrict_scopes": {
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		"restricted_response_types": {
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
 			},
-			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
+		},
+		"restricted_scopes": {
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
 			},
-			"exclusive_scopes": {
-				Type:     schema.TypeSet,
-				Optional: true,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-			},
-			"logo_url": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"persistent_grant_expiration_time": {
-				Type:     schema.TypeInt,
-				Optional: true,
-			},
-			"persistent_grant_expiration_time_unit": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "DAYS",
-			},
-			"persistent_grant_expiration_type": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "SERVER_DEFAULT",
-			},
-			"redirect_uris": {
-				Type:     schema.TypeSet,
-				Optional: true,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-			},
-			"refresh_rolling": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "SERVER_DEFAULT",
-			},
-			"require_signed_requests": {
-				Type:     schema.TypeBool,
-				Optional: true,
-			},
-			"restrict_scopes": {
-				Type:     schema.TypeBool,
-				Optional: true,
-			},
-			"restricted_response_types": {
-				Type:     schema.TypeSet,
-				Optional: true,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-			},
-			"restricted_scopes": {
-				Type:     schema.TypeSet,
-				Optional: true,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-			},
-			"validate_using_all_eligible_atms": {
-				Type:     schema.TypeBool,
-				Optional: true,
-			},
-			"client_auth": {
-				Type:     schema.TypeList,
-				Optional: true,
-				MaxItems: 1,
-				MinItems: 1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"client_cert_issuer_dn": {
-							Type:          schema.TypeString,
-							Optional:      true,
-							ConflictsWith: []string{"client_auth.0.secret"},
-						},
-						"client_cert_subject_dn": {
-							Type:          schema.TypeString,
-							Optional:      true,
-							ConflictsWith: []string{"client_auth.0.secret"},
-						},
-						"enforce_replay_prevention": {
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
-						//TODO do we enable Secret/EncryptedSecret??
-						"secret": {
-							Type:          schema.TypeString,
-							Optional:      true,
-							Sensitive:     true,
-							ConflictsWith: []string{"client_auth.0.client_cert_issuer_dn", "client_auth.0.client_cert_subject_dn"},
-						},
-						"type": {
-							Type:             schema.TypeString,
-							Required:         true,
-							ValidateDiagFunc: validateClientAuthType,
-						},
+		},
+		"validate_using_all_eligible_atms": {
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		"client_auth": {
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			MinItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"client_cert_issuer_dn": {
+						Type:          schema.TypeString,
+						Optional:      true,
+						ConflictsWith: []string{"client_auth.0.secret"},
+					},
+					"client_cert_subject_dn": {
+						Type:          schema.TypeString,
+						Optional:      true,
+						ConflictsWith: []string{"client_auth.0.secret"},
+					},
+					"enforce_replay_prevention": {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					//TODO do we enable Secret/EncryptedSecret??
+					"secret": {
+						Type:          schema.TypeString,
+						Optional:      true,
+						Sensitive:     true,
+						ConflictsWith: []string{"client_auth.0.client_cert_issuer_dn", "client_auth.0.client_cert_subject_dn"},
+					},
+					"type": {
+						Type:             schema.TypeString,
+						Required:         true,
+						ValidateDiagFunc: validateClientAuthType,
+					},
+					"token_endpoint_auth_signing_algorithm": {
+						Type:     schema.TypeString,
+						Optional: true,
 					},
 				},
 			},
-			"default_access_token_manager_ref": resourceLinkSchema(),
-			"oidc_policy": {
-				Type:     schema.TypeList,
-				Optional: true,
-				MaxItems: 1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"grant_access_session_revocation_api": {
-							Type:     schema.TypeBool,
-							Optional: true,
+		},
+		"default_access_token_manager_ref": resourceLinkSchema(),
+		"oidc_policy": {
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"grant_access_session_revocation_api": {
+						Type:     schema.TypeBool,
+						Optional: true,
+						Default:  false,
+					},
+					"pairwise_identifier_user_type": {
+						Type:     schema.TypeBool,
+						Optional: true,
+						Default:  false,
+					},
+					"id_token_signing_algorithm": {
+						Type:             schema.TypeString,
+						Optional:         true,
+						Default:          "RS256",
+						ValidateDiagFunc: validateTokenSigningAlgorithm,
+					},
+					"id_token_encryption_algorithm": {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+					"id_token_content_encryption_algorithm": {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+					"sector_identifier_uri": {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+					"logout_uris": {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
 						},
-						"id_token_signing_algorithm": {
-							Type:             schema.TypeString,
-							Optional:         true,
-							Default:          "RS256",
-							ValidateDiagFunc: validateTokenSigningAlgorithm,
-						},
-						"logout_uris": {
-							Type:     schema.TypeList,
-							Optional: true,
-							MinItems: 1,
-							Elem: &schema.Schema{
-								Type: schema.TypeString,
-							},
-						},
-						"ping_access_logout_capable": {
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
-						"policy_group": resourceLinkSchema(),
+					},
+					"ping_access_logout_capable": {
+						Type:     schema.TypeBool,
+						Optional: true,
+						Default:  false,
+					},
+					"policy_group": resourceLinkSchema(),
+				},
+			},
+		},
+		"jwks_settings": {
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"jwks": {
+						Type:          schema.TypeString,
+						Optional:      true,
+						ConflictsWith: []string{"jwks_settings.0.jwks_url"},
+					},
+					"jwks_url": {
+						Type:          schema.TypeString,
+						Optional:      true,
+						ConflictsWith: []string{"jwks_settings.0.jwks"},
 					},
 				},
 			},
-			"jwks_settings": {
-				Type:     schema.TypeList,
-				Optional: true,
-				MaxItems: 1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"jwks": {
-							Type:          schema.TypeString,
-							Optional:      true,
-							ConflictsWith: []string{"jwks_settings.0.jwks_url"},
-						},
-						"jwks_url": {
-							Type:          schema.TypeString,
-							Optional:      true,
-							ConflictsWith: []string{"jwks_settings.0.jwks"},
-						},
-					},
-				},
-			},
+		},
+		"ciba_delivery_mode": {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		"ciba_notification_endpoint": {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		"ciba_polling_interval": {
+			Type:     schema.TypeInt,
+			Optional: true,
+		},
+		"ciba_request_object_signing_algorithm": {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		"ciba_require_signed_requests": {
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		"ciba_user_code_supported": {
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		"bypass_activation_code_confirmation_override": {
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		"device_flow_setting_type": {
+			Type:     schema.TypeString,
+			Optional: true,
+			Default:  "SERVER_DEFAULT",
+		},
+		"device_polling_interval_override": {
+			Type:     schema.TypeInt,
+			Optional: true,
+		},
+		"extended_properties": {
+			Type:     schema.TypeSet,
+			Elem:     resourceParameterValues(),
+			Optional: true,
+		},
+		"pending_authorization_timeout_override": {
+			Type:     schema.TypeInt,
+			Optional: true,
+		},
+		"persistent_grant_idle_timeout": {
+			Type:     schema.TypeInt,
+			Optional: true,
+		},
+		"persistent_grant_idle_timeout_time_unit": {
+			Type:     schema.TypeString,
+			Optional: true,
+			Default:  "DAYS",
+		},
+		"persistent_grant_idle_timeout_type": {
+			Type:     schema.TypeString,
+			Optional: true,
+			Default:  "SERVER_DEFAULT",
+		},
+		"request_object_signing_algorithm": {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		"request_policy_ref": resourceLinkSchema(),
+		"require_proof_key_for_code_exchange": {
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		"token_exchange_processor_policy_ref": resourceLinkSchema(),
+		"user_authorization_url_override": {
+			Type:     schema.TypeString,
+			Optional: true,
 		},
 	}
 }
@@ -257,6 +363,7 @@ func resourcePingFederateOauthClientResourceReadResult(d *schema.ResourceData, r
 	var diags diag.Diagnostics
 	setResourceDataStringWithDiagnostic(d, "name", rv.Name, &diags)
 	setResourceDataStringWithDiagnostic(d, "client_id", rv.ClientId, &diags)
+	setResourceDataBoolWithDiagnostic(d, "enabled", rv.Enabled, &diags)
 	setResourceDataBoolWithDiagnostic(d, "bypass_approval_page", rv.BypassApprovalPage, &diags)
 	setResourceDataStringWithDiagnostic(d, "description", rv.Description, &diags)
 	setResourceDataStringWithDiagnostic(d, "logo_url", rv.LogoUrl, &diags)
@@ -267,6 +374,42 @@ func resourcePingFederateOauthClientResourceReadResult(d *schema.ResourceData, r
 	setResourceDataBoolWithDiagnostic(d, "require_signed_requests", rv.RequireSignedRequests, &diags)
 	setResourceDataBoolWithDiagnostic(d, "restrict_scopes", rv.RestrictScopes, &diags)
 	setResourceDataBoolWithDiagnostic(d, "validate_using_all_eligible_atms", rv.ValidateUsingAllEligibleAtms, &diags)
+	setResourceDataBoolWithDiagnostic(d, "bypass_activation_code_confirmation_override", rv.BypassActivationCodeConfirmationOverride, &diags)
+	setResourceDataStringWithDiagnostic(d, "ciba_delivery_mode", rv.CibaDeliveryMode, &diags)
+	setResourceDataStringWithDiagnostic(d, "ciba_notification_endpoint", rv.CibaNotificationEndpoint, &diags)
+	setResourceDataIntWithDiagnostic(d, "ciba_polling_interval", rv.CibaPollingInterval, &diags)
+	setResourceDataStringWithDiagnostic(d, "ciba_request_object_signing_algorithm", rv.CibaRequestObjectSigningAlgorithm, &diags)
+	setResourceDataBoolWithDiagnostic(d, "ciba_require_signed_requests", rv.CibaRequireSignedRequests, &diags)
+	setResourceDataBoolWithDiagnostic(d, "ciba_user_code_supported", rv.CibaUserCodeSupported, &diags)
+
+	setResourceDataStringWithDiagnostic(d, "device_flow_setting_type", rv.DeviceFlowSettingType, &diags)
+	setResourceDataIntWithDiagnostic(d, "device_polling_interval_override", rv.DevicePollingIntervalOverride, &diags)
+	setResourceDataIntWithDiagnostic(d, "pending_authorization_timeout_override", rv.PendingAuthorizationTimeoutOverride, &diags)
+	setResourceDataIntWithDiagnostic(d, "persistent_grant_idle_timeout", rv.PersistentGrantIdleTimeout, &diags)
+	setResourceDataStringWithDiagnostic(d, "persistent_grant_idle_timeout_time_unit", rv.PersistentGrantIdleTimeoutTimeUnit, &diags)
+	setResourceDataStringWithDiagnostic(d, "persistent_grant_idle_timeout_type", rv.PersistentGrantIdleTimeoutType, &diags)
+	setResourceDataStringWithDiagnostic(d, "request_object_signing_algorithm", rv.RequestObjectSigningAlgorithm, &diags)
+	setResourceDataBoolWithDiagnostic(d, "require_proof_key_for_code_exchange", rv.RequireProofKeyForCodeExchange, &diags)
+	setResourceDataStringWithDiagnostic(d, "user_authorization_url_override", rv.UserAuthorizationUrlOverride, &diags)
+
+	if rv.RequestPolicyRef != nil {
+		if err := d.Set("request_policy_ref", flattenResourceLink(rv.RequestPolicyRef)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
+		}
+	}
+
+	if rv.TokenExchangeProcessorPolicyRef != nil {
+		if err := d.Set("token_exchange_processor_policy_ref", flattenResourceLink(rv.TokenExchangeProcessorPolicyRef)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
+		}
+	}
+
+	if rv.ExtendedParameters != nil {
+		if err := d.Set("extended_properties", flattenMapOfParameterValues(rv.ExtendedParameters)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
+		}
+	}
+
 	if rv.GrantTypes != nil && len(*rv.GrantTypes) > 0 {
 		if err := d.Set("grant_types", *rv.GrantTypes); err != nil {
 			diags = append(diags, diag.FromErr(err)...)
@@ -322,84 +465,137 @@ func resourcePingFederateOauthClientResourceReadData(d *schema.ResourceData) *pf
 	client := &pf.Client{
 		Name:       String(d.Get("name").(string)),
 		ClientId:   String(d.Get("client_id").(string)),
+		Enabled:    Bool(d.Get("enabled").(bool)),
 		GrantTypes: &grants,
 	}
 
-	if _, ok := d.GetOk("bypass_approval_page"); ok {
-		client.BypassApprovalPage = Bool(d.Get("bypass_approval_page").(bool))
+	if v, ok := d.GetOk("bypass_approval_page"); ok {
+		client.BypassApprovalPage = Bool(v.(bool))
 	}
 
-	if _, ok := d.GetOk("description"); ok {
-		client.Description = String(d.Get("description").(string))
+	if v, ok := d.GetOk("description"); ok {
+		client.Description = String(v.(string))
 	}
 
-	if _, ok := d.GetOk("exclusive_scopes"); ok {
-		strs := expandStringList(d.Get("exclusive_scopes").(*schema.Set).List())
+	if v, ok := d.GetOk("exclusive_scopes"); ok {
+		strs := expandStringList(v.(*schema.Set).List())
 		client.ExclusiveScopes = &strs
 	}
 
-	if _, ok := d.GetOk("logo_url"); ok {
-		client.LogoUrl = String(d.Get("logo_url").(string))
+	if v, ok := d.GetOk("logo_url"); ok {
+		client.LogoUrl = String(v.(string))
 	}
 
-	if _, ok := d.GetOk("persistent_grant_expiration_time"); ok {
-		client.PersistentGrantExpirationTime = Int(d.Get("persistent_grant_expiration_time").(int))
+	if v, ok := d.GetOk("persistent_grant_expiration_time"); ok {
+		client.PersistentGrantExpirationTime = Int(v.(int))
 	}
 
-	if _, ok := d.GetOk("persistent_grant_expiration_time_unit"); ok {
-		client.PersistentGrantExpirationTimeUnit = String(d.Get("persistent_grant_expiration_time_unit").(string))
+	if v, ok := d.GetOk("persistent_grant_expiration_time_unit"); ok {
+		client.PersistentGrantExpirationTimeUnit = String(v.(string))
 	}
 
-	if _, ok := d.GetOk("persistent_grant_expiration_type"); ok {
-		client.PersistentGrantExpirationType = String(d.Get("persistent_grant_expiration_type").(string))
+	if v, ok := d.GetOk("persistent_grant_expiration_type"); ok {
+		client.PersistentGrantExpirationType = String(v.(string))
 	}
 
-	if _, ok := d.GetOk("redirect_uris"); ok {
-		strs := expandStringList(d.Get("redirect_uris").(*schema.Set).List())
+	if v, ok := d.GetOk("redirect_uris"); ok {
+		strs := expandStringList(v.(*schema.Set).List())
 		client.RedirectUris = &strs
 	}
 
-	if _, ok := d.GetOk("refresh_rolling"); ok {
-		client.RefreshRolling = String(d.Get("refresh_rolling").(string))
+	if v, ok := d.GetOk("refresh_rolling"); ok {
+		client.RefreshRolling = String(v.(string))
 	}
 
-	if _, ok := d.GetOk("require_signed_requests"); ok {
-		client.RequireSignedRequests = Bool(d.Get("require_signed_requests").(bool))
+	if v, ok := d.GetOk("require_signed_requests"); ok {
+		client.RequireSignedRequests = Bool(v.(bool))
 	}
 
-	if _, ok := d.GetOk("restrict_scopes"); ok {
-		client.RestrictScopes = Bool(d.Get("restrict_scopes").(bool))
+	if v, ok := d.GetOk("restrict_scopes"); ok {
+		client.RestrictScopes = Bool(v.(bool))
 	}
 
-	if _, ok := d.GetOk("restricted_response_types"); ok {
-		strs := expandStringList(d.Get("restricted_response_types").(*schema.Set).List())
+	if v, ok := d.GetOk("restricted_response_types"); ok {
+		strs := expandStringList(v.(*schema.Set).List())
 		client.RestrictedResponseTypes = &strs
 	}
 
-	if _, ok := d.GetOk("restricted_scopes"); ok {
-		strs := expandStringList(d.Get("restricted_scopes").(*schema.Set).List())
+	if v, ok := d.GetOk("restricted_scopes"); ok {
+		strs := expandStringList(v.(*schema.Set).List())
 		client.RestrictedScopes = &strs
 	}
 
-	if _, ok := d.GetOk("validate_using_all_eligible_atms"); ok {
-		client.ValidateUsingAllEligibleAtms = Bool(d.Get("validate_using_all_eligible_atms").(bool))
+	if v, ok := d.GetOk("validate_using_all_eligible_atms"); ok {
+		client.ValidateUsingAllEligibleAtms = Bool(v.(bool))
 	}
-
 	if v, ok := d.GetOk("client_auth"); ok && len(v.([]interface{})) > 0 {
 		client.ClientAuth = expandClientAuth(v.([]interface{}))
 	}
-
-	if _, ok := d.GetOk("jwks_settings"); ok {
-		client.JwksSettings = expandJwksSettings(d.Get("jwks_settings").(*schema.Set).List())
+	if v, ok := d.GetOk("jwks_settings"); ok && len(v.([]interface{})) > 0 {
+		client.JwksSettings = expandJwksSettings(v.([]interface{}))
 	}
-
 	if v, ok := d.GetOk("default_access_token_manager_ref"); ok && len(v.([]interface{})) > 0 {
 		client.DefaultAccessTokenManagerRef = expandResourceLink(v.([]interface{})[0].(map[string]interface{}))
 	}
-
 	if v, ok := d.GetOk("oidc_policy"); ok && len(v.([]interface{})) > 0 {
 		client.OidcPolicy = expandClientOIDCPolicy(v.([]interface{}))
 	}
-
+	if v, ok := d.GetOk("request_policy_ref"); ok && len(v.([]interface{})) > 0 {
+		client.RequestPolicyRef = expandResourceLink(v.([]interface{})[0].(map[string]interface{}))
+	}
+	if v, ok := d.GetOk("ciba_delivery_mode"); ok {
+		client.CibaDeliveryMode = String(v.(string))
+	}
+	if v, ok := d.GetOk("ciba_notification_endpoint"); ok {
+		client.CibaNotificationEndpoint = String(v.(string))
+	}
+	if v, ok := d.GetOk("ciba_polling_interval"); ok {
+		client.CibaPollingInterval = Int(v.(int))
+	}
+	if v, ok := d.GetOk("ciba_request_object_signing_algorithm"); ok {
+		client.CibaRequestObjectSigningAlgorithm = String(v.(string))
+	}
+	if v, ok := d.GetOk("ciba_require_signed_requests"); ok {
+		client.CibaRequireSignedRequests = Bool(v.(bool))
+	}
+	if v, ok := d.GetOk("ciba_user_code_supported"); ok {
+		client.CibaUserCodeSupported = Bool(v.(bool))
+	}
+	if v, ok := d.GetOk("bypass_activation_code_confirmation_override"); ok {
+		client.BypassActivationCodeConfirmationOverride = Bool(v.(bool))
+	}
+	if v, ok := d.GetOk("device_flow_setting_type"); ok {
+		client.DeviceFlowSettingType = String(v.(string))
+	}
+	if v, ok := d.GetOk("device_polling_interval_override"); ok {
+		client.DevicePollingIntervalOverride = Int(v.(int))
+	}
+	if v, ok := d.GetOk("extended_properties"); ok {
+		client.ExtendedParameters = expandMapOfParameterValues(v.(*schema.Set).List())
+	}
+	if v, ok := d.GetOk("pending_authorization_timeout_override"); ok {
+		client.PendingAuthorizationTimeoutOverride = Int(v.(int))
+	}
+	if v, ok := d.GetOk("persistent_grant_idle_timeout"); ok {
+		client.PersistentGrantIdleTimeout = Int(v.(int))
+	}
+	if v, ok := d.GetOk("persistent_grant_idle_timeout_time_unit"); ok {
+		client.PersistentGrantIdleTimeoutTimeUnit = String(v.(string))
+	}
+	if v, ok := d.GetOk("persistent_grant_idle_timeout_type"); ok {
+		client.PersistentGrantIdleTimeoutType = String(v.(string))
+	}
+	if v, ok := d.GetOk("request_object_signing_algorithm"); ok {
+		client.RequestObjectSigningAlgorithm = String(v.(string))
+	}
+	if v, ok := d.GetOk("require_proof_key_for_code_exchange"); ok {
+		client.RequireProofKeyForCodeExchange = Bool(v.(bool))
+	}
+	if v, ok := d.GetOk("token_exchange_processor_policy_ref"); ok && len(v.([]interface{})) > 0 {
+		client.TokenExchangeProcessorPolicyRef = expandResourceLink(v.([]interface{})[0].(map[string]interface{}))
+	}
+	if v, ok := d.GetOk("user_authorization_url_override"); ok {
+		client.UserAuthorizationUrlOverride = String(v.(string))
+	}
 	return client
 }

@@ -8,13 +8,11 @@ import (
 )
 
 type Config struct {
-	Username *string
-
-	Password *string
-
-	LogDebug *bool
-
-	Endpoint *string
+	Username          *string
+	Password          *string
+	LogDebug          *bool
+	MaskAuthorization *bool
+	Endpoint          *string
 
 	// The HTTP client to use when sending requests. Defaults to
 	// `http.DefaultClient`.
@@ -27,8 +25,9 @@ func NewConfig() *Config {
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 
 	return &Config{
-		LogDebug:   pingfederate.Bool(false),
-		HTTPClient: http.DefaultClient,
+		MaskAuthorization: pingfederate.Bool(true),
+		LogDebug:          pingfederate.Bool(false),
+		HTTPClient:        http.DefaultClient,
 	}
 }
 
@@ -49,5 +48,10 @@ func (c *Config) WithEndpoint(endpoint string) *Config {
 
 func (c *Config) WithDebug(debug bool) *Config {
 	c.LogDebug = pingfederate.Bool(debug)
+	return c
+}
+
+func (c *Config) WithMaskAuthorization(debug bool) *Config {
+	c.MaskAuthorization = pingfederate.Bool(debug)
 	return c
 }

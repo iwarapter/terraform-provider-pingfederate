@@ -374,8 +374,11 @@ func flattenClientAuth(orig, in *pf.ClientAuth) []map[string]interface{} {
 	if in.EnforceReplayPrevention != nil {
 		s["enforce_replay_prevention"] = *in.EnforceReplayPrevention
 	}
-	if in.Secret == nil && orig.Secret != nil {
+	if orig.Secret != nil {
 		s["secret"] = *orig.Secret
+	}
+	if in.TokenEndpointAuthSigningAlgorithm != nil {
+		s["token_endpoint_auth_signing_algorithm"] = *in.TokenEndpointAuthSigningAlgorithm
 	}
 	s["type"] = *in.Type
 	m = append(m, s)
@@ -423,9 +426,22 @@ func flattenClientOIDCPolicy(in *pf.ClientOIDCPolicy) []map[string]interface{} {
 	if in.PingAccessLogoutCapable != nil {
 		s["ping_access_logout_capable"] = *in.PingAccessLogoutCapable
 	}
+	if in.PairwiseIdentifierUserType != nil {
+		s["pairwise_identifier_user_type"] = *in.PairwiseIdentifierUserType
+	}
 	if in.PolicyGroup != nil {
 		s["policy_group"] = flattenResourceLink(in.PolicyGroup)
 	}
+	if in.IdTokenEncryptionAlgorithm != nil {
+		s["id_token_encryption_algorithm"] = *in.IdTokenEncryptionAlgorithm
+	}
+	if in.IdTokenContentEncryptionAlgorithm != nil {
+		s["id_token_content_encryption_algorithm"] = *in.IdTokenContentEncryptionAlgorithm
+	}
+	if in.SectorIdentifierUri != nil {
+		s["sector_identifier_uri"] = *in.SectorIdentifierUri
+	}
+
 	m = append(m, s)
 	return m
 }

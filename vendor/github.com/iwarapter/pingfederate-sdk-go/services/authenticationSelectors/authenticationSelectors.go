@@ -90,6 +90,11 @@ func (s *AuthenticationSelectorsService) GetAuthenticationSelectors(input *GetAu
 		Name:       "GetAuthenticationSelectors",
 		HTTPMethod: "GET",
 		HTTPPath:   path,
+		QueryParams: map[string]string{
+			"page":          input.Page,
+			"numberPerPage": input.NumberPerPage,
+			"filter":        input.Filter,
+		},
 	}
 	output = &models.AuthenticationSelectors{}
 	req := s.newRequest(op, nil, output)

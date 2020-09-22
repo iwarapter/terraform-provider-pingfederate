@@ -12,6 +12,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"reflect"
+	"regexp"
 	"runtime"
 	"time"
 
@@ -51,9 +52,10 @@ type Request struct {
 
 // An Operation is the service API operation to be made.
 type Operation struct {
-	Name       string
-	HTTPMethod string
-	HTTPPath   string
+	Name        string
+	HTTPMethod  string
+	HTTPPath    string
+	QueryParams map[string]string
 }
 
 // New returns a new Request pointer for the service API
@@ -92,6 +94,14 @@ func New(cfg config.Config, clientInfo metadata.ClientInfo, operation *Operation
 		err = fmt.Errorf("invalid endpoint uri %s", err)
 	}
 
+	q := httpReq.URL.Query()
+	for k, v := range operation.QueryParams {
+		if v != "" {
+			q.Set(k, v)
+		}
+	}
+	httpReq.URL.RawQuery = q.Encode()
+
 	r := &Request{
 		Config:     cfg,
 		ClientInfo: clientInfo,
@@ -128,10 +138,16 @@ func (r *Request) Send() error {
 	//for {
 	if *r.Config.LogDebug {
 		requestDump, err := httputil.DumpRequest(r.HTTPRequest, true)
+		requestDumpStr := string(requestDump)
+		if *r.Config.MaskAuthorization {
+			r, _ := regexp.Compile(`Authorization: (.*)`)
+			requestDumpStr = r.ReplaceAllString(requestDumpStr, "Authorization: ********")
+		}
+
 		if err != nil {
 			fmt.Println(err)
 		}
-		log.Printf(logReqMsg, r.ClientInfo.ServiceName, r.Operation.Name, r.RequestID, string(requestDump))
+		log.Printf(logReqMsg, r.ClientInfo.ServiceName, r.Operation.Name, r.RequestID, requestDumpStr)
 	}
 	r.AttemptTime = time.Now()
 

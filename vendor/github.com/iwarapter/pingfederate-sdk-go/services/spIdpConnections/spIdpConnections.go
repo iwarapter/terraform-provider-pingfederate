@@ -51,6 +51,12 @@ func (s *SpIdpConnectionsService) GetConnections(input *GetConnectionsInput) (ou
 		Name:       "GetConnections",
 		HTTPMethod: "GET",
 		HTTPPath:   path,
+		QueryParams: map[string]string{
+			"entityId":      input.EntityId,
+			"page":          input.Page,
+			"numberPerPage": input.NumberPerPage,
+			"filter":        input.Filter,
+		},
 	}
 	output = &models.IdpConnections{}
 	req := s.newRequest(op, nil, output)

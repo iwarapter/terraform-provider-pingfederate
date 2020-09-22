@@ -50,6 +50,11 @@ func (s *OauthClientsService) GetClients(input *GetClientsInput) (output *models
 		Name:       "GetClients",
 		HTTPMethod: "GET",
 		HTTPPath:   path,
+		QueryParams: map[string]string{
+			"page":          input.Page,
+			"numberPerPage": input.NumberPerPage,
+			"filter":        input.Filter,
+		},
 	}
 	output = &models.Clients{}
 	req := s.newRequest(op, nil, output)

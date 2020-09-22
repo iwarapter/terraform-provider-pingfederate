@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthClients"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -12,8 +15,6 @@ import (
 )
 
 func TestAccPingFederateOauthClient(t *testing.T) {
-	var out pf.Client
-
 	resource.Test(t, resource.TestCase{
 		// PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
@@ -22,14 +23,14 @@ func TestAccPingFederateOauthClient(t *testing.T) {
 			{
 				Config: testAccPingFederateOauthClientConfig("https://demo"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateOauthClientExists("pingfederate_oauth_client.my_client", &out),
+					testAccCheckPingFederateOauthClientExists("pingfederate_oauth_client.my_client"),
 					// testAccCheckPingFederateOauthClientAttributes(),
 				),
 			},
 			{
 				Config: testAccPingFederateOauthClientConfig("https://update"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateOauthClientExists("pingfederate_oauth_client.my_client", &out),
+					testAccCheckPingFederateOauthClientExists("pingfederate_oauth_client.my_client"),
 				),
 			},
 		},
@@ -64,10 +65,35 @@ func testAccPingFederateOauthClientConfig(configUpdate string) string {
 			]
 			ping_access_logout_capable = true
 		}
+	}
+
+	resource "pingfederate_oauth_client" "my_client_2" {
+		client_id = "tf-acc-woot-2"
+		name      = "tf-acc-woot-2"
+
+		grant_types = [
+			"CLIENT_CREDENTIALS",
+		]
+
+		default_access_token_manager_ref {
+			id = "${pingfederate_oauth_access_token_manager.my_atm.name}"
+		}
+
+		client_auth {
+			type = "SECRET"
+			secret = "Secret"
+		}
+
+		oidc_policy {
+			grant_access_session_revocation_api = false
+			logout_uris = []
+			ping_access_logout_capable = false
+			pairwise_identifier_user_type = false
+		}
 	}`, testAccPingFederateOauthAccessTokenManagerConfig("client", "180"), configUpdate)
 }
 
-func testAccCheckPingFederateOauthClientExists(n string, out *pf.Client) resource.TestCheckFunc {
+func testAccCheckPingFederateOauthClientExists(n string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -90,5 +116,102 @@ func testAccCheckPingFederateOauthClientExists(n string, out *pf.Client) resourc
 		}
 
 		return nil
+	}
+}
+
+func Test_resourcePingFederateOauthClientResourceReadData(t *testing.T) {
+
+	cases := []struct {
+		Resource pf.Client
+	}{
+		{
+			Resource: pf.Client{
+				BypassActivationCodeConfirmationOverride: Bool(true),
+				BypassApprovalPage:                       Bool(true),
+				CibaDeliveryMode:                         String("CibaDeliveryMode"),
+				CibaNotificationEndpoint:                 String("CibaNotificationEndpoint"),
+				CibaPollingInterval:                      Int(1),
+				CibaRequestObjectSigningAlgorithm:        String("CibaRequestObjectSigningAlgorithm"),
+				CibaRequireSignedRequests:                Bool(true),
+				CibaUserCodeSupported:                    Bool(true),
+				ClientAuth: &pf.ClientAuth{
+					ClientCertIssuerDn:                String("ClientCertIssuerDn"),
+					ClientCertSubjectDn:               String("ClientCertSubjectDn"),
+					EnforceReplayPrevention:           Bool(true),
+					Secret:                            String("Secret"),
+					TokenEndpointAuthSigningAlgorithm: String("TokenEndpointAuthSigningAlgorithm"),
+					Type:                              String("Type"),
+				},
+				ClientId: String("ClientId"),
+				DefaultAccessTokenManagerRef: &pf.ResourceLink{
+					Id: String("DefaultAccessTokenManagerRef"),
+				},
+				Description:                   String("Description"),
+				DeviceFlowSettingType:         String("DeviceFlowSettingType"),
+				DevicePollingIntervalOverride: Int(2),
+				Enabled:                       Bool(true),
+				ExclusiveScopes:               &[]*string{String("ExclusiveScopes")},
+				ExtendedParameters: map[string]*pf.ParameterValues{
+					"example": {
+						Values: &[]*string{String("ExtendedParameters")},
+					},
+				},
+				GrantTypes: &[]*string{String("GrantTypes")},
+				JwksSettings: &pf.JwksSettings{
+					Jwks:    String("Jwks"),
+					JwksUrl: String("JwksUrl"),
+				},
+				LogoUrl: String("LogoUrl"),
+				Name:    String("Name"),
+				OidcPolicy: &pf.ClientOIDCPolicy{
+					GrantAccessSessionRevocationApi:   Bool(true),
+					IdTokenContentEncryptionAlgorithm: String("IdTokenContentEncryptionAlgorithm"),
+					IdTokenEncryptionAlgorithm:        String("IdTokenEncryptionAlgorithm"),
+					IdTokenSigningAlgorithm:           String("IdTokenSigningAlgorithm"),
+					LogoutUris:                        &[]*string{String("LogoutUris")},
+					PairwiseIdentifierUserType:        Bool(true),
+					PingAccessLogoutCapable:           Bool(true),
+					PolicyGroup: &pf.ResourceLink{
+						Id: String("PolicyGroup"),
+					},
+					SectorIdentifierUri: String("SectorIdentifierUri"),
+				},
+				PendingAuthorizationTimeoutOverride: Int(3),
+				PersistentGrantExpirationTime:       Int(4),
+				PersistentGrantExpirationTimeUnit:   String("PersistentGrantExpirationTimeUnit"),
+				PersistentGrantExpirationType:       String("PersistentGrantExpirationType"),
+				PersistentGrantIdleTimeout:          Int(5),
+				PersistentGrantIdleTimeoutTimeUnit:  String("PersistentGrantIdleTimeoutTimeUnit"),
+				PersistentGrantIdleTimeoutType:      String("PersistentGrantIdleTimeoutType"),
+				RedirectUris:                        &[]*string{String("RedirectUris")},
+				RefreshRolling:                      String("RefreshRolling"),
+				RequestObjectSigningAlgorithm:       String("RequestObjectSigningAlgorithm"),
+				RequestPolicyRef:                    &pf.ResourceLink{Id: String("RequestPolicyRef")},
+				RequireProofKeyForCodeExchange:      Bool(true),
+				RequireSignedRequests:               Bool(true),
+				RestrictScopes:                      Bool(true),
+				RestrictedResponseTypes:             &[]*string{String("RestrictedResponseTypes")},
+				RestrictedScopes:                    &[]*string{String("RestrictedScopes")},
+				TokenExchangeProcessorPolicyRef:     &pf.ResourceLink{Id: String("TokenExchangeProcessorPolicyRef")},
+				UserAuthorizationUrlOverride:        String("UserAuthorizationUrlOverride"),
+				ValidateUsingAllEligibleAtms:        Bool(true),
+			},
+		},
+	}
+	for i, tc := range cases {
+		t.Run(fmt.Sprintf("tc:%v", i), func(t *testing.T) {
+
+			resourceSchema := resourcePingFederateOauthClientResourceSchema()
+			resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})
+			if resourceLocalData.Set("client_auth", []map[string]string{{"secret": "Secret"}}) != nil {
+				t.Errorf("unable to set test data for Test_resourcePingFederateOauthClientResourceReadData")
+			}
+
+			resourcePingFederateOauthClientResourceReadResult(resourceLocalData, &tc.Resource)
+
+			if got := *resourcePingFederateOauthClientResourceReadData(resourceLocalData); !cmp.Equal(got, tc.Resource) {
+				t.Errorf("resourcePingFederateOauthClientResourceReadData() = %v", cmp.Diff(got, tc.Resource))
+			}
+		})
 	}
 }

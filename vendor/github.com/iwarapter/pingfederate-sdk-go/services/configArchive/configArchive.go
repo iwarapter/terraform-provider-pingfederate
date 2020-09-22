@@ -49,6 +49,9 @@ func (s *ConfigArchiveService) ImportConfigArchive(input *ImportConfigArchiveInp
 		Name:       "ImportConfigArchive",
 		HTTPMethod: "POST",
 		HTTPPath:   path,
+		QueryParams: map[string]string{
+			"forceImport": input.ForceImport,
+		},
 	}
 
 	req := s.newRequest(op, input.Body, output)

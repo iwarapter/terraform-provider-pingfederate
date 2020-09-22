@@ -90,6 +90,11 @@ func (s *SpAdaptersService) GetSpAdapters(input *GetSpAdaptersInput) (output *mo
 		Name:       "GetSpAdapters",
 		HTTPMethod: "GET",
 		HTTPPath:   path,
+		QueryParams: map[string]string{
+			"page":          input.Page,
+			"numberPerPage": input.NumberPerPage,
+			"filter":        input.Filter,
+		},
 	}
 	output = &models.SpAdapters{}
 	req := s.newRequest(op, nil, output)

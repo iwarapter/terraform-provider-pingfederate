@@ -91,6 +91,11 @@ func (s *IdpAdaptersService) GetIdpAdapters(input *GetIdpAdaptersInput) (output 
 		Name:       "GetIdpAdapters",
 		HTTPMethod: "GET",
 		HTTPPath:   path,
+		QueryParams: map[string]string{
+			"page":          input.Page,
+			"numberPerPage": input.NumberPerPage,
+			"filter":        input.Filter,
+		},
 	}
 	output = &models.IdpAdapters{}
 	req := s.newRequest(op, nil, output)

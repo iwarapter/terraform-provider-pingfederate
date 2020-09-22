@@ -51,6 +51,11 @@ func (s *LocalIdentityIdentityProfilesService) GetIdentityProfiles(input *GetIde
 		Name:       "GetIdentityProfiles",
 		HTTPMethod: "GET",
 		HTTPPath:   path,
+		QueryParams: map[string]string{
+			"page":          input.Page,
+			"numberPerPage": input.NumberPerPage,
+			"filter":        input.Filter,
+		},
 	}
 	output = &models.LocalIdentityProfiles{}
 	req := s.newRequest(op, nil, output)
