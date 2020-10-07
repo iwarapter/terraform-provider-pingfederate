@@ -3,6 +3,8 @@ package pingfederate
 import (
 	"context"
 	"fmt"
+	"log"
+	"net/http"
 	"strings"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/authenticationSelectors"
@@ -25,7 +27,11 @@ func resourcePingFederateAuthenticationSelectorResource() *schema.Resource {
 		CustomizeDiff: func(ctx context.Context, d *schema.ResourceDiff, m interface{}) error {
 			svc := m.(pfClient).AuthenticationSelectors
 			if className, ok := d.GetOk("plugin_descriptor_ref.0.id"); ok {
-				desc, _, err := svc.GetAuthenticationSelectorDescriptorsById(&authenticationSelectors.GetAuthenticationSelectorDescriptorsByIdInput{Id: className.(string)})
+				desc, resp, err := svc.GetAuthenticationSelectorDescriptorsById(&authenticationSelectors.GetAuthenticationSelectorDescriptorsByIdInput{Id: className.(string)})
+				if resp != nil && resp.StatusCode == http.StatusForbidden {
+					log.Printf("[WARN] Unable to query AuthenticationSelectorDescriptor, appropriate IdP/SP role not enabled")
+					return nil
+				}
 				if err != nil {
 					descs, _, err := svc.GetAuthenticationSelectorDescriptors()
 					if err == nil && descs != nil {

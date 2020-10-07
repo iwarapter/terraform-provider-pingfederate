@@ -3,6 +3,8 @@ package pingfederate
 import (
 	"context"
 	"fmt"
+	"log"
+	"net/http"
 	"strings"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/idpAdapters"
@@ -25,7 +27,11 @@ func resourcePingFederateIdpAdapterResource() *schema.Resource {
 		CustomizeDiff: func(ctx context.Context, d *schema.ResourceDiff, m interface{}) error {
 			svc := m.(pfClient).IdpAdapters
 			if className, ok := d.GetOk("plugin_descriptor_ref.0.id"); ok {
-				desc, _, err := svc.GetIdpAdapterDescriptorsById(&idpAdapters.GetIdpAdapterDescriptorsByIdInput{Id: className.(string)})
+				desc, resp, err := svc.GetIdpAdapterDescriptorsById(&idpAdapters.GetIdpAdapterDescriptorsByIdInput{Id: className.(string)})
+				if resp != nil && resp.StatusCode == http.StatusForbidden {
+					log.Printf("[WARN] Unable to query IdpAdapterDescriptor, IdP role not enabled")
+					return nil
+				}
 				if err != nil {
 					descs, _, err := svc.GetIdpAdapterDescriptors()
 					if err == nil && descs != nil {

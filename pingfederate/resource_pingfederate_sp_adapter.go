@@ -3,6 +3,8 @@ package pingfederate
 import (
 	"context"
 	"fmt"
+	"log"
+	"net/http"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -25,7 +27,11 @@ func resourcePingFederateSpAdapterResource() *schema.Resource {
 		CustomizeDiff: func(ctx context.Context, d *schema.ResourceDiff, m interface{}) error {
 			svc := m.(pfClient).SpAdapters
 			if className, ok := d.GetOk("plugin_descriptor_ref.0.id"); ok {
-				desc, _, err := svc.GetSpAdapterDescriptorsById(&spAdapters.GetSpAdapterDescriptorsByIdInput{Id: className.(string)})
+				desc, resp, err := svc.GetSpAdapterDescriptorsById(&spAdapters.GetSpAdapterDescriptorsByIdInput{Id: className.(string)})
+				if resp != nil && resp.StatusCode == http.StatusForbidden {
+					log.Printf("[WARN] Unable to query SpAdapterDescriptor, SP role not enabled")
+					return nil
+				}
 				if err != nil {
 					descs, _, err := svc.GetSpAdapterDescriptors()
 					if err == nil && descs != nil {

@@ -3,6 +3,8 @@ package pingfederate
 import (
 	"context"
 	"fmt"
+	"log"
+	"net/http"
 	"strings"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthAccessTokenManagers"
@@ -25,7 +27,11 @@ func resourcePingFederateOauthAccessTokenManagersResource() *schema.Resource {
 		CustomizeDiff: func(ctx context.Context, d *schema.ResourceDiff, m interface{}) error {
 			svc := m.(pfClient).OauthAccessTokenManagers
 			if className, ok := d.GetOk("plugin_descriptor_ref.0.id"); ok {
-				desc, _, err := svc.GetTokenManagerDescriptor(&oauthAccessTokenManagers.GetTokenManagerDescriptorInput{Id: className.(string)})
+				desc, resp, err := svc.GetTokenManagerDescriptor(&oauthAccessTokenManagers.GetTokenManagerDescriptorInput{Id: className.(string)})
+				if resp != nil && resp.StatusCode == http.StatusForbidden {
+					log.Printf("[WARN] Unable to query OAuthTokenManagerDescriptor, OAuth 2.0 authorization server role enabled")
+					return nil
+				}
 				if err != nil {
 					descs, _, err := svc.GetTokenManagerDescriptors()
 					if err == nil && descs != nil {
