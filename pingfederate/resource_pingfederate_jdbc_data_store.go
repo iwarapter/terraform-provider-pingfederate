@@ -1,5 +1,7 @@
 package pingfederate
 
+//lint:file-ignore SA1019 Ignore deprecated GetOkExists - no current alternative
+
 import (
 	"context"
 
@@ -198,7 +200,7 @@ func resourcePingFederateJdbcDataStoreResourceReadResult(d *schema.ResourceData,
 
 func resourcePingFederateJdbcDataStoreResourceReadData(d *schema.ResourceData) *pf.JdbcDataStore {
 	ds := &pf.JdbcDataStore{}
-	if v, ok := d.GetOk("mask_attribute_values"); ok {
+	if v, ok := d.GetOkExists("mask_attribute_values"); ok {
 		ds.MaskAttributeValues = Bool(v.(bool))
 	}
 	if val, ok := d.GetOk("connection_url_tags"); ok && len(val.(*schema.Set).List()) > 0 {
@@ -225,7 +227,7 @@ func resourcePingFederateJdbcDataStoreResourceReadData(d *schema.ResourceData) *
 	if val, ok := d.GetOk("validate_connection_sql"); ok {
 		ds.ValidateConnectionSql = String(val.(string))
 	}
-	if val, ok := d.GetOk("allow_multi_value_attributes"); ok {
+	if val, ok := d.GetOkExists("allow_multi_value_attributes"); ok {
 		ds.AllowMultiValueAttributes = Bool(val.(bool))
 	}
 	if val, ok := d.GetOk("min_pool_size"); ok {

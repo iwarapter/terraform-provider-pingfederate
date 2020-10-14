@@ -1,5 +1,7 @@
 package pingfederate
 
+//lint:file-ignore SA1019 Ignore deprecated GetOkExists - no current alternative
+
 import (
 	"context"
 
@@ -266,7 +268,7 @@ func resourcePingFederateLdapDataStoreResourceReadData(d *schema.ResourceData) *
 		CreateIfNecessary: Bool(d.Get("create_if_necessary").(bool)),
 		VerifyHost:        Bool(d.Get("verify_host").(bool)),
 	}
-	if val, ok := d.GetOk("mask_attribute_values"); ok {
+	if val, ok := d.GetOkExists("mask_attribute_values"); ok {
 		ds.MaskAttributeValues = Bool(val.(bool))
 	}
 	//TODO hostnames_tags
@@ -280,7 +282,7 @@ func resourcePingFederateLdapDataStoreResourceReadData(d *schema.ResourceData) *
 	if val, ok := d.GetOk("ldap_type"); ok {
 		ds.LdapType = String(val.(string))
 	}
-	if val, ok := d.GetOk("bind_anonymously"); ok {
+	if val, ok := d.GetOkExists("bind_anonymously"); ok {
 		ds.BindAnonymously = Bool(val.(bool))
 	}
 	if val, ok := d.GetOk("user_dn"); ok {
@@ -292,19 +294,19 @@ func resourcePingFederateLdapDataStoreResourceReadData(d *schema.ResourceData) *
 	if val, ok := d.GetOk("encrypted_password"); ok {
 		ds.EncryptedPassword = String(val.(string))
 	}
-	if val, ok := d.GetOk("use_ssl"); ok {
+	if val, ok := d.GetOkExists("use_ssl"); ok {
 		ds.UseSsl = Bool(val.(bool))
 	}
-	if val, ok := d.GetOk("use_dns_srv_records"); ok {
+	if val, ok := d.GetOkExists("use_dns_srv_records"); ok {
 		ds.UseDnsSrvRecords = Bool(val.(bool))
 	}
-	if val, ok := d.GetOk("follow_ldap_referrals"); ok {
+	if val, ok := d.GetOkExists("follow_ldap_referrals"); ok {
 		ds.FollowLDAPReferrals = Bool(val.(bool))
 	}
-	if val, ok := d.GetOk("test_on_borrow"); ok {
+	if val, ok := d.GetOkExists("test_on_borrow"); ok {
 		ds.TestOnBorrow = Bool(val.(bool))
 	}
-	if val, ok := d.GetOk("test_on_return"); ok {
+	if val, ok := d.GetOkExists("test_on_return"); ok {
 		ds.TestOnReturn = Bool(val.(bool))
 	}
 	if val, ok := d.GetOk("min_connections"); ok {

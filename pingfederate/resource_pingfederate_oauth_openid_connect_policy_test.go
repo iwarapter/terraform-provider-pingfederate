@@ -163,6 +163,10 @@ func Test_resourcePingFederateOauthOpenIdConnectPolicyResourceReadData(t *testin
 				AccessTokenManagerRef: &pf.ResourceLink{
 					Id: String("foo"),
 				},
+				IncludeSriInIdToken:         Bool(false),
+				IncludeUserInfoInIdToken:    Bool(false),
+				IncludeSHashInIdToken:       Bool(false),
+				ReturnIdTokenOnRefreshGrant: Bool(false),
 				AttributeContract: &pf.OpenIdConnectAttributeContract{
 					CoreAttributes: &[]*pf.OpenIdConnectAttribute{
 						{

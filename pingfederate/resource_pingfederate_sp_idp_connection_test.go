@@ -102,7 +102,7 @@ func Test_resourcePingFederateSpIdpConnectionResourceReadData(t *testing.T) {
 	}{
 		{
 			Resource: pf.IdpConnection{
-				Active: Bool(true),
+				Active: Bool(false),
 				AdditionalAllowedEntitiesConfiguration: &pf.AdditionalAllowedEntitiesConfiguration{
 					AdditionalAllowedEntities: &[]*pf.Entity{
 						{
