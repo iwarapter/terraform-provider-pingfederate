@@ -93,8 +93,8 @@ func Test_resourcePingFederateJdbcDataStoreResourceReadData(t *testing.T) {
 				Name:                      String("terraform"),
 				Password:                  String("foo"),
 				UserName:                  String("sa"),
-				AllowMultiValueAttributes: Bool(true),
-				MaskAttributeValues:       Bool(true),
+				AllowMultiValueAttributes: Bool(false),
+				MaskAttributeValues:       Bool(false),
 				ValidateConnectionSql:     String("select * from dual;"),
 				Type:                      String("JDBC"),
 

@@ -1,5 +1,7 @@
 package pingfederate
 
+//lint:file-ignore SA1019 Ignore deprecated GetOkExists - no current alternative
+
 import (
 	"context"
 
@@ -92,7 +94,7 @@ func resourcePingFederateAuthnApiSettingsResourceReadData(d *schema.ResourceData
 	result := pf.AuthnApiSettings{
 		ApiEnabled: Bool(d.Get("api_enabled").(bool)),
 	}
-	if val, ok := d.GetOk("enable_api_descriptions"); ok {
+	if val, ok := d.GetOkExists("enable_api_descriptions"); ok {
 		result.EnableApiDescriptions = Bool(val.(bool))
 	}
 	if v, ok := d.GetOk("default_application_ref"); ok && len(v.([]interface{})) > 0 {

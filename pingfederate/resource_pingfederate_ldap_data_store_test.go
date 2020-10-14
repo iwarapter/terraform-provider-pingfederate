@@ -85,22 +85,27 @@ func Test_resourcePingFederateLdapDataStoreResourceReadData(t *testing.T) {
 	}{
 		{
 			Resource: pf.LdapDataStore{
-				Name:                 String("terraform"),
-				Password:             String("foo"),
-				MaskAttributeValues:  Bool(true),
-				Type:                 String("LDAP"),
+				BindAnonymously:   Bool(false),
+				ConnectionTimeout: Int(3000),
+				CreateIfNecessary: Bool(false),
+				DnsTtl:            Int(60000),
+				//TODO Only set because terraform sdk defaults int's to 0 :/
+				EncryptedPassword:    String("foo"),
+				FollowLDAPReferrals:  Bool(false),
 				LdapDnsSrvPrefix:     String("_ldap._tcp"),
 				LdapsDnsSrvPrefix:    String("_ldaps._tcp"),
-				ConnectionTimeout:    Int(3000),
-				CreateIfNecessary:    Bool(true),
-				DnsTtl:               Int(60000),
+				MaskAttributeValues:  Bool(false),
 				MaxWait:              Int(-1),
+				Name:                 String("terraform"),
+				Password:             String("foo"),
 				ReadTimeout:          Int(3000),
+				TestOnBorrow:         Bool(false),
+				TestOnReturn:         Bool(false),
 				TimeBetweenEvictions: Int(60000),
-				VerifyHost:           Bool(true),
-
-				//TODO Only set because terraform sdk defaults int's to 0 :/
-				EncryptedPassword: String("foo"),
+				Type:                 String("LDAP"),
+				UseDnsSrvRecords:     Bool(false),
+				UseSsl:               Bool(false),
+				VerifyHost:           Bool(false),
 			},
 		},
 	}

@@ -1,5 +1,7 @@
 package pingfederate
 
+//lint:file-ignore SA1019 Ignore deprecated GetOkExists - no current alternative
+
 import (
 	"context"
 
@@ -469,7 +471,7 @@ func resourcePingFederateOauthClientResourceReadData(d *schema.ResourceData) *pf
 		GrantTypes: &grants,
 	}
 
-	if v, ok := d.GetOk("bypass_approval_page"); ok {
+	if v, ok := d.GetOkExists("bypass_approval_page"); ok {
 		client.BypassApprovalPage = Bool(v.(bool))
 	}
 
@@ -507,11 +509,11 @@ func resourcePingFederateOauthClientResourceReadData(d *schema.ResourceData) *pf
 		client.RefreshRolling = String(v.(string))
 	}
 
-	if v, ok := d.GetOk("require_signed_requests"); ok {
+	if v, ok := d.GetOkExists("require_signed_requests"); ok {
 		client.RequireSignedRequests = Bool(v.(bool))
 	}
 
-	if v, ok := d.GetOk("restrict_scopes"); ok {
+	if v, ok := d.GetOkExists("restrict_scopes"); ok {
 		client.RestrictScopes = Bool(v.(bool))
 	}
 
@@ -525,7 +527,7 @@ func resourcePingFederateOauthClientResourceReadData(d *schema.ResourceData) *pf
 		client.RestrictedScopes = &strs
 	}
 
-	if v, ok := d.GetOk("validate_using_all_eligible_atms"); ok {
+	if v, ok := d.GetOkExists("validate_using_all_eligible_atms"); ok {
 		client.ValidateUsingAllEligibleAtms = Bool(v.(bool))
 	}
 	if v, ok := d.GetOk("client_auth"); ok && len(v.([]interface{})) > 0 {
@@ -555,13 +557,13 @@ func resourcePingFederateOauthClientResourceReadData(d *schema.ResourceData) *pf
 	if v, ok := d.GetOk("ciba_request_object_signing_algorithm"); ok {
 		client.CibaRequestObjectSigningAlgorithm = String(v.(string))
 	}
-	if v, ok := d.GetOk("ciba_require_signed_requests"); ok {
+	if v, ok := d.GetOkExists("ciba_require_signed_requests"); ok {
 		client.CibaRequireSignedRequests = Bool(v.(bool))
 	}
-	if v, ok := d.GetOk("ciba_user_code_supported"); ok {
+	if v, ok := d.GetOkExists("ciba_user_code_supported"); ok {
 		client.CibaUserCodeSupported = Bool(v.(bool))
 	}
-	if v, ok := d.GetOk("bypass_activation_code_confirmation_override"); ok {
+	if v, ok := d.GetOkExists("bypass_activation_code_confirmation_override"); ok {
 		client.BypassActivationCodeConfirmationOverride = Bool(v.(bool))
 	}
 	if v, ok := d.GetOk("device_flow_setting_type"); ok {
@@ -588,7 +590,7 @@ func resourcePingFederateOauthClientResourceReadData(d *schema.ResourceData) *pf
 	if v, ok := d.GetOk("request_object_signing_algorithm"); ok {
 		client.RequestObjectSigningAlgorithm = String(v.(string))
 	}
-	if v, ok := d.GetOk("require_proof_key_for_code_exchange"); ok {
+	if v, ok := d.GetOkExists("require_proof_key_for_code_exchange"); ok {
 		client.RequireProofKeyForCodeExchange = Bool(v.(bool))
 	}
 	if v, ok := d.GetOk("token_exchange_processor_policy_ref"); ok && len(v.([]interface{})) > 0 {

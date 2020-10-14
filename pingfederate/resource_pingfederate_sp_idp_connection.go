@@ -1,5 +1,7 @@
 package pingfederate
 
+//lint:file-ignore SA1019 Ignore deprecated GetOkExists - no current alternative
+
 import (
 	"context"
 
@@ -296,7 +298,7 @@ func resourcePingFederateSpIdpConnectionResourceReadData(d *schema.ResourceData)
 	if val, ok := d.GetOk("name"); ok {
 		result.Name = String(val.(string))
 	}
-	if val, ok := d.GetOk("active"); ok {
+	if val, ok := d.GetOkExists("active"); ok {
 		result.Active = Bool(val.(bool))
 	}
 	if val, ok := d.GetOk("virtual_entity_ids"); ok {

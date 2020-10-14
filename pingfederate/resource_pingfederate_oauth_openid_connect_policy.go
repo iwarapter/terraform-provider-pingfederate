@@ -1,5 +1,7 @@
 package pingfederate
 
+//lint:file-ignore SA1019 Ignore deprecated GetOkExists - no current alternative
+
 import (
 	"context"
 
@@ -175,16 +177,16 @@ func resourcePingFederateOpenIdConnectPolicyResourceReadData(d *schema.ResourceD
 	if v, ok := d.GetOk("id_token_lifetime"); ok {
 		policy.IdTokenLifetime = Int(v.(int))
 	}
-	if v, ok := d.GetOk("include_sri_in_id_token"); ok {
+	if v, ok := d.GetOkExists("include_sri_in_id_token"); ok {
 		policy.IncludeSriInIdToken = Bool(v.(bool))
 	}
-	if v, ok := d.GetOk("include_user_in_id_token"); ok {
+	if v, ok := d.GetOkExists("include_user_in_id_token"); ok {
 		policy.IncludeUserInfoInIdToken = Bool(v.(bool))
 	}
-	if v, ok := d.GetOk("include_shash_in_id_token"); ok {
+	if v, ok := d.GetOkExists("include_shash_in_id_token"); ok {
 		policy.IncludeSHashInIdToken = Bool(v.(bool))
 	}
-	if v, ok := d.GetOk("return_id_token_on_refresh_grant"); ok {
+	if v, ok := d.GetOkExists("return_id_token_on_refresh_grant"); ok {
 		policy.ReturnIdTokenOnRefreshGrant = Bool(v.(bool))
 	}
 	if v, ok := d.GetOk("scope_attribute_mappings"); ok {

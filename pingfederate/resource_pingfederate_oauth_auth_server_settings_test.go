@@ -85,6 +85,8 @@ func testAccPingFederateOauthAuthServerSettingsConfig(name, configUpdate string)
 			"http://localhost"
 		]
 
+		persistent_grant_lifetime      = -1
+        persistent_grant_lifetime_unit = "DAYS"
 		default_scope_description  = ""
 		authorization_code_timeout = 60
 		authorization_code_entropy = 30

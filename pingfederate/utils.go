@@ -86,7 +86,7 @@ func validateConfiguration(d *schema.ResourceDiff, desc *pf.PluginConfigDescript
 	var diags diag.Diagnostics
 	config := expandPluginConfiguration(d.Get("configuration").([]interface{}))
 	for _, descriptor := range *desc.Fields {
-		if descriptor.Required != nil {
+		if descriptor.Required != nil && *descriptor.Required {
 			if !hasField(*descriptor.Name, config) {
 				if descriptor.DefaultValue != nil {
 					diags = append(diags, diag.FromErr(fmt.Errorf("the field '%s' is required, its default value is '%s'", *descriptor.Name, *descriptor.DefaultValue))...)
