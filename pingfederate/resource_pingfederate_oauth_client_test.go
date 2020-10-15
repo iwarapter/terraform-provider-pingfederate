@@ -126,14 +126,14 @@ func Test_resourcePingFederateOauthClientResourceReadData(t *testing.T) {
 	}{
 		{
 			Resource: pf.Client{
-				BypassActivationCodeConfirmationOverride: Bool(true),
-				BypassApprovalPage:                       Bool(true),
+				BypassActivationCodeConfirmationOverride: Bool(false),
+				BypassApprovalPage:                       Bool(false),
 				CibaDeliveryMode:                         String("CibaDeliveryMode"),
 				CibaNotificationEndpoint:                 String("CibaNotificationEndpoint"),
 				CibaPollingInterval:                      Int(1),
 				CibaRequestObjectSigningAlgorithm:        String("CibaRequestObjectSigningAlgorithm"),
-				CibaRequireSignedRequests:                Bool(true),
-				CibaUserCodeSupported:                    Bool(true),
+				CibaRequireSignedRequests:                Bool(false),
+				CibaUserCodeSupported:                    Bool(false),
 				ClientAuth: &pf.ClientAuth{
 					ClientCertIssuerDn:                String("ClientCertIssuerDn"),
 					ClientCertSubjectDn:               String("ClientCertSubjectDn"),
@@ -149,7 +149,7 @@ func Test_resourcePingFederateOauthClientResourceReadData(t *testing.T) {
 				Description:                   String("Description"),
 				DeviceFlowSettingType:         String("DeviceFlowSettingType"),
 				DevicePollingIntervalOverride: Int(2),
-				Enabled:                       Bool(true),
+				Enabled:                       Bool(false),
 				ExclusiveScopes:               &[]*string{String("ExclusiveScopes")},
 				ExtendedParameters: map[string]*pf.ParameterValues{
 					"example": {
@@ -187,14 +187,14 @@ func Test_resourcePingFederateOauthClientResourceReadData(t *testing.T) {
 				RefreshRolling:                      String("RefreshRolling"),
 				RequestObjectSigningAlgorithm:       String("RequestObjectSigningAlgorithm"),
 				RequestPolicyRef:                    &pf.ResourceLink{Id: String("RequestPolicyRef")},
-				RequireProofKeyForCodeExchange:      Bool(true),
-				RequireSignedRequests:               Bool(true),
-				RestrictScopes:                      Bool(true),
+				RequireProofKeyForCodeExchange:      Bool(false),
+				RequireSignedRequests:               Bool(false),
+				RestrictScopes:                      Bool(false),
 				RestrictedResponseTypes:             &[]*string{String("RestrictedResponseTypes")},
 				RestrictedScopes:                    &[]*string{String("RestrictedScopes")},
 				TokenExchangeProcessorPolicyRef:     &pf.ResourceLink{Id: String("TokenExchangeProcessorPolicyRef")},
 				UserAuthorizationUrlOverride:        String("UserAuthorizationUrlOverride"),
-				ValidateUsingAllEligibleAtms:        Bool(true),
+				ValidateUsingAllEligibleAtms:        Bool(false),
 			},
 		},
 	}

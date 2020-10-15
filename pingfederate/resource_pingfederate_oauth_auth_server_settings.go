@@ -1,5 +1,7 @@
 package pingfederate
 
+//lint:file-ignore SA1019 Ignore deprecated GetOkExists - no current alternative
+
 import (
 	"context"
 	"fmt"
@@ -205,65 +207,65 @@ func resourcePingFederateOauthAuthServerSettingsResourceUpdate(_ context.Context
 	//	// authSettings.AdminWebServicePcvRef = //expand
 	//}
 
-	if _, ok := d.GetOk("allowed_origins"); ok {
-		strs := expandStringList(d.Get("allowed_origins").(*schema.Set).List())
+	if v, ok := d.GetOk("allowed_origins"); ok {
+		strs := expandStringList(v.(*schema.Set).List())
 		authSettings.AllowedOrigins = &strs
 	}
 
-	if _, ok := d.GetOk("allow_unidentified_client_extension_grants"); ok {
-		authSettings.AllowUnidentifiedClientExtensionGrants = Bool(d.Get("allow_unidentified_client_extension_grants").(bool))
+	if v, ok := d.GetOkExists("allow_unidentified_client_extension_grants"); ok {
+		authSettings.AllowUnidentifiedClientExtensionGrants = Bool(v.(bool))
 	}
 
-	if _, ok := d.GetOk("allow_unidentified_client_ro_creds"); ok {
-		authSettings.AllowUnidentifiedClientROCreds = Bool(d.Get("allow_unidentified_client_ro_creds").(bool))
+	if v, ok := d.GetOkExists("allow_unidentified_client_ro_creds"); ok {
+		authSettings.AllowUnidentifiedClientROCreds = Bool(v.(bool))
 	}
 
-	if _, ok := d.GetOk("bypass_authorization_for_approved_grants"); ok {
-		authSettings.BypassAuthorizationForApprovedGrants = Bool(d.Get("bypass_authorization_for_approved_grants").(bool))
+	if v, ok := d.GetOk("bypass_authorization_for_approved_grants"); ok {
+		authSettings.BypassAuthorizationForApprovedGrants = Bool(v.(bool))
 	}
 
-	if _, ok := d.GetOk("exclusive_scope_groups"); ok {
-		authSettings.ExclusiveScopeGroups = expandScopeGroups(d.Get("exclusive_scope_groups").(*schema.Set).List())
+	if v, ok := d.GetOk("exclusive_scope_groups"); ok {
+		authSettings.ExclusiveScopeGroups = expandScopeGroups(v.(*schema.Set).List())
 	}
 
-	if _, ok := d.GetOk("exclusive_scopes"); ok {
-		authSettings.ExclusiveScopes = expandScopes(d.Get("exclusive_scopes").(*schema.Set).List())
+	if v, ok := d.GetOk("exclusive_scopes"); ok {
+		authSettings.ExclusiveScopes = expandScopes(v.(*schema.Set).List())
 	}
 
 	if v, ok := d.GetOk("persistent_grant_contract"); ok && v.(*schema.Set).Len() > 0 {
 		authSettings.PersistentGrantContract = expandPersistentGrantContract(v.(*schema.Set).List())
 	}
 
-	if _, ok := d.GetOk("persistent_grant_lifetime"); ok {
-		authSettings.PersistentGrantLifetime = Int(d.Get("persistent_grant_lifetime").(int))
+	if v, ok := d.GetOk("persistent_grant_lifetime"); ok {
+		authSettings.PersistentGrantLifetime = Int(v.(int))
 	}
 
-	if _, ok := d.GetOk("persistent_grant_lifetime_unit"); ok {
-		authSettings.PersistentGrantLifetimeUnit = String(d.Get("persistent_grant_lifetime_unit").(string))
+	if v, ok := d.GetOk("persistent_grant_lifetime_unit"); ok {
+		authSettings.PersistentGrantLifetimeUnit = String(v.(string))
 	}
 
-	if _, ok := d.GetOk("persistent_grant_reuse_grant_types"); ok {
-		authSettings.PersistentGrantReuseGrantTypes = expandStringList(d.Get("persistent_grant_reuse_grant_types").(*schema.Set).List())
+	if v, ok := d.GetOk("persistent_grant_reuse_grant_types"); ok {
+		authSettings.PersistentGrantReuseGrantTypes = expandStringList(v.(*schema.Set).List())
 	}
 
-	if _, ok := d.GetOk("scopes"); ok {
-		authSettings.Scopes = expandScopes(d.Get("scopes").(*schema.Set).List())
+	if v, ok := d.GetOk("scopes"); ok {
+		authSettings.Scopes = expandScopes(v.(*schema.Set).List())
 	}
 
-	if _, ok := d.GetOk("scope_groups"); ok {
-		authSettings.ScopeGroups = expandScopeGroups(d.Get("scope_groups").(*schema.Set).List())
+	if v, ok := d.GetOk("scope_groups"); ok {
+		authSettings.ScopeGroups = expandScopeGroups(v.(*schema.Set).List())
 	}
 
-	if _, ok := d.GetOk("roll_refresh_token_values"); ok {
-		authSettings.RollRefreshTokenValues = Bool(d.Get("roll_refresh_token_values").(bool))
+	if v, ok := d.GetOkExists("roll_refresh_token_values"); ok {
+		authSettings.RollRefreshTokenValues = Bool(v.(bool))
 	}
 
-	if _, ok := d.GetOk("token_endpoint_base_url"); ok {
-		authSettings.TokenEndpointBaseUrl = String(d.Get("token_endpoint_base_url").(string))
+	if v, ok := d.GetOk("token_endpoint_base_url"); ok {
+		authSettings.TokenEndpointBaseUrl = String(v.(string))
 	}
 
-	if _, ok := d.GetOk("track_user_sessions_for_logout"); ok {
-		authSettings.TrackUserSessionsForLogout = Bool(d.Get("track_user_sessions_for_logout").(bool))
+	if v, ok := d.GetOkExists("track_user_sessions_for_logout"); ok {
+		authSettings.TrackUserSessionsForLogout = Bool(v.(bool))
 	}
 
 	svc := m.(pfClient).OauthAuthServerSettings
