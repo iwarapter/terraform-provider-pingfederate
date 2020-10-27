@@ -1,4 +1,14 @@
-## 0.0.6 (Unreleased)
+## 0.0.7 (Unreleased)
+
+NOTES:
+
+* This is an early release experimental build for PingFederate 10.x
+
+BUG FIXES:
+
+* resource/pingfederate_authentication_selector: Fix handling of the attribute contract.
+
+## 0.0.6 (Oct 15th, 2020)
 
 NOTES:
 
@@ -7,7 +17,8 @@ NOTES:
 BUG FIXES:
 
 * resource/pingfederate_oauth_client: Was missing several configuration fields and didnt support `NONE` client auth types.
-
+* Fixed issue with root boolean values not being set to `false` on several resources
+* Changed descriptor validation logic to soft fail if the role isnt enabled (but could be as part of the apply).
 
 ## 0.0.5 (Sept 14th, 2020)
 

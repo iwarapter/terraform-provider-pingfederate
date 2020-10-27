@@ -194,7 +194,16 @@ func Test_resourcePingFederateAuthenticationSelectorResourceReadData(t *testing.
 						},
 					},
 				},
-				//AttributeContract: &pf.AuthenticationSelectorAttributeContract{},
+				AttributeContract: &pf.AuthenticationSelectorAttributeContract{
+					ExtendedAttributes: &[]*pf.AuthenticationSelectorAttribute{
+						{
+							Name: String("bar"),
+						},
+						{
+							Name: String("foo"),
+						},
+					},
+				},
 			},
 		},
 	}
