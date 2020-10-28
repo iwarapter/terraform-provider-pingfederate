@@ -588,7 +588,7 @@ func expandAuthenticationSelectorAttributeContract(in []interface{}) *pf.Authent
 	for _, raw := range in {
 		l := raw.(map[string]interface{})
 		var atr []*pf.AuthenticationSelectorAttribute
-		for _, exAtr := range l["extended_attributes"].([]interface{}) {
+		for _, exAtr := range l["extended_attributes"].(*schema.Set).List() {
 			atr = append(atr, &pf.AuthenticationSelectorAttribute{Name: String(exAtr.(string))})
 		}
 		pgc.ExtendedAttributes = &atr
@@ -2566,9 +2566,10 @@ func expandConfigRow(in map[string]interface{}) *pf.ConfigRow {
 		fields := expandSensitiveConfigFields(val.(*schema.Set).List())
 		*result.Fields = append(*result.Fields, *fields...)
 	}
-	if val, ok := in["default_row"]; ok {
-		result.DefaultRow = Bool(val.(bool))
-	}
+	//Requires https://github.com/hashicorp/terraform-plugin-sdk/issues/261
+	//if val, ok := in["default_row"]; ok {
+	//	result.DefaultRow = Bool(val.(bool))
+	//}
 	return &result
 }
 

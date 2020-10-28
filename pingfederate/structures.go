@@ -429,6 +429,11 @@ func resourceConfigTable() *schema.Resource {
 func resourceConfigRow() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
+			//Requires https://github.com/hashicorp/terraform-plugin-sdk/issues/261
+			//"default_row": {
+			//	Type:     schema.TypeBool,
+			//	Optional: true,
+			//},
 			"fields": {
 				Type:     schema.TypeSet,
 				Optional: true,

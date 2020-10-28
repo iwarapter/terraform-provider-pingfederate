@@ -501,6 +501,10 @@ func flattenConfigRow(in []*pf.ConfigRow) []map[string]interface{} {
 	m := make([]map[string]interface{}, 0, len(in))
 	for _, v := range in {
 		s := make(map[string]interface{})
+		//Requires https://github.com/hashicorp/terraform-plugin-sdk/issues/261
+		//if v.DefaultRow != nil {
+		//	s["default_row"] = *v.DefaultRow
+		//}
 		s["fields"] = flattenConfigField(*v.Fields)
 		s["sensitive_fields"] = flattenSensitiveConfigField(*v.Fields)
 		m = append(m, s)

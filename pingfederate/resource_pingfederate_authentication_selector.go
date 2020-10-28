@@ -134,7 +134,7 @@ func resourcePingFederateAuthenticationSelectorResourceReadResult(d *schema.Reso
 		}
 	}
 	if rv.AttributeContract != nil && rv.AttributeContract.ExtendedAttributes != nil && len(*rv.AttributeContract.ExtendedAttributes) > 0 {
-		if err = d.Set("extended_attributes", flattenAuthenticationSelectorAttributeContract(rv.AttributeContract)); err != nil {
+		if err = d.Set("attribute_contract", flattenAuthenticationSelectorAttributeContract(rv.AttributeContract)); err != nil {
 			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
