@@ -189,13 +189,23 @@ func (r *Request) Send() error {
 	if r.DataFilled() {
 		//v := reflect.Indirect(reflect.ValueOf(r.Data))
 		defer r.HTTPResponse.Body.Close()
-
-		if err := json.NewDecoder(r.HTTPResponse.Body).Decode(&r.Data); err != nil {
-			if err == io.EOF {
-				err = nil // ignore EOF errors caused by empty response body
-			} else {
-				r.Error = fmt.Errorf("failed to unmarshall response %s", err)
+		switch r.Data.(type) {
+		case *string:
+			bodyBytes, err := ioutil.ReadAll(r.HTTPResponse.Body)
+			if err != nil {
+				r.Error = fmt.Errorf("failed to read response %s", err)
 				return err
+			}
+			v := string(bodyBytes)
+			*r.Data.(*string) = v
+		default:
+			if err := json.NewDecoder(r.HTTPResponse.Body).Decode(&r.Data); err != nil {
+				if err == io.EOF {
+					err = nil // ignore EOF errors caused by empty response body
+				} else {
+					r.Error = fmt.Errorf("failed to unmarshall response %s", err)
+					return err
+				}
 			}
 		}
 	}
@@ -203,7 +213,7 @@ func (r *Request) Send() error {
 	//	break
 	//}
 
-	return nil
+ 	return nil
 }
 
 // DataFilled returns true if the request's data for response deserialization

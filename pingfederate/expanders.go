@@ -1,321 +1,34 @@
 package pingfederate
 
 import (
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
-//func expandSpAdapterAttribute(in []interface{}) *[]*pf.SpAdapterAttribute {
-//	var contractList []*pf.SpAdapterAttribute
-//	for _, raw := range in {
-//		c := &pf.SpAdapterAttribute{
-//			Name: String(raw.(string)),
-//		}
-//		contractList = append(contractList, c)
-//	}
-//	return &contractList
-//}
-
-//func expandSpAdapterAttributeContract(in []interface{}) *pf.SpAdapterAttributeContract {
-//	pgc := &pf.SpAdapterAttributeContract{}
-//	for _, raw := range in {
-//		l := raw.(map[string]interface{})
-//		if val, ok := l["inherited"]; ok {
-//			pgc.Inherited = Bool(val.(bool))
-//		}
-//		if v, ok := l["extended_attributes"]; ok && len(v.(*schema.Set).List()) > 0 {
-//			pgc.ExtendedAttributes = expandSpAdapterAttribute(v.(*schema.Set).List())
-//		}
-//		if v, ok := l["core_attributes"]; ok && len(v.(*schema.Set).List()) > 0 {
-//			pgc.CoreAttributes = expandSpAdapterAttribute(v.(*schema.Set).List())
-//		}
-//	}
-//	return pgc
-//}
-
-//func expandSpAdapterTargetApplicationInfo(in []interface{}) *pf.SpAdapterTargetApplicationInfo {
-//	pgc := &pf.SpAdapterTargetApplicationInfo{}
-//	for _, raw := range in {
-//		l := raw.(map[string]interface{})
-//		if v, ok := l["inherited"]; ok {
-//			pgc.Inherited = Bool(v.(bool))
-//		}
-//		if v, ok := l["application_name"]; ok {
-//			pgc.ApplicationName = String(v.(string))
-//		}
-//		if v, ok := l["application_icon_url"]; ok {
-//			pgc.ApplicationIconUrl = String(v.(string))
-//		}
-//	}
-//	return pgc
-//}
-
-//func expandIdpAdapterAttributeContract(in []interface{}) *pf.IdpAdapterAttributeContract {
-//	iac := &pf.IdpAdapterAttributeContract{}
-//	for _, raw := range in {
-//		l := raw.(map[string]interface{})
-//		if v, ok := l["extended_attributes"]; ok && len(v.(*schema.Set).List()) > 0 {
-//			iac.ExtendedAttributes = expandIdpAdapterAttributes(v.(*schema.Set).List())
-//		}
-//		if v, ok := l["core_attributes"]; ok && len(v.(*schema.Set).List()) > 0 {
-//			iac.CoreAttributes = expandIdpAdapterAttributes(v.(*schema.Set).List())
-//		}
-//		if val, ok := l["mask_ognl_values"]; ok {
-//			iac.MaskOgnlValues = Bool(val.(bool))
-//		}
-//		if val, ok := l["inherited"]; ok {
-//			iac.Inherited = Bool(val.(bool))
-//		}
-//	}
-//	return iac
-//}
-
-//func expandIdpAdapterAttributes(in []interface{}) *[]*pf.IdpAdapterAttribute {
-//	attributes := &[]*pf.IdpAdapterAttribute{}
-//	for _, raw := range in {
-//		l := raw.(map[string]interface{})
-//		c := &pf.IdpAdapterAttribute{}
-//		if val, ok := l["name"]; ok {
-//			c.Name = String(val.(string))
-//		}
-//		if val, ok := l["pseudonym"]; ok {
-//			c.Pseudonym = Bool(val.(bool))
-//		}
-//		if val, ok := l["masked"]; ok {
-//			c.Masked = Bool(val.(bool))
-//		}
-//		*attributes = append(*attributes, c)
-//	}
-//	return attributes
-//}
-
-//func expandIdpAdapterContractMapping(in []interface{}) *pf.IdpAdapterContractMapping {
-//	iac := &pf.IdpAdapterContractMapping{AttributeSources: &[]*pf.AttributeSource{}}
-//	for _, raw := range in {
-//		l := raw.(map[string]interface{})
-//		if v, ok := l["inherited"]; ok {
-//			iac.Inherited = Bool(v.(bool))
-//		}
-//		if v, ok := l["attribute_contract_fulfillment"]; ok {
-//			iac.AttributeContractFulfillment = expandMapOfAttributeFulfillmentValue(v.(*schema.Set).List())
-//		}
-//		if v, ok := l["issuance_criteria"]; ok {
-//			iac.IssuanceCriteria = expandIssuanceCriteria(v.([]interface{}))
-//		}
-//
-//		if v, ok := l["ldap_attribute_source"]; ok && len(v.([]interface{})) > 0 {
-//			*iac.AttributeSources = append(*iac.AttributeSources, *expandLdapAttributeSource(v.([]interface{}))...)
-//		}
-//		if v, ok := l["jdbc_attribute_source"]; ok && len(v.([]interface{})) > 0 {
-//			*iac.AttributeSources = append(*iac.AttributeSources, *expandJdbcAttributeSource(v.([]interface{}))...)
-//		}
-//		if v, ok := l["custom_attribute_source"]; ok && len(v.([]interface{})) > 0 {
-//			*iac.AttributeSources = append(*iac.AttributeSources, *expandCustomAttributeSource(v.([]interface{}))...)
-//		}
-//
-//	}
-//	return iac
-//}
-
-//func expandLdapAttributeSource(in []interface{}) *[]*pf.AttributeSource {
-//	var sources []*pf.AttributeSource
-//	for _, raw := range in {
-//		l := raw.(map[string]interface{})
-//		src := &pf.AttributeSource{Type: String("LDAP")}
-//		iac := &pf.LdapAttributeSource{Type: String("LDAP")}
-//		if v, ok := l["data_store_ref"]; ok && len(v.([]interface{})) > 0 {
-//			iac.DataStoreRef = expandResourceLink(v.([]interface{}))
-//			src.DataStoreRef = iac.DataStoreRef
-//		}
-//		if v, ok := l["base_dn"]; ok {
-//			iac.BaseDn = String(v.(string))
-//		}
-//		if v, ok := l["id"]; ok {
-//			iac.Id = String(v.(string))
-//			src.Id = iac.Id
-//		}
-//		if v, ok := l["search_scope"]; ok {
-//			iac.SearchScope = String(v.(string))
-//		}
-//		if v, ok := l["description"]; ok {
-//			iac.Description = String(v.(string))
-//			src.Description = iac.Description
-//		}
-//		if v, ok := l["search_filter"]; ok {
-//			iac.SearchFilter = String(v.(string))
-//		}
-//		if v, ok := l["attribute_contract_fulfillment"]; ok {
-//			iac.AttributeContractFulfillment = expandMapOfAttributeFulfillmentValue(v.(*schema.Set).List())
-//			src.AttributeContractFulfillment = iac.AttributeContractFulfillment
-//		}
-//		if v, ok := l["binary_attribute_settings"]; ok {
-//			ca := map[string]*pf.BinaryLdapAttributeSettings{}
-//			for key, val := range v.(map[string]interface{}) {
-//				ca[key] = &pf.BinaryLdapAttributeSettings{BinaryEncoding: String(val.(string))}
-//			}
-//			iac.BinaryAttributeSettings = ca
-//		}
-//		if v, ok := l["member_of_nested_group"]; ok {
-//			iac.MemberOfNestedGroup = Bool(v.(bool))
-//		}
-//		src.LdapAttributeSource = *iac
-//		sources = append(sources, src)
-//	}
-//	return &sources
-//}
-
-//func expandJdbcAttributeSource(in []interface{}) *[]*pf.AttributeSource {
-//	var sources []*pf.AttributeSource
-//	for _, raw := range in {
-//		l := raw.(map[string]interface{})
-//		src := &pf.AttributeSource{Type: String("JDBC")}
-//		iac := &pf.JdbcAttributeSource{Type: String("JDBC")}
-//		if v, ok := l["data_store_ref"]; ok && len(v.([]interface{})) > 0 {
-//			iac.DataStoreRef = expandResourceLink(v.([]interface{}))
-//			src.DataStoreRef = iac.DataStoreRef
-//		}
-//		if v, ok := l["schema"]; ok {
-//			iac.Schema = String(v.(string))
-//		}
-//		if v, ok := l["id"]; ok {
-//			iac.Id = String(v.(string))
-//			src.Id = iac.Id
-//		}
-//		if v, ok := l["table"]; ok {
-//			iac.Table = String(v.(string))
-//		}
-//		if v, ok := l["description"]; ok {
-//			iac.Description = String(v.(string))
-//			src.Description = iac.Description
-//		}
-//		if v, ok := l["filter"]; ok {
-//			iac.Filter = String(v.(string))
-//		}
-//		if v, ok := l["attribute_contract_fulfillment"]; ok {
-//			iac.AttributeContractFulfillment = expandMapOfAttributeFulfillmentValue(v.(*schema.Set).List())
-//			src.AttributeContractFulfillment = iac.AttributeContractFulfillment
-//		}
-//		src.JdbcAttributeSource = *iac
-//		sources = append(sources, src)
-//	}
-//	return &sources
-//}
-
-//func expandCustomAttributeSource(in []interface{}) *[]*pf.AttributeSource {
-//	var sources []*pf.AttributeSource
-//	for _, raw := range in {
-//		l := raw.(map[string]interface{})
-//		src := &pf.AttributeSource{Type: String("CUSTOM")}
-//		iac := &pf.CustomAttributeSource{Type: String("CUSTOM")}
-//		if v, ok := l["data_store_ref"]; ok && len(v.([]interface{})) > 0 {
-//			iac.DataStoreRef = expandResourceLink(v.([]interface{}))
-//			src.DataStoreRef = iac.DataStoreRef
-//		}
-//		if v, ok := l["id"]; ok {
-//			iac.Id = String(v.(string))
-//			src.Id = iac.Id
-//		}
-//		if v, ok := l["description"]; ok {
-//			iac.Description = String(v.(string))
-//			src.Description = iac.Description
-//		}
-//		if v, ok := l["filter_fields"]; ok {
-//			iac.FilterFields = expandFieldEntry(v.([]interface{}))
-//		}
-//		if v, ok := l["attribute_contract_fulfillment"]; ok {
-//			iac.AttributeContractFulfillment = expandMapOfAttributeFulfillmentValue(v.(*schema.Set).List())
-//			src.AttributeContractFulfillment = iac.AttributeContractFulfillment
-//		}
-//		src.CustomAttributeSource = *iac
-//		sources = append(sources, src)
-//	}
-//	return &sources
-//}
-
-//func expandFieldEntry(in []interface{}) *[]*pf.FieldEntry {
-//	var fields []*pf.FieldEntry
-//	for _, raw := range in {
-//		l := raw.(map[string]interface{})
-//		f := &pf.FieldEntry{}
-//		if v, ok := l["name"]; ok {
-//			f.Name = String(v.(string))
-//		}
-//		if v, ok := l["value"]; ok {
-//			f.Value = String(v.(string))
-//		}
-//		fields = append(fields, f)
-//	}
-//	return &fields
-//}
-
-//func expandSourceTypeIdKey(in []interface{}) *pf.SourceTypeIdKey {
-//	ca := &pf.SourceTypeIdKey{}
-//	for _, raw := range in {
-//		l := raw.(map[string]interface{})
-//		if val, ok := l["id"]; ok && val.(string) != "" { //TODO im not sure why it insists on saving the ID as empty
-//			ca.Id = String(val.(string))
-//		}
-//		if val, ok := l["type"]; ok {
-//			ca.Type = String(val.(string))
-//		}
-//	}
-//	return ca
-//}
-
-//func expandIssuanceCriteria(in []interface{}) *pf.IssuanceCriteria {
-//	exp := &pf.IssuanceCriteria{}
-//	for _, raw := range in {
-//		l := raw.(map[string]interface{})
-//		if v, ok := l["conditional_criteria"]; ok {
-//			exp.ConditionalCriteria = expandConditionalIssuanceCriteriaEntry(v.([]interface{}))
-//		}
-//		if v, ok := l["expression_criteria"]; ok {
-//			exp.ExpressionCriteria = expandExpressionIssuanceCriteriaEntry(v.([]interface{}))
-//		}
-//	}
-//	return exp
-//}
-
-//func expandConditionalIssuanceCriteriaEntry(in []interface{}) *[]*pf.ConditionalIssuanceCriteriaEntry {
-//	exps := &[]*pf.ConditionalIssuanceCriteriaEntry{}
-//	for _, raw := range in {
-//		l := raw.(map[string]interface{})
-//		exp := &pf.ConditionalIssuanceCriteriaEntry{}
-//		if v, ok := l["source"]; ok {
-//			exp.Source = expandSourceTypeIdKey(v.([]interface{}))
-//		}
-//		if v, ok := l["attribute_name"]; ok {
-//			exp.AttributeName = String(v.(string))
-//		}
-//		if v, ok := l["condition"]; ok {
-//			exp.Condition = String(v.(string))
-//		}
-//		if v, ok := l["value"]; ok {
-//			exp.Value = String(v.(string))
-//		}
-//		if v, ok := l["error_result"]; ok {
-//			exp.ErrorResult = String(v.(string))
-//		}
-//		*exps = append(*exps, exp)
-//	}
-//	return exps
-//}
-
-//func expandExpressionIssuanceCriteriaEntry(in []interface{}) *[]*pf.ExpressionIssuanceCriteriaEntry {
-//	exps := &[]*pf.ExpressionIssuanceCriteriaEntry{}
-//	for _, raw := range in {
-//		l := raw.(map[string]interface{})
-//		exp := &pf.ExpressionIssuanceCriteriaEntry{}
-//		if v, ok := l["expression"]; ok {
-//			exp.Expression = String(v.(string))
-//		}
-//		if v, ok := l["error_result"]; ok {
-//			exp.ErrorResult = String(v.(string))
-//		}
-//		*exps = append(*exps, exp)
-//	}
-//	return exps
-//}
+func resourceKeypairResourceReadResult(d *schema.ResourceData, rv *pf.KeyPairView) diag.Diagnostics {
+	var diags diag.Diagnostics
+	setResourceDataStringWithDiagnostic(d, "keypair_id", rv.Id, &diags)
+	setResourceDataStringWithDiagnostic(d, "crypto_provider", rv.CryptoProvider, &diags)
+	setResourceDataStringWithDiagnostic(d, "expires", rv.Expires, &diags)
+	setResourceDataStringWithDiagnostic(d, "issuer_dn", rv.IssuerDN, &diags)
+	setResourceDataStringWithDiagnostic(d, "key_algorithm", rv.KeyAlgorithm, &diags)
+	setResourceDataIntWithDiagnostic(d, "key_size", rv.KeySize, &diags)
+	setResourceDataStringWithDiagnostic(d, "serial_number", rv.SerialNumber, &diags)
+	setResourceDataStringWithDiagnostic(d, "sha1_fingerprint", rv.Sha1Fingerprint, &diags)
+	setResourceDataStringWithDiagnostic(d, "sha256_fingerprint", rv.Sha256Fingerprint, &diags)
+	setResourceDataStringWithDiagnostic(d, "signature_algorithm", rv.SignatureAlgorithm, &diags)
+	setResourceDataStringWithDiagnostic(d, "status", rv.Status, &diags)
+	if rv.SubjectAlternativeNames != nil && len(*rv.SubjectAlternativeNames) > 0 {
+		if err := d.Set("subject_alternative_names", *rv.SubjectAlternativeNames); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
+		}
+	}
+	setResourceDataStringWithDiagnostic(d, "subject_dn", rv.SubjectDN, &diags)
+	setResourceDataStringWithDiagnostic(d, "valid_from", rv.ValidFrom, &diags)
+	setResourceDataIntWithDiagnostic(d, "version", rv.Version, &diags)
+	return diags
+}
 
 func expandScopes(in []interface{}) *[]*pf.ScopeEntry {
 	var scopeList []*pf.ScopeEntry

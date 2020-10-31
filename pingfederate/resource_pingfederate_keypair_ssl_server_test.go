@@ -4,25 +4,25 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/iwarapter/pingfederate-sdk-go/services/keyPairsSigning"
+	"github.com/iwarapter/pingfederate-sdk-go/services/keyPairsSslServer"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccPingFederateKeyPairSigning(t *testing.T) {
-	resourceName := "pingfederate_keypair_signing.demo"
-	resourceNameGen := "pingfederate_keypair_signing.test_generate"
+func TestAccPingFederateKeyPairSslServer(t *testing.T) {
+	resourceName := "pingfederate_keypair_ssl_server.demo"
+	resourceNameGen := "pingfederate_keypair_ssl_server.demo"
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateKeypairSigningDestroy,
+		CheckDestroy: testAccCheckPingFederateKeypairSslServerDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccPingFederateKeypairSigningConfig(),
+				Config: testAccPingFederateKeypairSslServerConfig(),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateKeypairSigningExists(resourceName),
+					testAccCheckPingFederateKeypairSslServerExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "sha1_fingerprint", "596FC7AA20CEA185DA02AFEFBD239677D19BE43B"),
 					resource.TestCheckResourceAttr(resourceName, "sha256_fingerprint", "C9D96118E2040126DE72E3DB1FC16930019047ED1032ED797E9C2F19E7028AD5"),
 					resource.TestCheckResourceAttr(resourceName, "expires", "2024-08-13T20:21:00.000Z"),
@@ -40,9 +40,9 @@ func TestAccPingFederateKeyPairSigning(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccPingFederateKeypairSigningConfigGenerate(),
+				Config: testAccPingFederateKeypairSslServerConfigGenerate(),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateKeypairSigningExists(resourceNameGen),
+					testAccCheckPingFederateKeypairSslServerExists(resourceNameGen),
 					resource.TestCheckResourceAttrSet(resourceNameGen, "sha1_fingerprint"),
 					resource.TestCheckResourceAttrSet(resourceNameGen, "sha256_fingerprint"),
 					resource.TestCheckResourceAttrSet(resourceNameGen, "expires"),
@@ -58,22 +58,22 @@ func TestAccPingFederateKeyPairSigning(t *testing.T) {
 	})
 }
 
-func testAccCheckPingFederateKeypairSigningDestroy(s *terraform.State) error {
+func testAccCheckPingFederateKeypairSslServerDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccPingFederateKeypairSigningConfig() string {
+func testAccPingFederateKeypairSslServerConfig() string {
 	return `
-resource "pingfederate_keypair_signing" "demo" {
+resource "pingfederate_keypair_ssl_server" "demo" {
   file_data = filebase64("test_cases/provider.p12")
   password = "password"
 }
 `
 }
 
-func testAccPingFederateKeypairSigningConfigGenerate() string {
+func testAccPingFederateKeypairSslServerConfigGenerate() string {
 	return `
-        resource "pingfederate_keypair_signing" "test_generate" {
+        resource "pingfederate_keypair_ssl_server" "demo" {
                 city = "Test"
                 common_name = "Test"
                 country = "GB"
@@ -86,7 +86,7 @@ func testAccPingFederateKeypairSigningConfigGenerate() string {
         }`
 }
 
-func testAccCheckPingFederateKeypairSigningExists(n string) resource.TestCheckFunc {
+func testAccCheckPingFederateKeypairSslServerExists(n string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -97,15 +97,15 @@ func testAccCheckPingFederateKeypairSigningExists(n string) resource.TestCheckFu
 			return fmt.Errorf("no rule ID is set")
 		}
 
-		conn := testAccProvider.Meta().(pfClient).KeyPairsSigning
-		result, _, err := conn.GetKeyPair(&keyPairsSigning.GetKeyPairInput{Id: rs.Primary.ID})
+		conn := testAccProvider.Meta().(pfClient).KeyPairsSslServer
+		result, _, err := conn.GetKeyPair(&keyPairsSslServer.GetKeyPairInput{Id: rs.Primary.ID})
 
 		if err != nil {
-			return fmt.Errorf("error: KeypairSigning (%s) not found", n)
+			return fmt.Errorf("error: KeypairSslServer (%s) not found", n)
 		}
 
 		if *result.Id != rs.Primary.Attributes["id"] {
-			return fmt.Errorf("error: KeypairSigning response (%s) didnt match state (%s)", *result.Id, rs.Primary.Attributes["id"])
+			return fmt.Errorf("error: KeypairSslServer response (%s) didnt match state (%s)", *result.Id, rs.Primary.Attributes["id"])
 		}
 
 		return nil
