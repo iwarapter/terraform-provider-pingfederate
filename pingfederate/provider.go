@@ -58,6 +58,7 @@ func Provider() *schema.Provider {
 			"pingfederate_keypair_signing_csr":                          resourcePingFederateKeypairSigningCsrResource(),
 			"pingfederate_keypair_ssl_server":                           resourcePingFederateKeypairSslServerResource(),
 			"pingfederate_keypair_ssl_server_csr":                       resourcePingFederateKeypairSslServerCsrResource(),
+			"pingfederate_keypair_ssl_server_settings":                  resourcePingFederateKeypairSslServerSettingsResource(),
 			"pingfederate_notification_publisher":                       resourcePingFederateNotificationPublisherResource(),
 			"pingfederate_oauth_auth_server_settings":                   resourcePingFederateOauthAuthServerSettingsResource(),
 			"pingfederate_oauth_authentication_policy_contract_mapping": resourcePingFederateOauthAuthenticationPolicyContractMappingsResource(),
