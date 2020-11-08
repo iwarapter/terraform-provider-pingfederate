@@ -1,6 +1,8 @@
 # Resource: pingfederate_authentication_policies
 
-Provides a AuthenticationPolicy.
+Provides a Authentication Policies.
+
+-> This resource manages a singleton within PingFederate and as such you should ONLY ever declare one of this resource type. Deleting this resource simply clears all policies.
 
 ## Example Usage
 
