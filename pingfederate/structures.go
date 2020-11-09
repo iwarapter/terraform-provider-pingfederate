@@ -41,6 +41,173 @@ func setOfString() *schema.Schema {
 	}
 }
 
+func resourceKeypairResourceSchema() map[string]*schema.Schema {
+	return map[string]*schema.Schema{
+		"keypair_id": {
+			Type:     schema.TypeString,
+			Optional: true,
+			Computed: true,
+			ForceNew: true,
+		},
+		"crypto_provider": {
+			Type:             schema.TypeString,
+			Optional:         true,
+			ForceNew:         true,
+			ValidateDiagFunc: validateCryptoProvider,
+		},
+		"file_data": {
+			Type:          schema.TypeString,
+			Optional:      true,
+			ForceNew:      true,
+			ConflictsWith: []string{"city", "common_name", "country", "key_algorithm", "key_size", "organization", "organization_unit", "state", "valid_days"},
+			RequiredWith:  []string{"file_data", "password"},
+		},
+		"password": {
+			Type:          schema.TypeString,
+			Sensitive:     true,
+			Optional:      true,
+			ForceNew:      true,
+			ConflictsWith: []string{"city", "common_name", "country", "key_algorithm", "key_size", "organization", "organization_unit", "state", "valid_days"},
+			RequiredWith:  []string{"file_data", "password"},
+		},
+		"city": {
+			Type:          schema.TypeString,
+			Optional:      true,
+			ForceNew:      true,
+			ConflictsWith: []string{"file_data", "password"},
+			RequiredWith:  []string{"city", "common_name", "country", "key_algorithm", "key_size", "organization", "organization_unit", "state", "valid_days"},
+		},
+		"common_name": {
+			Type:          schema.TypeString,
+			Optional:      true,
+			ForceNew:      true,
+			ConflictsWith: []string{"file_data", "password"},
+			RequiredWith:  []string{"city", "common_name", "country", "key_algorithm", "key_size", "organization", "organization_unit", "state", "valid_days"},
+		},
+		"country": {
+			Type:          schema.TypeString,
+			Optional:      true,
+			ForceNew:      true,
+			ConflictsWith: []string{"file_data", "password"},
+			RequiredWith:  []string{"city", "common_name", "country", "key_algorithm", "key_size", "organization", "organization_unit", "state", "valid_days"},
+		},
+		"key_algorithm": {
+			Type:          schema.TypeString,
+			Optional:      true,
+			ForceNew:      true,
+			Computed:      true,
+			ConflictsWith: []string{"file_data", "password"},
+			RequiredWith:  []string{"city", "common_name", "country", "key_algorithm", "key_size", "organization", "organization_unit", "state", "valid_days"},
+		},
+		"key_size": {
+			Type:          schema.TypeInt,
+			Optional:      true,
+			ForceNew:      true,
+			Computed:      true,
+			ConflictsWith: []string{"file_data", "password"},
+			RequiredWith:  []string{"city", "common_name", "country", "key_algorithm", "key_size", "organization", "organization_unit", "state", "valid_days"},
+		},
+		"organization": {
+			Type:          schema.TypeString,
+			Optional:      true,
+			ForceNew:      true,
+			ConflictsWith: []string{"file_data", "password"},
+			RequiredWith:  []string{"city", "common_name", "country", "key_algorithm", "key_size", "organization", "organization_unit", "state", "valid_days"},
+		},
+		"organization_unit": {
+			Type:          schema.TypeString,
+			Optional:      true,
+			ForceNew:      true,
+			ConflictsWith: []string{"file_data", "password"},
+			RequiredWith:  []string{"city", "common_name", "country", "key_algorithm", "key_size", "organization", "organization_unit", "state", "valid_days"},
+		},
+		"state": {
+			Type:          schema.TypeString,
+			Optional:      true,
+			ForceNew:      true,
+			ConflictsWith: []string{"file_data", "password"},
+			RequiredWith:  []string{"city", "common_name", "country", "key_algorithm", "key_size", "organization", "organization_unit", "state", "valid_days"},
+		},
+		"subject_alternative_names": {
+			Type:     schema.TypeSet,
+			Optional: true,
+			Computed: true,
+			ForceNew: true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+			ConflictsWith: []string{"file_data", "password"},
+			RequiredWith:  []string{"city", "common_name", "country", "key_algorithm", "key_size", "organization", "organization_unit", "state", "valid_days"},
+		},
+		"valid_days": {
+			Type:          schema.TypeInt,
+			Optional:      true,
+			ForceNew:      true,
+			ConflictsWith: []string{"file_data", "password"},
+			RequiredWith:  []string{"city", "common_name", "country", "key_algorithm", "key_size", "organization", "organization_unit", "state", "valid_days"},
+		},
+		"expires": {
+			Type:     schema.TypeString,
+			Computed: true,
+		},
+		"issuer_dn": {
+			Type:     schema.TypeString,
+			Computed: true,
+		},
+		"sha256_fingerprint": {
+			Type:     schema.TypeString,
+			Computed: true,
+		},
+		"serial_number": {
+			Type:     schema.TypeString,
+			Computed: true,
+		},
+		"sha1_fingerprint": {
+			Type:     schema.TypeString,
+			Computed: true,
+		},
+		"signature_algorithm": {
+			Type:     schema.TypeString,
+			Computed: true,
+		},
+		"status": {
+			Type:     schema.TypeString,
+			Computed: true,
+		},
+		"subject_cn": {
+			Type:     schema.TypeString,
+			Computed: true,
+		},
+		"subject_dn": {
+			Type:     schema.TypeString,
+			Computed: true,
+		},
+		"valid_from": {
+			Type:     schema.TypeString,
+			Computed: true,
+		},
+		"version": {
+			Type:     schema.TypeInt,
+			Computed: true,
+		},
+	}
+}
+
+func resourceKeypairCsrResourceSchema() map[string]*schema.Schema {
+	return map[string]*schema.Schema{
+		"keypair_id": {
+			Type:     schema.TypeString,
+			Required: true,
+			ForceNew: true,
+		},
+		"file_data": {
+			Type:     schema.TypeString,
+			Required: true,
+			ForceNew: true,
+		},
+	}
+}
+
 func resourceAuthenticationPolicyTreeSchema() *schema.Schema {
 	return &schema.Schema{
 		Type:     schema.TypeList,

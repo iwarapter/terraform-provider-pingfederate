@@ -37,6 +37,10 @@ func Provider() *schema.Provider {
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{"PINGFEDERATE_BASEURL"}, "https://localhost:9999"),
 			},
 		},
+		DataSourcesMap: map[string]*schema.Resource{
+			"pingfederate_keypair_signing_csr":    dataSourcePingFederateKeyPairSigningCsr(),
+			"pingfederate_keypair_ssl_server_csr": dataSourcePingFederateKeyPairSslServerCsr(),
+		},
 		ResourcesMap: map[string]*schema.Resource{
 			"pingfederate_authentication_policies_settings":             resourcePingFederateAuthenticationPoliciesSettingsResource(),
 			"pingfederate_authentication_policies":                      resourcePingFederateAuthenticationPoliciesResource(),
@@ -51,6 +55,10 @@ func Provider() *schema.Provider {
 			"pingfederate_idp_adapter":                                  resourcePingFederateIdpAdapterResource(),
 			"pingfederate_kerberos_realm":                               resourcePingFederateKerberosRealmResource(),
 			"pingfederate_keypair_signing":                              resourcePingFederateKeypairSigningResource(),
+			"pingfederate_keypair_signing_csr":                          resourcePingFederateKeypairSigningCsrResource(),
+			"pingfederate_keypair_ssl_server":                           resourcePingFederateKeypairSslServerResource(),
+			"pingfederate_keypair_ssl_server_csr":                       resourcePingFederateKeypairSslServerCsrResource(),
+			"pingfederate_keypair_ssl_server_settings":                  resourcePingFederateKeypairSslServerSettingsResource(),
 			"pingfederate_notification_publisher":                       resourcePingFederateNotificationPublisherResource(),
 			"pingfederate_oauth_auth_server_settings":                   resourcePingFederateOauthAuthServerSettingsResource(),
 			"pingfederate_oauth_authentication_policy_contract_mapping": resourcePingFederateOauthAuthenticationPolicyContractMappingsResource(),

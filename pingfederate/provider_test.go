@@ -21,6 +21,8 @@ import (
 	"github.com/ory/dockertest"
 )
 
+var cfg *config.Config
+
 func TestMain(m *testing.M) {
 	_, acceptanceTesting := os.LookupEnv("TF_ACC")
 	if acceptanceTesting {
@@ -64,7 +66,7 @@ func TestMain(m *testing.M) {
 
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 		pfUrl, _ := url.Parse(fmt.Sprintf("https://localhost:%s/pf-admin-api/v1", resource.GetPort("9999/tcp")))
-		cfg := config.NewConfig().WithUsername("Administrator").WithPassword("2Federate").WithEndpoint(pfUrl.String())
+		cfg = config.NewConfig().WithUsername("Administrator").WithPassword("2Federate").WithEndpoint(pfUrl.String())
 		client := version.New(cfg)
 
 		// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
@@ -76,7 +78,7 @@ func TestMain(m *testing.M) {
 		}); err != nil {
 			log.Fatalf("Could not connect to docker: %s", err)
 		}
-		resource.Expire(300)
+		resource.Expire(600)
 		os.Setenv("PINGFEDERATE_BASEURL", fmt.Sprintf("https://localhost:%s", resource.GetPort("9999/tcp")))
 		log.Println("Connected to PingFederate admin API....")
 		code := m.Run()
