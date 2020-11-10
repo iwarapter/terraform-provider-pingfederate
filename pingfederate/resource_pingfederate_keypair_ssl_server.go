@@ -43,31 +43,8 @@ func resourcePingFederateKeypairSslServerResourceCreate(_ context.Context, d *sc
 	}
 
 	input := keyPairsSslServer.CreateKeyPairInput{
-		Body: pf.NewKeyPairSettings{
-			CommonName:   String(d.Get("common_name").(string)),
-			Country:      String(d.Get("country").(string)),
-			KeyAlgorithm: String(d.Get("key_algorithm").(string)),
-			KeySize:      Int(d.Get("key_size").(int)),
-			Organization: String(d.Get("organization").(string)),
-			ValidDays:    Int(d.Get("valid_days").(int)),
-		},
+		Body: *resourcePingFederateKeypairResourceReadData(d),
 	}
-	if val, ok := d.GetOk("keypair_id"); ok {
-		input.Body.Id = String(val.(string))
-	}
-	if val, ok := d.GetOk("city"); ok {
-		input.Body.City = String(val.(string))
-	}
-	if val, ok := d.GetOk("organization_unit"); ok {
-		input.Body.OrganizationUnit = String(val.(string))
-	}
-	if val, ok := d.GetOk("state"); ok {
-		input.Body.State = String(val.(string))
-	}
-	if val, ok := d.GetOk("crypto_provider"); ok {
-		input.Body.CryptoProvider = String(val.(string))
-	}
-
 	result, _, err := svc.CreateKeyPair(&input)
 	if err != nil {
 		return diag.Errorf("unable to generate SslServerKeypair: %s", err)

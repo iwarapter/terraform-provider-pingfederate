@@ -26,11 +26,8 @@ func resourcePingFederateKeypairSigningResourceCreate(_ context.Context, d *sche
 	if _, ok := d.GetOk("file_data"); ok {
 		input := keyPairsSigning.ImportKeyPairInput{
 			Body: pf.PKCS12File{
-				CryptoProvider:    nil,
-				EncryptedPassword: nil,
-				FileData:          String(d.Get("file_data").(string)),
-				Id:                nil,
-				Password:          String(d.Get("password").(string)),
+				FileData: String(d.Get("file_data").(string)),
+				Password: String(d.Get("password").(string)),
 			},
 		}
 		result, _, err := svc.ImportKeyPair(&input)
@@ -42,28 +39,8 @@ func resourcePingFederateKeypairSigningResourceCreate(_ context.Context, d *sche
 		return resourceKeypairResourceReadResult(d, result)
 	}
 	input := keyPairsSigning.CreateKeyPairInput{
-		Body: pf.NewKeyPairSettings{
-			CommonName:   String(d.Get("common_name").(string)),
-			Country:      String(d.Get("country").(string)),
-			KeyAlgorithm: String(d.Get("key_algorithm").(string)),
-			KeySize:      Int(d.Get("key_size").(int)),
-			Organization: String(d.Get("organization").(string)),
-			ValidDays:    Int(d.Get("valid_days").(int)),
-		},
+		Body: *resourcePingFederateKeypairResourceReadData(d),
 	}
-	if val, ok := d.GetOk("city"); ok {
-		input.Body.City = String(val.(string))
-	}
-	if val, ok := d.GetOk("organization_unit"); ok {
-		input.Body.OrganizationUnit = String(val.(string))
-	}
-	if val, ok := d.GetOk("state"); ok {
-		input.Body.State = String(val.(string))
-	}
-	if val, ok := d.GetOk("crypto_provider"); ok {
-		input.Body.CryptoProvider = String(val.(string))
-	}
-
 	result, _, err := svc.CreateKeyPair(&input)
 	if err != nil {
 		return diag.Errorf("unable to generate SigningKeypair: %s", err)
