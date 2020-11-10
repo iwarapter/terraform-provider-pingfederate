@@ -7,15 +7,16 @@ Provides a signing keypair.
 ### Generating a KeyPair
 ```hcl
 resource "pingfederate_keypair_signing" "example" {
-  city              = "London"
-  common_name       = "Example"
-  country           = "GB"
-  key_algorithm     = "RSA"
-  key_size          = 2048
-  organization      = "Testing"
-  organization_unit = "Test"
-  state             = "Test"
-  valid_days        = 365
+  city                      = "London"
+  common_name               = "Example"
+  country                   = "GB"
+  key_algorithm             = "RSA"
+  key_size                  = 2048
+  organization              = "Testing"
+  organization_unit         = "Test"
+  state                     = "Test"
+  valid_days                = 365
+  subject_alternative_names = ["examle.com", "another.com"]
 }
 ```
 
