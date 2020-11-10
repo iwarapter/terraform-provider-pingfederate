@@ -63,6 +63,10 @@ func resourcePingFederateKeypairSigningResourceCreate(_ context.Context, d *sche
 	if val, ok := d.GetOk("crypto_provider"); ok {
 		input.Body.CryptoProvider = String(val.(string))
 	}
+	if val, ok := d.GetOk("subject_alternative_names"); ok {
+		sans := expandStringList(val.(*schema.Set).List())
+		input.Body.SubjectAlternativeNames = &sans
+	}
 
 	result, _, err := svc.CreateKeyPair(&input)
 	if err != nil {

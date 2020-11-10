@@ -52,6 +52,8 @@ func TestAccPingFederateKeyPairSigning(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceNameGen, "status", "VALID"),
 					resource.TestCheckResourceAttr(resourceNameGen, "subject_dn", "CN=Test, OU=Test, O=Test, L=Test, ST=Test, C=GB"),
 					resource.TestCheckResourceAttrSet(resourceNameGen, "valid_from"),
+					resource.TestCheckResourceAttr(resourceNameGen, "subject_alternative_names.0", "bar"),
+					resource.TestCheckResourceAttr(resourceNameGen, "subject_alternative_names.1", "foo"),
 				),
 			},
 		},
@@ -74,15 +76,16 @@ resource "pingfederate_keypair_signing" "demo" {
 func testAccPingFederateKeypairSigningConfigGenerate() string {
 	return `
         resource "pingfederate_keypair_signing" "test_generate" {
-                city = "Test"
-                common_name = "Test"
-                country = "GB"
-                key_algorithm = "RSA"
-                key_size = 2048
-                organization = "Test"
-                organization_unit = "Test"
-                state = "Test"
-                valid_days = 365
+			city = "Test"
+			common_name = "Test"
+			country = "GB"
+			key_algorithm = "RSA"
+			key_size = 2048
+			organization = "Test"
+			organization_unit = "Test"
+			state = "Test"
+			valid_days = 365
+			subject_alternative_names = ["foo", "bar"]
         }`
 }
 
