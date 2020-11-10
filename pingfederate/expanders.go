@@ -1,33 +1,37 @@
 package pingfederate
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
-func resourceKeypairResourceReadResult(d *schema.ResourceData, rv *pf.KeyPairView) diag.Diagnostics {
-	var diags diag.Diagnostics
-	setResourceDataStringWithDiagnostic(d, "keypair_id", rv.Id, &diags)
-	setResourceDataStringWithDiagnostic(d, "crypto_provider", rv.CryptoProvider, &diags)
-	setResourceDataStringWithDiagnostic(d, "expires", rv.Expires, &diags)
-	setResourceDataStringWithDiagnostic(d, "issuer_dn", rv.IssuerDN, &diags)
-	setResourceDataStringWithDiagnostic(d, "key_algorithm", rv.KeyAlgorithm, &diags)
-	setResourceDataIntWithDiagnostic(d, "key_size", rv.KeySize, &diags)
-	setResourceDataStringWithDiagnostic(d, "serial_number", rv.SerialNumber, &diags)
-	setResourceDataStringWithDiagnostic(d, "sha1_fingerprint", rv.Sha1Fingerprint, &diags)
-	setResourceDataStringWithDiagnostic(d, "sha256_fingerprint", rv.Sha256Fingerprint, &diags)
-	setResourceDataStringWithDiagnostic(d, "signature_algorithm", rv.SignatureAlgorithm, &diags)
-	setResourceDataStringWithDiagnostic(d, "status", rv.Status, &diags)
-	if rv.SubjectAlternativeNames != nil && len(*rv.SubjectAlternativeNames) > 0 {
-		if err := d.Set("subject_alternative_names", *rv.SubjectAlternativeNames); err != nil {
-			diags = append(diags, diag.FromErr(err)...)
-		}
+func resourcePingFederateKeypairResourceReadData(d *schema.ResourceData) *pf.NewKeyPairSettings {
+	settings := pf.NewKeyPairSettings{
+		CommonName:   String(d.Get("common_name").(string)),
+		Country:      String(d.Get("country").(string)),
+		KeyAlgorithm: String(d.Get("key_algorithm").(string)),
+		KeySize:      Int(d.Get("key_size").(int)),
+		Organization: String(d.Get("organization").(string)),
+		ValidDays:    Int(d.Get("valid_days").(int)),
 	}
-	setResourceDataStringWithDiagnostic(d, "subject_dn", rv.SubjectDN, &diags)
-	setResourceDataStringWithDiagnostic(d, "valid_from", rv.ValidFrom, &diags)
-	setResourceDataIntWithDiagnostic(d, "version", rv.Version, &diags)
-	return diags
+	if val, ok := d.GetOk("city"); ok {
+		settings.City = String(val.(string))
+	}
+	if val, ok := d.GetOk("organization_unit"); ok {
+		settings.OrganizationUnit = String(val.(string))
+	}
+	if val, ok := d.GetOk("state"); ok {
+		settings.State = String(val.(string))
+	}
+	if val, ok := d.GetOk("crypto_provider"); ok {
+		settings.CryptoProvider = String(val.(string))
+	}
+	if val, ok := d.GetOk("subject_alternative_names"); ok {
+		sans := expandStringList(val.(*schema.Set).List())
+		settings.SubjectAlternativeNames = &sans
+	}
+
+	return &settings
 }
 
 func expandScopes(in []interface{}) *[]*pf.ScopeEntry {

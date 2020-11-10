@@ -1,18 +1,34 @@
 package pingfederate
 
 import (
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
-//func flattenSpAdapterAttribute(in *pf.SpAdapterAttribute) []map[string]interface{} {
-//	m := make([]map[string]interface{}, 0, 1)
-//	s := make(map[string]interface{})
-//	if in.Name != nil {
-//		s["name"] = *in.Name
-//	}
-//	return append(m, s)
-//}
+func resourceKeypairResourceReadResult(d *schema.ResourceData, rv *pf.KeyPairView) diag.Diagnostics {
+	var diags diag.Diagnostics
+	setResourceDataStringWithDiagnostic(d, "keypair_id", rv.Id, &diags)
+	setResourceDataStringWithDiagnostic(d, "crypto_provider", rv.CryptoProvider, &diags)
+	setResourceDataStringWithDiagnostic(d, "expires", rv.Expires, &diags)
+	setResourceDataStringWithDiagnostic(d, "issuer_dn", rv.IssuerDN, &diags)
+	setResourceDataStringWithDiagnostic(d, "key_algorithm", rv.KeyAlgorithm, &diags)
+	setResourceDataIntWithDiagnostic(d, "key_size", rv.KeySize, &diags)
+	setResourceDataStringWithDiagnostic(d, "serial_number", rv.SerialNumber, &diags)
+	setResourceDataStringWithDiagnostic(d, "sha1_fingerprint", rv.Sha1Fingerprint, &diags)
+	setResourceDataStringWithDiagnostic(d, "sha256_fingerprint", rv.Sha256Fingerprint, &diags)
+	setResourceDataStringWithDiagnostic(d, "signature_algorithm", rv.SignatureAlgorithm, &diags)
+	setResourceDataStringWithDiagnostic(d, "status", rv.Status, &diags)
+	if rv.SubjectAlternativeNames != nil && len(*rv.SubjectAlternativeNames) > 0 {
+		if err := d.Set("subject_alternative_names", *rv.SubjectAlternativeNames); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
+		}
+	}
+	setResourceDataStringWithDiagnostic(d, "subject_dn", rv.SubjectDN, &diags)
+	setResourceDataStringWithDiagnostic(d, "valid_from", rv.ValidFrom, &diags)
+	setResourceDataIntWithDiagnostic(d, "version", rv.Version, &diags)
+	return diags
+}
 
 func flattenSpAdapterAttributes(in *[]*pf.SpAdapterAttribute) *schema.Set {
 	m := make([]interface{}, 0, len(*in))
