@@ -11,12 +11,13 @@ import (
 	"strings"
 
 	"github.com/hashicorp/go-multierror"
-	tftest "github.com/hashicorp/terraform-plugin-test/v2"
 	testing "github.com/mitchellh/go-testing-interface"
 
+	"github.com/hashicorp/terraform-plugin-go/tfprotov5"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/internal/addrs"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/internal/plugintest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
@@ -296,6 +297,11 @@ type TestCase struct {
 	//  }
 	ProviderFactories map[string]func() (*schema.Provider, error)
 
+	// ProtoV5ProviderFactories serves the same purpose as ProviderFactories,
+	// but for protocol v5 providers defined using the terraform-plugin-go
+	// ProviderServer interface.
+	ProtoV5ProviderFactories map[string]func() (tfprotov5.ProviderServer, error)
+
 	// Providers is the ResourceProvider that will be under test.
 	//
 	// Deprecated: Providers is deprecated, please use ProviderFactories
@@ -534,8 +540,8 @@ func Test(t testing.T, c TestCase) {
 	if err != nil {
 		t.Fatalf("Error getting working dir: %s", err)
 	}
-	helper := tftest.AutoInitProviderHelper(sourceDir)
-	defer func(helper *tftest.Helper) {
+	helper := plugintest.AutoInitProviderHelper(sourceDir)
+	defer func(helper *plugintest.Helper) {
 		err := helper.Close()
 		if err != nil {
 			log.Printf("Error cleaning up temporary test files: %s", err)

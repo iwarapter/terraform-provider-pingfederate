@@ -17,6 +17,8 @@ import (
 )
 
 func TestAccPingFederateIdpAdapter(t *testing.T) {
+	resourceName := "pingfederate_idp_adapter.demo"
+
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
@@ -25,15 +27,20 @@ func TestAccPingFederateIdpAdapter(t *testing.T) {
 			{
 				Config: testAccPingFederateIdpAdapterConfig("3"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateIdpAdapterExists("pingfederate_idp_adapter.demo"),
+					testAccCheckPingFederateIdpAdapterExists(resourceName),
 					//testAccCheckPingFederateIdpAdapterAttributes(),
 				),
 			},
 			{
 				Config: testAccPingFederateIdpAdapterConfig("4"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateIdpAdapterExists("pingfederate_idp_adapter.demo"),
+					testAccCheckPingFederateIdpAdapterExists(resourceName),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 			{
 				Config:      testAccPingFederateIdpAdapterConfigWrongPlugin(),

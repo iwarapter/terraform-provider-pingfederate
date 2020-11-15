@@ -26,12 +26,6 @@ func resourcePingFederateSpIdpConnectionResource() *schema.Resource {
 
 func resourcePingFederateSpIdpConnectionResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
-		"bypass_external_validation": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Description: "External validation will be bypassed when set to true. Default to false.",
-			Default:     false,
-		},
 		"connection_id": {
 			Type:     schema.TypeString,
 			Optional: true,
@@ -139,7 +133,7 @@ func resourcePingFederateSpIdpConnectionResourceCreate(_ context.Context, d *sch
 	svc := m.(pfClient).SpIdpConnections
 	input := spIdpConnections.CreateConnectionInput{
 		Body:                     *resourcePingFederateSpIdpConnectionResourceReadData(d),
-		BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool)),
+		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
 	result, _, err := svc.CreateConnection(&input)
 	if err != nil {
@@ -166,7 +160,7 @@ func resourcePingFederateSpIdpConnectionResourceUpdate(_ context.Context, d *sch
 	input := spIdpConnections.UpdateConnectionInput{
 		Id:                       d.Id(),
 		Body:                     *resourcePingFederateSpIdpConnectionResourceReadData(d),
-		BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool)),
+		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
 	result, _, err := svc.UpdateConnection(&input)
 	if err != nil {

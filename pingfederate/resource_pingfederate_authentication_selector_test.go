@@ -16,23 +16,28 @@ import (
 )
 
 func TestAccPingFederateAuthenticationSelectorResource(t *testing.T) {
+	resourceName := "pingfederate_authentication_selector.demo"
 	resource.ParallelTest(t, resource.TestCase{
-		// PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederateAuthenticationSelectorResourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateAuthenticationSelectorResourceConfig("0.0.0.0/0"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateAuthenticationSelectorResourceExists("pingfederate_authentication_selector.demo"),
+					testAccCheckPingFederateAuthenticationSelectorResourceExists(resourceName),
 					// testAccCheckPingFederateAuthenticationSelectorResourceAttributes(),
 				),
 			},
 			{
 				Config: testAccPingFederateAuthenticationSelectorResourceConfig("127.0.0.1/32"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateAuthenticationSelectorResourceExists("pingfederate_authentication_selector.demo"),
+					testAccCheckPingFederateAuthenticationSelectorResourceExists(resourceName),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 			{
 				Config:      testAccPingFederateAuthenticationSelectorResourceConfigWrongPlugins(),

@@ -1,10 +1,37 @@
+# PingFederate Provider
+
 The PingFederate provider is used to interact with the many resources supported by the PingFederate admin API. The provider needs to be configured with the proper credentials before it can be used.
 
 Use the navigation to the left to read about the available resources.
 
 
-### Example Usage
-```terraform
+## Example Usage
+Terraform 0.13 and later:
+```hcl
+terraform {
+  required_providers {
+    pingfederate = {
+      source = "iwarapter/pingfederate"
+      version = "~> 0.0.7"
+    }
+  }
+}
+
+provider "pingfederate" {
+  username = "Administrator"
+  password = "2Access"
+  base_url = "https://localhost:9999"
+  context  = "/pf-admin-api/v1"
+}
+
+# Create a authentication policy contract
+resource "pingfederate_authentication_policy_contract" "demo" {
+  # ...
+}
+```
+Terraform 0.12 and earlier:
+
+```hcl
 # Configure the PingFederate Provider
 provider "pingfederate" {
   username = "Administrator"
@@ -19,7 +46,7 @@ resource "pingfederate_authentication_policy_contract" "demo" {
 }
 ```
 
-### Authentication
+## Authentication
 
 The PingFederate provider offers a flexible means of providing credentials for authentication. The following methods are supported, in this order, and explained below:
 
@@ -55,3 +82,23 @@ $ export PINGFEDERATE_CONTEXT="/pf-admin-api/v1"
 $ export PINGFEDERATE_BASEURL="https://myadmin.server:9999"
 $ terraform plan
 ```
+
+## Argument Reference
+
+In addition to [generic `provider` arguments](https://www.terraform.io/docs/configuration/providers.html)
+(e.g. `alias` and `version`), the following arguments are supported in the AWS
+ `provider` block:
+
+* `username` - (Required) This is the PingFederate administrative username. It must be provided, but
+  it can also be sourced from the `PINGFEDERATE_USERNAME` environment variable.
+
+* `password` - (Required) This is the PingFederate administrative password. It must be provided, but
+  it can also be sourced from the `PINGFEDERATE_PASSWORD` environment variable.
+
+* `base_url` - (Required) This is the PingFederate base url (protocol:server:port). It must be provided, but
+  it can also be sourced from the `PINGFEDERATE_BASEURL` environment variable.
+
+* `context` - (Optional) This is the PingFederate context path for the admin API, defaults to `/pf-admin-api/v1`
+and can be sourced from the `PINGFEDERATE_CONTEXT` environment variable.
+
+* `bypass_external_validation` - (Optional) Whether to ignore external validation of resources within PingFederate defaults to `false`.

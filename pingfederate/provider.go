@@ -36,6 +36,12 @@ func Provider() *schema.Provider {
 				Description: descriptions["base_url"],
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{"PINGFEDERATE_BASEURL"}, "https://localhost:9999"),
 			},
+			"bypass_external_validation": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "External validation will be bypassed when set to true. Default to false.",
+				Default:     false,
+			},
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"pingfederate_keypair_signing_csr":    dataSourcePingFederateKeyPairSigningCsr(),
@@ -80,19 +86,21 @@ var descriptions map[string]string
 
 func init() {
 	descriptions = map[string]string{
-		"username": "The username for pingfederate API.",
-		"password": "The password for pingfederate API.",
-		"base_url": "The base url of the pingfederate API.",
-		"context":  "The context path of the pingfederate API.",
+		"username":                   "The username for pingfederate API.",
+		"password":                   "The password for pingfederate API.",
+		"base_url":                   "The base url of the pingfederate API.",
+		"context":                    "The context path of the pingfederate API.",
+		"bypass_external_validation": "External validation will be bypassed when set to true.",
 	}
 }
 
 func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	config := &Config{
-		Username: d.Get("username").(string),
-		Password: d.Get("password").(string),
-		BaseURL:  d.Get("base_url").(string),
-		Context:  d.Get("context").(string),
+		Username:                 d.Get("username").(string),
+		Password:                 d.Get("password").(string),
+		BaseURL:                  d.Get("base_url").(string),
+		Context:                  d.Get("context").(string),
+		BypassExternalValidation: d.Get("bypass_external_validation").(bool),
 	}
 
 	return config.Client()

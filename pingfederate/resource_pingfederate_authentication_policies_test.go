@@ -12,6 +12,7 @@ import (
 )
 
 func TestAccPingFederateAuthenticationPoliciesResource(t *testing.T) {
+	resourceName := "pingfederate_authentication_policies.demo"
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederateAuthenticationPoliciesResourceDestroy,
@@ -19,14 +20,19 @@ func TestAccPingFederateAuthenticationPoliciesResource(t *testing.T) {
 			{
 				Config: testAccPingFederateAuthenticationPoliciesResourceConfig(),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateAuthenticationPoliciesResourceExists("pingfederate_authentication_policies.demo"),
+					testAccCheckPingFederateAuthenticationPoliciesResourceExists(resourceName),
 					// testAccCheckPingFederateAuthenticationPoliciesResourceAttributes(),
 				),
 			},
 			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccPingFederateAuthenticationPoliciesResourceConfigTearDown(),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateAuthenticationPoliciesResourceExists("pingfederate_authentication_policies.demo"),
+					testAccCheckPingFederateAuthenticationPoliciesResourceExists(resourceName),
 				),
 			},
 		},

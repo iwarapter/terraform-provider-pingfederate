@@ -28,12 +28,6 @@ func resourcePingFederateJdbcDataStoreResource() *schema.Resource {
 
 func resourcePingFederateJdbcDataStoreResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
-		"bypass_external_validation": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Description: "External validation will be bypassed when set to true. Default to false.",
-			Default:     false,
-		},
 		"mask_attribute_values": {
 			Type:     schema.TypeBool,
 			Optional: true,
@@ -123,7 +117,7 @@ func resourcePingFederateJdbcDataStoreResourceCreate(_ context.Context, d *schem
 	ds := resourcePingFederateJdbcDataStoreResourceReadData(d)
 	input := dataStores.CreateJdbcDataStoreInput{
 		Body:                     *ds,
-		BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool)),
+		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
 	store, _, err := svc.CreateJdbcDataStore(&input)
 	if err != nil {
@@ -151,7 +145,7 @@ func resourcePingFederateJdbcDataStoreResourceUpdate(_ context.Context, d *schem
 	input := dataStores.UpdateJdbcDataStoreInput{
 		Id:                       d.Id(),
 		Body:                     *ds,
-		BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool)),
+		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
 	store, _, err := svc.UpdateJdbcDataStore(&input)
 	if err != nil {

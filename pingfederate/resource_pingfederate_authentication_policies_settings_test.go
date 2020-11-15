@@ -31,6 +31,11 @@ func TestAccPingFederateAuthenticationPoliciesSettingsResource(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "enable_sp_authn_selection", "true"),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

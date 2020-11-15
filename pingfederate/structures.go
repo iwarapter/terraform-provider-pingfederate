@@ -75,7 +75,6 @@ func resourceKeypairResourceSchema() map[string]*schema.Schema {
 			Optional:      true,
 			ForceNew:      true,
 			ConflictsWith: []string{"file_data", "password"},
-			RequiredWith:  []string{"city", "common_name", "country", "key_algorithm", "key_size", "organization", "organization_unit", "state", "valid_days"},
 		},
 		"common_name": {
 			Type:          schema.TypeString,
@@ -95,7 +94,7 @@ func resourceKeypairResourceSchema() map[string]*schema.Schema {
 			Type:          schema.TypeString,
 			Optional:      true,
 			ForceNew:      true,
-			Computed:      true,
+			Default:       "RSA",
 			ConflictsWith: []string{"file_data", "password"},
 			RequiredWith:  []string{"city", "common_name", "country", "key_algorithm", "key_size", "organization", "organization_unit", "state", "valid_days"},
 		},
@@ -103,9 +102,8 @@ func resourceKeypairResourceSchema() map[string]*schema.Schema {
 			Type:          schema.TypeInt,
 			Optional:      true,
 			ForceNew:      true,
-			Computed:      true,
+			Default:       2048,
 			ConflictsWith: []string{"file_data", "password"},
-			RequiredWith:  []string{"city", "common_name", "country", "key_algorithm", "key_size", "organization", "organization_unit", "state", "valid_days"},
 		},
 		"organization": {
 			Type:          schema.TypeString,
@@ -119,14 +117,12 @@ func resourceKeypairResourceSchema() map[string]*schema.Schema {
 			Optional:      true,
 			ForceNew:      true,
 			ConflictsWith: []string{"file_data", "password"},
-			RequiredWith:  []string{"city", "common_name", "country", "key_algorithm", "key_size", "organization", "organization_unit", "state", "valid_days"},
 		},
 		"state": {
 			Type:          schema.TypeString,
 			Optional:      true,
 			ForceNew:      true,
 			ConflictsWith: []string{"file_data", "password"},
-			RequiredWith:  []string{"city", "common_name", "country", "key_algorithm", "key_size", "organization", "organization_unit", "state", "valid_days"},
 		},
 		"subject_alternative_names": {
 			Type:     schema.TypeSet,
@@ -137,14 +133,12 @@ func resourceKeypairResourceSchema() map[string]*schema.Schema {
 				Type: schema.TypeString,
 			},
 			ConflictsWith: []string{"file_data", "password"},
-			RequiredWith:  []string{"city", "common_name", "country", "key_algorithm", "key_size", "organization", "organization_unit", "state", "valid_days"},
 		},
 		"valid_days": {
 			Type:          schema.TypeInt,
 			Optional:      true,
 			ForceNew:      true,
 			ConflictsWith: []string{"file_data", "password"},
-			RequiredWith:  []string{"city", "common_name", "country", "key_algorithm", "key_size", "organization", "organization_unit", "state", "valid_days"},
 		},
 		"expires": {
 			Type:     schema.TypeString,

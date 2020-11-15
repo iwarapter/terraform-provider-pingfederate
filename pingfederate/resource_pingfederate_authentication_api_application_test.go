@@ -42,6 +42,11 @@ func TestAccPingFederateAuthnApiApplicationResource(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "additional_allowed_origins.1", "https://foo.foo"),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

@@ -14,6 +14,8 @@ import (
 )
 
 func TestAccPingFederateKerberosRealmResource(t *testing.T) {
+	resourceName := "pingfederate_kerberos_realm.demo"
+
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederateKerberosRealmResourceDestroy,
@@ -21,14 +23,23 @@ func TestAccPingFederateKerberosRealmResource(t *testing.T) {
 			{
 				Config: testAccPingFederateKerberosRealmResourceConfig("bar.foo"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateKerberosRealmResourceExists("pingfederate_kerberos_realm.demo"),
+					testAccCheckPingFederateKerberosRealmResourceExists(resourceName),
 				),
 			},
 			{
 				Config: testAccPingFederateKerberosRealmResourceConfig("foo.foo"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateKerberosRealmResourceExists("pingfederate_kerberos_realm.demo"),
+					testAccCheckPingFederateKerberosRealmResourceExists(resourceName),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"kerberos_password",
+					"kerberos_encrypted_password",
+				},
 			},
 		},
 	})

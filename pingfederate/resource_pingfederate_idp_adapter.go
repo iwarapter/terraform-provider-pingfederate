@@ -55,12 +55,6 @@ func resourcePingFederateIdpAdapterResource() *schema.Resource {
 
 func resourcePingFederateIdpAdapterResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
-		"bypass_external_validation": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Description: "External validation will be bypassed when set to true. Default to false.",
-			Default:     false,
-		},
 		"name": {
 			Type:     schema.TypeString,
 			Required: true,
@@ -91,7 +85,7 @@ func resourcePingFederateIdpAdapterResourceCreate(_ context.Context, d *schema.R
 	svc := m.(pfClient).IdpAdapters
 	input := idpAdapters.CreateIdpAdapterInput{
 		Body:                     *resourcePingFederateIdpAdapterResourceReadData(d),
-		BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool)),
+		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
 	input.Body.Id = input.Body.Name
 	result, _, err := svc.CreateIdpAdapter(&input)
@@ -119,7 +113,7 @@ func resourcePingFederateIdpAdapterResourceUpdate(_ context.Context, d *schema.R
 	input := idpAdapters.UpdateIdpAdapterInput{
 		Id:                       d.Id(),
 		Body:                     *resourcePingFederateIdpAdapterResourceReadData(d),
-		BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool)),
+		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
 	result, _, err := svc.UpdateIdpAdapter(&input)
 	if err != nil {

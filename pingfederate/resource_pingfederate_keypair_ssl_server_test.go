@@ -39,6 +39,11 @@ func TestAccPingFederateKeyPairSslServer(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "version", "3"),
 				),
 			},
+			//{
+			//	ResourceName:      resourceName,
+			//	ImportState:       true,
+			//	ImportStateVerify: true,
+			//},
 			{
 				Config: testAccPingFederateKeypairSslServerConfigGenerate(),
 				Check: resource.ComposeTestCheckFunc(
@@ -55,6 +60,11 @@ func TestAccPingFederateKeyPairSslServer(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceNameGen, "subject_alternative_names.0", "bar"),
 					resource.TestCheckResourceAttr(resourceNameGen, "subject_alternative_names.1", "foo"),
 				),
+			},
+			{
+				ResourceName:      resourceNameGen,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})

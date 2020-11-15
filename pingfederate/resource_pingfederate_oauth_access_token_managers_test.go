@@ -17,6 +17,8 @@ import (
 )
 
 func TestAccPingFederateOauthAccessTokenManager(t *testing.T) {
+	resourceName := "pingfederate_oauth_access_token_manager.my_atm"
+
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederateOauthAccessTokenManagerDestroy,
@@ -24,193 +26,19 @@ func TestAccPingFederateOauthAccessTokenManager(t *testing.T) {
 			{
 				Config: testAccPingFederateOauthAccessTokenManagerConfig("acc", "120"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateOauthAccessTokenManagerExists("pingfederate_oauth_access_token_manager.my_atm"),
+					testAccCheckPingFederateOauthAccessTokenManagerExists(resourceName),
 				),
 			},
 			{
 				Config: testAccPingFederateOauthAccessTokenManagerConfig("acc", "180"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateOauthAccessTokenManagerExists("pingfederate_oauth_access_token_manager.my_atm"),
+					testAccCheckPingFederateOauthAccessTokenManagerExists(resourceName),
 				),
 			},
 			{
-				PreConfig: func() {
-					client := testAccProvider.Meta().(pfClient).OauthAccessTokenManagers
-					_, _, err := client.CreateTokenManager(&oauthAccessTokenManagers.CreateTokenManagerInput{
-						Body: pf.AccessTokenManager{
-							AttributeContract: &pf.AccessTokenAttributeContract{
-								ExtendedAttributes: &[]*pf.AccessTokenAttribute{
-									{
-										Name: String("username"),
-									},
-									{
-										Name: String("sub"),
-									},
-								},
-							},
-							Id:   String("importme"),
-							Name: String("importme"),
-							Configuration: &pf.PluginConfiguration{
-								Fields: &[]*pf.ConfigField{
-									{
-										Name:  String("Token Lifetime"),
-										Value: String("120"),
-									},
-									{
-										Name:  String("JWS Algorithm"),
-										Value: String("HS256"),
-									},
-									{
-										Name:  String("Active Symmetric Key ID"),
-										Value: String("foobarr"),
-									},
-									{
-										Name:  String("Active Signing Certificate Key ID"),
-										Value: String(""),
-									},
-									{
-										Name:  String("JWE Algorithm"),
-										Value: String(""),
-									},
-									{
-										Name:  String("JWE Content Encryption Algorithm"),
-										Value: String(""),
-									},
-									{
-										Name:  String("Active Symmetric Encryption Key ID"),
-										Value: String(""),
-									},
-									{
-										Name:  String("Asymmetric Encryption Key"),
-										Value: String(""),
-									},
-									{
-										Name:  String("Asymmetric Encryption JWKS URL"),
-										Value: String(""),
-									},
-									{
-										Name:  String("Include Key ID Header Parameter"),
-										Value: String("true"),
-									},
-									{
-										Name:  String("Include X.509 Thumbprint Header Parameter"),
-										Value: String("false"),
-									},
-									{
-										Name:  String("Default JWKS URL Cache Duration"),
-										Value: String("720"),
-									},
-									{
-										Name:  String("Include JWE Key ID Header Parameter"),
-										Value: String("true"),
-									},
-									{
-										Name:  String("Include JWE X.509 Thumbprint Header Parameter"),
-										Value: String("false"),
-									},
-									{
-										Name:  String("Client ID Claim Name"),
-										Value: String("client_id"),
-									},
-									{
-										Name:  String("Scope Claim Name"),
-										Value: String("scope"),
-									},
-									{
-										Name:  String("Space Delimit Scope Values"),
-										Value: String("true"),
-									},
-									{
-										Name:  String("Issuer Claim Value"),
-										Value: String(""),
-									},
-									{
-										Name:  String("Audience Claim Value"),
-										Value: String(""),
-									},
-									{
-										Name:  String("JWT ID Claim Length"),
-										Value: String("0"),
-									},
-									{
-										Name:  String("Access Grant GUID Claim Name"),
-										Value: String(""),
-									},
-									{
-										Name:  String("JWKS Endpoint Path"),
-										Value: String(""),
-									},
-									{
-										Name:  String("JWKS Endpoint Cache Duration"),
-										Value: String("720"),
-									},
-									{
-										Name:  String("Publish Key ID X.509 URL"),
-										Value: String("false"),
-									},
-									{
-										Name:  String("Publish Thumbprint X.509 URL"),
-										Value: String("false"),
-									},
-									{
-										Name:  String("Expand Scope Groups"),
-										Value: String("false"),
-									},
-								},
-								Tables: &[]*pf.ConfigTable{
-									{
-										Inherited: nil,
-										Name:      String("Symmetric Keys"),
-										Rows: &[]*pf.ConfigRow{
-											{
-												Fields: &[]*pf.ConfigField{
-													{
-														Name:  String("Key ID"),
-														Value: String("foobarr"),
-													},
-													{
-														Name:  String("Key"),
-														Value: String("123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890"),
-													},
-													{
-														Name:  String("Encoding"),
-														Value: String(""),
-													},
-												},
-											},
-										},
-									},
-									{
-										Name: String("Certificates"),
-										Rows: &[]*pf.ConfigRow{},
-									},
-								},
-							},
-							PluginDescriptorRef: &pf.ResourceLink{
-								Id: String("com.pingidentity.pf.access.token.management.plugins.JwtBearerAccessTokenManagementPlugin"),
-							},
-						},
-					})
-					if err != nil {
-						t.Fatalf("unable to create resource to import %s", err)
-					}
-				},
-				Config:            testAccPingFederateOauthAccessTokenManagerImportConfig(),
-				ResourceName:      "pingfederate_oauth_access_token_manager.my_atm",
+				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateId:     "importme",
-				ImportStateCheck: func(states []*terraform.InstanceState) error {
-					//cleanup
-					client := testAccProvider.Meta().(pfClient).OauthAccessTokenManagers
-					_, _, err := client.DeleteTokenManager(&oauthAccessTokenManagers.DeleteTokenManagerInput{
-						Id: "importme",
-					})
-					if err != nil {
-						t.Fatalf("unable to clean up importme atm")
-					}
-					return nil
-				},
 			},
 			{
 				Config:      testAccPingFederateOauthAccessTokenManagerConfigWrongPlugin(),
@@ -222,25 +50,6 @@ func TestAccPingFederateOauthAccessTokenManager(t *testing.T) {
 
 func testAccCheckPingFederateOauthAccessTokenManagerDestroy(s *terraform.State) error {
 	return nil
-}
-
-func testAccPingFederateOauthAccessTokenManagerImportConfig() string {
-	return `
-	resource "pingfederate_oauth_access_token_manager" "my_atm" {
-		instance_id = "importme"
-		name = "importme"
-		plugin_descriptor_ref {
-			id = "com.pingidentity.pf.access.token.management.plugins.JwtBearerAccessTokenManagementPlugin"
-		}
-
-		configuration {
-
-		}
-
-		attribute_contract {
-			extended_attributes = ["sub"]
-		}
-	}`
 }
 
 func testAccPingFederateOauthAccessTokenManagerConfig(name, configUpdate string) string {

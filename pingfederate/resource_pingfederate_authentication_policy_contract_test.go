@@ -14,23 +14,28 @@ import (
 )
 
 func TestAccPingFederateAuthenticationPolicyContractResource(t *testing.T) {
+	resourceName := "pingfederate_authentication_policy_contract.demo"
 	resource.ParallelTest(t, resource.TestCase{
-		// PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederateAuthenticationPolicyContractResourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateAuthenticationPolicyContractResourceConfig("email"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateAuthenticationPolicyContractResourceExists("pingfederate_authentication_policy_contract.demo"),
+					testAccCheckPingFederateAuthenticationPolicyContractResourceExists(resourceName),
 					// testAccCheckPingFederateAuthenticationPolicyContractResourceAttributes(),
 				),
 			},
 			{
 				Config: testAccPingFederateAuthenticationPolicyContractResourceConfig("address"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateAuthenticationPolicyContractResourceExists("pingfederate_authentication_policy_contract.demo"),
+					testAccCheckPingFederateAuthenticationPolicyContractResourceExists(resourceName),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})

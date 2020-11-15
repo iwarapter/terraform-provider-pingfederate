@@ -19,7 +19,7 @@ func resourceKeypairResourceReadResult(d *schema.ResourceData, rv *pf.KeyPairVie
 	setResourceDataStringWithDiagnostic(d, "sha256_fingerprint", rv.Sha256Fingerprint, &diags)
 	setResourceDataStringWithDiagnostic(d, "signature_algorithm", rv.SignatureAlgorithm, &diags)
 	setResourceDataStringWithDiagnostic(d, "status", rv.Status, &diags)
-	if rv.SubjectAlternativeNames != nil && len(*rv.SubjectAlternativeNames) > 0 {
+	if rv.SubjectAlternativeNames != nil {
 		if err := d.Set("subject_alternative_names", *rv.SubjectAlternativeNames); err != nil {
 			diags = append(diags, diag.FromErr(err)...)
 		}
