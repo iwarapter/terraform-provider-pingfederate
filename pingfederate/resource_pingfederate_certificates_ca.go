@@ -2,12 +2,13 @@ package pingfederate
 
 import (
 	"context"
-
-	"github.com/iwarapter/pingfederate-sdk-go/services/certificatesCa"
-
+	"encoding/base64"
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
+	"github.com/iwarapter/pingfederate-sdk-go/services/certificatesCa"
+	"strings"
 )
 
 func resourcePingFederateCertificatesCaResource() *schema.Resource {
@@ -16,7 +17,7 @@ func resourcePingFederateCertificatesCaResource() *schema.Resource {
 		ReadContext:   resourcePingFederateCertificatesCaResourceRead,
 		DeleteContext: resourcePingFederateCertificatesCaResourceDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: resourcePingFederateCertificatesCaResourceImport,
 		},
 		Schema: resourcePingFederateCertificatesCaResourceSchema(),
 	}
@@ -149,6 +150,31 @@ func resourcePingFederateCertificatesCaResourceDelete(_ context.Context, d *sche
 	return nil
 }
 
+func resourcePingFederateCertificatesCaResourceImport(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+	diags := resourcePingFederateCertificatesCaResourceRead(ctx, d, m)
+	if diags.HasError() {
+		msg := []string{}
+		for _, diagnostic := range diags {
+			msg = append(msg, diagnostic.Summary)
+		}
+		return nil, fmt.Errorf("unable to retrieve certifcate information:\n%s", strings.Join(msg, "\n"))
+	}
+
+	svc := m.(pfClient).CertificatesCa
+	input := certificatesCa.ExportCertificateFileInput{
+		Id: d.Id(),
+	}
+	result, _, err := svc.ExportCertificateFile(&input)
+	if err != nil {
+		return nil, fmt.Errorf("unable to retrieve certifcate file data %s", err)
+	}
+	encoded := base64.StdEncoding.EncodeToString([]byte(*result))
+	setResourceDataStringWithDiagnostic(d, "certificate_id", String(d.Id()), &diags)
+	setResourceDataStringWithDiagnostic(d, "file_data", String(encoded), &diags)
+
+	return []*schema.ResourceData{d}, nil
+}
+
 func resourcePingFederateCertificatesCaResourceReadResult(d *schema.ResourceData, rv *pf.CertView) diag.Diagnostics {
 	var diags diag.Diagnostics
 	setResourceDataStringWithDiagnostic(d, "crypto_provider", rv.CryptoProvider, &diags)
@@ -165,7 +191,7 @@ func resourcePingFederateCertificatesCaResourceReadResult(d *schema.ResourceData
 	setResourceDataStringWithDiagnostic(d, "valid_from", rv.ValidFrom, &diags)
 	setResourceDataIntWithDiagnostic(d, "version", rv.Version, &diags)
 
-	if rv.SubjectAlternativeNames != nil && len(*rv.SubjectAlternativeNames) > 0 {
+	if rv.SubjectAlternativeNames != nil {
 		if err := d.Set("subject_alternative_names", *rv.SubjectAlternativeNames); err != nil {
 			diags = append(diags, diag.FromErr(err)...)
 		}
