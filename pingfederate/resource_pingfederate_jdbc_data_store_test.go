@@ -14,6 +14,8 @@ import (
 )
 
 func TestAccPingFederateJdbcDataStoreResource(t *testing.T) {
+	resourceName := "pingfederate_jdbc_data_store.demo"
+
 	resource.ParallelTest(t, resource.TestCase{
 		// PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
@@ -22,15 +24,23 @@ func TestAccPingFederateJdbcDataStoreResource(t *testing.T) {
 			{
 				Config: testAccPingFederateJdbcDataStoreResourceConfig("1000"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateJdbcDataStoreResourceExists("pingfederate_jdbc_data_store.demo"),
+					testAccCheckPingFederateJdbcDataStoreResourceExists(resourceName),
 					// testAccCheckPingFederateJdbcDataStoreResourceAttributes(),
 				),
 			},
 			{
 				Config: testAccPingFederateJdbcDataStoreResourceConfig("1001"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateJdbcDataStoreResourceExists("pingfederate_jdbc_data_store.demo"),
+					testAccCheckPingFederateJdbcDataStoreResourceExists(resourceName),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"password",
+				},
 			},
 		},
 	})

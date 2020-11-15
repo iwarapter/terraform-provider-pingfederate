@@ -37,7 +37,6 @@ func TestAccPingFederateCertificatesCa(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "certificate_id", "3"),
 				),
 			},
-
 			{
 				ResourceName:      resourceName,
 				ImportState:       true,

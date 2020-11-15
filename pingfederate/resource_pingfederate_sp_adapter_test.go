@@ -17,6 +17,8 @@ import (
 )
 
 func TestAccPingFederateSpAdapter(t *testing.T) {
+	resourceName := "pingfederate_sp_adapter.demo"
+
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
@@ -25,15 +27,24 @@ func TestAccPingFederateSpAdapter(t *testing.T) {
 			{
 				Config: testAccPingFederateSpAdapterConfig("foo"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateSpAdapterExists("pingfederate_sp_adapter.demo"),
+					testAccCheckPingFederateSpAdapterExists(resourceName),
 					//testAccCheckPingFederateSpAdapterAttributes(),
 				),
 			},
 			{
 				Config: testAccPingFederateSpAdapterConfig("bar"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateSpAdapterExists("pingfederate_sp_adapter.demo"),
+					testAccCheckPingFederateSpAdapterExists(resourceName),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"configuration.0.sensitive_fields.0.value",
+					"configuration.0.sensitive_fields.1.value",
+				},
 			},
 			{
 				Config:      testAccPingFederateSpAdapterConfigWrongPlugin(),

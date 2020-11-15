@@ -36,6 +36,11 @@ func TestAccPingFederateAuthnApiSettingsResource(t *testing.T) {
 					resource.TestCheckNoResourceAttr(resourceName, "default_application_ref.0.location"),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

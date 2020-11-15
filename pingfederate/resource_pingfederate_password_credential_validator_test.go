@@ -17,23 +17,32 @@ import (
 )
 
 func TestAccPingFederatePasswordCredentialValidatorResource(t *testing.T) {
+	resourceName := "pingfederate_password_credential_validator.demo"
 	resource.Test(t, resource.TestCase{
-		// PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederatePasswordCredentialValidatorResourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederatePasswordCredentialValidatorResourceConfig("demo1"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederatePasswordCredentialValidatorResourceExists("pingfederate_password_credential_validator.demo"),
+					testAccCheckPingFederatePasswordCredentialValidatorResourceExists(resourceName),
 					// testAccCheckPingFederatePasswordCredentialValidatorResourceAttributes(),
 				),
 			},
 			{
 				Config: testAccPingFederatePasswordCredentialValidatorResourceConfig("demo2"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederatePasswordCredentialValidatorResourceExists("pingfederate_password_credential_validator.demo"),
+					testAccCheckPingFederatePasswordCredentialValidatorResourceExists(resourceName),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"configuration.0.tables.0.rows.0.sensitive_fields.0.value",
+					"configuration.0.tables.0.rows.0.sensitive_fields.1.value",
+				},
 			},
 			{
 				Config:      testAccPingFederatePasswordCredentialValidatorResourceConfigWrongPlugin(),

@@ -15,13 +15,11 @@ import (
 	"testing"
 	"time"
 
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
-	"github.com/iwarapter/pingfederate-sdk-go/services/certificatesCa"
-
-	"github.com/iwarapter/pingfederate-sdk-go/services/keyPairsSigning"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
+	"github.com/iwarapter/pingfederate-sdk-go/services/certificatesCa"
+	"github.com/iwarapter/pingfederate-sdk-go/services/keyPairsSigning"
 )
 
 func TestAccPingFederateKeyPairSigningCsr(t *testing.T) {

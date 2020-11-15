@@ -2,10 +2,11 @@ package pingfederate
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/iwarapter/pingfederate-sdk-go/services/keyPairsSslServer"
-	"testing"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -13,12 +14,13 @@ import (
 )
 
 func TestAccPingFederateKeypairSslServerSettingsResource(t *testing.T) {
+	resourceName := "pingfederate_keypair_ssl_server_settings.test"
 	svc := keyPairsSslServer.New(cfg)
 	settings, _, err := svc.GetSettings()
 	if err != nil {
 		t.Fatalf("unable to retrieve ssl server settings")
 	}
-	resourceName := "pingfederate_keypair_ssl_server_settings.test"
+
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederateKeypairSslServerSettingsResourceDestroy,
@@ -42,6 +44,11 @@ func TestAccPingFederateKeypairSslServerSettingsResource(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "active_runtime_server_certs.0", *settings.AdminConsoleCertRef.Id),
 					resource.TestCheckResourceAttr(resourceName, "active_admin_server_certs.0", *settings.RuntimeServerCertRef.Id),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})

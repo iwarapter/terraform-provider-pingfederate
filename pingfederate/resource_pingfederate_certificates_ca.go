@@ -4,11 +4,12 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"strings"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 	"github.com/iwarapter/pingfederate-sdk-go/services/certificatesCa"
-	"strings"
 )
 
 func resourcePingFederateCertificatesCaResource() *schema.Resource {

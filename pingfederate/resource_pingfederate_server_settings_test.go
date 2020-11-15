@@ -35,6 +35,11 @@ func TestAccPingFederateServerSettingsResource(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "roles_and_protocols.0.sp_role.0.enable", "true"),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

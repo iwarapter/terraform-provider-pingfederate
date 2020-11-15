@@ -6,11 +6,10 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func TestAccPingFederateOauthAuthServerSettings(t *testing.T) {
-	var out pf.AuthorizationServerSettings
+	resourceName := "pingfederate_oauth_auth_server_settings.settings"
 
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
@@ -19,14 +18,19 @@ func TestAccPingFederateOauthAuthServerSettings(t *testing.T) {
 			{
 				Config: testAccPingFederateOauthAuthServerSettingsConfig("bar", "404"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateOauthAuthServerSettingsExists("pingfederate_oauth_auth_server_settings.settings", 3, &out),
+					testAccCheckPingFederateOauthAuthServerSettingsExists(resourceName),
 				),
 			},
 			{
 				Config: testAccPingFederateOauthAuthServerSettingsConfig("bar", "403"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateOauthAuthServerSettingsExists("pingfederate_oauth_auth_server_settings.settings", 6, &out),
+					testAccCheckPingFederateOauthAuthServerSettingsExists(resourceName),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -95,7 +99,7 @@ func testAccPingFederateOauthAuthServerSettingsConfig(name, configUpdate string)
 	}`
 }
 
-func testAccCheckPingFederateOauthAuthServerSettingsExists(n string, c int64, out *pf.AuthorizationServerSettings) resource.TestCheckFunc {
+func testAccCheckPingFederateOauthAuthServerSettingsExists(n string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {

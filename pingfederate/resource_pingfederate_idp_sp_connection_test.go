@@ -15,6 +15,8 @@ import (
 )
 
 func TestAccPingFederateIdpSpConnection(t *testing.T) {
+	resourceName := "pingfederate_idp_sp_connection.demo"
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
@@ -23,15 +25,20 @@ func TestAccPingFederateIdpSpConnection(t *testing.T) {
 			{
 				Config: testAccPingFederateIdpSpConnectionConfig("foo"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateIdpSpConnectionExists("pingfederate_idp_sp_connection.demo"),
+					testAccCheckPingFederateIdpSpConnectionExists(resourceName),
 					//testAccCheckPingFederateIdpSpConnectionAttributes(),
 				),
 			},
 			{
 				Config: testAccPingFederateIdpSpConnectionConfig("bar"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateIdpSpConnectionExists("pingfederate_idp_sp_connection.demo"),
+					testAccCheckPingFederateIdpSpConnectionExists(resourceName),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})

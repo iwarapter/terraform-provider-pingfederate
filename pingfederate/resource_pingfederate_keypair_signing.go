@@ -2,6 +2,9 @@ package pingfederate
 
 import (
 	"context"
+	"fmt"
+	"regexp"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,7 +18,7 @@ func resourcePingFederateKeypairSigningResource() *schema.Resource {
 		ReadContext:   resourcePingFederateKeypairSigningResourceRead,
 		DeleteContext: resourcePingFederateKeypairSigningResourceDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: resourcePingFederateKeypairSigningResourceImport,
 		},
 		Schema: resourceKeypairResourceSchema(),
 	}
@@ -48,7 +51,6 @@ func resourcePingFederateKeypairSigningResourceCreate(_ context.Context, d *sche
 
 	d.SetId(*result.Id)
 	return resourceKeypairResourceReadResult(d, result)
-
 }
 
 func resourcePingFederateKeypairSigningResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -73,4 +75,59 @@ func resourcePingFederateKeypairSigningResourceDelete(_ context.Context, d *sche
 		return diag.Errorf("unable to delete SigningKeypair: %s", err)
 	}
 	return nil
+}
+
+func resourcePingFederateKeypairSigningResourceImport(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+	svc := m.(pfClient).KeyPairsSigning
+	input := keyPairsSigning.GetKeyPairInput{
+		Id: d.Id(),
+	}
+	result, _, err := svc.GetKeyPair(&input)
+	if err != nil {
+		return nil, fmt.Errorf("unable to retrieve read signing keypair for import %s", err)
+	}
+
+	return importKeyPairView(ctx, d, result, err)
+}
+
+func importKeyPairView(_ context.Context, d *schema.ResourceData, result *pf.KeyPairView, err error) ([]*schema.ResourceData, error) {
+	diags := resourceKeypairResourceReadResult(d, result)
+	//import based on upload
+	//TODO unable to properly support upload style imports - https://discuss.hashicorp.com/t/importer-functions-reading-file-config/17624/2
+
+	//import based on generate
+	if m, err := extractMatch("CN=([^,]+)", *result.SubjectDN); err == nil {
+		setResourceDataStringWithDiagnostic(d, "common_name", String(m), &diags)
+	}
+	if m, err := extractMatch("OU=([^,]+)", *result.SubjectDN); err == nil {
+		setResourceDataStringWithDiagnostic(d, "organization_unit", String(m), &diags)
+	}
+	if m, err := extractMatch("O=([^,]+)", *result.SubjectDN); err == nil {
+		setResourceDataStringWithDiagnostic(d, "organization", String(m), &diags)
+	}
+	if m, err := extractMatch("L=([^,]+)", *result.SubjectDN); err == nil {
+		setResourceDataStringWithDiagnostic(d, "city", String(m), &diags)
+	}
+	if m, err := extractMatch("ST=([^,]+)", *result.SubjectDN); err == nil {
+		setResourceDataStringWithDiagnostic(d, "state", String(m), &diags)
+	}
+	if m, err := extractMatch("C=([^,]+)", *result.SubjectDN); err == nil {
+		setResourceDataStringWithDiagnostic(d, "country", String(m), &diags)
+	}
+	from, _ := time.Parse(time.RFC3339, *result.ValidFrom)
+	expires, _ := time.Parse(time.RFC3339, *result.Expires)
+	setResourceDataIntWithDiagnostic(d, "valid_days", Int(int(expires.Sub(from).Hours()/24)), &diags)
+	if diags.HasError() {
+		return nil, fmt.Errorf("unable to import  %s", err)
+	}
+	return []*schema.ResourceData{d}, nil
+}
+
+func extractMatch(re, source string) (string, error) {
+	reg := regexp.MustCompile(re)
+	matches := reg.FindStringSubmatch(source)
+	if len(matches) == 2 {
+		return matches[1], nil
+	}
+	return "", fmt.Errorf("unable to find match, matches: %v", matches)
 }

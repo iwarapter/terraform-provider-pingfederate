@@ -14,23 +14,29 @@ import (
 )
 
 func TestAccPingFederateLdapDataStoreResource(t *testing.T) {
+	resourceName := "pingfederate_ldap_data_store.demo"
+
 	resource.ParallelTest(t, resource.TestCase{
-		// PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederateLdapDataStoreResourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateLdapDataStoreResourceConfig("1000"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateLdapDataStoreResourceExists("pingfederate_ldap_data_store.demo"),
+					testAccCheckPingFederateLdapDataStoreResourceExists(resourceName),
 					// testAccCheckPingFederateLdapDataStoreResourceAttributes(),
 				),
 			},
 			{
 				Config: testAccPingFederateLdapDataStoreResourceConfig("1001"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateLdapDataStoreResourceExists("pingfederate_ldap_data_store.demo"),
+					testAccCheckPingFederateLdapDataStoreResourceExists(resourceName),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -42,8 +48,11 @@ func testAccCheckPingFederateLdapDataStoreResourceDestroy(s *terraform.State) er
 
 func testAccPingFederateLdapDataStoreResourceConfig(configUpdate string) string {
 	return fmt.Sprintf(`
+provider "pingfederate" {
+  bypass_external_validation = true
+}
+
 resource "pingfederate_ldap_data_store" "demo" {
-	bypass_external_validation = true
 	name      = "terraform_ldap"
 	ldap_type = "PING_DIRECTORY"
 	hostnames = ["host.docker.internal:1389"]

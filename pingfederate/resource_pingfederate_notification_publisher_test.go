@@ -17,6 +17,8 @@ import (
 )
 
 func TestAccPingFederateNotificationPublisher(t *testing.T) {
+	resourceName := "pingfederate_notification_publisher.demo"
+
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
@@ -25,15 +27,20 @@ func TestAccPingFederateNotificationPublisher(t *testing.T) {
 			{
 				Config: testAccPingFederateNotificationPublisherConfig("foo"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateNotificationPublisherExists("pingfederate_notification_publisher.demo"),
+					testAccCheckPingFederateNotificationPublisherExists(resourceName),
 					//testAccCheckPingFederateNotificationPublisherAttributes(),
 				),
 			},
 			{
 				Config: testAccPingFederateNotificationPublisherConfig("bar"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateNotificationPublisherExists("pingfederate_notification_publisher.demo"),
+					testAccCheckPingFederateNotificationPublisherExists(resourceName),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 			{
 				Config:      testAccPingFederateNotificationPublisherConfigWrongPlugin(),

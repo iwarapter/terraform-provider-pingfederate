@@ -2,6 +2,7 @@ package pingfederate
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,7 +16,7 @@ func resourcePingFederateKeypairSslServerResource() *schema.Resource {
 		ReadContext:   resourcePingFederateKeypairSslServerResourceRead,
 		DeleteContext: resourcePingFederateKeypairSslServerResourceDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: resourcePingFederateKeypairSslServerResourceImport,
 		},
 		Schema: resourceKeypairResourceSchema(),
 	}
@@ -77,4 +78,17 @@ func resourcePingFederateKeypairSslServerResourceDelete(_ context.Context, d *sc
 		return diag.Errorf("unable to delete SslServerKeypair: %s", err)
 	}
 	return nil
+}
+
+func resourcePingFederateKeypairSslServerResourceImport(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+	svc := m.(pfClient).KeyPairsSslServer
+	input := keyPairsSslServer.GetKeyPairInput{
+		Id: d.Id(),
+	}
+	result, _, err := svc.GetKeyPair(&input)
+	if err != nil {
+		return nil, fmt.Errorf("unable to retrieve read ssl server keypair for import %s", err)
+	}
+
+	return importKeyPairView(ctx, d, result, err)
 }

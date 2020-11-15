@@ -1,4 +1,26 @@
-## 0.0.7 (Unreleased)
+## 0.0.8 (Unreleased)
+
+NOTES:
+
+* This is an early release experimental build for PingFederate 10.x
+* The `bypass_external_validation` which several resources used has been migrated to provider level configuration.
+This is a breaking change as the attribute was removed from the following affected resources:
+    - `resource_pingfederate_authentication_policies`
+    - `resource_pingfederate_idp_adapter`
+    - `resource_pingfederate_idp_sp_connection`
+    - `resource_pingfederate_jdbc_data_store`
+    - `resource_pingfederate_ldap_data_store`
+    - `resource_pingfederate_oauth_access_token_mappings`
+    - `resource_pingfederate_oauth_openid_connect_policy`
+    - `resource_pingfederate_sp_authentication_policy_contract_mapping`
+    - `resource_pingfederate_sp_idp_connection`
+
+BUG FIXES:
+
+* Fix issues with importing several resources.
+
+
+## 0.0.7 (Nov 9th, 2020)
 
 NOTES:
 

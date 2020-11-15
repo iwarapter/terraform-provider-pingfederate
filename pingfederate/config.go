@@ -75,9 +75,12 @@ type Config struct {
 	Password string
 	Context  string
 	BaseURL  string
+
+	BypassExternalValidation bool
 }
 
 type pfClient struct {
+	BypassExternalValidation                  bool
 	AdministrativeAccounts                    administrativeAccounts.AdministrativeAccountsAPI
 	AuthenticationApi                         authenticationApi.AuthenticationApiAPI
 	AuthenticationPolicies                    authenticationPolicies.AuthenticationPoliciesAPI
@@ -152,6 +155,7 @@ func (c *Config) Client() (interface{}, diag.Diagnostics) {
 	}
 
 	client := pfClient{
+		BypassExternalValidation:         c.BypassExternalValidation,
 		AdministrativeAccounts:           administrativeAccounts.New(cfg),
 		AuthenticationApi:                authenticationApi.New(cfg),
 		AuthenticationPolicies:           authenticationPolicies.New(cfg),

@@ -21,12 +21,6 @@ func resourcePingFederateOauthAccessTokenMappingsResource() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"bypass_external_validation": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Description: "External validation will be bypassed when set to true. Default to false.",
-				Default:     false,
-			},
 			"context": {
 				Type:     schema.TypeList,
 				Required: true,
@@ -77,7 +71,7 @@ func resourcePingFederateOauthAccessTokenMappingsResourceCreate(_ context.Contex
 	svc := m.(pfClient).OauthAccessTokenMappings
 	input := oauthAccessTokenMappings.CreateMappingInput{
 		Body:                     *resourcePingFederateOauthAccessTokenMappingsResourceReadData(d),
-		BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool)),
+		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
 	result, _, err := svc.CreateMapping(&input)
 	if err != nil {
@@ -104,7 +98,7 @@ func resourcePingFederateOauthAccessTokenMappingsResourceUpdate(_ context.Contex
 	input := oauthAccessTokenMappings.UpdateMappingInput{
 		Id:                       d.Id(),
 		Body:                     *resourcePingFederateOauthAccessTokenMappingsResourceReadData(d),
-		BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool)),
+		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
 	result, _, err := svc.UpdateMapping(&input)
 	if err != nil {

@@ -13,22 +13,28 @@ import (
 )
 
 func TestAccPingFederateOauthOpenIdConnectPolicy(t *testing.T) {
+	resourceName := "pingfederate_oauth_openid_connect_policy.demo"
+
 	resource.ParallelTest(t, resource.TestCase{
-		// PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederateOauthOpenIdConnectPolicyDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateOauthOpenIdConnectPolicyConfig("ClientId"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateOauthOpenIdConnectPolicyExists("pingfederate_oauth_openid_connect_policy.demo"),
+					testAccCheckPingFederateOauthOpenIdConnectPolicyExists(resourceName),
 				),
 			},
 			{
 				Config: testAccPingFederateOauthOpenIdConnectPolicyConfig("ClientId"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateOauthOpenIdConnectPolicyExists("pingfederate_oauth_openid_connect_policy.demo"),
+					testAccCheckPingFederateOauthOpenIdConnectPolicyExists(resourceName),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})

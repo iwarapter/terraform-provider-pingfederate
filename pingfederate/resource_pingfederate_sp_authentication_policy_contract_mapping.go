@@ -25,12 +25,6 @@ func resourcePingFederateSpAuthenticationPolicyContractMappingResource() *schema
 
 func resourcePingFederateSpAuthenticationPolicyContractMappingResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
-		"bypass_external_validation": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Description: "External validation will be bypassed when set to true. Default to false.",
-			Default:     false,
-		},
 		"ldap_attribute_source": {
 			Type:     schema.TypeList,
 			Optional: true,
@@ -80,7 +74,7 @@ func resourcePingFederateSpAuthenticationPolicyContractMappingResourceCreate(ctx
 	svc := m.(pfClient).SpAuthenticationPolicyContractMappings
 	input := spAuthenticationPolicyContractMappings.CreateApcToSpAdapterMappingInput{
 		Body:                     *resourcePingFederateSpAuthenticationPolicyContractMappingResourceReadData(d),
-		BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool)),
+		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
 	result, _, err := svc.CreateApcToSpAdapterMapping(&input)
 	if err != nil {
@@ -107,7 +101,7 @@ func resourcePingFederateSpAuthenticationPolicyContractMappingResourceUpdate(ctx
 	input := spAuthenticationPolicyContractMappings.UpdateApcToSpAdapterMappingByIdInput{
 		Id:                       d.Id(),
 		Body:                     *resourcePingFederateSpAuthenticationPolicyContractMappingResourceReadData(d),
-		BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool)),
+		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
 	result, _, err := svc.UpdateApcToSpAdapterMappingById(&input)
 	if err != nil {

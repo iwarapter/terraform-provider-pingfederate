@@ -27,12 +27,6 @@ func resourcePingFederateOpenIdConnectPolicyResource() *schema.Resource {
 
 func resourcePingFederateOpenIdConnectPolicyResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
-		"bypass_external_validation": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Description: "External validation will be bypassed when set to true. Default to false.",
-			Default:     false,
-		},
 		"policy_id": {
 			Type:     schema.TypeString,
 			Required: true,
@@ -83,7 +77,7 @@ func resourcePingFederateOpenIdConnectPolicyResourceCreate(_ context.Context, d 
 	svc := m.(pfClient).OauthOpenIdConnect
 	input := oauthOpenIdConnect.CreatePolicyInput{
 		Body:                     *resourcePingFederateOpenIdConnectPolicyResourceReadData(d),
-		BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool)),
+		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
 	result, _, err := svc.CreatePolicy(&input)
 	if err != nil {
@@ -110,7 +104,7 @@ func resourcePingFederateOpenIdConnectPolicyResourceUpdate(_ context.Context, d 
 	input := oauthOpenIdConnect.UpdatePolicyInput{
 		Id:                       d.Id(),
 		Body:                     *resourcePingFederateOpenIdConnectPolicyResourceReadData(d),
-		BypassExternalValidation: Bool(d.Get("bypass_external_validation").(bool)),
+		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
 	result, _, err := svc.UpdatePolicy(&input)
 	if err != nil {

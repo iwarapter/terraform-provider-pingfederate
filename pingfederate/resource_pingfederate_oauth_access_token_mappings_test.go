@@ -11,22 +11,28 @@ import (
 )
 
 func TestAccPingFederateOauthAccessTokenMappings(t *testing.T) {
+	resourceName := "pingfederate_oauth_access_token_mappings.demo"
+
 	resource.Test(t, resource.TestCase{
-		// PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederateOauthAccessTokenMappingsDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateOauthAccessTokenMappingsConfig("ClientId"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateOauthAccessTokenMappingsExists("pingfederate_oauth_access_token_mappings.demo"),
+					testAccCheckPingFederateOauthAccessTokenMappingsExists(resourceName),
 				),
 			},
 			{
 				Config: testAccPingFederateOauthAccessTokenMappingsConfig("ClientId"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateOauthAccessTokenMappingsExists("pingfederate_oauth_access_token_mappings.demo"),
+					testAccCheckPingFederateOauthAccessTokenMappingsExists(resourceName),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})

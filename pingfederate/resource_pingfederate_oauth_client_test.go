@@ -15,6 +15,7 @@ import (
 )
 
 func TestAccPingFederateOauthClient(t *testing.T) {
+	resourceName := "pingfederate_oauth_client.my_client"
 	resource.Test(t, resource.TestCase{
 		// PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
@@ -23,15 +24,20 @@ func TestAccPingFederateOauthClient(t *testing.T) {
 			{
 				Config: testAccPingFederateOauthClientConfig("https://demo"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateOauthClientExists("pingfederate_oauth_client.my_client"),
+					testAccCheckPingFederateOauthClientExists(resourceName),
 					// testAccCheckPingFederateOauthClientAttributes(),
 				),
 			},
 			{
 				Config: testAccPingFederateOauthClientConfig("https://update"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateOauthClientExists("pingfederate_oauth_client.my_client"),
+					testAccCheckPingFederateOauthClientExists(resourceName),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})

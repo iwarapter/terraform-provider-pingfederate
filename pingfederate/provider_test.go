@@ -14,8 +14,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
 	"github.com/iwarapter/pingfederate-sdk-go/services/version"
 	"github.com/ory/dockertest"
@@ -62,7 +63,7 @@ func TestMain(m *testing.M) {
 		if err != nil {
 			log.Fatalf("Could not start resource: %s", err)
 		}
-		pool.MaxWait = time.Minute * 2
+		pool.MaxWait = time.Minute * 5
 
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 		pfUrl, _ := url.Parse(fmt.Sprintf("https://localhost:%s/pf-admin-api/v1", resource.GetPort("9999/tcp")))
@@ -116,6 +117,12 @@ func init() {
 	//		},
 	//	}
 	//}
+}
+
+func TestProvider(t *testing.T) {
+	if err := Provider().InternalValidate(); err != nil {
+		t.Fatalf("err: %s", err)
+	}
 }
 
 func testAccPreCheck(t *testing.T) {
