@@ -1,0 +1,763 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.1.5">
+    
+    
+      
+        <title>Resource: pingfederate_oauth_client - Terraform PingFederate Provider</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.21aed14c.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.196e0c26.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#resource-pingfederate_oauth_client" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="Terraform PingFederate Provider" class="md-header-nav__button md-logo" aria-label="Terraform PingFederate Provider">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            Terraform PingFederate Provider
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              Resource: pingfederate_oauth_client
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/iwarapter/terraform-provider-pingfederate/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    iwarapter/terraform-provider-pingfederate
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Terraform PingFederate Provider" class="md-nav__button md-logo" aria-label="Terraform PingFederate Provider">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Terraform PingFederate Provider
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/iwarapter/terraform-provider-pingfederate/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    iwarapter/terraform-provider-pingfederate
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-1" type="checkbox" id="nav-1" >
+    <label class="md-nav__link" for="nav-1">
+      Home
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Home" data-md-level="1">
+      <label class="md-nav__title" for="nav-1">
+        <span class="md-nav__icon md-icon"></span>
+        Home
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../.." class="md-nav__link">
+      PingFederate Provider
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-1-2" type="checkbox" id="nav-1-2" >
+    <label class="md-nav__link" for="nav-1-2">
+      Supported Resources
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Supported Resources" data-md-level="2">
+      <label class="md-nav__title" for="nav-1-2">
+        <span class="md-nav__icon md-icon"></span>
+        Supported Resources
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../pingfederate_authentication_policy_contract/" class="md-nav__link">
+      pingfederate_authentication_policy_contract
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../pingfederate_notification_publisher/" class="md-nav__link">
+      pingfederate_notification_publisher
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../pingfederate_certificate_ca/" class="md-nav__link">
+      pingfederate_certificates_ca
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" >
+    <label class="md-nav__link" for="nav-2">
+      Releases
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Releases" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        <span class="md-nav__icon md-icon"></span>
+        Releases
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../releases/changelog/" class="md-nav__link">
+      Changelog
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#example-usage" class="md-nav__link">
+    Example Usage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#argument-attributes" class="md-nav__link">
+    Argument Attributes
+  </a>
+  
+    <nav class="md-nav" aria-label="Argument Attributes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#client_auth" class="md-nav__link">
+    client_auth
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oidc_policy" class="md-nav__link">
+    oidc_policy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jwks_settings" class="md-nav__link">
+    jwks_settings
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#attributes-reference" class="md-nav__link">
+    Attributes Reference
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#import" class="md-nav__link">
+    Import
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/iwarapter/terraform-provider-pingfederate/edit/master/docs/resources/pingfederate_oauth_client.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                <h1 id="resource-pingfederate_oauth_client">Resource: pingfederate_oauth_client</h1>
+<p>Provides an OAuth Client.</p>
+<h2 id="example-usage">Example Usage</h2>
+<div class="codehilite"><pre><span></span><code><span class="kr">resource</span> <span class="s">&quot;pingfederate_oauth_client&quot; &quot;demo&quot;</span> <span class=" -Punctuation">{</span>
+<span class="na">  client_id</span> <span class="o">=</span> <span class="s2">&quot;demo&quot;</span>
+<span class="na">  name</span>      <span class="o">=</span> <span class="s2">&quot;demo&quot;</span>
+
+<span class="na">  grant_types</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;EXTENSION&quot;</span><span class="p">,</span>
+  <span class="p">]</span>
+
+  <span class="err">client_auth</span> <span class=" -Punctuation">{</span>
+<span class="na">    enforce_replay_prevention</span> <span class="o">=</span> <span class="kt">false</span>
+<span class="na">    secret</span>                    <span class="o">=</span> <span class="s2">&quot;super_top_secret&quot;</span>
+<span class="na">    type</span>                      <span class="o">=</span> <span class="s2">&quot;SECRET&quot;</span>
+  <span class=" -Punctuation">}</span>
+
+  <span class="err">default_access_token_manager_ref</span> <span class=" -Punctuation">{</span>
+<span class="na">    id</span> <span class="o">=</span> <span class="err">pingfederate_oauth_access_token_manager</span><span class="p">.</span><span class="err">demo</span><span class="p">.</span><span class="err">id</span>
+  <span class=" -Punctuation">}</span>
+
+  <span class="err">oidc_policy</span> <span class=" -Punctuation">{</span>
+<span class="na">    grant_access_session_revocation_api</span> <span class="o">=</span> <span class="kt">false</span>
+<span class="na">    logout_uris</span>                         <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://example.com/logout&quot;</span><span class="p">]</span>
+<span class="na">    ping_access_logout_capable</span>          <span class="o">=</span> <span class="kt">true</span>
+  <span class=" -Punctuation">}</span>
+<span class=" -Punctuation">}</span>
+</code></pre></div>
+
+<h2 id="argument-attributes">Argument Attributes</h2>
+<p>The following arguments are supported:</p>
+<ul>
+<li>
+<p><code>bypass_activation_code_confirmation_override</code> - (Optional) Indicates if the Activation Code Confirmation page should be bypassed if 'verification_url_complete' is used by the end user to authorize a device. This overrides the 'bypassUseCodeConfirmation' value present in Authorization Server Settings.</p>
+</li>
+<li>
+<p><code>bypass_approval_page</code> - (Optional) Use this setting, for example, when you want to deploy a trusted application and authenticate end users via an IdP adapter or IdP connection.</p>
+</li>
+<li>
+<p><code>ciba_delivery_mode</code> - (Optional) The token delivery mode for the client.  The default value is 'POLL'.</p>
+</li>
+<li>
+<p><code>ciba_notification_endpoint</code> - (Optional) The endpoint the OP will call after a successful or failed end-user authentication.</p>
+</li>
+<li>
+<p><code>ciba_polling_interval</code> - (Optional) The minimum amount of time in seconds that the Client must wait between polling requests to the token endpoint. The default is 3 seconds.</p>
+</li>
+<li>
+<p><code>ciba_request_object_signing_algorithm</code> - (Optional) The JSON Web Signature [JWS] algorithm that must be used to sign the CIBA Request Object. All signing algorithms are allowed if value is not present</p>
+<ul>
+<li>RS256 - RSA using SHA-256</li>
+<li>RS384 - RSA using SHA-384</li>
+<li>RS512 - RSA using SHA-512</li>
+<li>ES256 - ECDSA using P256 Curve and SHA-256</li>
+<li>ES384 - ECDSA using P384 Curve and SHA-384</li>
+<li>ES512 - ECDSA using P521 Curve and SHA-512</li>
+<li>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256</li>
+<li>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384</li>
+<li>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512</li>
+<li>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11.</li>
+</ul>
+</li>
+<li>
+<p><code>ciba_require_signed_requests</code> - (Optional) Determines whether CIBA signed requests are required for this client.</p>
+</li>
+<li>
+<p><code>ciba_user_code_supported</code> - (Optional) Determines whether CIBA user code is supported for this client.</p>
+</li>
+<li>
+<p><code>client_auth</code> - (Optional) Client authentication settings.  If this model is null, it indicates that no client authentication will be used.</p>
+</li>
+<li>
+<p><code>client_id</code> - (Required) A unique identifier the client provides to the Resource Server to identify itself. This identifier is included with every request the client makes. For PUT requests, this field is optional and it will be overridden by the 'id' parameter of the PUT request.</p>
+</li>
+<li>
+<p><code>default_access_token_manager_ref</code> - (Optional) The default access token manager for this client.</p>
+</li>
+<li>
+<p><code>description</code> - (Optional) A description of what the client application does. This description appears when the user is prompted for authorization.</p>
+</li>
+<li>
+<p><code>device_flow_setting_type</code> - (Optional) Allows an administrator to override the Device Authorization Settings set globally for the OAuth AS. Defaults to SERVER_DEFAULT.</p>
+</li>
+<li>
+<p><code>device_polling_interval_override</code> - (Optional) The amount of time client should wait between polling requests, in seconds. This overrides the 'devicePollingInterval' value present in Authorization Server Settings.</p>
+</li>
+<li>
+<p><code>enabled</code> - (Optional) Specifies whether the client is enabled. The default value is true.</p>
+</li>
+<li>
+<p><code>exclusive_scopes</code> - (Optional) The exclusive scopes available for this client.</p>
+</li>
+<li>
+<p><code>extended_parameters</code> - (Optional) OAuth Client Metadata can be extended to use custom Client Metadata Parameters. The names of these custom parameters should be defined in /extendedProperties.</p>
+</li>
+<li>
+<p><code>grant_types</code> - (Required) The grant types allowed for this client. The EXTENSION grant type applies to SAML/JWT assertion grants.</p>
+</li>
+<li>
+<p><code>jwks_settings</code> - (Optional) JSON Web Key Set Settings of the OAuth client. Required if private key JWT client authentication or signed requests is enabled.</p>
+</li>
+<li>
+<p><code>logo_url</code> - (Optional) The location of the logo used on user-facing OAuth grant authorization and revocation pages.</p>
+</li>
+<li>
+<p><code>name</code> - (Required) A descriptive name for the client instance. This name appears when the user is prompted for authorization.</p>
+</li>
+<li>
+<p><code>oidc_policy</code> - (Optional) Open ID Connect Policy settings.  This is included in the message only when OIDC is enabled.</p>
+</li>
+<li>
+<p><code>pending_authorization_timeout_override</code> - (Optional) The 'device_code' and 'user_code' timeout, in seconds. This overrides the 'pendingAuthorizationTimeout' value present in Authorization Server Settings.</p>
+</li>
+<li>
+<p><code>persistent_grant_expiration_time</code> - (Optional) The persistent grant expiration time. -1 indicates an indefinite amount of time.</p>
+</li>
+<li>
+<p><code>persistent_grant_expiration_time_unit</code> - (Optional) The persistent grant expiration time unit.</p>
+</li>
+<li>
+<p><code>persistent_grant_expiration_type</code> - (Optional) Allows an administrator to override the Persistent Grant Lifetime set globally for the OAuth AS. Defaults to SERVER_DEFAULT.</p>
+</li>
+<li>
+<p><code>persistent_grant_idle_timeout</code> - (Optional) The persistent grant idle timeout.</p>
+</li>
+<li>
+<p><code>persistent_grant_idle_timeout_time_unit</code> - (Optional) The persistent grant idle timeout time unit.</p>
+</li>
+<li>
+<p><code>persistent_grant_idle_timeout_type</code> - (Optional) Allows an administrator to override the Persistent Grant Idle Timeout set globally for the OAuth AS. Defaults to SERVER_DEFAULT.</p>
+</li>
+<li>
+<p><code>redirect_uris</code> - (Optional) URIs to which the OAuth AS may redirect the resource owner's user agent after authorization is obtained. A redirection URI is used with the Authorization Code and Implicit grant types. Wildcards are allowed. However, for security reasons, make the URL as restrictive as possible.For example: https://<em>.company.com/</em> Important: If more than one URI is added or if a single URI uses wildcards, then Authorization Code grant and token requests must contain a specific matching redirect uri parameter.</p>
+</li>
+<li>
+<p><code>refresh_rolling</code> - (Optional) Use ROLL or DONT_ROLL to override the Roll Refresh Token Values setting on the Authorization Server Settings. SERVER_DEFAULT will default to the Roll Refresh Token Values setting on the Authorization Server Setting screen. Defaults to SERVER_DEFAULT.</p>
+</li>
+<li>
+<p><code>request_object_signing_algorithm</code> - (Optional) The JSON Web Signature [JWS] algorithm that must be used to sign the Request Object. All signing algorithms are allowed if value is not present</p>
+<ul>
+<li>RS256 - RSA using SHA-256</li>
+<li>RS384 - RSA using SHA-384</li>
+<li>RS512 - RSA using SHA-512</li>
+<li>ES256 - ECDSA using P256 Curve and SHA-256</li>
+<li>ES384 - ECDSA using P384 Curve and SHA-384</li>
+<li>ES512 - ECDSA using P521 Curve and SHA-512</li>
+<li>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256</li>
+<li>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384</li>
+<li>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512</li>
+<li>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11.</li>
+</ul>
+</li>
+<li>
+<p><code>request_policy_ref</code> - (Optional) The CIBA request policy.</p>
+</li>
+<li>
+<p><code>require_proof_key_for_code_exchange</code> - (Optional) Determines whether Proof Key for Code Exchange (PKCE) is required for this client.</p>
+</li>
+<li>
+<p><code>require_signed_requests</code> - (Optional) Determines whether signed requests are required for this client</p>
+</li>
+<li>
+<p><code>restrict_scopes</code> - (Optional) Restricts this client's access to specific scopes.</p>
+</li>
+<li>
+<p><code>restricted_response_types</code> - (Optional) The response types allowed for this client. If omitted all response types are available to the client.</p>
+</li>
+<li>
+<p><code>restricted_scopes</code> - (Optional) The scopes available for this client.</p>
+</li>
+<li>
+<p><code>token_exchange_processor_policy_ref</code> - (Optional) The Token Exchange Processor policy.</p>
+</li>
+<li>
+<p><code>user_authorization_url_override</code> - (Optional) The URL used as 'verification_url' and 'verification_url_complete' values in a Device Authorization request. This property overrides the 'userAuthorizationUrl' value present in Authorization Server Settings.</p>
+</li>
+<li>
+<p><code>validate_using_all_eligible_atms</code> - (Optional) Validates token using all eligible access token managers for the client.</p>
+</li>
+</ul>
+<h3 id="client_auth">client_auth</h3>
+<p>The <code>client_auth</code> block - Client Authentication.</p>
+<ul>
+<li>
+<p><code>client_cert_issuer_dn</code> - (Optional) Client TLS Certificate Issuer DN.</p>
+</li>
+<li>
+<p><code>client_cert_subject_dn</code> - (Optional) Client TLS Certificate Subject DN.</p>
+</li>
+<li>
+<p><code>enforce_replay_prevention</code> - (Optional) Enforce replay prevention on JSON Web Tokens. This field is applicable only for Private Key JWT Client Authentication.</p>
+</li>
+<li>
+<p><code>secret</code> - (Optional) Client secret for Basic Authentication.  To update the client secret, specify the plaintext value in this field.  This field will not be populated for GET requests.</p>
+</li>
+<li>
+<p><code>token_endpoint_auth_signing_algorithm</code> - (Optional) The JSON Web Signature [JWS] algorithm that must be used to sign the JSON Web Tokens. This field is applicable only for Private Key JWT Client Authentication. All signing algorithms are allowed if value is not present</p>
+<ul>
+<li>RS256 - RSA using SHA-256</li>
+<li>RS384 - RSA using SHA-384</li>
+<li>RS512 - RSA using SHA-512</li>
+<li>ES256 - ECDSA using P256 Curve and SHA-256</li>
+<li>ES384 - ECDSA using P384 Curve and SHA-384</li>
+<li>ES512 - ECDSA using P521 Curve and SHA-512</li>
+<li>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256</li>
+<li>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384</li>
+<li>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512</li>
+<li>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11.</li>
+</ul>
+</li>
+<li>
+<p><code>type</code> - (Optional) Client authentication type. The required field for type SECRET is secret. The required fields for type CERTIFICATE are clientCertIssuerDn and clientCertSubjectDn. The required field for type PRIVATE_KEY_JWT is: either jwks or jwksUrl.</p>
+</li>
+</ul>
+<h3 id="oidc_policy">oidc_policy</h3>
+<p>The <code>oidc_policy</code> block - OAuth Client Open ID Connect Policy.</p>
+<ul>
+<li>
+<p><code>grant_access_session_revocation_api</code> - (Optional) Determines whether this client is allowed to access the Session Revocation API.</p>
+</li>
+<li>
+<p><code>id_token_content_encryption_algorithm</code> - (Optional) The JSON Web Encryption [JWE] content encryption algorithm for the ID Token.</p>
+<ul>
+<li>AES_128_CBC_HMAC_SHA_256 - Composite AES-CBC-128 HMAC-SHA-256</li>
+<li>AES_192_CBC_HMAC_SHA_384 - Composite AES-CBC-192 HMAC-SHA-384</li>
+<li>AES_256_CBC_HMAC_SHA_512 - Composite AES-CBC-256 HMAC-SHA-512</li>
+<li>AES-GCM-128 - AES_128_GCM</li>
+<li>AES_192_GCM - AES-GCM-192</li>
+<li>AES_256_GCM - AES-GCM-256</li>
+</ul>
+</li>
+<li>
+<p><code>id_token_encryption_algorithm</code> - (Optional) The JSON Web Encryption [JWE] encryption algorithm used to encrypt the content encryption key for the ID Token.</p>
+<ul>
+<li>DIR - Direct Encryption with symmetric key</li>
+<li>A128KW - AES-128 Key Wrap</li>
+<li>A192KW - AES-192 Key Wrap</li>
+<li>A256KW - AES-256 Key Wrap</li>
+<li>A128GCMKW - AES-GCM-128 key encryption</li>
+<li>A192GCMKW - AES-GCM-192 key encryption</li>
+<li>A256GCMKW - AES-GCM-256 key encryption</li>
+<li>ECDH_ES - ECDH-ES</li>
+<li>ECDH_ES_A128KW - ECDH-ES with AES-128 Key Wrap</li>
+<li>ECDH_ES_A192KW - ECDH-ES with AES-192 Key Wrap</li>
+<li>ECDH_ES_A256KW - ECDH-ES with AES-256 Key Wrap</li>
+<li>RSA_OAEP - RSAES OAEP</li>
+</ul>
+</li>
+<li>
+<p><code>id_token_signing_algorithm</code> - (Optional) The JSON Web Signature [JWS] algorithm required for the ID Token.</p>
+<ul>
+<li>NONE - No signing algorithm</li>
+<li>HS256 - HMAC using SHA-256</li>
+<li>HS384 - HMAC using SHA-384</li>
+<li>HS512 - HMAC using SHA-512</li>
+<li>RS256 - RSA using SHA-256</li>
+<li>RS384 - RSA using SHA-384</li>
+<li>RS512 - RSA using SHA-512</li>
+<li>ES256 - ECDSA using P256 Curve and SHA-256</li>
+<li>ES384 - ECDSA using P384 Curve and SHA-384</li>
+<li>ES512 - ECDSA using P521 Curve and SHA-512</li>
+<li>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256</li>
+<li>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384</li>
+<li>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512</li>
+<li>A null value will represent the default algorithm which is RS256.</li>
+<li>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11</li>
+</ul>
+</li>
+<li>
+<p><code>logout_uris</code> - (Optional) A list of client logout URI's which will be invoked when a user logs out through one of PingFederate's SLO endpoints.</p>
+</li>
+<li>
+<p><code>pairwise_identifier_user_type</code> - (Optional) Determines whether the subject identifier type is pairwise.</p>
+</li>
+<li>
+<p><code>ping_access_logout_capable</code> - (Optional) Set this value to true if you wish to enable client application logout, and the client is PingAccess, or its logout endpoints follow the PingAccess path convention.</p>
+</li>
+<li>
+<p><code>policy_group</code> - (Optional) The Open ID Connect policy. A null value will represent the default policy group.</p>
+</li>
+<li>
+<p><code>sector_identifier_uri</code> - (Optional) The URI references a file with a single JSON array of Redirect URI and JWKS URL values.</p>
+</li>
+</ul>
+<h3 id="jwks_settings">jwks_settings</h3>
+<p>The <code>jwks_settings</code> block - JSON Web Key Set Settings.</p>
+<ul>
+<li>
+<p><code>jwks</code> - (Optional) JSON Web Key Set (JWKS) document of the OAuth client. Either 'jwks' or 'jwksUrl' must be provided if private key JWT client authentication or signed requests is enabled.  If the client signs its JWTs using an RSASSA-PSS signing algorithm, PingFederate must either use Java 11 or be integrated with a hardware security module (HSM) to process the digital signatures.</p>
+</li>
+<li>
+<p><code>jwks_url</code> - (Optional) JSON Web Key Set (JWKS) URL of the OAuth client. Either 'jwks' or 'jwksUrl' must be provided if private key JWT client authentication or signed requests is enabled.  If the client signs its JWTs using an RSASSA-PSS signing algorithm, PingFederate must either use Java 11 or be integrated with a hardware security module (HSM) to process the digital signatures.</p>
+</li>
+</ul>
+<h2 id="attributes-reference">Attributes Reference</h2>
+<p>In addition to all arguments above, the following attributes are exported:</p>
+<ul>
+<li><a href="#id"><code>id</code></a> - The ID of the oauth client (<code>client_id</code>).</li>
+</ul>
+<h2 id="import">Import</h2>
+<p>OAuth Clients can be imported using the id, e.g.</p>
+<div class="codehilite"><pre><span></span><code><span class="n">terraform</span> <span class="kn">import</span> <span class="nn">pingfederate_oauth_client.demo</span> <span class="mi">123</span>
+</code></pre></div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.7e0ee788.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b3a72adc.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: ['tabs'],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.4ac00218.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>

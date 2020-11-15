@@ -1,0 +1,841 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.1.5">
+    
+    
+      
+        <title>Resource: pingfederate_idp_sp_connection - Terraform PingFederate Provider</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.21aed14c.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.196e0c26.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#resource-pingfederate_idp_sp_connection" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="Terraform PingFederate Provider" class="md-header-nav__button md-logo" aria-label="Terraform PingFederate Provider">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            Terraform PingFederate Provider
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              Resource: pingfederate_idp_sp_connection
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/iwarapter/terraform-provider-pingfederate/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    iwarapter/terraform-provider-pingfederate
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Terraform PingFederate Provider" class="md-nav__button md-logo" aria-label="Terraform PingFederate Provider">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Terraform PingFederate Provider
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/iwarapter/terraform-provider-pingfederate/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    iwarapter/terraform-provider-pingfederate
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-1" type="checkbox" id="nav-1" >
+    <label class="md-nav__link" for="nav-1">
+      Home
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Home" data-md-level="1">
+      <label class="md-nav__title" for="nav-1">
+        <span class="md-nav__icon md-icon"></span>
+        Home
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../.." class="md-nav__link">
+      PingFederate Provider
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-1-2" type="checkbox" id="nav-1-2" >
+    <label class="md-nav__link" for="nav-1-2">
+      Supported Resources
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Supported Resources" data-md-level="2">
+      <label class="md-nav__title" for="nav-1-2">
+        <span class="md-nav__icon md-icon"></span>
+        Supported Resources
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../pingfederate_authentication_policy_contract/" class="md-nav__link">
+      pingfederate_authentication_policy_contract
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../pingfederate_notification_publisher/" class="md-nav__link">
+      pingfederate_notification_publisher
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../pingfederate_certificate_ca/" class="md-nav__link">
+      pingfederate_certificates_ca
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" >
+    <label class="md-nav__link" for="nav-2">
+      Releases
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Releases" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        <span class="md-nav__icon md-icon"></span>
+        Releases
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../releases/changelog/" class="md-nav__link">
+      Changelog
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#example-usage" class="md-nav__link">
+    Example Usage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#argument-attributes" class="md-nav__link">
+    Argument Attributes
+  </a>
+  
+    <nav class="md-nav" aria-label="Argument Attributes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#additionalallowedentitiesconfiguration" class="md-nav__link">
+    AdditionalAllowedEntitiesConfiguration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spattributequery" class="md-nav__link">
+    SpAttributeQuery
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#contactinfo" class="md-nav__link">
+    ContactInfo
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#connectioncredentials" class="md-nav__link">
+    ConnectionCredentials
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#connectionmetadataurl" class="md-nav__link">
+    ConnectionMetadataUrl
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#outboundprovision" class="md-nav__link">
+    OutboundProvision
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spbrowsersso" class="md-nav__link">
+    SpBrowserSso
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spwstrust" class="md-nav__link">
+    SpWsTrust
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#attributes-reference" class="md-nav__link">
+    Attributes Reference
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#import" class="md-nav__link">
+    Import
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/iwarapter/terraform-provider-pingfederate/edit/master/docs/resources/pingfederate_idp_sp_connections.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                <h1 id="resource-pingfederate_idp_sp_connection">Resource: pingfederate_idp_sp_connection</h1>
+<p>Provides a idp sp connection.</p>
+<h2 id="example-usage">Example Usage</h2>
+<div class="codehilite"><pre><span></span><code><span class="kr">resource</span> <span class="s">&quot;pingfederate_idp_sp_connection&quot; &quot;demo&quot;</span> <span class=" -Punctuation">{</span>
+<span class="na">  name</span>         <span class="o">=</span> <span class="s2">&quot;foo&quot;</span>
+<span class="na">  entity_id</span>    <span class="o">=</span> <span class="s2">&quot;foo&quot;</span>
+<span class="na">  active</span>       <span class="o">=</span> <span class="kt">true</span>
+<span class="na">  logging_mode</span> <span class="o">=</span> <span class="s2">&quot;STANDARD&quot;</span>
+  <span class="err">credentials</span> <span class=" -Punctuation">{</span>
+    <span class="err">inbound_back_channel_auth</span> <span class=" -Punctuation">{</span>
+<span class="na">      type</span>                    <span class="o">=</span> <span class="s2">&quot;INBOUND&quot;</span>
+<span class="na">      digital_signature</span>       <span class="o">=</span> <span class="kt">false</span>
+<span class="na">      require_ssl</span>             <span class="o">=</span> <span class="kt">false</span>
+<span class="na">      verification_subject_dn</span> <span class="o">=</span><span class="na"> &quot;CN</span><span class="o">=</span><span class="err">Example&quot;</span>
+    <span class=" -Punctuation">}</span>
+  <span class=" -Punctuation">}</span>
+  <span class="err">attribute_query</span> <span class=" -Punctuation">{</span>
+    <span class="err">jdbc_attribute_source</span> <span class=" -Punctuation">{</span>
+<span class="na">      filter</span>      <span class="o">=</span> <span class="s2">&quot;*&quot;</span>
+<span class="na">      description</span> <span class="o">=</span> <span class="s2">&quot;foo&quot;</span>
+<span class="na">      schema</span>      <span class="o">=</span> <span class="s2">&quot;INFORMATION_SCHEMA&quot;</span>
+<span class="na">      table</span>       <span class="o">=</span> <span class="s2">&quot;ADMINISTRABLE_ROLE_AUTHORIZATIONS&quot;</span>
+<span class="na">      id</span>          <span class="o">=</span> <span class="s2">&quot;foo&quot;</span>
+      <span class="err">data_store_ref</span> <span class=" -Punctuation">{</span>
+<span class="na">        id</span> <span class="o">=</span> <span class="s2">&quot;ProvisionerDS&quot;</span>
+      <span class=" -Punctuation">}</span>
+    <span class=" -Punctuation">}</span>
+
+    <span class="err">attribute_contract_fulfillment</span> <span class=" -Punctuation">{</span>
+<span class="na">      key_name</span> <span class="o">=</span> <span class="s2">&quot;foo&quot;</span>
+      <span class="err">source</span> <span class=" -Punctuation">{</span>
+<span class="na">        type</span> <span class="o">=</span> <span class="s2">&quot;JDBC_DATA_STORE&quot;</span>
+<span class="na">        id</span>   <span class="o">=</span> <span class="s2">&quot;foo&quot;</span>
+      <span class=" -Punctuation">}</span>
+<span class="na">      value</span> <span class="o">=</span> <span class="s2">&quot;GRANTEE&quot;</span>
+    <span class=" -Punctuation">}</span>
+
+<span class="na">    attributes</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;foo&quot;</span><span class="p">]</span>
+    <span class="err">policy</span> <span class=" -Punctuation">{</span>
+<span class="na">      sign_response</span>                  <span class="o">=</span> <span class="kt">false</span>
+<span class="na">      sign_assertion</span>                 <span class="o">=</span> <span class="kt">false</span>
+<span class="na">      encrypt_assertion</span>              <span class="o">=</span> <span class="kt">false</span>
+<span class="na">      require_signed_attribute_query</span> <span class="o">=</span> <span class="kt">false</span>
+<span class="na">      require_encrypted_name_id</span>      <span class="o">=</span> <span class="kt">false</span>
+    <span class=" -Punctuation">}</span>
+  <span class=" -Punctuation">}</span>
+<span class=" -Punctuation">}</span>
+</code></pre></div>
+
+<h2 id="argument-attributes">Argument Attributes</h2>
+<p>The following arguments are supported:</p>
+<ul>
+<li>
+<p><code>bypass_external_validation</code> - (Optional) External validation will be bypassed when set to true. Default to false.</p>
+</li>
+<li>
+<p><code>connection_id</code> - (Optional) The persistent, unique ID for the connection. It can be any combination of [a-zA-Z0-9._-]. This property is system-assigned if not specified.</p>
+</li>
+<li>
+<p><code>active</code> - (Optional) Specifies whether the connection is active and ready to process incoming requests. The default value is false.</p>
+</li>
+<li>
+<p><code>additional_allowed_entities_configuration</code> - (Optional) Additional allowed entities or issuers configuration. Currently only used in OIDC IdP (RP) connection.</p>
+</li>
+<li>
+<p><code>application_icon_url</code> - (Optional) The application icon url.</p>
+</li>
+<li>
+<p><code>application_name</code> - (Optional) The application name.</p>
+</li>
+<li>
+<p><code>attribute_query</code> - (Optional) The attribute query settings for supporting SPs in requesting user attributes.</p>
+</li>
+<li>
+<p><code>base_url</code> - (Optional) The fully-qualified hostname and port on which your partner's federation deployment runs.</p>
+</li>
+<li>
+<p><code>contact_info</code> - (Optional) The contact information for this partner.</p>
+</li>
+<li>
+<p><code>credentials</code> - (Optional) The certificates and settings for encryption, signing, and signature verification. It is required for  SAMLx.x and WS-Fed Connections.</p>
+</li>
+<li>
+<p><code>default_virtual_entity_id</code> - (Optional) The default alternate entity ID that identifies the local server to this partner. It is required when virtualEntityIds is not empty and must be included in that list.</p>
+</li>
+<li>
+<p><code>entity_id</code> - (Required) The partner's entity ID (connection ID) or issuer value (for OIDC Connections).</p>
+</li>
+<li>
+<p><code>extended_properties</code> - (Optional) Extended Properties allows to store additional information for IdP/SP Connections. The names of these extended properties should be defined in /extendedProperties.</p>
+</li>
+<li>
+<p><code>license_connection_group</code> - (Optional) The license connection group. If your PingFederate license is based on connection groups, each connection must be assigned to a group before it can be used.</p>
+</li>
+<li>
+<p><code>logging_mode</code> - (Optional) The level of transaction logging applicable for this connection. Default is STANDARD.</p>
+</li>
+<li>
+<p><code>metadata_reload_settings</code> - (Optional) Connection metadata automatic reload settings.</p>
+</li>
+<li>
+<p><code>name</code> - (Required) The connection name.</p>
+</li>
+<li>
+<p><code>outbound_provision</code> - (Optional) The Outbound Provision settings.</p>
+</li>
+<li>
+<p><code>sp_browser_sso</code> - (Optional) The browser-based SSO settings used to communicate with your SP.</p>
+</li>
+<li>
+<p><code>type</code> - (Required) The type of this connection. This must be set to 'SP'.</p>
+</li>
+<li>
+<p><code>virtual_entity_ids</code> - (Optional) List of alternate entity IDs that identifies the local server to this partner.</p>
+</li>
+<li>
+<p><code>ws_trust</code> - (Optional) The Ws-Trust settings.</p>
+</li>
+</ul>
+<h3 id="additionalallowedentitiesconfiguration">AdditionalAllowedEntitiesConfiguration</h3>
+<p>The <code>additional_allowed_entities_configuration</code> block - Additional allowed entities or issuers configuration. Currently only used in OIDC IdP (RP) connection.</p>
+<ul>
+<li>
+<p><code>additional_allowed_entities</code> - (Optional) An array of additional allowed entities or issuers to be accepted during entity or issuer validation.</p>
+</li>
+<li>
+<p><code>allow_additional_entities</code> - (Optional) Set to true to configure additional entities or issuers to be accepted during entity or issuer validation.</p>
+</li>
+<li>
+<p><code>allow_all_entities</code> - (Optional) Set to true to accept any entity or issuer during entity or issuer validation. (Not Recommended)</p>
+</li>
+</ul>
+<h3 id="spattributequery">SpAttributeQuery</h3>
+<p>The <code>sp_attribute_query</code> block - The attribute query profile supports SPs in requesting user attributes.</p>
+<ul>
+<li>
+<p><code>attribute_contract_fulfillment</code> - (Required) A list of mappings from attribute names to their fulfillment values.</p>
+</li>
+<li>
+<p><code>attribute_sources</code> - (Required) A list of configured data stores to look up attributes from.</p>
+</li>
+<li>
+<p><code>attributes</code> - (Required) The list of attributes that may be returned to the SP in the response to an attribute request.</p>
+</li>
+<li>
+<p><code>issuance_criteria</code> - (Optional) The issuance criteria that this transaction must meet before the corresponding attribute contract is fulfilled.</p>
+</li>
+<li>
+<p><code>policy</code> - (Optional) The attribute query profile's security policy.</p>
+</li>
+</ul>
+<h3 id="contactinfo">ContactInfo</h3>
+<p>The <code>contact_info</code> block - Contact information.</p>
+<ul>
+<li>
+<p><code>company</code> - (Optional) Company name.</p>
+</li>
+<li>
+<p><code>email</code> - (Optional) Contact email address.</p>
+</li>
+<li>
+<p><code>first_name</code> - (Optional) Contact first name.</p>
+</li>
+<li>
+<p><code>last_name</code> - (Optional) Contact last name.</p>
+</li>
+<li>
+<p><code>phone</code> - (Optional) Contact phone number.</p>
+</li>
+</ul>
+<h3 id="connectioncredentials">ConnectionCredentials</h3>
+<p>The <code>connection_credentials</code> block - The certificates and settings for encryption, signing, and signature verification.</p>
+<ul>
+<li>
+<p><code>block_encryption_algorithm</code> - (Optional) The algorithm used to encrypt assertions sent to this partner. AES_128, AES_256 and Triple_DES are also supported. Default is AES_128</p>
+</li>
+<li>
+<p><code>certs</code> - (Optional) The certificates used for signature verification and XML encryption.</p>
+</li>
+<li>
+<p><code>decryption_key_pair_ref</code> - (Optional) The ID of the primary key pair used to decrypt message content received from this partner. The ID of the key pair is also known as the alias and can be found by viewing the corresponding certificate under 'Signing &amp; Decryption Keys &amp; Certificates' in the PingFederate Administrative Console.</p>
+</li>
+<li>
+<p><code>inbound_back_channel_auth</code> - (Optional) The SOAP authentication method(s) to use when you receive a message using SOAP back channel.</p>
+</li>
+<li>
+<p><code>key_transport_algorithm</code> - (Optional) The algorithm used to transport keys to this partner. RSA_OAEP and RSA_v15 are supported. Default is RSA_OAEP</p>
+</li>
+<li>
+<p><code>outbound_back_channel_auth</code> - (Optional) The SOAP authentication method(s) to use when you send a message using SOAP back channel.</p>
+</li>
+<li>
+<p><code>secondary_decryption_key_pair_ref</code> - (Optional) The ID of the secondary key pair used to decrypt message content received from this partner.</p>
+</li>
+<li>
+<p><code>signing_settings</code> - (Optional) Settings related to the manner in which messages sent to the partner are digitally signed. Required for SP Connections.</p>
+</li>
+<li>
+<p><code>verification_issuer_dn</code> - (Optional) If a verification Subject DN is provided, you can optionally restrict the issuer to a specific trusted CA by specifying its DN in this field.</p>
+</li>
+<li>
+<p><code>verification_subject_dn</code> - (Optional) If this property is set, the verification trust model is Anchored. The verification certificate must be signed by a trusted CA and included in the incoming message, and the subject DN of the expected certificate is specified in this property. If this property is not set, then a primary verification certificate must be specified in the certs array.</p>
+</li>
+</ul>
+<h3 id="connectionmetadataurl">ConnectionMetadataUrl</h3>
+<p>The <code>connection_metadata_url</code> block - Configuration settings to enable automatic reload of partner's metadata.</p>
+<ul>
+<li>
+<p><code>enable_auto_metadata_update</code> - (Optional) Specifies whether the metadata of the connection will be automatically reloaded. The default value is true.</p>
+</li>
+<li>
+<p><code>metadata_url_ref</code> - (Required) ID of the saved Metadata URL.</p>
+</li>
+</ul>
+<h3 id="outboundprovision">OutboundProvision</h3>
+<p>The <code>outbound_provision</code> block - Outbound Provisioning allows an IdP to create and maintain user accounts at standards-based partner sites using SCIM as well as select-proprietary provisioning partner sites that are protocol-enabled.</p>
+<ul>
+<li>
+<p><code>channels</code> - (Required) Includes settings of a source data store, managing provisioning threads and mapping of attributes.</p>
+</li>
+<li>
+<p><code>custom_schema</code> - (Optional) Custom SCIM attribute configuration.</p>
+</li>
+<li>
+<p><code>target_settings</code> - (Required) Configuration fields that includes credentials to target SaaS application.</p>
+</li>
+<li>
+<p><code>type</code> - (Required) The SaaS plugin type.</p>
+</li>
+</ul>
+<h3 id="spbrowsersso">SpBrowserSso</h3>
+<p>The <code>sp_browser_sso</code> block - The SAML settings used to enable secure browser-based SSO to resources at your partner's site.</p>
+<ul>
+<li>
+<p><code>adapter_mappings</code> - (Required) A list of adapters that map to outgoing assertions.</p>
+</li>
+<li>
+<p><code>artifact</code> - (Optional) The settings for an artifact binding.</p>
+</li>
+<li>
+<p><code>assertion_lifetime</code> - (Required) The timeframe of validity before and after the issuance of the assertion.</p>
+</li>
+<li>
+<p><code>attribute_contract</code> - (Required) A set of user attributes that the IdP sends in the SAML assertion.</p>
+</li>
+<li>
+<p><code>authentication_policy_contract_assertion_mappings</code> - (Optional) A list of authentication policy contracts that map to outgoing assertions.</p>
+</li>
+<li>
+<p><code>default_target_url</code> - (Optional) Default Target URL for SAML1.x connections. For SP connections, this default URL represents the destination on the SP where the user will be directed. For IdP connections, entering a URL in the Default Target URL field overrides the SP Default URL SSO setting.</p>
+</li>
+<li>
+<p><code>enabled_profiles</code> - (Optional) The profiles that are enabled for browser-based SSO. SAML 2.0 supports all profiles whereas SAML 1.x IdP connections support both IdP and SP (non-standard) initiated SSO. This is required for SAMLx.x Connections.</p>
+</li>
+<li>
+<p><code>encryption_policy</code> - (Required) The SAML 2.0 encryption policy for browser-based SSO. Required for SAML 2.0 connections.</p>
+</li>
+<li>
+<p><code>incoming_bindings</code> - (Optional) The SAML bindings that are enabled for browser-based SSO. This is required for SAML 2.0 connections. For SAML 1.x based connections, it is not used for SP Connections and it is optional for IdP Connections.</p>
+</li>
+<li>
+<p><code>message_customizations</code> - (Optional) The message customizations for browser-based SSO. Depending on server settings, connection type, and protocol this may or may not be supported.</p>
+</li>
+<li>
+<p><code>protocol</code> - (Required) The browser-based SSO protocol to use.</p>
+</li>
+<li>
+<p><code>require_signed_authn_requests</code> - (Optional) Require AuthN requests to be signed when received via the POST or Redirect bindings.</p>
+</li>
+<li>
+<p><code>sign_assertions</code> - (Optional) Always sign the SAML Assertion.</p>
+</li>
+<li>
+<p><code>sign_response_as_required</code> - (Optional) Sign SAML Response as required by the associated binding and encryption policy. Applicable to SAML2.0 only and is defaulted to true. It can be set to false only on SAML2.0 connections when signAssertions is set to true.</p>
+</li>
+<li>
+<p><code>slo_service_endpoints</code> - (Optional) A list of possible endpoints to send SLO requests and responses.</p>
+</li>
+<li>
+<p><code>sp_saml_identity_mapping</code> - (Optional) Process in which users authenticated by the IdP are associated with user accounts local to the SP.</p>
+</li>
+<li>
+<p><code>sp_ws_fed_identity_mapping</code> - (Optional) Process in which users authenticated by the IdP are associated with user accounts local to the SP for WS-Federation connection types.</p>
+</li>
+<li>
+<p><code>sso_service_endpoints</code> - (Required) A list of possible endpoints to send assertions to.</p>
+</li>
+<li>
+<p><code>url_whitelist_entries</code> - (Optional) For WS-Federation connections, a whitelist of additional allowed domains and paths used to validate wreply for SLO, if enabled.</p>
+</li>
+<li>
+<p><code>ws_fed_token_type</code> - (Optional) The WS-Federation Token Type to use.</p>
+</li>
+<li>
+<p><code>ws_trust_version</code> - (Optional) The WS-Trust version for a WS-Federation connection. The default version is WSTRUST12.</p>
+</li>
+</ul>
+<h3 id="spwstrust">SpWsTrust</h3>
+<p>The <code>sp_ws_trust</code> block - Ws-Trust STS provides security-token validation and creation to extend SSO access to identity-enabled Web Services</p>
+<ul>
+<li>
+<p><code>abort_if_not_fulfilled_from_request</code> - (Optional) If the attribute contract cannot be fulfilled using data from the Request, abort the transaction.</p>
+</li>
+<li>
+<p><code>attribute_contract</code> - (Required) A set of user attributes that the IdP sends in the token.</p>
+</li>
+<li>
+<p><code>default_token_type</code> - (Optional) The default token type when a web service client (WSC) does not specify in the token request which token type the STS should issue. Defaults to SAML 2.0.</p>
+</li>
+<li>
+<p><code>encrypt_saml2_assertion</code> - (Optional) When selected, the STS encrypts the SAML 2.0 assertion. Applicable only to SAML 2.0 security token.  This option does not apply to OAuth assertion profiles.</p>
+</li>
+<li>
+<p><code>generate_key</code> - (Optional) When selected, the STS generates a symmetric key to be used in conjunction with the "Holder of Key" (HoK) designation for the assertion's Subject Confirmation Method.  This option does not apply to OAuth assertion profiles.</p>
+</li>
+<li>
+<p><code>message_customizations</code> - (Optional) The message customizations for WS-Trust. Depending on server settings, connection type, and protocol this may or may not be supported.</p>
+</li>
+<li>
+<p><code>minutes_after</code> - (Optional) The amount of time after the SAML token was issued during which it is to be considered valid. The default value is 30.</p>
+</li>
+<li>
+<p><code>minutes_before</code> - (Optional) The amount of time before the SAML token was issued during which it is to be considered valid. The default value is 5.</p>
+</li>
+<li>
+<p><code>o_auth_assertion_profiles</code> - (Optional) When selected, four additional token-type requests become available.</p>
+</li>
+<li>
+<p><code>partner_service_ids</code> - (Required) The partner service identifiers.</p>
+</li>
+<li>
+<p><code>request_contract_ref</code> - (Optional) Request Contract to be used to map attribute values into the security token.</p>
+</li>
+<li>
+<p><code>token_processor_mappings</code> - (Required) A list of token processors to validate incoming tokens.</p>
+</li>
+</ul>
+<h2 id="attributes-reference">Attributes Reference</h2>
+<p>In addition to all arguments above, the following attributes are exported:</p>
+<ul>
+<li><a href="#id"><code>id</code></a> - The idp sp connections ID (<code>connection_id</code>)</li>
+</ul>
+<h2 id="import">Import</h2>
+<p>IDP SP Connections can be imported using the id, e.g.</p>
+<div class="codehilite"><pre><span></span><code><span class="n">terraform</span> <span class="kn">import</span> <span class="nn">pingfederate_idp_sp_connection.demo</span> <span class="mi">123</span>
+</code></pre></div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.7e0ee788.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b3a72adc.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: ['tabs'],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.4ac00218.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>

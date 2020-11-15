@@ -1,0 +1,1030 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.1.5">
+    
+    
+      
+        <title>Resource: pingfederate_authentication_policies - Terraform PingFederate Provider</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.21aed14c.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.196e0c26.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#resource-pingfederate_authentication_policies" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="Terraform PingFederate Provider" class="md-header-nav__button md-logo" aria-label="Terraform PingFederate Provider">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            Terraform PingFederate Provider
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              Resource: pingfederate_authentication_policies
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/iwarapter/terraform-provider-pingfederate/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    iwarapter/terraform-provider-pingfederate
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Terraform PingFederate Provider" class="md-nav__button md-logo" aria-label="Terraform PingFederate Provider">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Terraform PingFederate Provider
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/iwarapter/terraform-provider-pingfederate/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    iwarapter/terraform-provider-pingfederate
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-1" type="checkbox" id="nav-1" >
+    <label class="md-nav__link" for="nav-1">
+      Home
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Home" data-md-level="1">
+      <label class="md-nav__title" for="nav-1">
+        <span class="md-nav__icon md-icon"></span>
+        Home
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../.." class="md-nav__link">
+      PingFederate Provider
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-1-2" type="checkbox" id="nav-1-2" >
+    <label class="md-nav__link" for="nav-1-2">
+      Supported Resources
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Supported Resources" data-md-level="2">
+      <label class="md-nav__title" for="nav-1-2">
+        <span class="md-nav__icon md-icon"></span>
+        Supported Resources
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../pingfederate_authentication_policy_contract/" class="md-nav__link">
+      pingfederate_authentication_policy_contract
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../pingfederate_notification_publisher/" class="md-nav__link">
+      pingfederate_notification_publisher
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../pingfederate_certificate_ca/" class="md-nav__link">
+      pingfederate_certificates_ca
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" >
+    <label class="md-nav__link" for="nav-2">
+      Releases
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Releases" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        <span class="md-nav__icon md-icon"></span>
+        Releases
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../releases/changelog/" class="md-nav__link">
+      Changelog
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#example-usage" class="md-nav__link">
+    Example Usage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#argument-attributes" class="md-nav__link">
+    Argument Attributes
+  </a>
+  
+    <nav class="md-nav" aria-label="Argument Attributes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#authn_selection_trees" class="md-nav__link">
+    authn_selection_trees
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#root_node-children" class="md-nav__link">
+    root_node / children
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#action" class="md-nav__link">
+    action
+  </a>
+  
+    <nav class="md-nav" aria-label="action">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#apc-mapping-policy-action" class="md-nav__link">
+    APC Mapping Policy Action
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#localidentitymappingpolicyaction" class="md-nav__link">
+    LocalIdentityMappingPolicyAction
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#authnselectorpolicyaction" class="md-nav__link">
+    AuthnSelectorPolicyAction
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#authnsourcepolicyaction" class="md-nav__link">
+    AuthnSourcePolicyAction
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#continuepolicyaction" class="md-nav__link">
+    ContinuePolicyAction
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#donepolicyaction" class="md-nav__link">
+    DonePolicyAction
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#restartpolicyaction" class="md-nav__link">
+    RestartPolicyAction
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#attribute_contract_fulfillment" class="md-nav__link">
+    attribute_contract_fulfillment
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#attribute_mapping" class="md-nav__link">
+    attribute_mapping
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#attribute_rule" class="md-nav__link">
+    attribute_rule
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#attribute_rules" class="md-nav__link">
+    attribute_rules
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#authentication_source" class="md-nav__link">
+    authentication_source
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conditional_criteria" class="md-nav__link">
+    conditional_criteria
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom_attribute_source" class="md-nav__link">
+    custom_attribute_source
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expression_criteria" class="md-nav__link">
+    expression_criteria
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filter_fields" class="md-nav__link">
+    filter_fields
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issuance_criteria" class="md-nav__link">
+    issuance_criteria
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jdbc_attribute_source" class="md-nav__link">
+    jdbc_attribute_source
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ldap_attribute_source" class="md-nav__link">
+    ldap_attribute_source
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#source" class="md-nav__link">
+    source
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/iwarapter/terraform-provider-pingfederate/edit/master/docs/resources/pingfederate_authentication_policies.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                <h1 id="resource-pingfederate_authentication_policies">Resource: pingfederate_authentication_policies</h1>
+<p>Provides a Authentication Policies.</p>
+<p>-&gt; This resource manages a singleton within PingFederate and as such you should ONLY ever declare one of this resource type. Deleting this resource simply clears all policies.</p>
+<h2 id="example-usage">Example Usage</h2>
+<div class="codehilite"><pre><span></span><code><span class="err">resource &quot;pingfederate_authentication_policies&quot; &quot;demo&quot; {</span>
+<span class="err">  fail_if_no_selection    = false</span>
+<span class="err">  tracked_http_parameters = [&quot;foo&quot;]</span>
+<span class="err">  default_authentication_sources {</span>
+<span class="err">    type = &quot;IDP_ADAPTER&quot;</span>
+<span class="err">    source_ref {</span>
+<span class="err">      id = pingfederate_idp_adapter.demo.id</span>
+<span class="err">    }</span>
+<span class="err">  }</span>
+<span class="err">  authn_selection_trees {</span>
+<span class="err">    name = &quot;bar&quot;</span>
+<span class="err">    root_node {</span>
+<span class="err">      action {</span>
+<span class="err">        type = &quot;AUTHN_SOURCE&quot;</span>
+<span class="err">        authentication_source {</span>
+<span class="err">          type = &quot;IDP_ADAPTER&quot;</span>
+<span class="err">          source_ref {</span>
+<span class="err">            id = pingfederate_idp_adapter.demo.id</span>
+<span class="err">          }</span>
+<span class="err">        }</span>
+<span class="err">      }</span>
+<span class="err">      children {</span>
+<span class="err">        action {</span>
+<span class="err">          type    = &quot;RESTART&quot;</span>
+<span class="err">          context = &quot;Fail&quot;</span>
+<span class="err">        }</span>
+<span class="err">      }</span>
+<span class="err">      children {</span>
+<span class="err">        action {</span>
+<span class="err">          type    = &quot;DONE&quot;</span>
+<span class="err">          context = &quot;Success&quot;</span>
+<span class="err">        }</span>
+<span class="err">      }</span>
+<span class="err">    }</span>
+<span class="err">  }</span>
+<span class="err">  authn_selection_trees {</span>
+<span class="err">    name = &quot;foo&quot;</span>
+<span class="err">    root_node {</span>
+<span class="err">      action {</span>
+<span class="err">        type = &quot;AUTHN_SOURCE&quot;</span>
+<span class="err">        authentication_source {</span>
+<span class="err">          type = &quot;IDP_ADAPTER&quot;</span>
+<span class="err">          source_ref {</span>
+<span class="err">            id = pingfederate_idp_adapter.demo.id</span>
+<span class="err">          }</span>
+<span class="err">        }</span>
+<span class="err">      }</span>
+<span class="err">      children {</span>
+<span class="err">        action {</span>
+<span class="err">          type    = &quot;RESTART&quot;</span>
+<span class="err">          context = &quot;Fail&quot;</span>
+<span class="err">        }</span>
+<span class="err">      }</span>
+<span class="err">      children {</span>
+<span class="err">        action {</span>
+<span class="err">          type    = &quot;DONE&quot;</span>
+<span class="err">          context = &quot;Success&quot;</span>
+<span class="err">        }</span>
+<span class="err">      }</span>
+<span class="err">    }</span>
+<span class="err">  }</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<h2 id="argument-attributes">Argument Attributes</h2>
+<p>The following arguments are supported:</p>
+<ul>
+<li>
+<p><code>authn_selection_trees</code> - (Optional) The list of authentication policy trees.</p>
+</li>
+<li>
+<p><code>default_authentication_sources</code> - (Optional) The default authentication sources.</p>
+</li>
+<li>
+<p><code>fail_if_no_selection</code> - (Optional) Fail if policy finds no authentication source.</p>
+</li>
+<li>
+<p><code>tracked_http_parameters</code> - (Optional) The HTTP request parameters to track and make available to authentication sources, selectors, and contract mappings throughout the authentication policy.</p>
+</li>
+</ul>
+<h3 id="authn_selection_trees">authn_selection_trees</h3>
+<p>The <code>authn_selection_trees</code> block - An authentication policy tree.</p>
+<ul>
+<li>
+<p><code>authentication_api_application_ref</code> - (Optional) Authentication API Application Id to be used in this policy branch. If the value is not specified, no Authentication API Application will be used.</p>
+</li>
+<li>
+<p><code>description</code> - (Optional) A description for the authentication policy.</p>
+</li>
+<li>
+<p><code>enabled</code> - (Optional) Whether or not this authentication policy tree is enabled. Default is true.</p>
+</li>
+<li>
+<p><code>name</code> - (Optional) The authentication policy name. Name is unique.</p>
+</li>
+<li>
+<p><code>root_node</code> - (Optional) A node inside the authentication policy tree.</p>
+</li>
+</ul>
+<h3 id="root_node-children">root_node / children</h3>
+<p>The <code>root_node</code> and <code>children</code> block - An authentication policy tree node.</p>
+<ul>
+<li>
+<p><code>action</code> - (Required) The result action.</p>
+</li>
+<li>
+<p><code>children</code> - (Optional) The nodes inside the authentication policy tree node.</p>
+</li>
+</ul>
+<h3 id="action">action</h3>
+<p>The <code>action</code> block - An authentication policy selection action. This can be configured for one of the following policy types.</p>
+<ul>
+<li>ApcMappingPolicyAction</li>
+<li>LocalIdentityMappingPolicyAction</li>
+<li>AuthnSelectorPolicyAction</li>
+<li>AuthnSourcePolicyAction</li>
+<li>ContinuePolicyAction</li>
+<li>RestartPolicyAction</li>
+<li>DonePolicyAction</li>
+</ul>
+<h4 id="apc-mapping-policy-action">APC Mapping Policy Action</h4>
+<p>The <code>action</code> block</p>
+<ul>
+<li>
+<p><code>attribute_mapping</code> - (Required) Contract fulfillment with the authentication policy contract's default values, and additional attributes retrieved from local data stores.</p>
+</li>
+<li>
+<p><code>authentication_policy_contract_ref</code> - (Required) Reference to the associated authentication policy contract.</p>
+</li>
+<li>
+<p><code>context</code> - (Optional) The result context.</p>
+</li>
+<li>
+<p><code>type</code> - (Required) The authentication selection type.</p>
+</li>
+</ul>
+<h4 id="localidentitymappingpolicyaction">LocalIdentityMappingPolicyAction</h4>
+<p>The <code>action</code> block</p>
+<ul>
+<li>
+<p><code>context</code> - (Optional) The result context.</p>
+</li>
+<li>
+<p><code>inbound_mapping</code> - (Optional) Inbound mappings into the local identity profile fields.</p>
+</li>
+<li>
+<p><code>local_identity_ref</code> - (Required) Reference to the associated local identity profile.</p>
+</li>
+<li>
+<p><code>outbound_attribute_mapping</code> - (Required) Authentication policy contract mappings associated with this local Identity profile.</p>
+</li>
+<li>
+<p><code>type</code> - (Required) The authentication selection type.</p>
+</li>
+</ul>
+<h4 id="authnselectorpolicyaction">AuthnSelectorPolicyAction</h4>
+<p>The <code>action</code> block</p>
+<ul>
+<li>
+<p><code>authentication_selector_ref</code> - (Required) Reference to the associated authentication selector.</p>
+</li>
+<li>
+<p><code>context</code> - (Optional) The result context.</p>
+</li>
+<li>
+<p><code>type</code> - (Required) The authentication selection type.</p>
+</li>
+</ul>
+<h4 id="authnsourcepolicyaction">AuthnSourcePolicyAction</h4>
+<p>The <code>action</code> block</p>
+<ul>
+<li>
+<p><code>attribute_rules</code> - (Optional) The authentication policy rules.</p>
+</li>
+<li>
+<p><code>authentication_source</code> - (Required) The associated authentication source.</p>
+</li>
+<li>
+<p><code>context</code> - (Optional) The result context.</p>
+</li>
+<li>
+<p><code>input_user_id_mapping</code> - (Optional) The input user id mapping.</p>
+</li>
+<li>
+<p><code>type</code> - (Required) The authentication selection type.</p>
+</li>
+</ul>
+<h4 id="continuepolicyaction">ContinuePolicyAction</h4>
+<p>The <code>action</code> block</p>
+<ul>
+<li>
+<p><code>context</code> - (Optional) The result context.</p>
+</li>
+<li>
+<p><code>type</code> - (Required) The authentication selection type.</p>
+</li>
+</ul>
+<h4 id="donepolicyaction">DonePolicyAction</h4>
+<p>The <code>action</code> block</p>
+<ul>
+<li>
+<p><code>context</code> - (Optional) The result context.</p>
+</li>
+<li>
+<p><code>type</code> - (Required) The authentication selection type.</p>
+</li>
+</ul>
+<h4 id="restartpolicyaction">RestartPolicyAction</h4>
+<p>The <code>action</code> block</p>
+<ul>
+<li>
+<p><code>context</code> - (Optional) The result context.</p>
+</li>
+<li>
+<p><code>type</code> - (Required) The authentication selection type.</p>
+</li>
+</ul>
+<h3 id="attribute_contract_fulfillment">attribute_contract_fulfillment</h3>
+<p>The <code>attribute_contract_fulfillment</code> block - Defines how an attribute in an attribute contract should be populated.</p>
+<ul>
+<li>
+<p><code>key_name</code> - (Required) The attribute key mapping.</p>
+</li>
+<li>
+<p><code>source</code> - (Required) The attribute value source.</p>
+</li>
+<li>
+<p><code>value</code> - (Required) The value for this attribute.</p>
+</li>
+</ul>
+<h3 id="attribute_mapping">attribute_mapping</h3>
+<p>The <code>attribute_mapping</code> block - A list of mappings from attribute sources to attribute targets.</p>
+<ul>
+<li>
+<p><code>attribute_contract_fulfillment</code> - (Required) A list of mappings from attribute names to their fulfillment values.</p>
+</li>
+<li>
+<p><code>ldap_attribute_source</code> - (Optional) A list of configured ldap data stores to look up attributes from.</p>
+</li>
+<li>
+<p><code>jdbc_attribute_source</code> - (Optional) A list of configured jdbc data stores to look up attributes from.</p>
+</li>
+<li>
+<p><code>custom_attribute_source</code> - (Optional) A list of configured custom data stores to look up attributes from.</p>
+</li>
+<li>
+<p><code>issuance_criteria</code> - (Optional) The issuance criteria that this transaction must meet before the corresponding attribute contract is fulfilled.</p>
+</li>
+</ul>
+<h3 id="attribute_rule">attribute_rule</h3>
+<p>The <code>attribute_rule</code> block - Authentication policy rules using attributes from the previous authentication source. Each rule is evaluated to determine the next action in the policy.</p>
+<ul>
+<li>
+<p><code>attribute_name</code> - (Required) The name of the attribute to use in this attribute rule.</p>
+</li>
+<li>
+<p><code>condition</code> - (Required) The condition that will be applied to the attribute's expected value.</p>
+</li>
+<li>
+<p><code>expected_value</code> - (Required) The expected value of this attribute rule.</p>
+</li>
+<li>
+<p><code>result</code> - (Required) The result of this attribute rule.</p>
+</li>
+</ul>
+<h3 id="attribute_rules">attribute_rules</h3>
+<p>The <code>attribute_rules</code> block - A collection of attribute rules</p>
+<ul>
+<li>
+<p><code>fallback_to_success</code> - (Optional) When all the rules fail, you may choose to default to the general success action or fail. Default to success.</p>
+</li>
+<li>
+<p><code>items</code> - (Optional) The actual list of attribute rules.</p>
+</li>
+</ul>
+<h3 id="authentication_source">authentication_source</h3>
+<p>The <code>authentication_source</code> block - An authentication source (IdP adapter or IdP connection).</p>
+<ul>
+<li>
+<p><code>source_ref</code> - (Required) A reference to the authentication source.</p>
+</li>
+<li>
+<p><code>type</code> - (Required) The type of this authentication source.</p>
+</li>
+</ul>
+<h3 id="conditional_criteria">conditional_criteria</h3>
+<p>The <code>conditional_criteria</code> block - An issuance criterion that checks a source attribute against a particular condition and the expected value. If the condition is true then this issuance criterion passes, otherwise the criterion fails.</p>
+<ul>
+<li>
+<p><code>attribute_name</code> - (Required) The name of the attribute to use in this issuance criterion.</p>
+</li>
+<li>
+<p><code>condition</code> - (Required) The condition that will be applied to the source attribute's value and the expected value.</p>
+</li>
+<li>
+<p><code>error_result</code> - (Optional) The error result to return if this issuance criterion fails. This error result will show up in the PingFederate server logs.</p>
+</li>
+<li>
+<p><code>source</code> - (Required) The source of the attribute.</p>
+</li>
+<li>
+<p><code>value</code> - (Required) The expected value of this issuance criterion.</p>
+</li>
+</ul>
+<h3 id="custom_attribute_source">custom_attribute_source</h3>
+<p>The <code>custom_attribute_source</code> block - The configured settings used to look up attributes from a custom data store.</p>
+<ul>
+<li>
+<p><code>attribute_contract_fulfillment</code> - (Optional) A list of mappings from attribute names to their fulfillment values. This field is only valid for the SP Connection's Browser SSO mappings</p>
+</li>
+<li>
+<p><code>data_store_ref</code> - (Required) Reference to the associated data store.</p>
+</li>
+<li>
+<p><code>description</code> - (Optional) The description of this attribute source. The description needs to be unique amongst the attribute sources for the mapping.<br>Note: Required for APC-to-SP Adapter Mappings</p>
+</li>
+<li>
+<p><code>filter_fields</code> - (Optional) The list of fields that can be used to filter a request to the custom data store.</p>
+</li>
+</ul>
+<h3 id="expression_criteria">expression_criteria</h3>
+<p>The <code>expression_criteria</code> block - An issuance criterion that uses a Boolean return value from an OGNL expression to determine whether or not it passes.</p>
+<ul>
+<li>
+<p><code>error_result</code> - (Optional) The error result to return if this issuance criterion fails. This error result will show up in the PingFederate server logs.</p>
+</li>
+<li>
+<p><code>expression</code> - (Required) The OGNL expression to evaluate.</p>
+</li>
+</ul>
+<h3 id="filter_fields">filter_fields</h3>
+<p>The <code>filter_fields</code> block - A simple name value pair to represent a field entry.</p>
+<ul>
+<li>
+<p><code>name</code> - (Required) The name of this field.</p>
+</li>
+<li>
+<p><code>value</code> - (Optional) The value of this field. Whether or not the value is required will be determined by plugin validation checks.</p>
+</li>
+</ul>
+<h3 id="issuance_criteria">issuance_criteria</h3>
+<p>The <code>issuance_criteria</code> block - A list of criteria that determines whether a transaction (usually a SSO transaction) is continued. All criteria must pass in order for the transaction to continue.</p>
+<ul>
+<li>
+<p><code>conditional_criteria</code> - (Optional) A list of conditional issuance criteria where existing attributes must satisfy their conditions against expected values in order for the transaction to continue.</p>
+</li>
+<li>
+<p><code>expression_criteria</code> - (Optional) A list of expression issuance criteria where the OGNL expressions must evaluate to true in order for the transaction to continue.</p>
+</li>
+</ul>
+<h3 id="jdbc_attribute_source">jdbc_attribute_source</h3>
+<p>The <code>jdbc_attribute_source</code> block - The configured settings used to look up attributes from a JDBC data store.</p>
+<ul>
+<li>
+<p><code>attribute_contract_fulfillment</code> - (Optional) A list of mappings from attribute names to their fulfillment values. This field is only valid for the SP Connection's Browser SSO mappings</p>
+</li>
+<li>
+<p><code>data_store_ref</code> - (Required) Reference to the associated data store.</p>
+</li>
+<li>
+<p><code>description</code> - (Optional) The description of this attribute source. The description needs to be unique amongst the attribute sources for the mapping.<br>Note: Required for APC-to-SP Adapter Mappings</p>
+</li>
+<li>
+<p><code>filter</code> - (Required) The JDBC WHERE clause used to query your data store to locate a user record.</p>
+</li>
+<li>
+<p><code>schema</code> - (Optional) Lists the table structure that stores information within a database. Some databases, such as Oracle, require a schema for a JDBC query. Other databases, such as MySQL, do not require a schema.</p>
+</li>
+<li>
+<p><code>table</code> - (Required) The name of the database table. The name is used to construct the SQL query to retrieve data from the data store.</p>
+</li>
+</ul>
+<h3 id="ldap_attribute_source">ldap_attribute_source</h3>
+<p>The <code>ldap_attribute_source</code> block - The configured settings used to look up attributes from a LDAP data store.</p>
+<ul>
+<li>
+<p><code>attribute_contract_fulfillment</code> - (Optional) A list of mappings from attribute names to their fulfillment values. This field is only valid for the SP Connection's Browser SSO mappings</p>
+</li>
+<li>
+<p><code>base_dn</code> - (Optional) The base DN to search from. If not specified, the search will start at the LDAP's root.</p>
+</li>
+<li>
+<p><code>binary_attribute_settings</code> - (Optional) The advanced settings for binary LDAP attributes.</p>
+</li>
+<li>
+<p><code>data_store_ref</code> - (Required) Reference to the associated data store.</p>
+</li>
+<li>
+<p><code>description</code> - (Optional) The description of this attribute source. The description needs to be unique amongst the attribute sources for the mapping.<br>Note: Required for APC-to-SP Adapter Mappings</p>
+</li>
+<li>
+<p><code>member_of_nested_group</code> - (Optional) Set this to true to return transitive group memberships for the 'memberOf' attribute.  This only applies for Active Directory data sources.  All other data sources will be set to false.</p>
+</li>
+<li>
+<p><code>search_filter</code> - (Required) The LDAP filter that will be used to lookup the objects from the directory.</p>
+</li>
+<li>
+<p><code>search_scope</code> - (Required) Determines the node depth of the query.</p>
+</li>
+</ul>
+<h3 id="source">source</h3>
+<p>The <code>source</code> block - A key that is meant to reference a source from which an attribute can be retrieved.
+This model is usually paired with a value which, depending on the SourceType, can be a hardcoded value or a reference to an attribute name specific to that SourceType.
+Not all values are applicable - a validation error will be returned for incorrect values.</p>
+<ul>
+<li><code>type</code> - (Required) The source type of this key.</li>
+</ul>
+<p>For each SourceType, the value should be:</p>
+<ul>
+<li><code>ACCOUNT_LINK</code> - If account linking was enabled for the browser SSO, the value must be 'Local User ID', unless it has been overridden in PingFederate's server configuration.</li>
+<li><code>ADAPTER</code> - The value is one of the attributes of the IdP Adapter.</li>
+<li><code>ASSERTION</code> - The value is one of the attributes coming from the SAML assertion.</li>
+<li><code>AUTHENTICATION_POLICY_CONTRACT</code> - The value is one of the attributes coming from an authentication policy contract.</li>
+<li><code>LOCAL_IDENTITY_PROFILE</code> - The value is one of the fields coming from a local identity profile.</li>
+<li><code>CONTEXT</code> - The value must be one of the following ['TargetResource' or 'OAuthScopes' or 'ClientId' or 'AuthenticationCtx' or 'ClientIp' or 'Locale' or 'StsBasicAuthUsername' or 'StsSSLClientCertSubjectDN' or 'StsSSLClientCertChain' or 'VirtualServerId' or 'AuthenticatingAuthority' or 'DefaultPersistentGrantLifetime']</li>
+<li><code>CLAIMS</code> - Attributes provided by the OIDC Provider.</li>
+<li><code>CUSTOM_DATA_STORE</code> - The value is one of the attributes returned by this custom data store.</li>
+<li><code>EXPRESSION</code> - The value is an OGNL expression.</li>
+<li><code>EXTENDED_CLIENT_METADATA</code> - The value is from an OAuth extended client metadata parameter. This source type is deprecated and has been replaced by EXTENDED_PROPERTIES.</li>
+<li><code>EXTENDED_PROPERTIES</code> - The value is from an OAuth Client's extended property.</li>
+<li><code>IDP_CONNECTION</code> - The value is one of the attributes passed in by the IdP connection.</li>
+<li><code>JDBC_DATA_STORE</code> - The value is one of the column names returned from the JDBC attribute source.</li>
+<li><code>LDAP_DATA_STORE</code> - The value is one of the LDAP attributes supported by your LDAP data store.</li>
+<li><code>MAPPED_ATTRIBUTES</code> - The value is the name of one of the mapped attributes that is defined in the associated attribute mapping.</li>
+<li><code>OAUTH_PERSISTENT_GRANT</code> - The value is one of the attributes from the persistent grant.</li>
+<li><code>PASSWORD_CREDENTIAL_VALIDATOR</code> - The value is one of the attributes of the PCV.</li>
+<li><code>NO_MAPPING</code> - A placeholder value to indicate that an attribute currently has no mapped source.TEXT - A hardcoded value that is used to populate the corresponding attribute.</li>
+<li><code>TOKEN</code> - The value is one of the token attributes.</li>
+<li><code>REQUEST</code> - The value is from the request context such as the CIBA identity hint contract or the request contract for Ws-Trust.</li>
+<li><code>TRACKED_HTTP_PARAMS</code> - The value is from the original request parameters.</li>
+<li><code>SUBJECT_TOKEN</code> - The value is one of the OAuth 2.0 Token exchange subject_token attributes.</li>
+<li><code>ACTOR_TOKEN</code> - The value is one of the OAuth 2.0 Token exchange actor_token attributes.</li>
+<li><code>TOKEN_EXCHANGE_PROCESSOR_POLICY</code> - The value is one of the attributes coming from a Token Exchange Processor policy.</li>
+</ul>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.7e0ee788.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b3a72adc.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: ['tabs'],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.4ac00218.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>
