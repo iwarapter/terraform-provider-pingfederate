@@ -52,25 +52,6 @@ func testAccCheckPingFederateOauthAccessTokenManagerDestroy(s *terraform.State) 
 	return nil
 }
 
-func testAccPingFederateOauthAccessTokenManagerImportConfig() string {
-	return `
-	resource "pingfederate_oauth_access_token_manager" "my_atm" {
-		instance_id = "importme"
-		name = "importme"
-		plugin_descriptor_ref {
-			id = "com.pingidentity.pf.access.token.management.plugins.JwtBearerAccessTokenManagementPlugin"
-		}
-
-		configuration {
-
-		}
-
-		attribute_contract {
-			extended_attributes = ["sub"]
-		}
-	}`
-}
-
 func testAccPingFederateOauthAccessTokenManagerConfig(name, configUpdate string) string {
 	return fmt.Sprintf(`
 	resource "pingfederate_oauth_access_token_manager" "my_atm" {
