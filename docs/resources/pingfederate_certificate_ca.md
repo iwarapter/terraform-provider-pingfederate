@@ -3,7 +3,7 @@
 Provides a certificate ca.
 
 ## Example Usage
-```terraform
+```hcl
 resource "pingfederate_certificates_ca" "demo" {
   certificate_id = "example"
   file_data = base64encode(file("test_cases/amazon_root_ca1.pem"))

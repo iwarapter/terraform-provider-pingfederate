@@ -23,3 +23,13 @@ The following arguments are supported:
 - `runtime_server_cert` - (Required) Reference to the default SSL Server Certificate Key pair active for Runtime Server.
 - `active_admin_server_certs` - (Required) The CSR response file data in PKCS7 format or as an X.509 certificate. PEM encoding (with or without the header and footer lines) is required. New line characters should be omitted or encoded in this value.
 - `active_runtime_server_certs` - (Required) The active SSL Server Certificate Key pairs for PF Administrator Console.
+
+## Import
+
+-> The resource ID is fixed as `ssl_server_settings` because this is a singleton resource.
+
+Ssl Server KeyPair Settings can be imported using the id, e.g.
+
+```
+terraform import pingfederate_keypair_ssl_server_settings.demo ssl_server_settings
+```

@@ -3,7 +3,7 @@
 Provides a notification publisher.
 
 ## Example Usage
-```terraform
+```hcl
 resource "pingfederate_notification_publisher" "demo" {
   name         = "bar"
   publisher_id = "foo1"
