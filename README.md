@@ -1,7 +1,7 @@
 PingFederate Terraform Provider
 ==================
 
-- Website: https://iwarapter.github.io/terraform-provider-pingfederate/
+- Website: https://registry.terraform.io/providers/iwarapter/pingfederate/latest
 - ![Status: Experimental](https://img.shields.io/badge/status-experimental-EAAA32) [![Gitter](https://badges.gitter.im/iwarapter/terraform-provider-pingfederate.svg)](https://gitter.im/iwarapter/terraform-provider-pingfederate?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
   [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=github.com.iwarapter.terraform-provider-pingfederate&metric=coverage)](https://sonarcloud.io/dashboard?id=github.com.iwarapter.terraform-provider-pingfederate)
   [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=github.com.iwarapter.terraform-provider-pingfederate&metric=alert_status)](https://sonarcloud.io/dashboard?id=github.com.iwarapter.terraform-provider-pingfederate)
@@ -43,7 +43,8 @@ $ terraform-provider-pingfederate
 Using the Provider
 ----------------------
 
-To use a released provider in your Terraform environment, download the latest version from https://github.com/iwarapter/terraform-provider-pingfederate/releases and follow the instructions to [install it as a plugin.](https://www.terraform.io/docs/plugins/basics.html#installing-a-plugin) After placing it into your plugins directory,  run `terraform init` to initialize it.
+Please see the terraform registry docs for detailed usage documentation:
+https://registry.terraform.io/providers/iwarapter/pingfederate/latest/docs
 
 Testing the Provider
 ---------------------------

@@ -18,7 +18,7 @@ This is a breaking change as the attribute was removed from the following affect
 BUG FIXES:
 
 * Fix issues with importing several resources.
-
+* Add configuration validation for the provider block for any initial connection issues.
 
 ## 0.0.7 (Nov 9th, 2020)
 

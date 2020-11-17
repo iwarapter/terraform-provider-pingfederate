@@ -1,6 +1,6 @@
 # Resource: pingfederate_authentication_policies
 
-Provides a Authentication Policies.
+Provides an Authentication Policies tree.
 
 -> This resource manages a singleton within PingFederate and as such you should ONLY ever declare one of this resource type. Deleting this resource simply clears all policies.
 
@@ -364,3 +364,13 @@ For each SourceType, the value should be:
 - `SUBJECT_TOKEN` - The value is one of the OAuth 2.0 Token exchange subject_token attributes.
 - `ACTOR_TOKEN` - The value is one of the OAuth 2.0 Token exchange actor_token attributes.
 - `TOKEN_EXCHANGE_PROCESSOR_POLICY` - The value is one of the attributes coming from a Token Exchange Processor policy.
+
+## Import
+
+-> The resource ID is fixed as `default_authentication_policies` because this is a singleton resource.
+
+Authentication Policies can be imported using the id, e.g.
+
+```
+terraform import pingfederate_authentication_policies.demo default_authentication_policies
+```

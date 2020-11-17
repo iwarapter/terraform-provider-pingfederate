@@ -58,7 +58,7 @@ The PingFederate provider offers a flexible means of providing credentials for a
 Static credentials can be provided by adding an `username` and `password` in-line in the PingFederate provider block:
 
 Usage:
-```terraform
+```hcl
 provider "pingfederate" {
   username = "Administrator"
   password = "2Access"
@@ -70,7 +70,7 @@ provider "pingfederate" {
 ### Environment variables
 You can provide your credentials via the `PINGFEDERATE_USERNAME`, `PINGFEDERATE_PASSWORD`, `PINGFEDERATE_CONTEXT` and `PINGFEDERATE_BASEURL` environment variables.
 
-```terraform
+```hcl
 provider "pingfederate" {}
 ```
 
@@ -86,7 +86,7 @@ $ terraform plan
 ## Argument Reference
 
 In addition to [generic `provider` arguments](https://www.terraform.io/docs/configuration/providers.html)
-(e.g. `alias` and `version`), the following arguments are supported in the AWS
+(e.g. `alias` and `version`), the following arguments are supported in the PingFederate
  `provider` block:
 
 * `username` - (Required) This is the PingFederate administrative username. It must be provided, but

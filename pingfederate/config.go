@@ -2,9 +2,12 @@ package pingfederate
 
 import (
 	"crypto/tls"
+	"fmt"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
+	"syscall"
 
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
 
@@ -144,9 +147,18 @@ type pfClient struct {
 
 // Client configures and returns a fully initialized PAClient
 func (c *Config) Client() (interface{}, diag.Diagnostics) {
+	var diags diag.Diagnostics
 	/* #nosec */
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-	url, _ := url.Parse(c.BaseURL)
+	url, err := url.ParseRequestURI(c.BaseURL)
+	if err != nil {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Invalid URL",
+			Detail:   fmt.Sprintf("Unable to parse base_url for client: %s", err),
+		})
+		return nil, diags
+	}
 
 	cfg := config.NewConfig().WithEndpoint(url.String() + c.Context).WithUsername(c.Username).WithPassword(c.Password)
 
@@ -216,5 +228,37 @@ func (c *Config) Client() (interface{}, diag.Diagnostics) {
 		Version:                                   version.New(cfg),
 		VirtualHostNames:                          virtualHostNames.New(cfg),
 	}
+
+	if _, _, err := client.Version.GetVersion(); err != nil {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Connection Error",
+			Detail:   fmt.Sprintf("Unable to connect to PingFederate: %s", checkErr(err)),
+		})
+		return nil, diags
+	}
+
 	return client, nil
+}
+
+func checkErr(err error) string {
+	if netError, ok := err.(net.Error); ok && netError.Timeout() {
+		return "Timeout"
+	}
+
+	switch t := err.(type) {
+	case *net.OpError:
+		if t.Op == "dial" {
+			return "Unknown host/port"
+		} else if t.Op == "read" {
+			return "Connection refused"
+		}
+	case *url.Error:
+		return checkErr(t.Err)
+	case syscall.Errno:
+		if t == syscall.ECONNREFUSED {
+			return "Connection refused"
+		}
+	}
+	return err.Error()
 }

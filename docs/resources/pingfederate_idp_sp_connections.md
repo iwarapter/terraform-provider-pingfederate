@@ -3,7 +3,7 @@
 Provides a idp sp connection.
 
 ## Example Usage
-```terraform
+```hcl
 resource "pingfederate_idp_sp_connection" "demo" {
   name         = "foo"
   entity_id    = "foo"
@@ -53,8 +53,6 @@ resource "pingfederate_idp_sp_connection" "demo" {
 ## Argument Attributes
 
 The following arguments are supported:
-
-- `bypass_external_validation` - (Optional) External validation will be bypassed when set to true. Default to false.
 
 - `connection_id` - (Optional) The persistent, unique ID for the connection. It can be any combination of [a-zA-Z0-9._-]. This property is system-assigned if not specified.
 

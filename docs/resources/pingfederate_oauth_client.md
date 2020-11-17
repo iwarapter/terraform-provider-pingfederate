@@ -4,7 +4,7 @@ Provides an OAuth Client.
 
 ## Example Usage
 
-```terraform
+```hcl
 resource "pingfederate_oauth_client" "demo" {
   client_id = "demo"
   name      = "demo"

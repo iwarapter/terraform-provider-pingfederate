@@ -73,9 +73,9 @@ In addition to all arguments above, the following attributes are exported:
 
 ## Import
 
-SSL Server KeyPairs can be imported using the id, e.g.
-
 -> This is currently only supported for generated KeyPairs.
+
+SSL Server KeyPairs can be imported using the id, e.g.
 
 ```
 terraform import pingfederate_keypair_ssl_server.demo 123
