@@ -466,6 +466,72 @@ func Test_resourcePingFederateIdpAdapterResourceReadData(t *testing.T) {
 				},
 			},
 		},
+		{
+			Resource: pf.IdpAdapter{
+				Name: String(""),
+				PluginDescriptorRef: &pf.ResourceLink{
+					Id: String("com.pingidentity.adapters.httpbasic.idp.HttpBasicIdpAuthnAdapter"),
+				},
+				Configuration: &pf.PluginConfiguration{
+					Fields: &[]*pf.ConfigField{
+						{
+							Name:      String("Result Attribute Name"),
+							Value:     String(""),
+							Inherited: Bool(false),
+						},
+					},
+				},
+				AttributeMapping: &pf.IdpAdapterContractMapping{
+					AttributeContractFulfillment: map[string]*pf.AttributeFulfillmentValue{},
+					AttributeSources:             &[]*pf.AttributeSource{},
+					Inherited:                    Bool(false),
+					IssuanceCriteria: &pf.IssuanceCriteria{
+						ExpressionCriteria: &[]*pf.ExpressionIssuanceCriteriaEntry{
+							{
+								ErrorResult: String("foo"),
+								Expression:  String("foo"),
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			Resource: pf.IdpAdapter{
+				Name: String(""),
+				PluginDescriptorRef: &pf.ResourceLink{
+					Id: String("com.pingidentity.adapters.httpbasic.idp.HttpBasicIdpAuthnAdapter"),
+				},
+				Configuration: &pf.PluginConfiguration{
+					Fields: &[]*pf.ConfigField{
+						{
+							Name:      String("Result Attribute Name"),
+							Value:     String(""),
+							Inherited: Bool(false),
+						},
+					},
+				},
+				AttributeMapping: &pf.IdpAdapterContractMapping{
+					AttributeContractFulfillment: map[string]*pf.AttributeFulfillmentValue{},
+					AttributeSources:             &[]*pf.AttributeSource{},
+					Inherited:                    Bool(false),
+					IssuanceCriteria: &pf.IssuanceCriteria{
+						ConditionalCriteria: &[]*pf.ConditionalIssuanceCriteriaEntry{
+							{
+								AttributeName: String("foo"),
+								Condition:     String("foo"),
+								ErrorResult:   String("foo"),
+								Source: &pf.SourceTypeIdKey{
+									Id:   String("foo"),
+									Type: String("foo"),
+								},
+								Value: String("foo"),
+							},
+						},
+					},
+				},
+			},
+		},
 	}
 	for i, tc := range cases {
 		t.Run(fmt.Sprintf("tc:%v", i), func(t *testing.T) {

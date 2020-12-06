@@ -1769,10 +1769,10 @@ func expandJdbcAttributeSource(in map[string]interface{}) *pf.AttributeSource {
 
 func expandIssuanceCriteria(in map[string]interface{}) *pf.IssuanceCriteria {
 	var result pf.IssuanceCriteria
-	if val, ok := in["conditional_criteria"]; ok {
+	if val, ok := in["conditional_criteria"]; ok && len(val.([]interface{})) > 0 {
 		result.ConditionalCriteria = expandConditionalIssuanceCriteriaEntryList(val.([]interface{}))
 	}
-	if val, ok := in["expression_criteria"]; ok {
+	if val, ok := in["expression_criteria"]; ok && len(val.([]interface{})) > 0 {
 		result.ExpressionCriteria = expandExpressionIssuanceCriteriaEntryList(val.([]interface{}))
 	}
 	return &result
