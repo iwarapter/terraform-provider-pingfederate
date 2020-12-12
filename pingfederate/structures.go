@@ -539,6 +539,14 @@ func resourceRequiredLinkSchema() *schema.Schema {
 	return s
 }
 
+func resourceRequiredForceNewLinkSchema() *schema.Schema {
+	s := resourceLinkSchema()
+	s.Required = true
+	s.ForceNew = true
+	s.Optional = false
+	return s
+}
+
 func resourcePluginConfiguration() *schema.Schema {
 	return &schema.Schema{
 		Type:     schema.TypeList,

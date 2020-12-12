@@ -73,7 +73,33 @@ func testAccPingFederateAuthenticationSelectorResourceConfig(configUpdate string
 	  }
 	}
   }
-}`, configUpdate)
+}
+
+resource "pingfederate_authentication_selector" "demo2" {
+  name = "fee"
+  plugin_descriptor_ref {
+	id = "com.pingidentity.pf.selectors.saml.SamlAuthnContextAdapterSelector"
+  }
+  configuration {
+	fields {
+      name = "Add or Update AuthN Context Attribute"
+	  value = "true"
+	}
+	fields {
+      name = "Enable 'No Match' Result Value"
+	  value = "true"
+	}
+	fields {
+      name = "Enable 'Not in Request' Result Value"
+	  value = "false"
+	}
+  }
+
+  attribute_contract {
+	extended_attributes = ["bar", "asd"]
+  }
+}
+`, configUpdate)
 }
 
 func testAccPingFederateAuthenticationSelectorResourceConfigWrongPlugins() string {
