@@ -120,7 +120,7 @@ func resourcePingFederateOauthAuthenticationPolicyContractMappingsResourceReadRe
 			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
-	if rv.IssuanceCriteria != nil && (rv.IssuanceCriteria.ExpressionCriteria != nil && rv.IssuanceCriteria.ConditionalCriteria != nil) {
+	if rv.IssuanceCriteria != nil && issuanceCriteriaShouldFlatten(rv.IssuanceCriteria) {
 		if err := d.Set("issuance_criteria", flattenIssuanceCriteria(rv.IssuanceCriteria)); err != nil {
 			diags = append(diags, diag.FromErr(err)...)
 		}

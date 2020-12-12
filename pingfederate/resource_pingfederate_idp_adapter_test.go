@@ -56,7 +56,7 @@ func testAccCheckPingFederateIdpAdapterDestroy(s *terraform.State) error {
 
 func testAccPingFederateIdpAdapterConfig(configUpdate string) string {
 	return fmt.Sprintf(`
-	resource "pingfederate_idp_adapter" "demo" {
+resource "pingfederate_idp_adapter" "demo" {
   name = "barrr"
   plugin_descriptor_ref {
     id = "com.pingidentity.adapters.httpbasic.idp.HttpBasicIdpAuthnAdapter"
@@ -68,7 +68,7 @@ func testAccPingFederateIdpAdapterConfig(configUpdate string) string {
       rows {
         fields {
           name  = "Password Credential Validator Instance"
-          value = pingfederate_password_credential_validator.demo.name
+          value = "pcvtestme"
         }
       }
     }
@@ -121,45 +121,7 @@ func testAccPingFederateIdpAdapterConfig(configUpdate string) string {
       }
     }
   }
-}
-
-resource "pingfederate_password_credential_validator" "demo" {
-  name = "barrrrrr"
-  plugin_descriptor_ref {
-	id = "org.sourceid.saml20.domain.SimpleUsernamePasswordCredentialValidator"
-  }
-
-  configuration {
-	tables {
-	  name = "Users"
-	  rows {
-		fields {
-		  name  = "Username"
-		  value = "example"
-		}
-
-		sensitive_fields {
-		  name  = "Password"
-		  value = "demo"
-		}
-
-		sensitive_fields {
-		  name  = "Confirm Password"
-		  value = "demo"
-		}
-
-		fields {
-		  name  = "Relax Password Requirements"
-		  value = "true"
-		}
-	  }
-	}
-  }
-  attribute_contract {
-	core_attributes = ["username"]
-  }
-}
-`, configUpdate)
+}`, configUpdate)
 }
 
 func testAccPingFederateIdpAdapterConfigWrongPlugin() string {
@@ -463,6 +425,72 @@ func Test_resourcePingFederateIdpAdapterResourceReadData(t *testing.T) {
 					},
 					Inherited:      Bool(true),
 					MaskOgnlValues: Bool(true),
+				},
+			},
+		},
+		{
+			Resource: pf.IdpAdapter{
+				Name: String(""),
+				PluginDescriptorRef: &pf.ResourceLink{
+					Id: String("com.pingidentity.adapters.httpbasic.idp.HttpBasicIdpAuthnAdapter"),
+				},
+				Configuration: &pf.PluginConfiguration{
+					Fields: &[]*pf.ConfigField{
+						{
+							Name:      String("Result Attribute Name"),
+							Value:     String(""),
+							Inherited: Bool(false),
+						},
+					},
+				},
+				AttributeMapping: &pf.IdpAdapterContractMapping{
+					AttributeContractFulfillment: map[string]*pf.AttributeFulfillmentValue{},
+					AttributeSources:             &[]*pf.AttributeSource{},
+					Inherited:                    Bool(false),
+					IssuanceCriteria: &pf.IssuanceCriteria{
+						ExpressionCriteria: &[]*pf.ExpressionIssuanceCriteriaEntry{
+							{
+								ErrorResult: String("foo"),
+								Expression:  String("foo"),
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			Resource: pf.IdpAdapter{
+				Name: String(""),
+				PluginDescriptorRef: &pf.ResourceLink{
+					Id: String("com.pingidentity.adapters.httpbasic.idp.HttpBasicIdpAuthnAdapter"),
+				},
+				Configuration: &pf.PluginConfiguration{
+					Fields: &[]*pf.ConfigField{
+						{
+							Name:      String("Result Attribute Name"),
+							Value:     String(""),
+							Inherited: Bool(false),
+						},
+					},
+				},
+				AttributeMapping: &pf.IdpAdapterContractMapping{
+					AttributeContractFulfillment: map[string]*pf.AttributeFulfillmentValue{},
+					AttributeSources:             &[]*pf.AttributeSource{},
+					Inherited:                    Bool(false),
+					IssuanceCriteria: &pf.IssuanceCriteria{
+						ConditionalCriteria: &[]*pf.ConditionalIssuanceCriteriaEntry{
+							{
+								AttributeName: String("foo"),
+								Condition:     String("foo"),
+								ErrorResult:   String("foo"),
+								Source: &pf.SourceTypeIdKey{
+									Id:   String("foo"),
+									Type: String("foo"),
+								},
+								Value: String("foo"),
+							},
+						},
+					},
 				},
 			},
 		},

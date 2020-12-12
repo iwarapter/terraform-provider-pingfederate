@@ -13,7 +13,7 @@ import (
 
 func TestAccPingFederateAuthenticationPoliciesResource(t *testing.T) {
 	resourceName := "pingfederate_authentication_policies.demo"
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederateAuthenticationPoliciesResourceDestroy,
 		Steps: []resource.TestStep{
@@ -47,99 +47,7 @@ func testAccPingFederateAuthenticationPoliciesResourceConfigTearDown() string {
 resource "pingfederate_authentication_policies" "demo" {
   fail_if_no_selection = false
   tracked_http_parameters = ["foo"]
-}
-
-resource "pingfederate_idp_adapter" "demo" {
-  name = "testing"
-  plugin_descriptor_ref {
-    id = "com.pingidentity.adapters.httpbasic.idp.HttpBasicIdpAuthnAdapter"
-  }
-
-  configuration {
-    tables {
-      name = "Credential Validators"
-      rows {
-        fields {
-          name  = "Password Credential Validator Instance"
-          value = pingfederate_password_credential_validator.demo.name
-        }
-      }
-    }
-    fields {
-      name  = "Realm"
-      value = "foo"
-    }
-
-    fields {
-      name  = "Challenge Retries"
-      value = "3"
-    }
-  }
-
-  attribute_contract {
-    core_attributes {
-      name      = "username"
-      pseudonym = true
-    }
-    extended_attributes {
-      name = "sub"
-    }
-  }
-  attribute_mapping {
-    attribute_contract_fulfillment {
-      key_name = "sub"
-      source {
-        type = "ADAPTER"
-      }
-      value = "sub"
-    }
-    attribute_contract_fulfillment {
-      key_name = "username"
-      source {
-        type = "ADAPTER"
-      }
-      value = "username"
-    }
-  }
-}
-
-resource "pingfederate_password_credential_validator" "demo" {
-  name = "demo"
-  plugin_descriptor_ref {
-    id = "org.sourceid.saml20.domain.SimpleUsernamePasswordCredentialValidator"
-  }
-
-  configuration {
-    tables {
-      name = "Users"
-      rows {
-        fields {
-          name  = "Username"
-          value = "example"
-        }
-
-        sensitive_fields {
-          name  = "Password"
-          value = "demo"
-        }
-
-        sensitive_fields {
-          name  = "Confirm Password"
-          value = "demo"
-        }
-
-        fields {
-          name  = "Relax Password Requirements"
-          value = "true"
-        }
-      }
-    }
-  }
-  attribute_contract {
-    core_attributes = ["username"]
-  }
-}
-`
+}`
 }
 
 func testAccPingFederateAuthenticationPoliciesResourceConfig() string {
@@ -150,7 +58,7 @@ resource "pingfederate_authentication_policies" "demo" {
   default_authentication_sources {
     type = "IDP_ADAPTER"
     source_ref {
-      id = pingfederate_idp_adapter.demo.id
+      id = "idptestme"
     }
   }
   authn_selection_trees {
@@ -161,7 +69,7 @@ resource "pingfederate_authentication_policies" "demo" {
         authentication_source {
           type = "IDP_ADAPTER"
           source_ref {
-            id = pingfederate_idp_adapter.demo.id
+            id = "idptestme"
           }
         }
       }
@@ -187,7 +95,7 @@ resource "pingfederate_authentication_policies" "demo" {
         authentication_source {
           type = "IDP_ADAPTER"
           source_ref {
-            id = pingfederate_idp_adapter.demo.id
+            id = "idptestme"
           }
         }
       }
@@ -205,99 +113,7 @@ resource "pingfederate_authentication_policies" "demo" {
       }
 	}
   }
-}
-
-resource "pingfederate_idp_adapter" "demo" {
-  name = "testing"
-  plugin_descriptor_ref {
-    id = "com.pingidentity.adapters.httpbasic.idp.HttpBasicIdpAuthnAdapter"
-  }
-
-  configuration {
-    tables {
-      name = "Credential Validators"
-      rows {
-        fields {
-          name  = "Password Credential Validator Instance"
-          value = pingfederate_password_credential_validator.demo.name
-        }
-      }
-    }
-    fields {
-      name  = "Realm"
-      value = "foo"
-    }
-
-    fields {
-      name  = "Challenge Retries"
-      value = "3"
-    }
-  }
-
-  attribute_contract {
-    core_attributes {
-      name      = "username"
-      pseudonym = true
-    }
-    extended_attributes {
-      name = "sub"
-    }
-  }
-  attribute_mapping {
-    attribute_contract_fulfillment {
-      key_name = "sub"
-      source {
-        type = "ADAPTER"
-      }
-      value = "sub"
-    }
-    attribute_contract_fulfillment {
-      key_name = "username"
-      source {
-        type = "ADAPTER"
-      }
-      value = "username"
-    }
-  }
-}
-
-resource "pingfederate_password_credential_validator" "demo" {
-  name = "demo"
-  plugin_descriptor_ref {
-    id = "org.sourceid.saml20.domain.SimpleUsernamePasswordCredentialValidator"
-  }
-
-  configuration {
-    tables {
-      name = "Users"
-      rows {
-        fields {
-          name  = "Username"
-          value = "example"
-        }
-
-        sensitive_fields {
-          name  = "Password"
-          value = "demo"
-        }
-
-        sensitive_fields {
-          name  = "Confirm Password"
-          value = "demo"
-        }
-
-        fields {
-          name  = "Relax Password Requirements"
-          value = "true"
-        }
-      }
-    }
-  }
-  attribute_contract {
-    core_attributes = ["username"]
-  }
-}
-`
+}`
 }
 
 func testAccCheckPingFederateAuthenticationPoliciesResourceExists(n string) resource.TestCheckFunc {

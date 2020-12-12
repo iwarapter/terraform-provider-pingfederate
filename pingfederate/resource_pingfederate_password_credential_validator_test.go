@@ -18,7 +18,7 @@ import (
 
 func TestAccPingFederatePasswordCredentialValidatorResource(t *testing.T) {
 	resourceName := "pingfederate_password_credential_validator.demo"
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederatePasswordCredentialValidatorResourceDestroy,
 		Steps: []resource.TestStep{
