@@ -1,9 +1,11 @@
 package pingfederate
 
 import (
+	"bytes"
 	"context"
 	"crypto/tls"
 	"fmt"
+	"github.com/ory/dockertest/docker"
 	"log"
 	"net/http"
 	"net/url"
@@ -63,7 +65,9 @@ func TestMain(m *testing.M) {
 		if err != nil {
 			log.Fatalf("Could not start resource: %s", err)
 		}
-		pool.MaxWait = time.Minute * 5
+		logs := new(bytes.Buffer)
+		err = pool.Client.Logs(docker.LogsOptions{Stdout: true, OutputStream: logs, Container: resource.Container.ID})
+		pool.MaxWait = time.Minute * 8
 
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 		pfUrl, _ := url.Parse(fmt.Sprintf("https://localhost:%s/pf-admin-api/v1", resource.GetPort("9999/tcp")))
@@ -77,13 +81,13 @@ func TestMain(m *testing.M) {
 			_, _, err = client.GetVersion()
 			return err
 		}); err != nil {
-			log.Fatalf("Could not connect to docker: %s", err)
+			log.Fatalf("Could not connect to docker: %s\n%s", err, logs)
 		}
 		resource.Expire(600)
 		os.Setenv("PINGFEDERATE_BASEURL", fmt.Sprintf("https://localhost:%s", resource.GetPort("9999/tcp")))
 		log.Println("Connected to PingFederate admin API....")
 		code := m.Run()
-		log.Println("Tests complete shutting down container")
+		log.Printf("Tests complete shutting down container\n%s", logs)
 
 		// You can't defer this because os.Exit doesn't care for defer
 		if err := pool.Purge(resource); err != nil {

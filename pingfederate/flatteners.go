@@ -79,7 +79,7 @@ func flattenIdpAdapterContractMapping(in *pf.IdpAdapterContractMapping) []map[st
 	if in.AttributeContractFulfillment != nil {
 		s["attribute_contract_fulfillment"] = flattenMapOfAttributeFulfillmentValue(in.AttributeContractFulfillment)
 	}
-	if in.IssuanceCriteria != nil && (in.IssuanceCriteria.ExpressionCriteria != nil || in.IssuanceCriteria.ConditionalCriteria != nil) {
+	if in.IssuanceCriteria != nil && issuanceCriteriaShouldFlatten(in.IssuanceCriteria) {
 		s["issuance_criteria"] = flattenIssuanceCriteria(in.IssuanceCriteria)
 	}
 

@@ -15,7 +15,7 @@ import (
 
 func TestAccPingFederateOauthAuthenticationPolicyContractMapping(t *testing.T) {
 	resourceName := "pingfederate_oauth_authentication_policy_contract_mapping.demo"
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederateOauthAuthenticationPolicyContractMappingDestroy,
@@ -243,6 +243,48 @@ func Test_resourcePingFederateOauthAuthenticationPolicyContractMappingResourceRe
 						Description: String("foo"),
 						Id:          String("foo"),
 						Type:        String("CUSTOM"),
+					},
+				},
+			},
+		},
+		{
+			Resource: pf.ApcToPersistentGrantMapping{
+				Id: String(""),
+				AuthenticationPolicyContractRef: &pf.ResourceLink{
+					Id: String("foo"),
+				},
+				AttributeContractFulfillment: map[string]*pf.AttributeFulfillmentValue{},
+				AttributeSources:             &[]*pf.AttributeSource{},
+				IssuanceCriteria: &pf.IssuanceCriteria{
+					ExpressionCriteria: &[]*pf.ExpressionIssuanceCriteriaEntry{
+						{
+							ErrorResult: String("foo"),
+							Expression:  String("foo"),
+						},
+					},
+				},
+			},
+		},
+		{
+			Resource: pf.ApcToPersistentGrantMapping{
+				Id: String(""),
+				AuthenticationPolicyContractRef: &pf.ResourceLink{
+					Id: String("foo"),
+				},
+				AttributeContractFulfillment: map[string]*pf.AttributeFulfillmentValue{},
+				AttributeSources:             &[]*pf.AttributeSource{},
+				IssuanceCriteria: &pf.IssuanceCriteria{
+					ConditionalCriteria: &[]*pf.ConditionalIssuanceCriteriaEntry{
+						{
+							AttributeName: String("foo"),
+							Condition:     String("foo"),
+							ErrorResult:   String("foo"),
+							Source: &pf.SourceTypeIdKey{
+								Id:   String("foo"),
+								Type: String("foo"),
+							},
+							Value: String("foo"),
+						},
 					},
 				},
 			},

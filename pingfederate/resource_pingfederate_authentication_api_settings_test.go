@@ -12,7 +12,7 @@ import (
 func TestAccPingFederateAuthnApiSettingsResource(t *testing.T) {
 	resourceName := "pingfederate_authentication_api_settings.demo"
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederateAuthnApiSettingsResourceDestroy,
 		Steps: []resource.TestStep{
@@ -30,7 +30,7 @@ func TestAccPingFederateAuthnApiSettingsResource(t *testing.T) {
 				Config: testAccPingFederateAuthnApiSettingsResourceConfig("false"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateAuthnApiSettingsResourceExists("pingfederate_authentication_api_settings.demo"),
-					resource.TestCheckResourceAttr(resourceName, "api_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "api_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "enable_api_descriptions", "false"),
 					resource.TestCheckNoResourceAttr(resourceName, "default_application_ref.0.id"),
 					resource.TestCheckNoResourceAttr(resourceName, "default_application_ref.0.location"),
@@ -59,7 +59,7 @@ func testAccPingFederateAuthnApiSettingsResourceConfig(configUpdate string) stri
 
 	return fmt.Sprintf(`
 resource "pingfederate_authentication_api_settings" "demo" {
-	api_enabled = %s
+	api_enabled = true
 	enable_api_descriptions = %s
 	%s
 }
@@ -68,7 +68,7 @@ resource "pingfederate_authentication_api_application" "demo" {
 	name      				   = "settings"
 	url				 		   = "https://bar"
 	description 			   = "this is words"
-}`, configUpdate, configUpdate, ref)
+}`, configUpdate, ref)
 }
 
 func testAccCheckPingFederateAuthnApiSettingsResourceExists(n string) resource.TestCheckFunc {

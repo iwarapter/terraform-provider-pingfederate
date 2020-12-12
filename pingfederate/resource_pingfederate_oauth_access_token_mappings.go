@@ -20,49 +20,53 @@ func resourcePingFederateOauthAccessTokenMappingsResource() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 
-		Schema: map[string]*schema.Schema{
-			"context": {
-				Type:     schema.TypeList,
-				Required: true,
-				MaxItems: 1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"type": {
-							Type:     schema.TypeString,
-							Required: true,
-							//TODO ValidateFunc: 'DEFAULT' or 'PCV' or 'IDP_CONNECTION' or 'IDP_ADAPTER' or 'AUTHENTICATION_POLICY_CONTRACT' or 'CLIENT_CREDENTIALS' or 'TOKEN_EXCHANGE_PROCESSOR_POLICY']: The Access Token Mapping Context type.
-						},
-						"context_ref": resourceLinkSchema(),
+		Schema: resourcePingFederateOauthAccessTokenMappingsResourceSchema(),
+	}
+}
+
+func resourcePingFederateOauthAccessTokenMappingsResourceSchema() map[string]*schema.Schema {
+	return map[string]*schema.Schema{
+		"context": {
+			Type:     schema.TypeList,
+			Required: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"type": {
+						Type:     schema.TypeString,
+						Required: true,
+						//TODO ValidateFunc: 'DEFAULT' or 'PCV' or 'IDP_CONNECTION' or 'IDP_ADAPTER' or 'AUTHENTICATION_POLICY_CONTRACT' or 'CLIENT_CREDENTIALS' or 'TOKEN_EXCHANGE_PROCESSOR_POLICY']: The Access Token Mapping Context type.
 					},
+					"context_ref": resourceLinkSchema(),
 				},
 			},
-			"access_token_manager_ref": resourceRequiredLinkSchema(),
-			"ldap_attribute_source": {
-				Type:     schema.TypeList,
-				Optional: true,
-				Elem:     resourceLdapAttributeSource(),
-			},
-			"jdbc_attribute_source": {
-				Type:     schema.TypeList,
-				Optional: true,
-				Elem:     resourceJdbcAttributeSource(),
-			},
-			"custom_attribute_source": {
-				Type:     schema.TypeList,
-				Optional: true,
-				Elem:     resourceCustomAttributeSource(),
-			},
-			"attribute_contract_fulfillment": {
-				Type:     schema.TypeSet,
-				Required: true,
-				Elem:     resourceAttributeFulfillmentValue(),
-			},
-			"issuance_criteria": {
-				Type:     schema.TypeList,
-				Optional: true,
-				MaxItems: 1,
-				Elem:     resourceIssuanceCriteria(),
-			},
+		},
+		"access_token_manager_ref": resourceRequiredLinkSchema(),
+		"ldap_attribute_source": {
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem:     resourceLdapAttributeSource(),
+		},
+		"jdbc_attribute_source": {
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem:     resourceJdbcAttributeSource(),
+		},
+		"custom_attribute_source": {
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem:     resourceCustomAttributeSource(),
+		},
+		"attribute_contract_fulfillment": {
+			Type:     schema.TypeSet,
+			Required: true,
+			Elem:     resourceAttributeFulfillmentValue(),
+		},
+		"issuance_criteria": {
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem:     resourceIssuanceCriteria(),
 		},
 	}
 }
@@ -134,7 +138,7 @@ func resourcePingFederateOauthAccessTokenMappingsResourceReadResult(d *schema.Re
 
 		}
 	}
-	if rv.IssuanceCriteria != nil && (rv.IssuanceCriteria.ExpressionCriteria != nil && rv.IssuanceCriteria.ConditionalCriteria != nil) {
+	if rv.IssuanceCriteria != nil && issuanceCriteriaShouldFlatten(rv.IssuanceCriteria) {
 		if err := d.Set("issuance_criteria", flattenIssuanceCriteria(rv.IssuanceCriteria)); err != nil {
 			diags = append(diags, diag.FromErr(err)...)
 
@@ -175,7 +179,7 @@ func resourcePingFederateOauthAccessTokenMappingsResourceReadData(d *schema.Reso
 		AttributeSources:             &[]*pf.AttributeSource{},
 	}
 	if v, ok := d.GetOk("issuance_criteria"); ok {
-		result.IssuanceCriteria = expandIssuanceCriteria(v.(map[string]interface{}))
+		result.IssuanceCriteria = expandIssuanceCriteria(v.([]interface{})[0].(map[string]interface{}))
 	}
 	if v, ok := d.GetOk("ldap_attribute_source"); ok && len(v.([]interface{})) > 0 {
 		*result.AttributeSources = append(*result.AttributeSources, *expandLdapAttributeSourceList(v.([]interface{}))...)

@@ -56,7 +56,7 @@ func testAccCheckPingFederateIdpAdapterDestroy(s *terraform.State) error {
 
 func testAccPingFederateIdpAdapterConfig(configUpdate string) string {
 	return fmt.Sprintf(`
-	resource "pingfederate_idp_adapter" "demo" {
+resource "pingfederate_idp_adapter" "demo" {
   name = "barrr"
   plugin_descriptor_ref {
     id = "com.pingidentity.adapters.httpbasic.idp.HttpBasicIdpAuthnAdapter"
@@ -68,7 +68,7 @@ func testAccPingFederateIdpAdapterConfig(configUpdate string) string {
       rows {
         fields {
           name  = "Password Credential Validator Instance"
-          value = pingfederate_password_credential_validator.demo.name
+          value = "pcvtestme"
         }
       }
     }
@@ -121,45 +121,7 @@ func testAccPingFederateIdpAdapterConfig(configUpdate string) string {
       }
     }
   }
-}
-
-resource "pingfederate_password_credential_validator" "demo" {
-  name = "barrrrrr"
-  plugin_descriptor_ref {
-	id = "org.sourceid.saml20.domain.SimpleUsernamePasswordCredentialValidator"
-  }
-
-  configuration {
-	tables {
-	  name = "Users"
-	  rows {
-		fields {
-		  name  = "Username"
-		  value = "example"
-		}
-
-		sensitive_fields {
-		  name  = "Password"
-		  value = "demo"
-		}
-
-		sensitive_fields {
-		  name  = "Confirm Password"
-		  value = "demo"
-		}
-
-		fields {
-		  name  = "Relax Password Requirements"
-		  value = "true"
-		}
-	  }
-	}
-  }
-  attribute_contract {
-	core_attributes = ["username"]
-  }
-}
-`, configUpdate)
+}`, configUpdate)
 }
 
 func testAccPingFederateIdpAdapterConfigWrongPlugin() string {

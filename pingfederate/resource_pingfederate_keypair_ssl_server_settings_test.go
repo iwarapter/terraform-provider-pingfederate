@@ -2,6 +2,7 @@ package pingfederate
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -15,13 +16,22 @@ import (
 
 func TestAccPingFederateKeypairSslServerSettingsResource(t *testing.T) {
 	resourceName := "pingfederate_keypair_ssl_server_settings.test"
-	svc := keyPairsSslServer.New(cfg)
-	settings, _, err := svc.GetSettings()
-	if err != nil {
-		t.Fatalf("unable to retrieve ssl server settings")
+	var settings *pf.SslServerSettings
+	if os.Getenv("TF_ACC") != "" {
+		svc := keyPairsSslServer.New(cfg)
+		var err error
+		settings, _, err = svc.GetSettings()
+		if err != nil {
+			t.Fatalf("unable to retrieve ssl server settings")
+		}
+	} else {
+		settings = &pf.SslServerSettings{
+			AdminConsoleCertRef:  &pf.ResourceLink{Id: String("stub")},
+			RuntimeServerCertRef: &pf.ResourceLink{Id: String("stub")},
+		}
 	}
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederateKeypairSslServerSettingsResourceDestroy,
 		Steps: []resource.TestStep{

@@ -16,7 +16,7 @@ import (
 
 func TestAccPingFederateOauthClient(t *testing.T) {
 	resourceName := "pingfederate_oauth_client.my_client"
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		// PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederateOauthClientDestroy,
@@ -49,8 +49,6 @@ func testAccCheckPingFederateOauthClientDestroy(s *terraform.State) error {
 
 func testAccPingFederateOauthClientConfig(configUpdate string) string {
 	return fmt.Sprintf(`
-	%s
-
 	resource "pingfederate_oauth_client" "my_client" {
 		client_id = "tf-acc-woot"
 		name      = "tf-acc-woot"
@@ -60,7 +58,7 @@ func testAccPingFederateOauthClientConfig(configUpdate string) string {
 		]
 
 		default_access_token_manager_ref {
-			id = "${pingfederate_oauth_access_token_manager.my_atm.name}"
+			id = "testme"
 		}
 
 		oidc_policy {
@@ -82,7 +80,7 @@ func testAccPingFederateOauthClientConfig(configUpdate string) string {
 		]
 
 		default_access_token_manager_ref {
-			id = "${pingfederate_oauth_access_token_manager.my_atm.name}"
+			id = "testme"
 		}
 
 		client_auth {
@@ -96,7 +94,7 @@ func testAccPingFederateOauthClientConfig(configUpdate string) string {
 			ping_access_logout_capable = false
 			pairwise_identifier_user_type = false
 		}
-	}`, testAccPingFederateOauthAccessTokenManagerConfig("client", "180"), configUpdate)
+	}`, configUpdate)
 }
 
 func testAccCheckPingFederateOauthClientExists(n string) resource.TestCheckFunc {
