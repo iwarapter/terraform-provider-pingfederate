@@ -41,6 +41,16 @@ func setOfString() *schema.Schema {
 	}
 }
 
+func requiredSetOfString() *schema.Schema {
+	return &schema.Schema{
+		Type:     schema.TypeSet,
+		Required: true,
+		Elem: &schema.Schema{
+			Type: schema.TypeString,
+		},
+	}
+}
+
 func resourceKeypairResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"keypair_id": {

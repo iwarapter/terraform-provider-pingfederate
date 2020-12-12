@@ -2739,3 +2739,26 @@ func expandSpTokenGeneratorMappingList(in []interface{}) *[]*pf.SpTokenGenerator
 	}
 	return &result
 }
+
+func expandLdapTagConfigList(in []interface{}) *[]*pf.LdapTagConfig {
+	var result []*pf.LdapTagConfig
+	for _, v := range in {
+		result = append(result, expandLdapTagConfig(v.(map[string]interface{})))
+	}
+	return &result
+}
+
+func expandLdapTagConfig(in map[string]interface{}) *pf.LdapTagConfig {
+	var result pf.LdapTagConfig
+	if val, ok := in["hostnames"]; ok {
+		strs := expandStringList(val.(*schema.Set).List())
+		result.Hostnames = &strs
+	}
+	if val, ok := in["tags"]; ok {
+		result.Tags = String(val.(string))
+	}
+	if val, ok := in["default_source"]; ok {
+		result.DefaultSource = Bool(val.(bool))
+	}
+	return &result
+}

@@ -2812,3 +2812,25 @@ func flattenSpBrowserSsoAttributes(in *[]*pf.SpBrowserSsoAttribute) []interface{
 	}
 	return m
 }
+
+func flattenLdapTagConfigs(in *[]*pf.LdapTagConfig) []interface{} {
+	m := make([]interface{}, 0, len(*in))
+	for _, v := range *in {
+		m = append(m, flattenLdapTagConfig(v))
+	}
+	return m
+}
+
+func flattenLdapTagConfig(in *pf.LdapTagConfig) map[string]interface{} {
+	s := make(map[string]interface{})
+	if in.Hostnames != nil {
+		s["hostnames"] = *in.Hostnames
+	}
+	if in.Tags != nil {
+		s["tags"] = *in.Tags
+	}
+	if in.DefaultSource != nil {
+		s["default_source"] = *in.DefaultSource
+	}
+	return s
+}
