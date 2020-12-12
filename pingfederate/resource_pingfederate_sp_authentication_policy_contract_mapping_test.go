@@ -16,7 +16,7 @@ import (
 
 func TestAccPingFederateSpAuthenticationPolicyContractMapping(t *testing.T) {
 	resourceName := "pingfederate_sp_authentication_policy_contract_mapping.demo"
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederateSpAuthenticationPolicyContractMappingDestroy,
@@ -349,6 +349,46 @@ func Test_resourcePingFederateSpAuthenticationPolicyContractMappingResourceReadD
 						Type:        String("CUSTOM"),
 					},
 				},
+			},
+		},
+		{
+			Resource: pf.ApcToSpAdapterMapping{
+				Id:                           String(""),
+				AttributeContractFulfillment: map[string]*pf.AttributeFulfillmentValue{},
+				AttributeSources:             &[]*pf.AttributeSource{},
+				IssuanceCriteria: &pf.IssuanceCriteria{
+					ExpressionCriteria: &[]*pf.ExpressionIssuanceCriteriaEntry{
+						{
+							ErrorResult: String("foo"),
+							Expression:  String("foo"),
+						},
+					},
+				},
+				SourceId: String(""),
+				TargetId: String(""),
+			},
+		},
+		{
+			Resource: pf.ApcToSpAdapterMapping{
+				Id:                           String(""),
+				AttributeContractFulfillment: map[string]*pf.AttributeFulfillmentValue{},
+				AttributeSources:             &[]*pf.AttributeSource{},
+				IssuanceCriteria: &pf.IssuanceCriteria{
+					ConditionalCriteria: &[]*pf.ConditionalIssuanceCriteriaEntry{
+						{
+							AttributeName: String("foo"),
+							Condition:     String("foo"),
+							ErrorResult:   String("foo"),
+							Source: &pf.SourceTypeIdKey{
+								Id:   String("foo"),
+								Type: String("foo"),
+							},
+							Value: String("foo"),
+						},
+					},
+				},
+				SourceId: String(""),
+				TargetId: String(""),
 			},
 		},
 	}

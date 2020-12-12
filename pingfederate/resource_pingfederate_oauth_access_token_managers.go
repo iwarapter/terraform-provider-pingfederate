@@ -151,29 +151,7 @@ func resourcePingFederateOauthAccessTokenManagersResourceCreate(_ context.Contex
 		return diag.Errorf("unable to read OauthAccessTokenManagers: %s", err)
 	}
 	d.SetId(*result.Id)
-	diags := resourcePingFederateOauthAccessTokenManagersResourceReadResult(d, result, svc)
-	if diags.HasError() {
-		return diags
-	}
-	return setOauthAccessTokenManagerAsDefaultIfNoneSet(*result.Id, svc)
-}
-
-func setOauthAccessTokenManagerAsDefaultIfNoneSet(id string, svc oauthAccessTokenManagers.OauthAccessTokenManagersAPI) diag.Diagnostics {
-	result, _, err := svc.GetSettings()
-	if err != nil {
-		return diag.Errorf("unable to read the OauthAccessTokenManagers settings %s", err)
-	}
-	if result.DefaultAccessTokenManagerRef != nil {
-		_, _, err = svc.UpdateSettings(&oauthAccessTokenManagers.UpdateSettingsInput{
-			Body: pf.AccessTokenManagementSettings{
-				DefaultAccessTokenManagerRef: &pf.ResourceLink{Id: String(id)},
-			},
-		})
-		if err != nil {
-			return diag.Errorf("unable to update the OauthAccessTokenManagers settings %s", err)
-		}
-	}
-	return nil
+	return resourcePingFederateOauthAccessTokenManagersResourceReadResult(d, result, svc)
 }
 
 func resourcePingFederateOauthAccessTokenManagersResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

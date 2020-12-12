@@ -17,7 +17,7 @@ import (
 func TestAccPingFederateSpIdpConnection(t *testing.T) {
 	resourceName := "pingfederate_sp_idp_connection.demo"
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederateSpIdpConnectionDestroy,

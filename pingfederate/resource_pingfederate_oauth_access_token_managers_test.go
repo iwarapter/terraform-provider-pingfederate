@@ -19,7 +19,7 @@ import (
 func TestAccPingFederateOauthAccessTokenManager(t *testing.T) {
 	resourceName := "pingfederate_oauth_access_token_manager.my_atm"
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederateOauthAccessTokenManagerDestroy,
 		Steps: []resource.TestStep{
