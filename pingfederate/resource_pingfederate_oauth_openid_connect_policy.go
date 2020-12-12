@@ -4,6 +4,11 @@ package pingfederate
 
 import (
 	"context"
+	"fmt"
+	"net/http"
+	"time"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthOpenIdConnect"
 
@@ -22,6 +27,9 @@ func resourcePingFederateOpenIdConnectPolicyResource() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: resourcePingFederateOpenIdConnectPolicyResourceSchema(),
+		Timeouts: &schema.ResourceTimeout{
+			Delete: schema.DefaultTimeout(1 * time.Minute),
+		},
 	}
 }
 
@@ -114,14 +122,24 @@ func resourcePingFederateOpenIdConnectPolicyResourceUpdate(_ context.Context, d 
 	return resourcePingFederateOpenIdConnectPolicyResourceReadResult(d, result)
 }
 
-func resourcePingFederateOpenIdConnectPolicyResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateOpenIdConnectPolicyResourceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthOpenIdConnect
 	input := oauthOpenIdConnect.DeletePolicyInput{
 		Id: d.Id(),
 	}
-	_, _, err := svc.DeletePolicy(&input)
+	err := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+
+		_, resp, err := svc.DeletePolicy(&input)
+		if resp != nil && resp.StatusCode == http.StatusUnprocessableEntity {
+			return resource.RetryableError(fmt.Errorf("unable to delete with retry OauthOpenIdConnectPolicy: %s", err))
+		}
+		if err != nil {
+			return resource.NonRetryableError(fmt.Errorf("unable to delete OauthOpenIdConnectPolicy: %s", err))
+		}
+		return nil
+	})
 	if err != nil {
-		return diag.Errorf("unable to delete OauthOpenIdConnectPolicy: %s", err)
+		return diag.FromErr(err)
 	}
 	return nil
 }
