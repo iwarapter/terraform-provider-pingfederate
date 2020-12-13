@@ -90,8 +90,8 @@ In addition to all arguments above, the following attributes are exported:
 
 ## Import
 
-Authentication API Applications can be imported using the id, e.g.
+Ldap Data Stores can be imported using the id, e.g.
 
 ```
-terraform import pingfederate_authentication_selector.example 123
+terraform import pingfederate_ldap_data_store.example 123
 ```
