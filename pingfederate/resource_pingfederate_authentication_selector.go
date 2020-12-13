@@ -58,8 +58,9 @@ func resourcePingFederateAuthenticationSelectorResourceSchema() map[string]*sche
 		"name": {
 			Type:     schema.TypeString,
 			Required: true,
+			ForceNew: true,
 		},
-		"plugin_descriptor_ref": resourceLinkSchema(),
+		"plugin_descriptor_ref": resourceRequiredForceNewLinkSchema(),
 		"configuration":         resourcePluginConfiguration(),
 		"attribute_contract": {
 			Type:     schema.TypeList,

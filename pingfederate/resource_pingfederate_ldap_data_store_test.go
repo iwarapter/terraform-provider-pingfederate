@@ -99,6 +99,13 @@ func Test_resourcePingFederateLdapDataStoreResourceReadData(t *testing.T) {
 				CreateIfNecessary: Bool(false),
 				DnsTtl:            Int(60000),
 				//TODO Only set because terraform sdk defaults int's to 0 :/
+				HostnamesTags: &[]*pf.LdapTagConfig{
+					{
+						DefaultSource: Bool(true),
+						Hostnames:     &[]*string{String("ldaps://foo")},
+						Tags:          String("tags"),
+					},
+				},
 				EncryptedPassword:    String("foo"),
 				FollowLDAPReferrals:  Bool(false),
 				LdapDnsSrvPrefix:     String("_ldap._tcp"),

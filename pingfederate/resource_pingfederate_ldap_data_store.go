@@ -35,12 +35,10 @@ func resourcePingFederateLdapDataStoreResourceSchema() map[string]*schema.Schema
 		"hostnames_tags": {
 			Type:     schema.TypeList,
 			Optional: true,
+			Computed: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					"hostnames": {
-						Type:     schema.TypeString,
-						Required: true,
-					},
+					"hostnames": requiredSetOfString(),
 					"tags": {
 						Type:     schema.TypeString,
 						Optional: true,
@@ -239,9 +237,11 @@ func resourcePingFederateLdapDataStoreResourceReadResult(d *schema.ResourceData,
 	setResourceDataStringWithDiagnostic(d, "ldap_dns_srv_prefix", rv.LdapDnsSrvPrefix, &diags)
 	setResourceDataStringWithDiagnostic(d, "ldaps_dns_srv_prefix", rv.LdapsDnsSrvPrefix, &diags)
 
-	//if rv.HostnamesTags != nil && len(*rv.HostnamesTags) != 0 {
-	//	//TODO connection_url_tags
-	//}
+	if rv.HostnamesTags != nil && len(*rv.HostnamesTags) != 0 {
+		if err := d.Set("hostnames_tags", flattenLdapTagConfigs(rv.HostnamesTags)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
+		}
+	}
 	if rv.Hostnames != nil && len(*rv.Hostnames) > 0 {
 		if err := d.Set("hostnames", flattenStringList(*rv.Hostnames)); err != nil {
 			diags = append(diags, diag.FromErr(err)...)
@@ -265,7 +265,9 @@ func resourcePingFederateLdapDataStoreResourceReadData(d *schema.ResourceData) *
 	if val, ok := d.GetOkExists("mask_attribute_values"); ok {
 		ds.MaskAttributeValues = Bool(val.(bool))
 	}
-	//TODO hostnames_tags
+	if val, ok := d.GetOk("hostnames_tags"); ok {
+		ds.HostnamesTags = expandLdapTagConfigList(val.([]interface{}))
+	}
 	if val, ok := d.GetOk("hostnames"); ok {
 		strs := expandStringList(val.(*schema.Set).List())
 		ds.Hostnames = &strs
