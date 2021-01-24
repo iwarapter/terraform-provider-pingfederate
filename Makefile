@@ -1,9 +1,20 @@
 # Makefile
 VERSION ?= 0.0.1-BETA
 NAME=terraform-provider-pingfederate_v${VERSION}
+OS_NAME := $(shell uname -s | tr A-Z a-z)
+
 
 pf-init:
-	@docker run -d --hostname pingfederate -v `pwd`/pingfederate/pingfederate-data.zip:/opt/in/instance/server/default/data/drop-in-deployer/data.zip --name pingfederate -e PING_IDENTITY_DEVOPS_KEY=$(PING_IDENTITY_DEVOPS_KEY) -e PING_IDENTITY_DEVOPS_USER=$(PING_IDENTITY_DEVOPS_USER) -e PING_IDENTITY_ACCEPT_EULA=YES --publish 9999:9999 --publish 9031:9031 pingidentity/pingfederate:10.0.5-edge
+	@docker run -d --rm --hostname pingfederate \
+		--name pingfederate \
+		-e PING_IDENTITY_DEVOPS_KEY=$(PING_IDENTITY_DEVOPS_KEY) \
+		-e PING_IDENTITY_DEVOPS_USER=$(PING_IDENTITY_DEVOPS_USER) \
+		-e PING_IDENTITY_ACCEPT_EULA=YES \
+		-e SERVER_PROFILE_URL=https://github.com/pingidentity/pingidentity-server-profiles.git \
+		-e SERVER_PROFILE_PATH=getting-started/pingfederate \
+		--publish 9999:9999 \
+		--publish 9031:9031 \
+		pingidentity/pingfederate:10.0.6-edge
 
 checks:
 	@go fmt ./...
@@ -27,12 +38,15 @@ build:
 deploy-local:
 	@mkdir -p ~/.terraform.d/plugins
 	@cp ${NAME} ~/.terraform.d/plugins/
+	@mkdir -p ~/.terraform.d/plugins/registry.terraform.io/iwarapter/pingfederate/${VERSION}/${OS_NAME}_amd64
+	@cp ${NAME} ~/.terraform.d/plugins/registry.terraform.io/iwarapter/pingfederate/${VERSION}/${OS_NAME}_amd64
 
 func-init:
+	@rm -rf func-tests/.terraform.lock.hcl
 	@rm -rf func-tests/.terraform
 	@rm -rf func-tests/crash.log
 	@rm -rf func-tests/run.log
-	@cd func-tests && terraform init
+	@cd func-tests && terraform init -lock=true
 
 func-plan:
 	@cd func-tests && TF_LOG=TRACE TF_LOG_PATH=./terraform.log terraform plan

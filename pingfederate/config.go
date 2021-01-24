@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"regexp"
 	"syscall"
 
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
@@ -83,6 +84,7 @@ type Config struct {
 }
 
 type pfClient struct {
+	apiVersion                                string
 	BypassExternalValidation                  bool
 	AdministrativeAccounts                    administrativeAccounts.AdministrativeAccountsAPI
 	AuthenticationApi                         authenticationApi.AuthenticationApiAPI
@@ -229,7 +231,8 @@ func (c *Config) Client() (interface{}, diag.Diagnostics) {
 		VirtualHostNames:                          virtualHostNames.New(cfg),
 	}
 
-	if _, _, err := client.Version.GetVersion(); err != nil {
+	v, _, err := client.Version.GetVersion()
+	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
 			Summary:  "Connection Error",
@@ -238,7 +241,15 @@ func (c *Config) Client() (interface{}, diag.Diagnostics) {
 		return nil, diags
 	}
 
+	client.apiVersion = *v.Version
+
 	return client, nil
+}
+
+// Checks whether we are running against PingAccess 6.1 or above and can track password changes
+func (c pfClient) IsPF10() bool {
+	re := regexp.MustCompile(`^(10\.[0-9])`)
+	return re.MatchString(c.apiVersion)
 }
 
 func checkErr(err error) string {

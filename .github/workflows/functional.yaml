@@ -1,0 +1,77 @@
+on:
+  push:
+    paths:
+      - 'pingfederate/**'
+      - 'vendor/**'
+      - 'go.mod'
+      - 'go.sum'
+      - 'main.go'
+      - '.github/workflows/functional.yaml'
+  pull_request:
+    paths:
+      - 'pingfederate/**'
+      - 'vendor/**'
+      - 'go.mod'
+      - 'go.sum'
+      - 'main.go'
+      - '.github/workflows/functional.yaml'
+      -
+name: e2e
+jobs:
+  e2e:
+    name: e2e
+    strategy:
+      fail-fast: false
+      matrix:
+        pingfederate-version: [10.0.6, 10.1.3, 10.2.1]
+        terraform-version: [0.13.6, 0.14.5]
+    services:
+      pingfederate:
+        image: pingidentity/pingfederate:${{ matrix.pingfederate-version }}-edge
+        env:
+          PING_IDENTITY_ACCEPT_EULA: YES
+          PING_IDENTITY_DEVOPS_USER: ${{ secrets.PING_IDENTITY_DEVOPS_USER }}
+          PING_IDENTITY_DEVOPS_KEY: ${{ secrets.PING_IDENTITY_DEVOPS_KEY }}
+          SERVER_PROFILE_URL: https://github.com/pingidentity/pingidentity-server-profiles.git
+          SERVER_PROFILE_PATH: getting-started/pingfederate
+        ports:
+          - 9999:9999
+          - 9031:9031
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go 1.14
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.14
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: ${{ matrix.terraform-version }}
+
+      - name: Install Build and Deploy
+        run: make build deploy-local
+
+      - name: Terraform Init
+        run: make func-init
+
+      - name: Terraform Plan
+        env:
+          TF_VAR_pf_version: ${{ matrix.pingfederate-version }}
+        run: make func-plan
+
+      - name: Terraform Apply
+        env:
+          TF_VAR_pf_version: ${{ matrix.pingfederate-version }}
+        run: make func-apply
+
+      - name: Terraform Plan
+        env:
+          TF_VAR_pf_version: ${{ matrix.pingfederate-version }}
+        run: terraform plan -detailed-exitcode
+        working-directory: func-tests

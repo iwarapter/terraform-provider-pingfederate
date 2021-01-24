@@ -5,7 +5,6 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
-	"github.com/ory/dockertest/docker"
 	"log"
 	"net/http"
 	"net/url"
@@ -15,6 +14,8 @@ import (
 	"runtime"
 	"testing"
 	"time"
+
+	"github.com/ory/dockertest/docker"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
@@ -46,7 +47,7 @@ func TestMain(m *testing.M) {
 				Repository: "pingidentity/pingfederate",
 				Mounts:     []string{dir + "/pingfederate-data.zip:/opt/in/instance/server/default/data/drop-in-deployer/data.zip"},
 				Env:        []string{fmt.Sprintf("PING_IDENTITY_DEVOPS_USER=%s", devOpsUser), fmt.Sprintf("PING_IDENTITY_DEVOPS_KEY=%s", devOpsKey), "PING_IDENTITY_ACCEPT_EULA=YES"},
-				Tag:        "10.0.5-edge",
+				Tag:        "10.0.6-edge",
 			}
 		} else {
 			options = &dockertest.RunOptions{
@@ -56,7 +57,7 @@ func TestMain(m *testing.M) {
 					dir + "/pingfederate.lic:/opt/in/instance/server/default/conf/pingfederate.lic",
 					dir + "/pingfederate-data.zip:/opt/in/instance/server/default/data/drop-in-deployer/data.zip",
 				},
-				Tag: "10.0.5-edge",
+				Tag: "10.0.6-edge",
 			}
 		}
 

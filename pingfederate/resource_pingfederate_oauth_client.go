@@ -4,6 +4,11 @@ package pingfederate
 
 import (
 	"context"
+	"fmt"
+	"net/http"
+	"time"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthClients"
 
@@ -21,7 +26,9 @@ func resourcePingFederateOauthClientResource() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(1 * time.Minute),
+		},
 		Schema: resourcePingFederateOauthClientResourceSchema(),
 	}
 }
@@ -309,14 +316,26 @@ func resourcePingFederateOauthClientResourceSchema() map[string]*schema.Schema {
 	}
 }
 
-func resourcePingFederateOauthClientResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateOauthClientResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthClients
 	input := oauthClients.CreateClientInput{
 		Body: *resourcePingFederateOauthClientResourceReadData(d),
 	}
-	result, _, err := svc.CreateClient(&input)
+	var result *pf.Client
+	err := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+		var err error
+		var resp *http.Response
+		result, resp, err = svc.CreateClient(&input)
+		if resp != nil && resp.StatusCode == http.StatusUnprocessableEntity {
+			return resource.RetryableError(fmt.Errorf("unable to create with retry OauthClients: %s", err))
+		}
+		if err != nil {
+			return resource.NonRetryableError(fmt.Errorf("unable to create OauthClients: %s", err))
+		}
+		return nil
+	})
 	if err != nil {
-		return diag.Errorf("unable to create OauthClients: %s", err)
+		return diag.FromErr(err)
 	}
 	d.SetId(*result.ClientId)
 	return resourcePingFederateOauthClientResourceReadResult(d, result)
@@ -361,7 +380,6 @@ func resourcePingFederateOauthClientResourceDelete(_ context.Context, d *schema.
 }
 
 func resourcePingFederateOauthClientResourceReadResult(d *schema.ResourceData, rv *pf.Client) diag.Diagnostics {
-	//TODO
 	var diags diag.Diagnostics
 	setResourceDataStringWithDiagnostic(d, "name", rv.Name, &diags)
 	setResourceDataStringWithDiagnostic(d, "client_id", rv.ClientId, &diags)

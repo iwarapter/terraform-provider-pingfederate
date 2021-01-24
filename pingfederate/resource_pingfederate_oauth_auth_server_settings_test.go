@@ -28,9 +28,10 @@ func TestAccPingFederateOauthAuthServerSettings(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"persistent_grant_lifetime", "persistent_grant_lifetime_unit"},
 			},
 		},
 	})
