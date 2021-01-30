@@ -1140,8 +1140,8 @@ func resourceOpenIdConnectAttributeContract() *schema.Schema {
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"core_attributes": {
-					Type: schema.TypeSet,
-					//Optional: true,
+					Type:     schema.TypeSet,
+					Optional: true,
 					Computed: true,
 					Elem:     resourceOpenIdConnectAttribute(),
 				},

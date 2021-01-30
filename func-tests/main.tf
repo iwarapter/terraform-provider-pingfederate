@@ -1,15 +1,39 @@
+terraform {
+  required_providers {
+    pingfederate = {
+      source  = "iwarapter/pingfederate"
+      version = "0.0.1-BETA"
+      #for functional testing
+    }
+  }
+}
+
 provider "pingfederate" {
-  password = "2Federate"
+  password = "2FederateM0re"
+}
+
+locals {
+  isPF10_0 = length(regexall("10.[0]", var.pf_version)) > 0
+  isPF10_1 = length(regexall("10.[1]", var.pf_version)) > 0
+  isPF10_2 = length(regexall("10.[2]", var.pf_version)) > 0
 }
 
 resource "pingfederate_server_settings" "settings" {
   federation_info {
-    base_url        = "https://localhost:9031"
-    saml2_entity_id = "testing"
+    base_url         = "https://localhost:9031"
+    saml2_entity_id  = "testing"
+    saml1x_issuer_id = "testing"
+    wsfed_realm      = "testing"
   }
   roles_and_protocols {
+    enable_idp_discovery = true
     idp_role {
-      enable = true
+      enable                       = true
+      enable_outbound_provisioning = true
+      enable_saml10                = true
+      enable_saml11                = true
+      enable_ws_fed                = true
+      enable_ws_trust              = true
       saml20_profile {
         enable = true
       }
@@ -19,9 +43,16 @@ resource "pingfederate_server_settings" "settings" {
       enable_openid_connect = true
     }
     sp_role {
-      enable = true
+      enable                      = true
+      enable_inbound_provisioning = true
+      enable_openid_connect       = true
+      enable_saml10               = true
+      enable_saml11               = true
+      enable_ws_fed               = true
+      enable_ws_trust             = true
       saml20_profile {
-        enable = true
+        enable      = true
+        enable_xasp = true
       }
     }
   }
@@ -66,9 +97,10 @@ resource "pingfederate_oauth_auth_server_settings" "settings" {
     ]
   }
 
-  //  persistent_grant_contract {
-  //    extended_attributes = ["woot"]
-  //  }
+  persistent_grant_contract {
+    extended_attributes = [
+    "woot"]
+  }
 
   allowed_origins = [
     "http://localhost",
@@ -116,6 +148,10 @@ resource "pingfederate_oauth_client" "woot" {
 
     ping_access_logout_capable = true
   }
+
+  depends_on = [
+    pingfederate_server_settings.settings
+  ]
 }
 
 resource "pingfederate_oauth_access_token_manager" "my_atm" {
@@ -169,7 +205,8 @@ resource "pingfederate_oauth_access_token_manager" "my_atm" {
   }
 
   attribute_contract {
-    extended_attributes = ["sub"]
+    extended_attributes = [
+    "sub"]
   }
 }
 
@@ -319,6 +356,15 @@ resource "pingfederate_sp_adapter" "demo" {
 
   configuration {
 
+    #pf version specific config
+    dynamic "fields" {
+      for_each = local.isPF10_0 ? [] : [1]
+      content {
+        name  = "SameSite Cookie"
+        value = "3"
+      }
+    }
+
     sensitive_fields {
       name  = "Password"
       value = "Secret123"
@@ -420,13 +466,18 @@ resource "pingfederate_sp_adapter" "demo" {
   }
 
   attribute_contract {
-    core_attributes = ["subject"]
+    core_attributes = [
+    "subject"]
   }
 
   target_application_info {
     application_name     = "foo"
     application_icon_url = "https://foo"
   }
+
+  depends_on = [
+    pingfederate_server_settings.settings
+  ]
 }
 
 resource "pingfederate_oauth_access_token_mappings" "demo" {
@@ -506,6 +557,10 @@ resource "pingfederate_oauth_openid_connect_policy" "demo" {
   //  scope_attribute_mappings = { //TODO hoping the new TF 2.0.0 SDK will finally support sensible maps
   //    address = ["foo", "bar"]
   //  }
+
+  depends_on = [
+    pingfederate_server_settings.settings
+  ]
 }
 
 resource "pingfederate_notification_publisher" "demo" {
@@ -516,6 +571,15 @@ resource "pingfederate_notification_publisher" "demo" {
   }
 
   configuration {
+    #pf version specific config
+    dynamic "fields" {
+      for_each = local.isPF10_0 ? [] : [1]
+      content {
+        name  = "UTF-8 Message Header Support"
+        value = "false"
+      }
+    }
+
     fields {
       name  = "From Address"
       value = "help@foo.org"

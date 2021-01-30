@@ -183,7 +183,7 @@ func resourcePingFederateOauthAuthServerSettingsResourceRead(_ context.Context, 
 	if err != nil {
 		return diag.Errorf("unable to read OauthAuthServerSettings: %s", err)
 	}
-	return resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result)
+	return resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result, m.(pfClient).IsPF10())
 }
 
 func resourcePingFederateOauthAuthServerSettingsResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -206,6 +206,7 @@ func resourcePingFederateOauthAuthServerSettingsResourceUpdate(_ context.Context
 	//if _, ok := d.GetOk("admin_web_service_pcv_ref"); ok {
 	//	// authSettings.AdminWebServicePcvRef = //expand
 	//}
+	isPF10 := m.(pfClient).IsPF10()
 
 	if v, ok := d.GetOk("allowed_origins"); ok {
 		strs := expandStringList(v.(*schema.Set).List())
@@ -238,10 +239,14 @@ func resourcePingFederateOauthAuthServerSettingsResourceUpdate(_ context.Context
 
 	if v, ok := d.GetOk("persistent_grant_lifetime"); ok {
 		authSettings.PersistentGrantLifetime = Int(v.(int))
+	} else if isPF10 {
+		authSettings.PersistentGrantLifetime = Int(-1)
 	}
 
 	if v, ok := d.GetOk("persistent_grant_lifetime_unit"); ok {
 		authSettings.PersistentGrantLifetimeUnit = String(v.(string))
+	} else if isPF10 {
+		authSettings.PersistentGrantLifetimeUnit = String("DAYS")
 	}
 
 	if v, ok := d.GetOk("persistent_grant_reuse_grant_types"); ok {
@@ -277,7 +282,7 @@ func resourcePingFederateOauthAuthServerSettingsResourceUpdate(_ context.Context
 	if err != nil {
 		return diag.Errorf("unable to update OauthAuthServerSettings: %s", err)
 	}
-	return resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result)
+	return resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result, m.(pfClient).IsPF10())
 }
 
 func resourcePingFederateOauthAuthServerSettingsResourceDelete(_ context.Context, _ *schema.ResourceData, _ interface{}) diag.Diagnostics {
@@ -291,11 +296,11 @@ func resourcePingFederateOauthAuthServerSettingsResourceImport(_ context.Context
 	if err != nil {
 		return []*schema.ResourceData{d}, fmt.Errorf(err.Error())
 	}
-	resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result)
+	resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result, m.(pfClient).IsPF10())
 	return []*schema.ResourceData{d}, nil
 }
 
-func resourcePingFederateOauthAuthServerSettingsResourceReadResult(d *schema.ResourceData, rv *pf.AuthorizationServerSettings) diag.Diagnostics {
+func resourcePingFederateOauthAuthServerSettingsResourceReadResult(d *schema.ResourceData, rv *pf.AuthorizationServerSettings, isPF10 bool) diag.Diagnostics {
 	var diags diag.Diagnostics
 	setResourceDataStringWithDiagnostic(d, "default_scope_description", rv.DefaultScopeDescription, &diags)
 	setResourceDataIntWithDiagnostic(d, "authorization_code_timeout", rv.AuthorizationCodeTimeout, &diags)
@@ -305,7 +310,13 @@ func resourcePingFederateOauthAuthServerSettingsResourceReadResult(d *schema.Res
 	setResourceDataBoolWithDiagnostic(d, "allow_unidentified_client_extension_grants", rv.AllowUnidentifiedClientExtensionGrants, &diags)
 	setResourceDataBoolWithDiagnostic(d, "track_user_sessions_for_logout", rv.TrackUserSessionsForLogout, &diags)
 	setResourceDataStringWithDiagnostic(d, "token_endpoint_base_url", rv.TokenEndpointBaseUrl, &diags)
+	if rv.PersistentGrantLifetime != nil && *rv.PersistentGrantLifetime == -1 && isPF10 {
+		rv.PersistentGrantLifetime = nil
+	}
 	setResourceDataIntWithDiagnostic(d, "persistent_grant_lifetime", rv.PersistentGrantLifetime, &diags)
+	if rv.PersistentGrantLifetimeUnit != nil && *rv.PersistentGrantLifetimeUnit == "DAYS" && isPF10 {
+		rv.PersistentGrantLifetimeUnit = nil
+	}
 	setResourceDataStringWithDiagnostic(d, "persistent_grant_lifetime_unit", rv.PersistentGrantLifetimeUnit, &diags)
 	setResourceDataBoolWithDiagnostic(d, "roll_refresh_token_values", rv.RollRefreshTokenValues, &diags)
 	setResourceDataBoolWithDiagnostic(d, "bypass_authorization_for_approved_grants", rv.BypassAuthorizationForApprovedGrants, &diags)
