@@ -17,6 +17,21 @@ Requirements
 - [Go](https://golang.org/doc/install) 1.12 (to build the provider plugin)
 - [Docker](https://www.docker.com/products/docker-desktop) latest
 
+
+Using the Provider
+----------------------
+
+Please see the terraform registry docs for detailed usage documentation:
+https://registry.terraform.io/providers/iwarapter/pingfederate/latest/docs
+
+The provider is current tested against the following versions of PingFederate
+
+| PingFederate | Status |
+|------------|--------|
+| 10.0.6 | ![e2e](https://github.com/iwarapter/terraform-provider-pingfederate/workflows/e2e/badge.svg)|
+| 10.1.3 | ![e2e](https://github.com/iwarapter/terraform-provider-pingfederate/workflows/e2e/badge.svg)|
+| 10.2.1 | ![e2e](https://github.com/iwarapter/terraform-provider-pingfederate/workflows/e2e/badge.svg)|
+
 Developing the Provider
 ---------------------
 
