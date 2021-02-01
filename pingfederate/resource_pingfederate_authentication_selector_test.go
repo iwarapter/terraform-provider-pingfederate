@@ -15,6 +15,27 @@ import (
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
+func init() {
+	resource.AddTestSweepers("authentication_selector", &resource.Sweeper{
+		Name:         "authentication_selector",
+		Dependencies: []string{},
+		F: func(r string) error {
+			svc := authenticationSelectors.New(cfg)
+			results, _, err := svc.GetAuthenticationSelectors(&authenticationSelectors.GetAuthenticationSelectorsInput{})
+			if err != nil {
+				return fmt.Errorf("unable to list authentication policy contracts %s", err)
+			}
+			for _, item := range *results.Items {
+				_, _, err := svc.DeleteAuthenticationSelector(&authenticationSelectors.DeleteAuthenticationSelectorInput{Id: *item.Id})
+				if err != nil {
+					return fmt.Errorf("unable to sweep authentication policy contract %s because %s", *item.Id, err)
+				}
+			}
+			return nil
+		},
+	})
+}
+
 func TestAccPingFederateAuthenticationSelectorResource(t *testing.T) {
 	resourceName := "pingfederate_authentication_selector.demo"
 	resource.ParallelTest(t, resource.TestCase{
@@ -53,7 +74,7 @@ func testAccCheckPingFederateAuthenticationSelectorResourceDestroy(s *terraform.
 
 func testAccPingFederateAuthenticationSelectorResourceConfig(configUpdate string) string {
 	return fmt.Sprintf(`resource "pingfederate_authentication_selector" "demo" {
-  name = "wee"
+  name = "acctestwee"
   plugin_descriptor_ref {
 	id = "com.pingidentity.pf.selectors.cidr.CIDRAdapterSelector"
   }
@@ -76,7 +97,7 @@ func testAccPingFederateAuthenticationSelectorResourceConfig(configUpdate string
 }
 
 resource "pingfederate_authentication_selector" "demo2" {
-  name = "fee"
+  name = "acctestfee"
   plugin_descriptor_ref {
 	id = "com.pingidentity.pf.selectors.saml.SamlAuthnContextAdapterSelector"
   }
@@ -105,7 +126,7 @@ resource "pingfederate_authentication_selector" "demo2" {
 func testAccPingFederateAuthenticationSelectorResourceConfigWrongPlugins() string {
 	return `
 resource "pingfederate_authentication_selector" "demo" {
-  name = "wee"
+  name = "acctestone"
   plugin_descriptor_ref {
 	id = "com.pingidentity.pf.selectors.cidr.wrong"
   }

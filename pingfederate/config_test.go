@@ -1,12 +1,13 @@
 package pingfederate
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"net"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
 	"testing"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 )
 
 func TestConfig_Client(t *testing.T) {

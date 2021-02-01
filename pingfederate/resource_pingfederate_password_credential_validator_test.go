@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -15,6 +16,29 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
+
+func init() {
+	resource.AddTestSweepers("password_credential_validator", &resource.Sweeper{
+		Name:         "password_credential_validator",
+		Dependencies: []string{},
+		F: func(r string) error {
+			svc := passwordCredentialValidators.New(cfg)
+			results, _, err := svc.GetPasswordCredentialValidators()
+			if err != nil {
+				return fmt.Errorf("unable to list password credential validator %s", err)
+			}
+			for _, item := range *results.Items {
+				if strings.Contains(*item.Name, "acctest") {
+					_, _, err := svc.DeletePasswordCredentialValidator(&passwordCredentialValidators.DeletePasswordCredentialValidatorInput{Id: *item.Id})
+					if err != nil {
+						return fmt.Errorf("unable to sweep password credential validator %s because %s", *item.Id, err)
+					}
+				}
+			}
+			return nil
+		},
+	})
+}
 
 func TestAccPingFederatePasswordCredentialValidatorResource(t *testing.T) {
 	resourceName := "pingfederate_password_credential_validator.demo"
@@ -58,7 +82,7 @@ func testAccCheckPingFederatePasswordCredentialValidatorResourceDestroy(s *terra
 
 func testAccPingFederatePasswordCredentialValidatorResourceConfig(configUpdate string) string {
 	return fmt.Sprintf(`resource "pingfederate_password_credential_validator" "demo" {
-	  name = "foo"
+	  name = "acctestfoo"
 	  plugin_descriptor_ref {
 		id = "org.sourceid.saml20.domain.SimpleUsernamePasswordCredentialValidator"
 	  }
@@ -98,7 +122,7 @@ func testAccPingFederatePasswordCredentialValidatorResourceConfig(configUpdate s
 func testAccPingFederatePasswordCredentialValidatorResourceConfigWrongPlugin() string {
 	return `
 resource "pingfederate_password_credential_validator" "demo" {
-  name = "foo"
+  name = "acctestfoo"
   plugin_descriptor_ref {
 	id = "org.sourceid.saml20.domain.wrong"
   }

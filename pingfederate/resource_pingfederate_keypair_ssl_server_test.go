@@ -2,6 +2,7 @@ package pingfederate
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/keyPairsSslServer"
@@ -9,6 +10,29 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
+
+func init() {
+	resource.AddTestSweepers("keypair_ssl_server", &resource.Sweeper{
+		Name:         "keypair_ssl_server",
+		Dependencies: []string{},
+		F: func(r string) error {
+			svc := keyPairsSslServer.New(cfg)
+			results, _, err := svc.GetKeyPairs()
+			if err != nil {
+				return fmt.Errorf("unable to list ssl server keypairs %s", err)
+			}
+			for _, item := range *results.Items {
+				if strings.Contains(*item.Id, "csr-test") {
+					_, _, err := svc.DeleteKeyPair(&keyPairsSslServer.DeleteKeyPairInput{Id: *item.Id})
+					if err != nil {
+						return fmt.Errorf("unable to sweep ssl server keypair %s because %s", *item.Id, err)
+					}
+				}
+			}
+			return nil
+		},
+	})
+}
 
 func TestAccPingFederateKeyPairSslServer(t *testing.T) {
 	resourceName := "pingfederate_keypair_ssl_server.demo"

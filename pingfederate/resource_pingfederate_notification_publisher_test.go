@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/notificationPublishers"
@@ -15,6 +16,29 @@ import (
 
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
+
+func init() {
+	resource.AddTestSweepers("notification_publisher", &resource.Sweeper{
+		Name:         "notification_publisher",
+		Dependencies: []string{},
+		F: func(r string) error {
+			svc := notificationPublishers.New(cfg)
+			results, _, err := svc.GetNotificationPublishers()
+			if err != nil {
+				return fmt.Errorf("unable to list notification publishers %s", err)
+			}
+			for _, item := range *results.Items {
+				if strings.Contains(*item.Name, "acc_test") {
+					_, _, err := svc.DeleteNotificationPublisher(&notificationPublishers.DeleteNotificationPublisherInput{Id: *item.Id})
+					if err != nil {
+						return fmt.Errorf("unable to sweep notification publisher %s because %s", *item.Id, err)
+					}
+				}
+			}
+			return nil
+		},
+	})
+}
 
 func TestAccPingFederateNotificationPublisher(t *testing.T) {
 	resourceName := "pingfederate_notification_publisher.demo"
@@ -57,7 +81,7 @@ func testAccCheckPingFederateNotificationPublisherDestroy(s *terraform.State) er
 func testAccPingFederateNotificationPublisherConfig(configUpdate string) string {
 	return fmt.Sprintf(`
 resource "pingfederate_notification_publisher" "demo" {
-  name = "bar"
+  name = "acc_test_bar"
   publisher_id = "foo1"
   plugin_descriptor_ref {
     id = "com.pingidentity.email.SmtpNotificationPlugin"
@@ -124,7 +148,7 @@ resource "pingfederate_notification_publisher" "demo" {
 func testAccPingFederateNotificationPublisherConfigWrongPlugin() string {
 	return `
 resource "pingfederate_notification_publisher" "demo" {
-  name = "bar2"
+  name = "acc_test_bar2"
   publisher_id = "bar2"
   plugin_descriptor_ref {
     id = "com.pingidentity.adapters.opentoken.wrong"

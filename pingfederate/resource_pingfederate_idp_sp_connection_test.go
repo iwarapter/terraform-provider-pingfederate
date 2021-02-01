@@ -14,6 +14,27 @@ import (
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
+func init() {
+	resource.AddTestSweepers("idp_sp_connection", &resource.Sweeper{
+		Name:         "idp_sp_connection",
+		Dependencies: []string{},
+		F: func(r string) error {
+			svc := idpSpConnections.New(cfg)
+			results, _, err := svc.GetConnections(&idpSpConnections.GetConnectionsInput{Filter: "acc_test"})
+			if err != nil {
+				return fmt.Errorf("unable to list idp sp connections %s", err)
+			}
+			for _, item := range *results.Items {
+				_, _, err := svc.DeleteConnection(&idpSpConnections.DeleteConnectionInput{Id: *item.Id})
+				if err != nil {
+					return fmt.Errorf("unable to sweep idp sp connection %s because %s", *item.Id, err)
+				}
+			}
+			return nil
+		},
+	})
+}
+
 func TestAccPingFederateIdpSpConnection(t *testing.T) {
 	resourceName := "pingfederate_idp_sp_connection.demo"
 
@@ -51,7 +72,7 @@ func testAccCheckPingFederateIdpSpConnectionDestroy(s *terraform.State) error {
 func testAccPingFederateIdpSpConnectionConfig(configUpdate string) string {
 	return fmt.Sprintf(`
 resource "pingfederate_idp_sp_connection" "demo" {
-  name = "foo"
+  name = "acc_test_foo"
   entity_id = "foo"
   active = true
   logging_mode = "STANDARD"

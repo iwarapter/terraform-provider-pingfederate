@@ -10,6 +10,27 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
+func init() {
+	resource.AddTestSweepers("certificates_ca", &resource.Sweeper{
+		Name:         "certificates_ca",
+		Dependencies: []string{},
+		F: func(r string) error {
+			svc := certificatesCa.New(cfg)
+			results, _, err := svc.GetTrustedCAs()
+			if err != nil {
+				return fmt.Errorf("unable to list certificate ca %s", err)
+			}
+			for _, item := range *results.Items {
+				_, _, err := svc.DeleteTrustedCA(&certificatesCa.DeleteTrustedCAInput{Id: *item.Id})
+				if err != nil {
+					return fmt.Errorf("unable to sweep certificate ca %s because %s", *item.Id, err)
+				}
+			}
+			return nil
+		},
+	})
+}
+
 func TestAccPingFederateCertificatesCa(t *testing.T) {
 	resourceName := "pingfederate_certificates_ca.demo"
 

@@ -1,10 +1,11 @@
 package client
 
 import (
+	"io"
+
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/client/metadata"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/request"
-	"io"
 )
 
 type Options struct {

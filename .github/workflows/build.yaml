@@ -1,20 +1,20 @@
 on:
   push:
     paths:
-      - 'pingfederate/**'
-      - 'vendor/**'
-      - 'go.mod'
-      - 'go.sum'
-      - 'main.go'
-      - '.github/workflows/build.yaml'
+      - "pingfederate/**"
+      - "vendor/**"
+      - "go.mod"
+      - "go.sum"
+      - "main.go"
+      - ".github/workflows/build.yaml"
   pull_request:
     paths:
-      - 'pingfederate/**'
-      - 'vendor/**'
-      - 'go.mod'
-      - 'go.sum'
-      - 'main.go'
-      - '.github/workflows/build.yaml'
+      - "pingfederate/**"
+      - "vendor/**"
+      - "go.mod"
+      - "go.sum"
+      - "main.go"
+      - ".github/workflows/build.yaml"
 
 name: ci
 jobs:
@@ -22,26 +22,26 @@ jobs:
     name: build
     runs-on: ubuntu-latest
     steps:
+      - name: Set up Go 1.14
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.14
+        id: go
 
-    - name: Set up Go 1.14
-      uses: actions/setup-go@v1
-      with:
-        go-version: 1.14
-      id: go
+      - name: Checkout Source
+        uses: actions/checkout@v2
 
-    - name: Checkout Source
-      uses: actions/checkout@v2
+      - name: Test
+        env:
+          PING_IDENTITY_DEVOPS_USER: ${{ secrets.PING_IDENTITY_DEVOPS_USER }}
+          PING_IDENTITY_DEVOPS_KEY: ${{ secrets.PING_IDENTITY_DEVOPS_KEY }}
+        run: |
+          make pf-init
+          TF_ACC=1 go test -mod=vendor ./... -v -trimpath -coverprofile=coverage.out
+          go tool cover -func=coverage.out
 
-    - name: Test
-      env:
-        PING_IDENTITY_DEVOPS_USER: ${{ secrets.PING_IDENTITY_DEVOPS_USER }}
-        PING_IDENTITY_DEVOPS_KEY: ${{ secrets.PING_IDENTITY_DEVOPS_KEY }}
-      run: |
-        TF_ACC=1 go test -mod=vendor ./... -v -trimpath -coverprofile=coverage.out
-        go tool cover -func=coverage.out
-
-    - name: SonarCloud Scan
-      uses: sonarsource/sonarcloud-github-action@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

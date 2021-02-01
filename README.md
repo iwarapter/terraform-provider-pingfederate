@@ -64,10 +64,10 @@ https://registry.terraform.io/providers/iwarapter/pingfederate/latest/docs
 Testing the Provider
 ---------------------------
 
-In order to test the provider, you can run `make test`.
+In order to test the provider, you can run `make sweep test`.
 
 ```sh
-$ make test
+$ make sweep test
 ```
 
 This will run the acceptance tests by initializing a local docker container to execute the functional tests against.

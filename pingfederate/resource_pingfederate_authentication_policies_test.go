@@ -4,12 +4,31 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/iwarapter/pingfederate-sdk-go/services/authenticationPolicies"
+
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
+
+func init() {
+	resource.AddTestSweepers("authentication_policies", &resource.Sweeper{
+		Name:         "authentication_policies",
+		Dependencies: []string{},
+		F: func(r string) error {
+			svc := authenticationPolicies.New(cfg)
+			_, _, err := svc.UpdateDefaultAuthenticationPolicy(&authenticationPolicies.UpdateDefaultAuthenticationPolicyInput{Body: pf.AuthenticationPolicy{
+				FailIfNoSelection: Bool(false),
+			}})
+			if err != nil {
+				return fmt.Errorf("unable to reset authentication policies %s", err)
+			}
+			return nil
+		},
+	})
+}
 
 func TestAccPingFederateAuthenticationPoliciesResource(t *testing.T) {
 	resourceName := "pingfederate_authentication_policies.demo"
@@ -21,7 +40,6 @@ func TestAccPingFederateAuthenticationPoliciesResource(t *testing.T) {
 				Config: testAccPingFederateAuthenticationPoliciesResourceConfig(),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateAuthenticationPoliciesResourceExists(resourceName),
-					// testAccCheckPingFederateAuthenticationPoliciesResourceAttributes(),
 				),
 			},
 			{

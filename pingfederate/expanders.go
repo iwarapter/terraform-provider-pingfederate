@@ -708,22 +708,11 @@ func expandMapOfAttributeFulfillmentValue(in []interface{}) map[string]*pf.Attri
 	return ca
 }
 
-//func expandAttributeFulfillmentValue(in map[string]interface{}) *pf.AttributeFulfillmentValue {
-//	ca := &pf.AttributeFulfillmentValue{}
-//	if v, ok := in["source"]; ok {
-//		ca.Source = expandSourceTypeIdKey(v.([]interface{}))
-//	}
-//	if v, ok := in["value"]; ok && v != "" {
-//		ca.Value = String(v.(string))
-//	}
-//	return ca
-//}
-
 func expandPersistentGrantContract(in []interface{}) *pf.PersistentGrantContract {
 	pgc := &pf.PersistentGrantContract{}
 	for _, raw := range in {
 		l := raw.(map[string]interface{})
-		var atr []*pf.PersistentGrantAttribute
+		atr := make([]*pf.PersistentGrantAttribute, 0)
 		for _, exAtr := range l["extended_attributes"].([]interface{}) {
 			atr = append(atr, &pf.PersistentGrantAttribute{Name: String(exAtr.(string))})
 		}

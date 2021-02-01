@@ -13,6 +13,26 @@ import (
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
+func init() {
+	resource.AddTestSweepers("authentication_api_applications", &resource.Sweeper{
+		Name: "authentication_api_applications",
+		F: func(r string) error {
+			svc := authenticationApi.New(cfg)
+			results, _, err := svc.GetAuthenticationApiApplications()
+			if err != nil {
+				return fmt.Errorf("unable to list authentication api applications to sweep %s", err)
+			}
+			for _, item := range *results.Items {
+				_, _, err = svc.DeleteApplication(&authenticationApi.DeleteApplicationInput{Id: *item.Id})
+				if err != nil {
+					return fmt.Errorf("unable to sweep authentication api application %s because %s", *item.Id, err)
+				}
+			}
+			return nil
+		},
+	})
+}
+
 func TestAccPingFederateAuthnApiApplicationResource(t *testing.T) {
 	resourceName := "pingfederate_authentication_api_application.demo"
 

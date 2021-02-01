@@ -78,9 +78,7 @@ type AccessTokenMappingContext struct {
 }
 
 //AccessTokenMappings - A collection of Access Token Attribute Mapping items.
-type AccessTokenMappings struct {
-	Items *[]*AccessTokenMapping `json:"items,omitempty"`
-}
+type AccessTokenMappings []*AccessTokenMapping
 
 //AccountManagementSettings - Account management settings.
 type AccountManagementSettings struct {
