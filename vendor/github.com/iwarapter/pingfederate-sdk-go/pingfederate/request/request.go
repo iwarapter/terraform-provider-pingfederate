@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 	"io"
 	"io/ioutil"
 	"log"
@@ -15,6 +14,8 @@ import (
 	"regexp"
 	"runtime"
 	"time"
+
+	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 
 	"github.com/google/uuid"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
@@ -213,7 +214,7 @@ func (r *Request) Send() error {
 	//	break
 	//}
 
- 	return nil
+	return nil
 }
 
 // DataFilled returns true if the request's data for response deserialization

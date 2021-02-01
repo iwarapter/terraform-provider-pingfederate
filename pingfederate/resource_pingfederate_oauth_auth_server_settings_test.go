@@ -16,13 +16,13 @@ func TestAccPingFederateOauthAuthServerSettings(t *testing.T) {
 		CheckDestroy: testAccCheckPingFederateOauthAuthServerSettingsDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccPingFederateOauthAuthServerSettingsConfig("bar", "404"),
+				Config: testAccPingFederateOauthAuthServerSettingsConfig(""),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateOauthAuthServerSettingsExists(resourceName),
 				),
 			},
 			{
-				Config: testAccPingFederateOauthAuthServerSettingsConfig("bar", "403"),
+				Config: testAccPingFederateOauthAuthServerSettingsConfig("scopes {\nname = \"example\"\ndescription = \"example\"\n}"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateOauthAuthServerSettingsExists(resourceName),
 				),
@@ -41,8 +41,8 @@ func testAccCheckPingFederateOauthAuthServerSettingsDestroy(s *terraform.State) 
 	return nil
 }
 
-func testAccPingFederateOauthAuthServerSettingsConfig(name, configUpdate string) string {
-	return `
+func testAccPingFederateOauthAuthServerSettingsConfig(configUpdate string) string {
+	return fmt.Sprintf(`
 	resource "pingfederate_oauth_auth_server_settings" "settings" {
 		scopes {
 			name        = "address"
@@ -69,6 +69,7 @@ func testAccPingFederateOauthAuthServerSettingsConfig(name, configUpdate string)
 			description = "profile"
 		}
 
+		%s
 		scope_groups {
 			name        = "group1"
 			description = "group1"
@@ -97,7 +98,7 @@ func testAccPingFederateOauthAuthServerSettingsConfig(name, configUpdate string)
 		authorization_code_entropy = 30
 		refresh_token_length       = 42
 		refresh_rolling_interval   = 0
-	}`
+	}`, configUpdate)
 }
 
 func testAccCheckPingFederateOauthAuthServerSettingsExists(n string) resource.TestCheckFunc {

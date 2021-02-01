@@ -6,6 +6,8 @@ import (
 	"regexp"
 	"testing"
 
+	"github.com/iwarapter/pingfederate-sdk-go/services/serverSettings"
+
 	"github.com/iwarapter/pingfederate-sdk-go/services/spAdapters"
 
 	"github.com/google/go-cmp/cmp"
@@ -15,6 +17,34 @@ import (
 
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
+
+func init() {
+	resource.AddTestSweepers("sp_adapter", &resource.Sweeper{
+		Name:         "sp_adapter",
+		Dependencies: []string{},
+		F: func(r string) error {
+			svc := spAdapters.New(cfg)
+			settings, _, err := serverSettings.New(cfg).GetServerSettings()
+			if err != nil {
+				return fmt.Errorf("unable to check server settings %s", err)
+			}
+			if !*settings.RolesAndProtocols.SpRole.Enable {
+				return nil
+			}
+			results, _, err := svc.GetSpAdapters(&spAdapters.GetSpAdaptersInput{Filter: "acc_test"})
+			if err != nil {
+				return fmt.Errorf("unable to list sp adapter %s", err)
+			}
+			for _, item := range *results.Items {
+				_, _, err := svc.DeleteSpAdapter(&spAdapters.DeleteSpAdapterInput{Id: *item.Id})
+				if err != nil {
+					return fmt.Errorf("unable to sweep sp adapter %s because %s", *item.Id, err)
+				}
+			}
+			return nil
+		},
+	})
+}
 
 func TestAccPingFederateSpAdapter(t *testing.T) {
 	resourceName := "pingfederate_sp_adapter.demo"

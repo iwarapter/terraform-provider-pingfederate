@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/iwarapter/pingfederate-sdk-go/services/serverSettings"
+
 	"github.com/iwarapter/pingfederate-sdk-go/services/spAuthenticationPolicyContractMappings"
 
 	"github.com/google/go-cmp/cmp"
@@ -13,6 +15,34 @@ import (
 
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
+
+func init() {
+	resource.AddTestSweepers("sp_authentication_policy_contract_mapping", &resource.Sweeper{
+		Name:         "sp_authentication_policy_contract_mapping",
+		Dependencies: []string{},
+		F: func(r string) error {
+			svc := spAuthenticationPolicyContractMappings.New(cfg)
+			settings, _, err := serverSettings.New(cfg).GetServerSettings()
+			if err != nil {
+				return fmt.Errorf("unable to check server settings %s", err)
+			}
+			if !*settings.RolesAndProtocols.SpRole.Enable {
+				return nil
+			}
+			results, _, err := svc.GetApcToSpAdapterMappings()
+			if err != nil {
+				return fmt.Errorf("unable to list sp authentication policy contract mapping %s", err)
+			}
+			for _, item := range *results.Items {
+				_, _, err := svc.DeleteApcToSpAdapterMappingById(&spAuthenticationPolicyContractMappings.DeleteApcToSpAdapterMappingByIdInput{Id: *item.Id})
+				if err != nil {
+					return fmt.Errorf("unable to sweep sp authentication policy contract mapping %s because %s", *item.Id, err)
+				}
+			}
+			return nil
+		},
+	})
+}
 
 func TestAccPingFederateSpAuthenticationPolicyContractMapping(t *testing.T) {
 	resourceName := "pingfederate_sp_authentication_policy_contract_mapping.demo"
@@ -62,13 +92,13 @@ func testAccPingFederateSpAuthenticationPolicyContractMappingConfig(configUpdate
 }
 
 resource "pingfederate_authentication_policy_contract" "demo" {
-  name = "spadaptertest2"
+  name = "acctestspadaptertest2"
   extended_attributes = ["foo", "email"]
 }
 
 resource "pingfederate_sp_adapter" "demo" {
-  name = "spadaptertest2"
-  sp_adapter_id = "spadaptertest2"
+  name = "acctestspadaptertest2"
+  sp_adapter_id = "acctestspadaptertest2"
   plugin_descriptor_ref {
     id = "com.pingidentity.adapters.opentoken.SpAuthnAdapter"
   }

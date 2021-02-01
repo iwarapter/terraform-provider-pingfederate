@@ -13,6 +13,27 @@ import (
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
+func init() {
+	resource.AddTestSweepers("authentication_policy_contract", &resource.Sweeper{
+		Name:         "authentication_policy_contract",
+		Dependencies: []string{},
+		F: func(r string) error {
+			svc := authenticationPolicyContracts.New(cfg)
+			results, _, err := svc.GetAuthenticationPolicyContracts(&authenticationPolicyContracts.GetAuthenticationPolicyContractsInput{Filter: "acc_test"})
+			if err != nil {
+				return fmt.Errorf("unable to list authentication policy contracts %s", err)
+			}
+			for _, item := range *results.Items {
+				_, _, err := svc.DeleteAuthenticationPolicyContract(&authenticationPolicyContracts.DeleteAuthenticationPolicyContractInput{Id: *item.Id})
+				if err != nil {
+					return fmt.Errorf("unable to sweep authentication policy contract %s because %s", *item.Id, err)
+				}
+			}
+			return nil
+		},
+	})
+}
+
 func TestAccPingFederateAuthenticationPolicyContractResource(t *testing.T) {
 	resourceName := "pingfederate_authentication_policy_contract.demo"
 	resource.ParallelTest(t, resource.TestCase{
@@ -23,13 +44,18 @@ func TestAccPingFederateAuthenticationPolicyContractResource(t *testing.T) {
 				Config: testAccPingFederateAuthenticationPolicyContractResourceConfig("email"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateAuthenticationPolicyContractResourceExists(resourceName),
-					// testAccCheckPingFederateAuthenticationPolicyContractResourceAttributes(),
+					resource.TestCheckResourceAttr(resourceName, "name", "acc_test_one"),
+					resource.TestCheckResourceAttr(resourceName, "extended_attributes.0", "email"),
+					resource.TestCheckResourceAttr(resourceName, "extended_attributes.1", "foo"),
 				),
 			},
 			{
 				Config: testAccPingFederateAuthenticationPolicyContractResourceConfig("address"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateAuthenticationPolicyContractResourceExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", "acc_test_one"),
+					resource.TestCheckResourceAttr(resourceName, "extended_attributes.0", "address"),
+					resource.TestCheckResourceAttr(resourceName, "extended_attributes.1", "foo"),
 				),
 			},
 			{
@@ -48,7 +74,7 @@ func testAccCheckPingFederateAuthenticationPolicyContractResourceDestroy(s *terr
 func testAccPingFederateAuthenticationPolicyContractResourceConfig(configUpdate string) string {
 	return fmt.Sprintf(`
 	resource "pingfederate_authentication_policy_contract" "demo" {
-		name = "testing"
+		name = "acc_test_one"
 		extended_attributes = ["foo", "%s"]
 	}`, configUpdate)
 }

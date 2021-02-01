@@ -2,6 +2,7 @@ package pingfederate
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -13,6 +14,29 @@ import (
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
+func init() {
+	resource.AddTestSweepers("oauth_authentication_policy_contract_mapping", &resource.Sweeper{
+		Name:         "oauth_authentication_policy_contract_mapping",
+		Dependencies: []string{},
+		F: func(r string) error {
+			svc := oauthAuthenticationPolicyContractMappings.New(cfg)
+			results, _, err := svc.GetApcMappings()
+			if err != nil {
+				return fmt.Errorf("unable to list oauth authentication policy contract mappings %s", err)
+			}
+			for _, item := range *results.Items {
+				if strings.Contains(*item.Id, "acc_test") {
+					_, _, err := svc.DeleteApcMapping(&oauthAuthenticationPolicyContractMappings.DeleteApcMappingInput{Id: *item.Id})
+					if err != nil {
+						return fmt.Errorf("unable to sweep oauth authentication policy contract mapping %s because %s", *item.Id, err)
+					}
+				}
+			}
+			return nil
+		},
+	})
+}
+
 func TestAccPingFederateOauthAuthenticationPolicyContractMapping(t *testing.T) {
 	resourceName := "pingfederate_oauth_authentication_policy_contract_mapping.demo"
 	resource.ParallelTest(t, resource.TestCase{
@@ -21,14 +45,14 @@ func TestAccPingFederateOauthAuthenticationPolicyContractMapping(t *testing.T) {
 		CheckDestroy: testAccCheckPingFederateOauthAuthenticationPolicyContractMappingDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccPingFederateOauthAuthenticationPolicyContractMappingConfig("foo"),
+				Config: testAccPingFederateOauthAuthenticationPolicyContractMappingConfig("subject"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateOauthAuthenticationPolicyContractMappingExists(resourceName),
 					//testAccCheckPingFederateOauthAuthenticationPolicyContractMappingAttributes(),
 				),
 			},
 			{
-				Config: testAccPingFederateOauthAuthenticationPolicyContractMappingConfig("bar"),
+				Config: testAccPingFederateOauthAuthenticationPolicyContractMappingConfig("subject"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateOauthAuthenticationPolicyContractMappingExists(resourceName),
 				),
@@ -47,7 +71,7 @@ func testAccCheckPingFederateOauthAuthenticationPolicyContractMappingDestroy(s *
 }
 
 func testAccPingFederateOauthAuthenticationPolicyContractMappingConfig(configUpdate string) string {
-	return `
+	return fmt.Sprintf(`
 resource "pingfederate_oauth_authentication_policy_contract_mapping" "demo" {
   authentication_policy_contract_ref {
     id = pingfederate_authentication_policy_contract.demo.id
@@ -71,14 +95,14 @@ resource "pingfederate_oauth_authentication_policy_contract_mapping" "demo" {
     source {
       type = "AUTHENTICATION_POLICY_CONTRACT"
     }
-    value = "subject"
+    value = "%s"
   }
 }
 
 resource "pingfederate_authentication_policy_contract" "demo" {
-  name = "test3"
+  name = "acc_test_test3"
   extended_attributes = ["foo", "email"]
-}`
+}`, configUpdate)
 }
 
 func testAccCheckPingFederateOauthAuthenticationPolicyContractMappingExists(n string) resource.TestCheckFunc {

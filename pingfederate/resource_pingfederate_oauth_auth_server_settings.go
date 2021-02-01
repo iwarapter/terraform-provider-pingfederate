@@ -130,7 +130,6 @@ func resourcePingFederateOauthAuthServerSettingsResource() *schema.Resource {
 						"extended_attributes": {
 							Type:     schema.TypeList,
 							Optional: true,
-							MinItems: 1,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},

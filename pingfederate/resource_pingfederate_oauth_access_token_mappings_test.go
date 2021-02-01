@@ -2,16 +2,41 @@ package pingfederate
 
 import (
 	"fmt"
+	"strings"
+	"testing"
+
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
-	"testing"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthAccessTokenMappings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
+
+func init() {
+	resource.AddTestSweepers("oauth_access_token_mappings", &resource.Sweeper{
+		Name:         "oauth_access_token_mappings",
+		Dependencies: []string{},
+		F: func(r string) error {
+			svc := oauthAccessTokenMappings.New(cfg)
+			results, _, err := svc.GetMappings()
+			if err != nil {
+				return fmt.Errorf("unable to list oauth access token mappings %s", err)
+			}
+			for _, item := range *results {
+				if strings.Contains(*item.Id, "acc_test") {
+					_, _, err := svc.DeleteMapping(&oauthAccessTokenMappings.DeleteMappingInput{Id: *item.Id})
+					if err != nil {
+						return fmt.Errorf("unable to sweep oauth access token mappings %s because %s", *item.Id, err)
+					}
+				}
+			}
+			return nil
+		},
+	})
+}
 
 func TestAccPingFederateOauthAccessTokenMappings(t *testing.T) {
 	resourceName := "pingfederate_oauth_access_token_mappings.demo"

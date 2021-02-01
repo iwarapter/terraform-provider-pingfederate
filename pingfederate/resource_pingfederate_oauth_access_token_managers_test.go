@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthAccessTokenManagers"
@@ -15,6 +16,29 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
+
+func init() {
+	resource.AddTestSweepers("oauth_access_token_manager", &resource.Sweeper{
+		Name:         "oauth_access_token_manager",
+		Dependencies: []string{},
+		F: func(r string) error {
+			svc := oauthAccessTokenManagers.New(cfg)
+			results, _, err := svc.GetTokenManagers()
+			if err != nil {
+				return fmt.Errorf("unable to list oauth access token managers %s", err)
+			}
+			for _, item := range *results.Items {
+				if strings.Contains(*item.Name, "acc_test") {
+					_, _, err := svc.DeleteTokenManager(&oauthAccessTokenManagers.DeleteTokenManagerInput{Id: *item.Id})
+					if err != nil {
+						return fmt.Errorf("unable to sweep oauth access token manager %s because %s", *item.Id, err)
+					}
+				}
+			}
+			return nil
+		},
+	})
+}
 
 func TestAccPingFederateOauthAccessTokenManager(t *testing.T) {
 	resourceName := "pingfederate_oauth_access_token_manager.my_atm"
@@ -56,7 +80,7 @@ func testAccPingFederateOauthAccessTokenManagerConfig(name, configUpdate string)
 	return fmt.Sprintf(`
 	resource "pingfederate_oauth_access_token_manager" "my_atm" {
 		instance_id = "%s"
-		name = "%s"
+		name = "acc_test_%s"
 		plugin_descriptor_ref {
 			id = "org.sourceid.oauth20.token.plugin.impl.ReferenceBearerAccessTokenManagementPlugin"
 		}
@@ -113,7 +137,7 @@ func testAccPingFederateOauthAccessTokenManagerConfigWrongPlugin() string {
 	return `
 resource "pingfederate_oauth_access_token_manager" "my_atm" {
 	instance_id = "foo"
-	name = "foo"
+	name = "acc_test_foo"
 	plugin_descriptor_ref {
 		id = "org.sourceid.oauth20.token.plugin.impl.wrong"
 	}

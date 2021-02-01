@@ -25,6 +25,11 @@ checks:
 unit-test:
 	@go test -mod=vendor ./... -v
 
+
+sweep:
+	@echo "WARNING: This will destroy infrastructure. Use only in development accounts."
+	go test ./... -v -sweep=all -timeout 60m
+
 test:
 	@rm -f pingfederate/terraform.log && TF_LOG=TRACE TF_LOG_PATH=./terraform.log TF_ACC=1 go test -mod=vendor ./... -v
 

@@ -16,6 +16,27 @@ import (
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
+func init() {
+	resource.AddTestSweepers("idp_adapter", &resource.Sweeper{
+		Name:         "idp_adapter",
+		Dependencies: []string{},
+		F: func(r string) error {
+			svc := idpAdapters.New(cfg)
+			results, _, err := svc.GetIdpAdapters(&idpAdapters.GetIdpAdaptersInput{Filter: "acctest"})
+			if err != nil {
+				return fmt.Errorf("unable to list idp adapter %s", err)
+			}
+			for _, item := range *results.Items {
+				_, _, err := svc.DeleteIdpAdapter(&idpAdapters.DeleteIdpAdapterInput{Id: *item.Id})
+				if err != nil {
+					return fmt.Errorf("unable to sweep idp adapter %s because %s", *item.Id, err)
+				}
+			}
+			return nil
+		},
+	})
+}
+
 func TestAccPingFederateIdpAdapter(t *testing.T) {
 	resourceName := "pingfederate_idp_adapter.demo"
 
@@ -57,7 +78,7 @@ func testAccCheckPingFederateIdpAdapterDestroy(s *terraform.State) error {
 func testAccPingFederateIdpAdapterConfig(configUpdate string) string {
 	return fmt.Sprintf(`
 resource "pingfederate_idp_adapter" "demo" {
-  name = "barrr"
+  name = "acctestbarrr"
   plugin_descriptor_ref {
     id = "com.pingidentity.adapters.httpbasic.idp.HttpBasicIdpAuthnAdapter"
   }
@@ -127,7 +148,7 @@ resource "pingfederate_idp_adapter" "demo" {
 func testAccPingFederateIdpAdapterConfigWrongPlugin() string {
 	return `
 resource "pingfederate_idp_adapter" "demo" {
-  name = "barrr"
+  name = "acctestbarrr"
   plugin_descriptor_ref {
     id = "com.pingidentity.adapters.httpbasic.idp.wrong"
   }

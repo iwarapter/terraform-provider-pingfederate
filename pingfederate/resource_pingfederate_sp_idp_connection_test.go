@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/iwarapter/pingfederate-sdk-go/services/serverSettings"
+
 	"github.com/iwarapter/pingfederate-sdk-go/services/spIdpConnections"
 
 	"github.com/google/go-cmp/cmp"
@@ -13,6 +15,34 @@ import (
 
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
+
+func init() {
+	resource.AddTestSweepers("sp_idp_connection", &resource.Sweeper{
+		Name:         "sp_idp_connection",
+		Dependencies: []string{},
+		F: func(r string) error {
+			svc := spIdpConnections.New(cfg)
+			settings, _, err := serverSettings.New(cfg).GetServerSettings()
+			if err != nil {
+				return fmt.Errorf("unable to check server settings %s", err)
+			}
+			if !*settings.RolesAndProtocols.SpRole.Enable {
+				return nil
+			}
+			results, _, err := svc.GetConnections(&spIdpConnections.GetConnectionsInput{Filter: "acc_test"})
+			if err != nil {
+				return fmt.Errorf("unable to list sp idp connection %s", err)
+			}
+			for _, item := range *results.Items {
+				_, _, err := svc.DeleteConnection(&spIdpConnections.DeleteConnectionInput{Id: *item.Id})
+				if err != nil {
+					return fmt.Errorf("unable to sweep sp idp connection %s because %s", *item.Id, err)
+				}
+			}
+			return nil
+		},
+	})
+}
 
 func TestAccPingFederateSpIdpConnection(t *testing.T) {
 	resourceName := "pingfederate_sp_idp_connection.demo"

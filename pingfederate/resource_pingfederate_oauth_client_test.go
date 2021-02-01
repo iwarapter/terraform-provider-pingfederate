@@ -14,6 +14,27 @@ import (
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
+func init() {
+	resource.AddTestSweepers("oauth_client", &resource.Sweeper{
+		Name:         "oauth_client",
+		Dependencies: []string{},
+		F: func(r string) error {
+			svc := oauthClients.New(cfg)
+			results, _, err := svc.GetClients(&oauthClients.GetClientsInput{Filter: "acc_test"})
+			if err != nil {
+				return fmt.Errorf("unable to list oauth client %s", err)
+			}
+			for _, item := range *results.Items {
+				_, _, err := svc.DeleteClient(&oauthClients.DeleteClientInput{Id: *item.ClientId})
+				if err != nil {
+					return fmt.Errorf("unable to sweep oauth client %s because %s", *item.ClientId, err)
+				}
+			}
+			return nil
+		},
+	})
+}
+
 func TestAccPingFederateOauthClient(t *testing.T) {
 	resourceName := "pingfederate_oauth_client.my_client"
 	resource.ParallelTest(t, resource.TestCase{

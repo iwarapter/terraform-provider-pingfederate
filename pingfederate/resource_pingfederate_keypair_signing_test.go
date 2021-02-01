@@ -10,6 +10,27 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
+func init() {
+	resource.AddTestSweepers("keypair_signing", &resource.Sweeper{
+		Name:         "keypair_signing",
+		Dependencies: []string{},
+		F: func(r string) error {
+			svc := keyPairsSigning.New(cfg)
+			results, _, err := svc.GetKeyPairs()
+			if err != nil {
+				return fmt.Errorf("unable to list signing keypairs %s", err)
+			}
+			for _, item := range *results.Items {
+				_, _, err := svc.DeleteKeyPair(&keyPairsSigning.DeleteKeyPairInput{Id: *item.Id})
+				if err != nil {
+					return fmt.Errorf("unable to sweep signing keypair %s because %s", *item.Id, err)
+				}
+			}
+			return nil
+		},
+	})
+}
+
 func TestAccPingFederateKeyPairSigning(t *testing.T) {
 	resourceName := "pingfederate_keypair_signing.demo"
 	resourceNameGen := "pingfederate_keypair_signing.test_generate"

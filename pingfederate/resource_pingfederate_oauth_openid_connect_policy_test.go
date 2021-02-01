@@ -2,7 +2,11 @@ package pingfederate
 
 import (
 	"fmt"
+	"strings"
 	"testing"
+
+	"github.com/iwarapter/pingfederate-sdk-go/services/oauthOpenIdConnect"
+	"github.com/iwarapter/pingfederate-sdk-go/services/serverSettings"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -12,6 +16,36 @@ import (
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
+func init() {
+	resource.AddTestSweepers("oauth_openid_connect_policy", &resource.Sweeper{
+		Name:         "oauth_openid_connect_policy",
+		Dependencies: []string{},
+		F: func(r string) error {
+			svc := oauthOpenIdConnect.New(cfg)
+			settings, _, err := serverSettings.New(cfg).GetServerSettings()
+			if err != nil {
+				return fmt.Errorf("unable to check server settings %s", err)
+			}
+			if !*settings.RolesAndProtocols.OauthRole.EnableOpenIdConnect {
+				return nil
+			}
+			results, _, err := svc.GetPolicies()
+			if err != nil {
+				return fmt.Errorf("unable to list oauth openid connect policy %s", err)
+			}
+			for _, item := range *results.Items {
+				if strings.Contains(*item.Name, "acc_test") {
+					_, _, err := svc.DeletePolicy(&oauthOpenIdConnect.DeletePolicyInput{Id: *item.Id})
+					if err != nil {
+						return fmt.Errorf("unable to sweep oauth openid connect policy %s because %s", *item.Id, err)
+					}
+				}
+			}
+			return nil
+		},
+	})
+}
+
 func TestAccPingFederateOauthOpenIdConnectPolicy(t *testing.T) {
 	resourceName := "pingfederate_oauth_openid_connect_policy.demo"
 
@@ -20,13 +54,13 @@ func TestAccPingFederateOauthOpenIdConnectPolicy(t *testing.T) {
 		CheckDestroy: testAccCheckPingFederateOauthOpenIdConnectPolicyDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccPingFederateOauthOpenIdConnectPolicyConfig("ClientId"),
+				Config: testAccPingFederateOauthOpenIdConnectPolicyConfig("name"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateOauthOpenIdConnectPolicyExists(resourceName),
 				),
 			},
 			{
-				Config: testAccPingFederateOauthOpenIdConnectPolicyConfig("ClientId"),
+				Config: testAccPingFederateOauthOpenIdConnectPolicyConfig("name"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateOauthOpenIdConnectPolicyExists(resourceName),
 				),
@@ -45,10 +79,10 @@ func testAccCheckPingFederateOauthOpenIdConnectPolicyDestroy(s *terraform.State)
 }
 
 func testAccPingFederateOauthOpenIdConnectPolicyConfig(configUpdate string) string {
-	return `
+	return fmt.Sprintf(`
 resource "pingfederate_oauth_openid_connect_policy" "demo" {
   policy_id = "foo"
-  name      = "foo"
+  name      = "acc_test_foo"
   access_token_manager_ref {
     id = "testme"
   }
@@ -75,9 +109,9 @@ resource "pingfederate_oauth_openid_connect_policy" "demo" {
 
   scope_attribute_mappings {
     key_name = "address"
-	values = ["name"]
+	values = ["%s"]
   }
-}`
+}`, configUpdate)
 }
 
 func testAccCheckPingFederateOauthOpenIdConnectPolicyExists(n string) resource.TestCheckFunc {

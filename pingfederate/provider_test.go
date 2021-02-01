@@ -1,127 +1,68 @@
 package pingfederate
 
 import (
-	"bytes"
 	"context"
 	"crypto/tls"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
-	"net/url"
+	"net/http/httputil"
 	"os"
 	"path/filepath"
 	"reflect"
 	"runtime"
 	"testing"
-	"time"
 
-	"github.com/ory/dockertest/docker"
-
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
+	"github.com/iwarapter/pingfederate-sdk-go/services/idpAdapters"
+	"github.com/iwarapter/pingfederate-sdk-go/services/oauthAccessTokenManagers"
+	"github.com/iwarapter/pingfederate-sdk-go/services/passwordCredentialValidators"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
 	"github.com/iwarapter/pingfederate-sdk-go/services/version"
-	"github.com/ory/dockertest"
 )
 
 var cfg *config.Config
 
 func TestMain(m *testing.M) {
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	cfg = config.NewConfig().WithUsername("Administrator").WithPassword("2FederateM0re").WithEndpoint("https://localhost:9999/pf-admin-api/v1")
+	os.Setenv("PINGFEDERATE_PASSWORD", "2FederateM0re")
+	flag.Parse()
+	sweep := flag.Lookup("sweep")
+	if sweep != nil && sweep.Value.String() != "" {
+		client := version.New(cfg)
+		v, r, err := client.GetVersion()
+		if err != nil {
+			if r != nil {
+				b, _ := httputil.DumpResponse(r, true)
+				log.Fatalf("unable to get pingfederate '%s'\n%s", err, b)
+			}
+			log.Fatalf("unable to get pingfederate '%s'", err)
+		}
+		log.Printf("Connected to PingFederate %s", *v.Version)
+	}
 	_, acceptanceTesting := os.LookupEnv("TF_ACC")
 	if acceptanceTesting {
-		pool, err := dockertest.NewPool("")
-		if err != nil {
-			log.Fatalf("Could not connect to docker: %s", err)
+		if err := dataSetup(); err != nil {
+			log.Fatalf("unable to setup test data\n%s", err)
 		}
-
-		devOpsUser, devOpsUserExists := os.LookupEnv("PING_IDENTITY_DEVOPS_USER")
-		devOpsKey, devOpsKeyExists := os.LookupEnv("PING_IDENTITY_DEVOPS_KEY")
-
-		var options *dockertest.RunOptions
-		dir, _ := os.Getwd()
-
-		if devOpsUserExists && devOpsKeyExists {
-			options = &dockertest.RunOptions{
-				Hostname:   "pingfederate",
-				Repository: "pingidentity/pingfederate",
-				Mounts:     []string{dir + "/pingfederate-data.zip:/opt/in/instance/server/default/data/drop-in-deployer/data.zip"},
-				Env:        []string{fmt.Sprintf("PING_IDENTITY_DEVOPS_USER=%s", devOpsUser), fmt.Sprintf("PING_IDENTITY_DEVOPS_KEY=%s", devOpsKey), "PING_IDENTITY_ACCEPT_EULA=YES"},
-				Tag:        "10.0.6-edge",
-			}
-		} else {
-			options = &dockertest.RunOptions{
-				Hostname:   "pingfederate",
-				Repository: "pingidentity/pingfederate",
-				Mounts: []string{
-					dir + "/pingfederate.lic:/opt/in/instance/server/default/conf/pingfederate.lic",
-					dir + "/pingfederate-data.zip:/opt/in/instance/server/default/data/drop-in-deployer/data.zip",
-				},
-				Tag: "10.0.6-edge",
-			}
-		}
-
-		// pulls an image, creates a container based on it and runs it
-		resource, err := pool.RunWithOptions(options)
-		if err != nil {
-			log.Fatalf("Could not start resource: %s", err)
-		}
-		logs := new(bytes.Buffer)
-		err = pool.Client.Logs(docker.LogsOptions{Stdout: true, OutputStream: logs, Container: resource.Container.ID})
-		pool.MaxWait = time.Minute * 8
-
-		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-		pfUrl, _ := url.Parse(fmt.Sprintf("https://localhost:%s/pf-admin-api/v1", resource.GetPort("9999/tcp")))
-		cfg = config.NewConfig().WithUsername("Administrator").WithPassword("2Federate").WithEndpoint(pfUrl.String())
-		client := version.New(cfg)
-
-		// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
-		if err := pool.Retry(func() error {
-
-			log.Println("Attempting to connect to PingFederate admin API....")
-			_, _, err = client.GetVersion()
-			return err
-		}); err != nil {
-			log.Fatalf("Could not connect to docker: %s\n%s", err, logs)
-		}
-		resource.Expire(600)
-		os.Setenv("PINGFEDERATE_BASEURL", fmt.Sprintf("https://localhost:%s", resource.GetPort("9999/tcp")))
-		log.Println("Connected to PingFederate admin API....")
-		code := m.Run()
-		log.Printf("Tests complete shutting down container\n%s", logs)
-
-		// You can't defer this because os.Exit doesn't care for defer
-		if err := pool.Purge(resource); err != nil {
-			log.Fatalf("Could not purge resource: %s", err)
-		}
-
-		os.Exit(code)
-	} else {
-		m.Run()
 	}
+	resource.TestMain(m)
 }
 
 var testAccProviders map[string]*schema.Provider
 var testAccProvider *schema.Provider
 
-//var testAccProviderFactories func(providers *[]*schema.Provider) map[string]*schema.Provider
-//var testAccTemplateProvider *schema.Provider
-
 func init() {
 	testAccProvider = Provider()
-	//testAccTemplateProvider = template.Provider().(*schema.Provider)
 	testAccProviders = map[string]*schema.Provider{
 		"pingfederate": testAccProvider,
 	}
-	//testAccProviderFactories = func(providers *[]*schema.Provider) map[string]*schema.Provider {
-	//	return map[string]*schema.Provider{
-	//		"pingfederate": func() (schema.Provider, error) {
-	//			p := Provider()
-	//			*providers = append(*providers, p.(*schema.Provider))
-	//			return p, nil
-	//		},
-	//	}
-	//}
 }
 
 func TestProvider(t *testing.T) {
@@ -153,4 +94,127 @@ func equals(tb testing.TB, exp, act interface{}) {
 		fmt.Printf("\033[31m%s:%d:\n\n\texp: %#v\n\n\tgot: %#v\033[39m\n\n", filepath.Base(file), line, exp, act)
 		tb.FailNow()
 	}
+}
+
+func dataSetup() error {
+	pcv := passwordCredentialValidators.New(cfg)
+	if _, _, err := pcv.GetPasswordCredentialValidator(&passwordCredentialValidators.GetPasswordCredentialValidatorInput{Id: "pcvtestme"}); err != nil {
+		if _, _, err := pcv.CreatePasswordCredentialValidator(&passwordCredentialValidators.CreatePasswordCredentialValidatorInput{
+			Body: pf.PasswordCredentialValidator{
+				Configuration: &pf.PluginConfiguration{
+					Tables: &[]*pf.ConfigTable{
+						{
+							Name: String("Users"),
+							Rows: &[]*pf.ConfigRow{
+								{
+									Fields: &[]*pf.ConfigField{
+										{
+											Name:  String("Username"),
+											Value: String("example"),
+										},
+										{
+											Name:  String("Password"),
+											Value: String("example"),
+										},
+										{
+											Name:  String("Confirm Password"),
+											Value: String("example"),
+										},
+										{
+											Name:  String("Relax Password Requirements"),
+											Value: String("true"),
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+				Id:                  String("pcvtestme"),
+				Name:                String("pcvtestme"),
+				PluginDescriptorRef: &pf.ResourceLink{Id: String("org.sourceid.saml20.domain.SimpleUsernamePasswordCredentialValidator")},
+			},
+		}); err != nil {
+			return fmt.Errorf("unable to create test password credential validator\n%s", err)
+		}
+	}
+	atv := oauthAccessTokenManagers.New(cfg)
+	if _, _, err := atv.GetTokenManager(&oauthAccessTokenManagers.GetTokenManagerInput{Id: "testme"}); err != nil {
+		if _, _, err := atv.CreateTokenManager(&oauthAccessTokenManagers.CreateTokenManagerInput{
+			Body: pf.AccessTokenManager{
+				AccessControlSettings: nil,
+				AttributeContract: &pf.AccessTokenAttributeContract{
+					ExtendedAttributes: &[]*pf.AccessTokenAttribute{
+						{
+							Name: String("name"),
+						},
+					},
+				},
+				Configuration:             &pf.PluginConfiguration{},
+				Id:                        String("testme"),
+				Name:                      String("testme"),
+				PluginDescriptorRef:       &pf.ResourceLink{Id: String("org.sourceid.oauth20.token.plugin.impl.ReferenceBearerAccessTokenManagementPlugin")},
+				SelectionSettings:         nil,
+				SessionValidationSettings: nil,
+			},
+		}); err != nil {
+			return fmt.Errorf("unable to create test password credential validator\n%s", err)
+		}
+	}
+	idp := idpAdapters.New(cfg)
+	if _, _, err := idp.GetIdpAdapter(&idpAdapters.GetIdpAdapterInput{Id: "idptestme"}); err != nil {
+		if _, _, err := idp.CreateIdpAdapter(&idpAdapters.CreateIdpAdapterInput{BypassExternalValidation: Bool(true),
+			Body: pf.IdpAdapter{
+				AttributeContract: &pf.IdpAdapterAttributeContract{
+					CoreAttributes: &[]*pf.IdpAdapterAttribute{
+						{
+							Name:      String("username"),
+							Pseudonym: Bool(true),
+						},
+					},
+					ExtendedAttributes: &[]*pf.IdpAdapterAttribute{
+						{
+							Name: String("sub"),
+						},
+					},
+				},
+				AttributeMapping: nil,
+				AuthnCtxClassRef: nil,
+				Configuration: &pf.PluginConfiguration{
+					Tables: &[]*pf.ConfigTable{
+						{
+							Name: String("Credential Validators"),
+							Rows: &[]*pf.ConfigRow{
+								{
+									Fields: &[]*pf.ConfigField{
+										{
+											Name:  String("Password Credential Validator Instance"),
+											Value: String("pcvtestme"),
+										},
+									},
+								},
+							},
+						},
+					},
+					Fields: &[]*pf.ConfigField{
+						{
+							Name:  String("Realm"),
+							Value: String("foo"),
+						},
+						{
+							Name:  String("Challenge Retries"),
+							Value: String("3"),
+						},
+					},
+				},
+				Id:                  String("idptestme"),
+				Name:                String("idptestme"),
+				ParentRef:           nil,
+				PluginDescriptorRef: &pf.ResourceLink{Id: String("com.pingidentity.adapters.httpbasic.idp.HttpBasicIdpAuthnAdapter")},
+			},
+		}); err != nil {
+			return fmt.Errorf("unable to create test idp adapter\n%s", err)
+		}
+	}
+	return nil
 }
