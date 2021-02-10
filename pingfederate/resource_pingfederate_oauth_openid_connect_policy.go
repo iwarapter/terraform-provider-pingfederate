@@ -66,7 +66,12 @@ func resourcePingFederateOpenIdConnectPolicyResourceSchema() map[string]*schema.
 			Type:     schema.TypeBool,
 			Optional: true,
 		},
-		"attribute_contract": resourceOpenIdConnectAttributeContract(),
+		"attribute_contract": {
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem:     resourceOpenIdConnectAttributeContract(),
+		},
 		"attribute_mapping": {
 			Type:     schema.TypeList,
 			Optional: true,

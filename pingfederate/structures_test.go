@@ -5,6 +5,8 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
@@ -27,7 +29,7 @@ func Test_weCanFlattenScopes(t *testing.T) {
 
 	flattened := flattenScopes(initialScopes)
 
-	equals(t, output, flattened)
+	assert.Equal(t, output, flattened)
 }
 
 func Test_weCanFlattenScopeGroups(t *testing.T) {
@@ -42,7 +44,7 @@ func Test_weCanFlattenScopeGroups(t *testing.T) {
 
 	flattened := flattenScopeGroups(initialScopeGroups)
 
-	equals(t, output, flattened)
+	assert.Equal(t, output, flattened)
 }
 
 func Test_weCanFlattenPersistentGrantContract(t *testing.T) {
@@ -63,7 +65,7 @@ func Test_weCanFlattenPersistentGrantContract(t *testing.T) {
 
 	flattened := flattenPersistentGrantContract(initialPersistentGrantContract)
 
-	equals(t, output, flattened)
+	assert.Equal(t, output, flattened)
 }
 
 func Test_weCanFlattenClientAuth(t *testing.T) {
@@ -77,7 +79,7 @@ func Test_weCanFlattenClientAuth(t *testing.T) {
 
 	flattened := flattenClientAuth(initialClientAuth, initialClientAuth)
 
-	equals(t, output, flattened)
+	assert.Equal(t, output, flattened)
 }
 
 func Test_weCanFlattenJwksSettings(t *testing.T) {
@@ -89,7 +91,7 @@ func Test_weCanFlattenJwksSettings(t *testing.T) {
 
 	flattened := flattenJwksSettings(initialJwksSettings)
 
-	equals(t, output, flattened)
+	assert.Equal(t, output, flattened)
 }
 
 func Test_weCanFlattenResourceLink(t *testing.T) {
@@ -101,7 +103,7 @@ func Test_weCanFlattenResourceLink(t *testing.T) {
 
 	flattened := flattenResourceLink(initialResourceLink)
 
-	equals(t, output, flattened)
+	assert.Equal(t, output, flattened)
 }
 
 func Test_weCanFlattenClientOIDCPolicy(t *testing.T) {
@@ -118,11 +120,12 @@ func Test_weCanFlattenClientOIDCPolicy(t *testing.T) {
 
 	flattened := flattenClientOIDCPolicy(initialClientOIDCPolicy)
 
-	equals(t, output, flattened)
+	assert.Equal(t, output, flattened)
 }
 
 func testPluginConfiguration() []interface{} {
-	return []interface{}{map[string]interface{}{"fields": schema.NewSet(configFieldHash, []interface{}{map[string]interface{}{"name": "Token Length", "value": "28", "inherited": false}})}}
+	f := schema.HashResource(resourceConfigField())
+	return []interface{}{map[string]interface{}{"fields": schema.NewSet(f, []interface{}{map[string]interface{}{"name": "Token Length", "value": "28", "inherited": false}})}}
 }
 
 func Test_weCanFlattenPluginConfiguration(t *testing.T) {
@@ -155,13 +158,13 @@ func Test_weCanFlattenPluginConfiguration(t *testing.T) {
 
 	flattened := flattenPluginConfiguration(initialPluginConfiguration)
 
-	assert(t, output[0].(map[string]interface{})["fields"].(*schema.Set).Equal(flattened[0].(map[string]interface{})["fields"].(*schema.Set)), "")
+	assert.True(t, output[0].(map[string]interface{})["fields"].(*schema.Set).Equal(flattened[0].(map[string]interface{})["fields"].(*schema.Set)))
 }
 
 func Test_expandPluginConfiguration(t *testing.T) {
 	expandPluginConfiguration := expandPluginConfiguration(testPluginConfiguration())
 
-	equals(t, 1, len(*(*expandPluginConfiguration).Fields))
+	assert.Equal(t, 1, len(*(*expandPluginConfiguration).Fields))
 }
 
 func Test_weCanFlattenAuthenticationPolicyContractAttribute(t *testing.T) {
@@ -175,7 +178,7 @@ func Test_weCanFlattenAuthenticationPolicyContractAttribute(t *testing.T) {
 
 	flattened := flattenAuthenticationPolicyContractAttribute(*attributes)
 
-	equals(t, output, flattened)
+	assert.Equal(t, output, flattened)
 }
 
 func Test_maskPluginConfigurationFromDescriptor(t *testing.T) {

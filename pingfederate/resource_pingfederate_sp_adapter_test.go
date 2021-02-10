@@ -31,7 +31,7 @@ func init() {
 			if !*settings.RolesAndProtocols.SpRole.Enable {
 				return nil
 			}
-			results, _, err := svc.GetSpAdapters(&spAdapters.GetSpAdaptersInput{Filter: "acc_test"})
+			results, _, err := svc.GetSpAdapters(&spAdapters.GetSpAdaptersInput{Filter: "acctest"})
 			if err != nil {
 				return fmt.Errorf("unable to list sp adapter %s", err)
 			}
@@ -212,8 +212,8 @@ resource "pingfederate_sp_adapter" "demo" {
 func testAccPingFederateSpAdapterConfigWrongPlugin() string {
 	return `
 resource "pingfederate_sp_adapter" "demo" {
-  name = "bar"
-  sp_adapter_id = "spadaptertest1"
+  name = "acctestbar"
+  sp_adapter_id = "acctesttest1"
   plugin_descriptor_ref {
     id = "com.pingidentity.adapters.opentoken.wrong"
   }

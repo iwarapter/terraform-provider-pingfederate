@@ -484,7 +484,8 @@ func flattenConfigField(in []*pf.ConfigField) *schema.Set {
 		}
 		m = append(m, s)
 	}
-	return schema.NewSet(configFieldHash, m)
+	f := schema.HashResource(resourceConfigField())
+	return schema.NewSet(f, m)
 }
 
 func flattenSensitiveConfigField(in []*pf.ConfigField) *schema.Set {
@@ -510,7 +511,8 @@ func flattenSensitiveConfigField(in []*pf.ConfigField) *schema.Set {
 		}
 		m = append(m, s)
 	}
-	return schema.NewSet(configFieldHash, m)
+	f := schema.HashResource(resourceConfigField())
+	return schema.NewSet(f, m)
 }
 
 func flattenConfigRow(in []*pf.ConfigRow) []map[string]interface{} {
@@ -694,12 +696,18 @@ func flattenOpenIdConnectAttributes(in []*pf.OpenIdConnectAttribute) []map[strin
 	m := make([]map[string]interface{}, 0, len(in))
 	for _, v := range in {
 		s := make(map[string]interface{})
-		s["name"] = v.Name
+		s["name"] = *v.Name
 		if v.IncludeInUserInfo != nil {
-			s["include_in_user_info"] = v.IncludeInUserInfo
+			s["include_in_user_info"] = *v.IncludeInUserInfo
+			if *v.IncludeInUserInfo {
+				s["override_default_delivery"] = true
+			}
 		}
 		if v.IncludeInIdToken != nil {
-			s["include_in_id_token"] = v.IncludeInIdToken
+			s["include_in_id_token"] = *v.IncludeInIdToken
+			if *v.IncludeInIdToken {
+				s["override_default_delivery"] = true
+			}
 		}
 		m = append(m, s)
 	}

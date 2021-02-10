@@ -335,15 +335,29 @@ func expandOpenIdConnectAttributes(in []interface{}) *[]*pf.OpenIdConnectAttribu
 		if val, ok := l["name"]; ok {
 			c.Name = String(val.(string))
 		}
-		if val, ok := l["include_in_id_token"]; ok {
-			c.IncludeInIdToken = Bool(val.(bool))
-		}
-		if val, ok := l["include_in_user_info"]; ok {
-			c.IncludeInUserInfo = Bool(val.(bool))
+		if isOverrideDefaultDelivery(l) {
+			// because the terraform-plugin-sdk will not distinguish between an unset bool and false we need to check if our computed value is true
+			// to prevent attempting to override with false,false as this is incorrect.
+			if val, ok := l["include_in_id_token"]; ok {
+				c.IncludeInIdToken = Bool(val.(bool))
+			}
+			if val, ok := l["include_in_user_info"]; ok {
+				c.IncludeInUserInfo = Bool(val.(bool))
+			}
 		}
 		*attributes = append(*attributes, c)
 	}
 	return attributes
+}
+
+func isOverrideDefaultDelivery(d map[string]interface{}) bool {
+	if val, ok := d["include_in_id_token"]; ok && val.(bool) {
+		return true
+	}
+	if val, ok := d["include_in_user_info"]; ok && val.(bool) {
+		return true
+	}
+	return false
 }
 
 func expandOpenIdConnectAttributeContract(in []interface{}) *pf.OpenIdConnectAttributeContract {
