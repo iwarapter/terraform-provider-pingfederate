@@ -1057,29 +1057,6 @@ func resourceExpressionIssuanceCriteriaEntry() *schema.Resource {
 	}
 }
 
-func configFieldHash(v interface{}) int {
-	var buf bytes.Buffer
-	m := v.(map[string]interface{})
-	buf.WriteString(m["name"].(string))
-	//if d, ok := m["value"]; ok && d.(string) != "" {
-	//	buf.WriteString(fmt.Sprintf("%s-", d.(string)))
-	//}
-	// if d, ok := m["encrypted_value"]; ok && d.(string) != "" {
-	// 	buf.WriteString(fmt.Sprintf("%s-", d.(string)))
-	// }
-	//if d, ok := m["inherited"]; ok {
-	//	buf.WriteString(fmt.Sprintf("%t-", d.(bool)))
-	//}
-	return hashcodeString(buf.String())
-}
-
-//func configTableHash(v interface{}) int {
-//	var buf bytes.Buffer
-//	m := v.(map[string]interface{})
-//	buf.WriteString(m["name"].(string))
-//	return hashcodeString(buf.String())
-//}
-
 func jdbcTagConfigHash(v interface{}) int {
 	var buf bytes.Buffer
 	m := v.(map[string]interface{})
