@@ -149,7 +149,7 @@ func testAccPingFederateNotificationPublisherConfigWrongPlugin() string {
 	return `
 resource "pingfederate_notification_publisher" "demo" {
   name = "acc_test_bar2"
-  publisher_id = "bar2"
+  publisher_id = "acc_test_bar2"
   plugin_descriptor_ref {
     id = "com.pingidentity.adapters.opentoken.wrong"
   }

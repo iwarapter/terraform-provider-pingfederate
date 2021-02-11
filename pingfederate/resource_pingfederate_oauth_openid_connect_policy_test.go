@@ -5,6 +5,9 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthOpenIdConnect"
 	"github.com/iwarapter/pingfederate-sdk-go/services/serverSettings"
 
@@ -81,7 +84,7 @@ func testAccCheckPingFederateOauthOpenIdConnectPolicyDestroy(s *terraform.State)
 func testAccPingFederateOauthOpenIdConnectPolicyConfig(configUpdate string) string {
 	return fmt.Sprintf(`
 resource "pingfederate_oauth_openid_connect_policy" "demo" {
-  policy_id = "foo"
+  policy_id = "acc_test_foo"
   name      = "acc_test_foo"
   access_token_manager_ref {
     id = "testme"
@@ -89,7 +92,6 @@ resource "pingfederate_oauth_openid_connect_policy" "demo" {
   attribute_contract {
     extended_attributes {
       name = "name"
-      include_in_id_token = true
     }
   }
   attribute_mapping {
@@ -287,6 +289,117 @@ func Test_resourcePingFederateOauthOpenIdConnectPolicyResourceReadData(t *testin
 				},
 			},
 		},
+		{
+			Resource: pf.OpenIdConnectPolicy{
+				Id:              String("test two"),
+				Name:            String("test two"),
+				IdTokenLifetime: Int(5),
+				AccessTokenManagerRef: &pf.ResourceLink{
+					Id: String("foo"),
+				},
+				AttributeMapping: &pf.AttributeMapping{
+					AttributeContractFulfillment: map[string]*pf.AttributeFulfillmentValue{},
+					AttributeSources:             &[]*pf.AttributeSource{},
+					IssuanceCriteria: &pf.IssuanceCriteria{
+						ConditionalCriteria: &[]*pf.ConditionalIssuanceCriteriaEntry{
+							{
+								AttributeName: String("foo"),
+								Condition:     String("foo"),
+								ErrorResult:   String("foo"),
+								Source: &pf.SourceTypeIdKey{
+									Id:   String("foo"),
+									Type: String("foo"),
+								},
+								Value: String("foo"),
+							},
+						},
+					},
+				},
+				AttributeContract: &pf.OpenIdConnectAttributeContract{
+					ExtendedAttributes: &[]*pf.OpenIdConnectAttribute{
+						{
+							IncludeInIdToken:  nil,
+							IncludeInUserInfo: nil,
+							Name:              String("foo"),
+						},
+					},
+				},
+			},
+		},
+		{
+			Resource: pf.OpenIdConnectPolicy{
+				Id:              String("test two"),
+				Name:            String("test two"),
+				IdTokenLifetime: Int(5),
+				AccessTokenManagerRef: &pf.ResourceLink{
+					Id: String("foo"),
+				},
+				AttributeMapping: &pf.AttributeMapping{
+					AttributeContractFulfillment: map[string]*pf.AttributeFulfillmentValue{},
+					AttributeSources:             &[]*pf.AttributeSource{},
+					IssuanceCriteria: &pf.IssuanceCriteria{
+						ConditionalCriteria: &[]*pf.ConditionalIssuanceCriteriaEntry{
+							{
+								AttributeName: String("foo"),
+								Condition:     String("foo"),
+								ErrorResult:   String("foo"),
+								Source: &pf.SourceTypeIdKey{
+									Id:   String("foo"),
+									Type: String("foo"),
+								},
+								Value: String("foo"),
+							},
+						},
+					},
+				},
+				AttributeContract: &pf.OpenIdConnectAttributeContract{
+					ExtendedAttributes: &[]*pf.OpenIdConnectAttribute{
+						{
+							IncludeInIdToken:  Bool(true),
+							IncludeInUserInfo: Bool(false),
+							Name:              String("foo"),
+						},
+					},
+				},
+			},
+		},
+		{
+			Resource: pf.OpenIdConnectPolicy{
+				Id:              String("test two"),
+				Name:            String("test two"),
+				IdTokenLifetime: Int(5),
+				AccessTokenManagerRef: &pf.ResourceLink{
+					Id: String("foo"),
+				},
+				AttributeMapping: &pf.AttributeMapping{
+					AttributeContractFulfillment: map[string]*pf.AttributeFulfillmentValue{},
+					AttributeSources:             &[]*pf.AttributeSource{},
+					IssuanceCriteria: &pf.IssuanceCriteria{
+						ConditionalCriteria: &[]*pf.ConditionalIssuanceCriteriaEntry{
+							{
+								AttributeName: String("foo"),
+								Condition:     String("foo"),
+								ErrorResult:   String("foo"),
+								Source: &pf.SourceTypeIdKey{
+									Id:   String("foo"),
+									Type: String("foo"),
+								},
+								Value: String("foo"),
+							},
+						},
+					},
+				},
+				AttributeContract: &pf.OpenIdConnectAttributeContract{
+					ExtendedAttributes: &[]*pf.OpenIdConnectAttribute{
+						{
+							IncludeInIdToken:  Bool(false),
+							IncludeInUserInfo: Bool(true),
+							Name:              String("foo"),
+						},
+					},
+				},
+			},
+		},
 	}
 	for i, tc := range cases {
 		t.Run(fmt.Sprintf("tc:%v", i), func(t *testing.T) {
@@ -300,4 +413,34 @@ func Test_resourcePingFederateOauthOpenIdConnectPolicyResourceReadData(t *testin
 			}
 		})
 	}
+}
+
+func Test_resourcePingFederateOauthOpenIdConnectPolicy_resourceOpenIdConnectAttribute_flatten_expand(t *testing.T) {
+	atrs := []*pf.OpenIdConnectAttribute{
+		{
+			Name:              String("one"),
+			IncludeInIdToken:  Bool(false),
+			IncludeInUserInfo: Bool(true),
+		},
+		{
+			Name:              String("two"),
+			IncludeInIdToken:  Bool(true),
+			IncludeInUserInfo: Bool(false),
+		},
+		{
+			Name: String("three"),
+			//IncludeInIdToken:  Bool(false),
+			//IncludeInUserInfo: Bool(false),
+		},
+	}
+	resourceSchema := resourceOpenIdConnectAttributeContract().Schema
+	resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})
+	require.Nil(t, resourceLocalData.Set("extended_attributes", flattenOpenIdConnectAttributes(atrs)))
+	assert.ElementsMatch(t, atrs, *expandOpenIdConnectAttributes(resourceLocalData.Get("extended_attributes").(*schema.Set).List()))
+
+	//lets change our false example to true to enable
+	atrs[2].IncludeInIdToken = Bool(true)
+	atrs[2].IncludeInUserInfo = Bool(false)
+	require.Nil(t, resourceLocalData.Set("extended_attributes", flattenOpenIdConnectAttributes(atrs)))
+	assert.ElementsMatch(t, atrs, *expandOpenIdConnectAttributes(resourceLocalData.Get("extended_attributes").(*schema.Set).List()))
 }

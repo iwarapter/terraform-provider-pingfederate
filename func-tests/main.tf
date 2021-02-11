@@ -509,16 +509,14 @@ resource "pingfederate_oauth_openid_connect_policy" "demo" {
       include_in_user_info = true
     }
     extended_attributes {
-      name                 = "email_verified"
-      include_in_user_info = true
+      name = "email_verified"
     }
     extended_attributes {
-      name                 = "family_name"
-      include_in_user_info = true
+      name = "family_name"
     }
     extended_attributes {
-      name                 = "name"
-      include_in_user_info = true
+      name                = "name"
+      include_in_id_token = true
     }
   }
   attribute_mapping {

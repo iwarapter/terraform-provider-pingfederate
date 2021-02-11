@@ -1057,29 +1057,6 @@ func resourceExpressionIssuanceCriteriaEntry() *schema.Resource {
 	}
 }
 
-func configFieldHash(v interface{}) int {
-	var buf bytes.Buffer
-	m := v.(map[string]interface{})
-	buf.WriteString(m["name"].(string))
-	//if d, ok := m["value"]; ok && d.(string) != "" {
-	//	buf.WriteString(fmt.Sprintf("%s-", d.(string)))
-	//}
-	// if d, ok := m["encrypted_value"]; ok && d.(string) != "" {
-	// 	buf.WriteString(fmt.Sprintf("%s-", d.(string)))
-	// }
-	//if d, ok := m["inherited"]; ok {
-	//	buf.WriteString(fmt.Sprintf("%t-", d.(bool)))
-	//}
-	return hashcodeString(buf.String())
-}
-
-//func configTableHash(v interface{}) int {
-//	var buf bytes.Buffer
-//	m := v.(map[string]interface{})
-//	buf.WriteString(m["name"].(string))
-//	return hashcodeString(buf.String())
-//}
-
 func jdbcTagConfigHash(v interface{}) int {
 	var buf bytes.Buffer
 	m := v.(map[string]interface{})
@@ -1116,6 +1093,11 @@ func resourceOpenIdConnectAttribute() *schema.Resource {
 				Description: "The name of this attribute.",
 				Required:    true,
 			},
+			"override_default_delivery": {
+				Type:        schema.TypeBool,
+				Description: "This is true when either include in id or user info is true and is used to make the resulting API calls correct",
+				Computed:    true,
+			},
 			"include_in_id_token": {
 				Type:        schema.TypeBool,
 				Description: "Attribute is included in the ID Token.",
@@ -1126,30 +1108,25 @@ func resourceOpenIdConnectAttribute() *schema.Resource {
 				Type:        schema.TypeBool,
 				Description: "Attribute is included in the User Info.",
 				Optional:    true,
-				Default:     true,
+				Default:     false,
 			},
 		},
 	}
 }
 
-func resourceOpenIdConnectAttributeContract() *schema.Schema {
-	return &schema.Schema{
-		Type:     schema.TypeList,
-		Optional: true,
-		MaxItems: 1,
-		Elem: &schema.Resource{
-			Schema: map[string]*schema.Schema{
-				"core_attributes": {
-					Type:     schema.TypeSet,
-					Optional: true,
-					Computed: true,
-					Elem:     resourceOpenIdConnectAttribute(),
-				},
-				"extended_attributes": {
-					Type:     schema.TypeSet,
-					Optional: true,
-					Elem:     resourceOpenIdConnectAttribute(),
-				},
+func resourceOpenIdConnectAttributeContract() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"core_attributes": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Computed: true,
+				Elem:     resourceOpenIdConnectAttribute(),
+			},
+			"extended_attributes": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem:     resourceOpenIdConnectAttribute(),
 			},
 		},
 	}
