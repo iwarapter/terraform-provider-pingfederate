@@ -1,4 +1,35 @@
-## 0.0.8 (Unreleased)
+## 0.0.10 (Feb 11th, 2021)
+
+NOTES:
+
+* This is an early release experimental build for PingFederate 10.x
+
+BUG FIXES:
+
+* Ensure OIDC Policy overrides for default delivery is correctly set.
+
+## 0.0.9 (Feb 1st, 2021)
+
+NOTES:
+
+* This is an early release experimental build for PingFederate 10.x
+* Added documentation for the following resources:
+  - `pingfederate_authentication_api_application`
+  - `pingfederate_authentication_selector`
+  - `pingfederate_jdbc_data_store`
+  - `pingfederate_ldap_data_store`
+  - `pingfederate_oauth_openid_connect_policy`
+
+BUG FIXES:
+
+* Fix #42
+* Fix authentication selector not ForceNew when name or plugin changes.
+* Add hostname tags for ldap_data_store.
+* Fix oauth_access_token_mappings mishandling issuance_criteria
+* Add retry on oauth client creation to handle flakey PF API.
+* Add retry on oauth openid connect policy creation to handle flakey PF API.
+
+## 0.0.8 (Nov 17th, 2020)
 
 NOTES:
 
