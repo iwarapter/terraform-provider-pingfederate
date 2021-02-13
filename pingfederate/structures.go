@@ -242,7 +242,7 @@ func resourceAuthenticationPolicyTreeSchema() *schema.Schema {
 							"children": {
 								Type:     schema.TypeList,
 								Optional: true,
-								Elem:     resourceAuthenticationPolicyTreeNodeSchemaBuilder(5),
+								Elem:     resourceAuthenticationPolicyTreeNodeSchemaBuilder(10),
 							},
 						},
 					},

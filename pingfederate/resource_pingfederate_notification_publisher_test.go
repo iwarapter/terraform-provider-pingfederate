@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
-	"strings"
 	"testing"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/notificationPublishers"
@@ -28,11 +27,9 @@ func init() {
 				return fmt.Errorf("unable to list notification publishers %s", err)
 			}
 			for _, item := range *results.Items {
-				if strings.Contains(*item.Name, "acc_test") {
-					_, _, err := svc.DeleteNotificationPublisher(&notificationPublishers.DeleteNotificationPublisherInput{Id: *item.Id})
-					if err != nil {
-						return fmt.Errorf("unable to sweep notification publisher %s because %s", *item.Id, err)
-					}
+				_, _, err := svc.DeleteNotificationPublisher(&notificationPublishers.DeleteNotificationPublisherInput{Id: *item.Id})
+				if err != nil {
+					return fmt.Errorf("unable to sweep notification publisher %s because %s", *item.Id, err)
 				}
 			}
 			return nil

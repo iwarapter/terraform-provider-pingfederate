@@ -18,7 +18,7 @@ import (
 func init() {
 	resource.AddTestSweepers("authentication_selector", &resource.Sweeper{
 		Name:         "authentication_selector",
-		Dependencies: []string{},
+		Dependencies: []string{"authentication_policies"},
 		F: func(r string) error {
 			svc := authenticationSelectors.New(cfg)
 			results, _, err := svc.GetAuthenticationSelectors(&authenticationSelectors.GetAuthenticationSelectorsInput{})

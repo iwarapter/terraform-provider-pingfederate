@@ -21,7 +21,7 @@ import (
 func init() {
 	resource.AddTestSweepers("sp_adapter", &resource.Sweeper{
 		Name:         "sp_adapter",
-		Dependencies: []string{},
+		Dependencies: []string{"authentication_policies"},
 		F: func(r string) error {
 			svc := spAdapters.New(cfg)
 			settings, _, err := serverSettings.New(cfg).GetServerSettings()
@@ -31,7 +31,7 @@ func init() {
 			if !*settings.RolesAndProtocols.SpRole.Enable {
 				return nil
 			}
-			results, _, err := svc.GetSpAdapters(&spAdapters.GetSpAdaptersInput{Filter: "acctest"})
+			results, _, err := svc.GetSpAdapters(&spAdapters.GetSpAdaptersInput{})
 			if err != nil {
 				return fmt.Errorf("unable to list sp adapter %s", err)
 			}

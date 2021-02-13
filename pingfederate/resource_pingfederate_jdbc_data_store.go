@@ -78,11 +78,11 @@ func resourcePingFederateJdbcDataStoreResourceSchema() map[string]*schema.Schema
 		"encrypted_password": {
 			Type:     schema.TypeString,
 			Optional: true,
+			Computed: true,
 		},
 		"validate_connection_sql": {
 			Type:     schema.TypeString,
 			Optional: true,
-			//Default: "",
 		},
 		"allow_multi_value_attributes": {
 			Type:     schema.TypeBool,

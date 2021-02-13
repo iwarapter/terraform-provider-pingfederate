@@ -11,6 +11,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/iwarapter/pingfederate-sdk-go/services/authenticationSelectors"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
@@ -193,6 +195,41 @@ func dataSetup() error {
 			},
 		}); err != nil {
 			return fmt.Errorf("unable to create test idp adapter\n%s", err)
+		}
+	}
+	authnSel := authenticationSelectors.New(cfg)
+	if _, _, err := authnSel.GetAuthenticationSelector(&authenticationSelectors.GetAuthenticationSelectorInput{Id: "idptestme"}); err != nil {
+		if _, _, err := authnSel.CreateAuthenticationSelector(&authenticationSelectors.CreateAuthenticationSelectorInput{
+			Body: pf.AuthenticationSelector{
+				Configuration: &pf.PluginConfiguration{
+					Tables: &[]*pf.ConfigTable{
+						{
+							Name: String("Networks"),
+							Rows: &[]*pf.ConfigRow{
+								{
+									Fields: &[]*pf.ConfigField{
+										{
+											Name:  String("Network Range (CIDR notation)"),
+											Value: String("127.0.0.1/32"),
+										},
+									},
+								},
+							},
+						},
+					},
+					Fields: &[]*pf.ConfigField{
+						{
+							Name:  String("Result Attribute Name"),
+							Value: String(""),
+						},
+					},
+				},
+				Id:                  String("authseltestme"),
+				Name:                String("authseltestme"),
+				PluginDescriptorRef: &pf.ResourceLink{Id: String("com.pingidentity.pf.selectors.cidr.CIDRAdapterSelector")},
+			},
+		}); err != nil {
+			return fmt.Errorf("unable to create test authentication selector\n%s", err)
 		}
 	}
 	return nil

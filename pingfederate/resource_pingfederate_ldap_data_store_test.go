@@ -13,6 +13,27 @@ import (
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
+//func init() {
+//	resource.AddTestSweepers("data_store", &resource.Sweeper{
+//		Name:         "data_store",
+//		Dependencies: []string{},
+//		F: func(r string) error {
+//			svc := dataStores.New(cfg)
+//			results, _, err := svc.GetDataStores()
+//			if err != nil {
+//				return fmt.Errorf("unable to list data stores %s", err)
+//			}
+//			for _, item := range *results.Items {
+//				_, _, err := svc.DeleteDataStore(&dataStores.DeleteDataStoreInput{Id: *item.Id})
+//				if err != nil {
+//					return fmt.Errorf("unable to sweep data store %s because %s", *item.Id, err)
+//				}
+//			}
+//			return nil
+//		},
+//	})
+//}
+
 func TestAccPingFederateLdapDataStoreResource(t *testing.T) {
 	resourceName := "pingfederate_ldap_data_store.demo"
 
