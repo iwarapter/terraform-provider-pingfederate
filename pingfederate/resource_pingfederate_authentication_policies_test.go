@@ -106,31 +106,189 @@ resource "pingfederate_authentication_policies" "demo" {
     }
   }
   authn_selection_trees {
-    name = "foo"
+    name = "one"
     root_node {
       action {
-        type = "AUTHN_SOURCE"
-        authentication_source {
-          type = "IDP_ADAPTER"
-          source_ref {
-            id = "idptestme"
+        type = "AUTHN_SELECTOR"
+        authentication_selector_ref {
+          id = "authseltestme"
+        }
+      }
+      children {
+        action {
+          type    = "AUTHN_SELECTOR"
+          context = "No"
+          authentication_selector_ref {
+            id = "authseltestme"
+          }
+        }
+        children {
+          action {
+            type    = "AUTHN_SELECTOR"
+            context = "No"
+            authentication_selector_ref {
+              id = "authseltestme"
+            }
+          }
+          children {
+            action {
+              type    = "AUTHN_SELECTOR"
+              context = "No"
+              authentication_selector_ref {
+                id = "authseltestme"
+              }
+            }
+            children {
+              action {
+                type    = "AUTHN_SELECTOR"
+                context = "No"
+                authentication_selector_ref {
+                  id = "authseltestme"
+                }
+              }
+              children {
+                action {
+                  type    = "AUTHN_SELECTOR"
+                  context = "No"
+                  authentication_selector_ref {
+                    id = "authseltestme"
+                  }
+                }
+                children {
+                  action {
+                    type    = "AUTHN_SELECTOR"
+                    context = "No"
+                    authentication_selector_ref {
+                      id = "authseltestme"
+                    }
+                  }
+                  children {
+                    action {
+                      type    = "AUTHN_SELECTOR"
+                      context = "No"
+                      authentication_selector_ref {
+                        id = "authseltestme"
+                      }
+                    }
+                    children {
+                      action {
+                        type    = "AUTHN_SELECTOR"
+                        context = "No"
+                        authentication_selector_ref {
+                          id = "authseltestme"
+                        }
+                      }
+                      children {
+                        action {
+                          type    = "AUTHN_SELECTOR"
+                          context = "No"
+                          authentication_selector_ref {
+                            id = "authseltestme"
+                          }
+                        }
+                        children {
+                          action {
+                            type    = "CONTINUE"
+                            context = "No"
+                          }
+                        }
+                        children {
+                          action {
+                            type    = "CONTINUE"
+                            context = "Yes"
+                          }
+                        }
+                      }
+                      children {
+                        action {
+                          type    = "CONTINUE"
+                          context = "Yes"
+                        }
+                      }
+                    }
+                    children {
+                      action {
+                        type    = "CONTINUE"
+                        context = "Yes"
+                      }
+                    }
+                  }
+                  children {
+                    action {
+                      type    = "CONTINUE"
+                      context = "Yes"
+                    }
+                  }
+                }
+                children {
+                  action {
+                    type    = "CONTINUE"
+                    context = "Yes"
+                  }
+                }
+              }
+              children {
+                action {
+                  type    = "CONTINUE"
+                  context = "Yes"
+                }
+              }
+            }
+            children {
+              action {
+                type    = "CONTINUE"
+                context = "Yes"
+              }
+            }
+          }
+          children {
+            action {
+              type    = "CONTINUE"
+              context = "Yes"
+            }
+          }
+        }
+        children {
+          action {
+            type    = "CONTINUE"
+            context = "Yes"
           }
         }
       }
       children {
         action {
-          type = "RESTART"
-          context = "Fail"
+          type    = "CONTINUE"
+          context = "Yes"
         }
       }
-      children {
-        action {
-          type = "DONE"
-          context = "Success"
-        }
-      }
-	}
+    }
   }
+  //authn_selection_trees {
+  //  name = "foo"
+  //  root_node {
+  //    action {
+  //      type = "AUTHN_SOURCE"
+  //      authentication_source {
+  //        type = "IDP_ADAPTER"
+  //        source_ref {
+  //          id = "idptestme"
+  //        }
+  //      }
+  //    }
+  //    children {
+  //      action {
+  //        type = "RESTART"
+  //        context = "Fail"
+  //      }
+  //    }
+  //    children {
+  //      action {
+  //        type = "DONE"
+  //        context = "Success"
+  //      }
+  //    }
+	//}
+  //}
 }`
 }
 

@@ -9,7 +9,8 @@ terraform {
 }
 
 provider "pingfederate" {
-  password = "2FederateM0re"
+  bypass_external_validation = true
+  password                   = "2FederateM0re"
 }
 
 locals {
@@ -210,142 +211,132 @@ resource "pingfederate_oauth_access_token_manager" "my_atm" {
   }
 }
 
-//#resource "pingfederate_authentication_policy_contract" "apc_foo" {
-//#  name = "wee"
-//#  core_attributes = ["subject"]
-//#  extended_attributes = ["foo", "bar"]
-//#}
-//
-//resource "pingfederate_password_credential_validator" "demo" {
-//  name = "foo"
-//  plugin_descriptor_ref {
-//    id = "org.sourceid.saml20.domain.SimpleUsernamePasswordCredentialValidator"
-//  }
-//
-//  configuration {
-//    tables {
-//      name = "Users"
-//      rows {
-//        fields {
-//          name  = "Username"
-//          value = "bob"
-//        }
-//
-//        sensitive_fields {
-//          name  = "Password"
-//          value = "demo2"
-//        }
-//
-//        sensitive_fields {
-//          name  = "Confirm Password"
-//          value = "demo2"
-//        }
-//
-//        fields {
-//          name  = "Relax Password Requirements"
-//          value = "true"
-//        }
-//      }
-//    }
-//  }
-//  attribute_contract {
-//    core_attributes = ["username"]
-//  }
-//}
-//
-//resource "pingfederate_data_store" "demo" {
-//  jdbc_data_store {
-//    name         = "terraform"
-//    driver_class = "org.hsqldb.jdbcDriver"
-//    user_name    = "sa"
-//    //    password = ""
-//    connection_url = "jdbc:hsqldb:mem:mymemdb"
-//
-//    connection_url_tags {
-//      connection_url = "jdbc:hsqldb:mem:mymemdb"
-//      default_source = true
-//    }
-//  }
-//}
-////
-//resource "pingfederate_data_store" "demo_ldap" {
-//  bypass_external_validation = true
-//  ldap_data_store {
-//    name      = "terraform_ldap"
-//    ldap_type = "PING_DIRECTORY"
-//    hostnames = [
-//    "host.docker.internal:1389"]
-//    bind_anonymously = true
-//
-//
-//    min_connections = 1
-//    max_connections = 1
-//  }
-//}
-//
-//resource "pingfederate_idp_adapter" "demo" {
-//  name = "bart"
-//  plugin_descriptor_ref {
-//    id = "com.pingidentity.adapters.httpbasic.idp.HttpBasicIdpAuthnAdapter"
-//  }
-//
-//  configuration {
-//    tables {
-//      name = "Credential Validators"
-//      rows {
-//        fields {
-//          name  = "Password Credential Validator Instance"
-//          value = pingfederate_password_credential_validator.demo.name
-//        }
-//      }
-//    }
-//    fields {
-//      name  = "Realm"
-//      value = "foo"
-//    }
-//
-//    fields {
-//      name  = "Challenge Retries"
-//      value = "3"
-//    }
-//
-//  }
-//
-//  attribute_contract {
-//    core_attributes {
-//      name      = "username"
-//      pseudonym = true
-//    }
-//    extended_attributes {
-//      name = "sub"
-//    }
-//  }
-//  attribute_mapping {
-//    attribute_contract_fulfillment {
-//      key_name = "sub"
-//      source {
-//        type = "ADAPTER"
-//      }
-//      value = "sub"
-//    }
-//    attribute_contract_fulfillment {
-//      key_name = "username"
-//      source {
-//        type = "ADAPTER"
-//      }
-//      value = "username"
-//    }
-//    jdbc_attribute_source {
-//      filter      = "\"\""
-//      description = "foo"
-//      schema      = "INFORMATION_SCHEMA"
-//      table       = "ADMINISTRABLE_ROLE_AUTHORIZATIONS"
-//      data_store_ref {
-//        id = "ProvisionerDS"
-//      }
-//    }
-//  }
-//}
+resource "pingfederate_authentication_policy_contract" "apc_foo" {
+  name                = "wee"
+  extended_attributes = ["foo", "bar"]
+}
+
+resource "pingfederate_password_credential_validator" "demo" {
+  name = "foo"
+  plugin_descriptor_ref {
+    id = "org.sourceid.saml20.domain.SimpleUsernamePasswordCredentialValidator"
+  }
+
+  configuration {
+    tables {
+      name = "Users"
+      rows {
+        fields {
+          name  = "Username"
+          value = "bob"
+        }
+
+        sensitive_fields {
+          name  = "Password"
+          value = "demo2"
+        }
+
+        sensitive_fields {
+          name  = "Confirm Password"
+          value = "demo2"
+        }
+
+        fields {
+          name  = "Relax Password Requirements"
+          value = "true"
+        }
+      }
+    }
+  }
+  attribute_contract {
+    core_attributes = ["username"]
+  }
+}
+
+resource "pingfederate_jdbc_data_store" "demo" {
+  name           = "terraform"
+  driver_class   = "org.hsqldb.jdbcDriver"
+  user_name      = "sa"
+  password       = "secret"
+  connection_url = "jdbc:hsqldb:mem:mymemdb"
+  connection_url_tags {
+    connection_url = "jdbc:hsqldb:mem:mymemdb"
+    default_source = true
+  }
+}
+
+resource "pingfederate_ldap_data_store" "demo_ldap" {
+  name             = "terraform_ldap"
+  ldap_type        = "PING_DIRECTORY"
+  hostnames        = ["host.docker.internal:1389"]
+  bind_anonymously = true
+  min_connections  = 1
+  max_connections  = 1
+}
+
+resource "pingfederate_idp_adapter" "demo" {
+  name = "bart"
+  plugin_descriptor_ref {
+    id = "com.pingidentity.adapters.httpbasic.idp.HttpBasicIdpAuthnAdapter"
+  }
+
+  configuration {
+    tables {
+      name = "Credential Validators"
+      rows {
+        fields {
+          name  = "Password Credential Validator Instance"
+          value = pingfederate_password_credential_validator.demo.name
+        }
+      }
+    }
+    fields {
+      name  = "Realm"
+      value = "foo"
+    }
+
+    fields {
+      name  = "Challenge Retries"
+      value = "3"
+    }
+
+  }
+
+  attribute_contract {
+    core_attributes {
+      name      = "username"
+      pseudonym = true
+    }
+    extended_attributes {
+      name = "sub"
+    }
+  }
+  attribute_mapping {
+    attribute_contract_fulfillment {
+      key_name = "sub"
+      source {
+        type = "ADAPTER"
+      }
+      value = "sub"
+    }
+    attribute_contract_fulfillment {
+      key_name = "username"
+      source {
+        type = "ADAPTER"
+      }
+      value = "username"
+    }
+    jdbc_attribute_source {
+      filter      = "\"\""
+      description = "foo"
+      schema      = "INFORMATION_SCHEMA"
+      table       = "ADMINISTRABLE_ROLE_AUTHORIZATIONS"
+      data_store_ref {
+        id = "ProvisionerDS"
+      }
+    }
+  }
+}
 
 resource "pingfederate_sp_adapter" "demo" {
   name          = "bar"
@@ -461,8 +452,6 @@ resource "pingfederate_sp_adapter" "demo" {
       name  = "Use Verbose Error Messages"
       value = "false"
     }
-
-
   }
 
   attribute_contract {
@@ -629,6 +618,98 @@ resource "pingfederate_notification_publisher" "demo" {
     fields {
       name  = "Enable SMTP Debugging Messages"
       value = "false"
+    }
+  }
+}
+
+resource "pingfederate_authentication_selector" "demo" {
+  name = "one"
+  plugin_descriptor_ref {
+    id = "com.pingidentity.pf.selectors.cidr.CIDRAdapterSelector"
+  }
+
+  configuration {
+    fields {
+      name  = "Result Attribute Name"
+      value = ""
+    }
+    tables {
+      name = "Networks"
+      rows {
+        fields {
+          name  = "Network Range (CIDR notation)"
+          value = "127.0.0.1/32"
+        }
+      }
+    }
+  }
+}
+
+resource "pingfederate_authentication_policies" "demo" {
+  fail_if_no_selection    = false
+  tracked_http_parameters = ["foo"]
+  authn_selection_trees {
+    name = "one"
+    root_node {
+      action {
+        type = "AUTHN_SELECTOR"
+        authentication_selector_ref {
+          id = pingfederate_authentication_selector.demo.id
+        }
+      }
+      children {
+        action {
+          type    = "AUTHN_SELECTOR"
+          context = "No"
+          authentication_selector_ref {
+            id = pingfederate_authentication_selector.demo.id
+          }
+        }
+        children {
+          action {
+            type    = "CONTINUE"
+            context = "No"
+          }
+        }
+        children {
+          action {
+            type    = "CONTINUE"
+            context = "Yes"
+          }
+        }
+      }
+      children {
+        action {
+          type    = "CONTINUE"
+          context = "Yes"
+        }
+      }
+    }
+  }
+  authn_selection_trees {
+    name = "foo"
+    root_node {
+      action {
+        type = "AUTHN_SOURCE"
+        authentication_source {
+          type = "IDP_ADAPTER"
+          source_ref {
+            id = pingfederate_idp_adapter.demo.id
+          }
+        }
+      }
+      children {
+        action {
+          type    = "RESTART"
+          context = "Fail"
+        }
+      }
+      children {
+        action {
+          type    = "DONE"
+          context = "Success"
+        }
+      }
     }
   }
 }

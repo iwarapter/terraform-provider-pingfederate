@@ -19,7 +19,7 @@ import (
 func init() {
 	resource.AddTestSweepers("idp_adapter", &resource.Sweeper{
 		Name:         "idp_adapter",
-		Dependencies: []string{},
+		Dependencies: []string{"authentication_policies"},
 		F: func(r string) error {
 			svc := idpAdapters.New(cfg)
 			results, _, err := svc.GetIdpAdapters(&idpAdapters.GetIdpAdaptersInput{Filter: "acctest"})

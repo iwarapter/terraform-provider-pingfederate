@@ -51,18 +51,23 @@ func testAccCheckPingFederateJdbcDataStoreResourceDestroy(s *terraform.State) er
 }
 
 func testAccPingFederateJdbcDataStoreResourceConfig(configUpdate string) string {
-	return fmt.Sprintf(`resource "pingfederate_jdbc_data_store" "demo" {
-		name = "terraform"
-		driver_class = "org.hsqldb.jdbcDriver"
-		user_name = "sa"
-		password = ""
-		max_pool_size = %s
-		connection_url = "jdbc:hsqldb:mem:mymemdb"
-		connection_url_tags {
-		  connection_url = "jdbc:hsqldb:mem:mymemdb"
-		  default_source = true
-		}
-	}`, configUpdate)
+	return fmt.Sprintf(`
+provider "pingfederate" {
+  bypass_external_validation = true
+}
+
+resource "pingfederate_jdbc_data_store" "demo" {
+  name = "terraform"
+  driver_class = "org.hsqldb.jdbcDriver"
+  user_name = "sa"
+  password = ""
+  max_pool_size = %s
+  connection_url = "jdbc:hsqldb:mem:mymemdb"
+  connection_url_tags {
+	connection_url = "jdbc:hsqldb:mem:mymemdb"
+	default_source = true
+  }
+}`, configUpdate)
 }
 
 func testAccCheckPingFederateJdbcDataStoreResourceExists(n string) resource.TestCheckFunc {
