@@ -13,11 +13,35 @@ import (
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
+func init() {
+	resource.AddTestSweepers("jdbc_data_store", &resource.Sweeper{
+		Name:         "jdbc_data_store",
+		Dependencies: []string{},
+		F: func(r string) error {
+			svc := dataStores.New(cfg)
+			results, _, err := svc.GetDataStores()
+			if err != nil {
+				return fmt.Errorf("unable to list data stores %s", err)
+			}
+			for _, item := range *results.Items {
+				switch v := item.(type) {
+				case pf.JdbcDataStore:
+					_, _, err := svc.DeleteDataStore(&dataStores.DeleteDataStoreInput{Id: *v.Id})
+					if err != nil {
+						return fmt.Errorf("unable to sweep data store %s because %s", *v.Id, err)
+					}
+				}
+
+			}
+			return nil
+		},
+	})
+}
+
 func TestAccPingFederateJdbcDataStoreResource(t *testing.T) {
 	resourceName := "pingfederate_jdbc_data_store.demo"
 
 	resource.ParallelTest(t, resource.TestCase{
-		// PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederateJdbcDataStoreResourceDestroy,
 		Steps: []resource.TestStep{
@@ -40,6 +64,7 @@ func TestAccPingFederateJdbcDataStoreResource(t *testing.T) {
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
 					"password",
+					"encrypted_password",
 				},
 			},
 		},
@@ -60,7 +85,7 @@ resource "pingfederate_jdbc_data_store" "demo" {
   name = "terraform"
   driver_class = "org.hsqldb.jdbcDriver"
   user_name = "sa"
-  password = ""
+  password = "example"
   max_pool_size = %s
   connection_url = "jdbc:hsqldb:mem:mymemdb"
   connection_url_tags {

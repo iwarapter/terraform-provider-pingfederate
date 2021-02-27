@@ -13,26 +13,30 @@ import (
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
-//func init() {
-//	resource.AddTestSweepers("data_store", &resource.Sweeper{
-//		Name:         "data_store",
-//		Dependencies: []string{},
-//		F: func(r string) error {
-//			svc := dataStores.New(cfg)
-//			results, _, err := svc.GetDataStores()
-//			if err != nil {
-//				return fmt.Errorf("unable to list data stores %s", err)
-//			}
-//			for _, item := range *results.Items {
-//				_, _, err := svc.DeleteDataStore(&dataStores.DeleteDataStoreInput{Id: *item.Id})
-//				if err != nil {
-//					return fmt.Errorf("unable to sweep data store %s because %s", *item.Id, err)
-//				}
-//			}
-//			return nil
-//		},
-//	})
-//}
+func init() {
+	resource.AddTestSweepers("ldap_data_store", &resource.Sweeper{
+		Name:         "ldap_data_store",
+		Dependencies: []string{},
+		F: func(r string) error {
+			svc := dataStores.New(cfg)
+			results, _, err := svc.GetDataStores()
+			if err != nil {
+				return fmt.Errorf("unable to list data stores %s", err)
+			}
+			for _, item := range *results.Items {
+				switch v := item.(type) {
+				case pf.LdapDataStore:
+					_, _, err := svc.DeleteDataStore(&dataStores.DeleteDataStoreInput{Id: *v.Id})
+					if err != nil {
+						return fmt.Errorf("unable to sweep data store %s because %s", *v.Id, err)
+					}
+				}
+
+			}
+			return nil
+		},
+	})
+}
 
 func TestAccPingFederateLdapDataStoreResource(t *testing.T) {
 	resourceName := "pingfederate_ldap_data_store.demo"
@@ -58,6 +62,10 @@ func TestAccPingFederateLdapDataStoreResource(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"password",
+					"encrypted_password",
+				},
 			},
 		},
 	})
@@ -74,12 +82,14 @@ provider "pingfederate" {
 }
 
 resource "pingfederate_ldap_data_store" "demo" {
-	name      = "terraform_ldap"
-	ldap_type = "PING_DIRECTORY"
-	hostnames = ["host.docker.internal:1389"]
-	bind_anonymously = true
-	min_connections = 1
-	max_connections = %s
+	name             = "terraform_ldap"
+	ldap_type        = "PING_DIRECTORY"
+	hostnames        = ["host.docker.internal:1389"]
+	user_dn          = "test"
+	password         = "secret"
+	bind_anonymously = false
+	min_connections  = 1
+	max_connections  = %s
 }`, configUpdate)
 }
 
