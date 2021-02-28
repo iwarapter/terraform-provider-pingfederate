@@ -1,6 +1,7 @@
 package oauthClients
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -45,6 +46,13 @@ func (c *OauthClientsService) newRequest(op *request.Operation, params, data int
 //RequestType: GET
 //Input: input *GetClientsInput
 func (s *OauthClientsService) GetClients(input *GetClientsInput) (output *models.Clients, resp *http.Response, err error) {
+	return s.GetClientsWithContext(context.Background(), input)
+}
+
+//GetClientsWithContext - Get the list of OAuth clients.
+//RequestType: GET
+//Input: ctx context.Context, input *GetClientsInput
+func (s *OauthClientsService) GetClientsWithContext(ctx context.Context, input *GetClientsInput) (output *models.Clients, resp *http.Response, err error) {
 	path := "/oauth/clients"
 	op := &request.Operation{
 		Name:       "GetClients",
@@ -58,6 +66,7 @@ func (s *OauthClientsService) GetClients(input *GetClientsInput) (output *models
 	}
 	output = &models.Clients{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -69,6 +78,13 @@ func (s *OauthClientsService) GetClients(input *GetClientsInput) (output *models
 //RequestType: POST
 //Input: input *CreateClientInput
 func (s *OauthClientsService) CreateClient(input *CreateClientInput) (output *models.Client, resp *http.Response, err error) {
+	return s.CreateClientWithContext(context.Background(), input)
+}
+
+//CreateClientWithContext - Create a new OAuth client.
+//RequestType: POST
+//Input: ctx context.Context, input *CreateClientInput
+func (s *OauthClientsService) CreateClientWithContext(ctx context.Context, input *CreateClientInput) (output *models.Client, resp *http.Response, err error) {
 	path := "/oauth/clients"
 	op := &request.Operation{
 		Name:       "CreateClient",
@@ -77,6 +93,7 @@ func (s *OauthClientsService) CreateClient(input *CreateClientInput) (output *mo
 	}
 	output = &models.Client{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -88,6 +105,13 @@ func (s *OauthClientsService) CreateClient(input *CreateClientInput) (output *mo
 //RequestType: GET
 //Input: input *GetClientInput
 func (s *OauthClientsService) GetClient(input *GetClientInput) (output *models.Client, resp *http.Response, err error) {
+	return s.GetClientWithContext(context.Background(), input)
+}
+
+//GetClientWithContext - Find the OAuth client by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetClientInput
+func (s *OauthClientsService) GetClientWithContext(ctx context.Context, input *GetClientInput) (output *models.Client, resp *http.Response, err error) {
 	path := "/oauth/clients/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -98,6 +122,7 @@ func (s *OauthClientsService) GetClient(input *GetClientInput) (output *models.C
 	}
 	output = &models.Client{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -109,6 +134,13 @@ func (s *OauthClientsService) GetClient(input *GetClientInput) (output *models.C
 //RequestType: PUT
 //Input: input *UpdateClientInput
 func (s *OauthClientsService) UpdateClient(input *UpdateClientInput) (output *models.Client, resp *http.Response, err error) {
+	return s.UpdateClientWithContext(context.Background(), input)
+}
+
+//UpdateClientWithContext - Updates the OAuth client.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateClientInput
+func (s *OauthClientsService) UpdateClientWithContext(ctx context.Context, input *UpdateClientInput) (output *models.Client, resp *http.Response, err error) {
 	path := "/oauth/clients/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -119,6 +151,7 @@ func (s *OauthClientsService) UpdateClient(input *UpdateClientInput) (output *mo
 	}
 	output = &models.Client{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -130,6 +163,13 @@ func (s *OauthClientsService) UpdateClient(input *UpdateClientInput) (output *mo
 //RequestType: DELETE
 //Input: input *DeleteClientInput
 func (s *OauthClientsService) DeleteClient(input *DeleteClientInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeleteClientWithContext(context.Background(), input)
+}
+
+//DeleteClientWithContext - Delete an OAuth client.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteClientInput
+func (s *OauthClientsService) DeleteClientWithContext(ctx context.Context, input *DeleteClientInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/oauth/clients/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -140,6 +180,7 @@ func (s *OauthClientsService) DeleteClient(input *DeleteClientInput) (output *mo
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -151,6 +192,13 @@ func (s *OauthClientsService) DeleteClient(input *DeleteClientInput) (output *mo
 //RequestType: GET
 //Input: input *GetClientSecretInput
 func (s *OauthClientsService) GetClientSecret(input *GetClientSecretInput) (output *models.ClientSecret, resp *http.Response, err error) {
+	return s.GetClientSecretWithContext(context.Background(), input)
+}
+
+//GetClientSecretWithContext - Get the client secret of an existing OAuth client.
+//RequestType: GET
+//Input: ctx context.Context, input *GetClientSecretInput
+func (s *OauthClientsService) GetClientSecretWithContext(ctx context.Context, input *GetClientSecretInput) (output *models.ClientSecret, resp *http.Response, err error) {
 	path := "/oauth/clients/{id}/clientAuth/clientSecret"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -161,6 +209,7 @@ func (s *OauthClientsService) GetClientSecret(input *GetClientSecretInput) (outp
 	}
 	output = &models.ClientSecret{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -172,6 +221,13 @@ func (s *OauthClientsService) GetClientSecret(input *GetClientSecretInput) (outp
 //RequestType: PUT
 //Input: input *UpdateClientSecretInput
 func (s *OauthClientsService) UpdateClientSecret(input *UpdateClientSecretInput) (output *models.ClientSecret, resp *http.Response, err error) {
+	return s.UpdateClientSecretWithContext(context.Background(), input)
+}
+
+//UpdateClientSecretWithContext - Update the client secret of an existing OAuth client.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateClientSecretInput
+func (s *OauthClientsService) UpdateClientSecretWithContext(ctx context.Context, input *UpdateClientSecretInput) (output *models.ClientSecret, resp *http.Response, err error) {
 	path := "/oauth/clients/{id}/clientAuth/clientSecret"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -182,6 +238,7 @@ func (s *OauthClientsService) UpdateClientSecret(input *UpdateClientSecretInput)
 	}
 	output = &models.ClientSecret{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

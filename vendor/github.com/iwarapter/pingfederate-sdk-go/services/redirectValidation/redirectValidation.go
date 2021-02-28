@@ -1,6 +1,7 @@
 package redirectValidation
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
@@ -44,6 +45,13 @@ func (c *RedirectValidationService) newRequest(op *request.Operation, params, da
 //RequestType: GET
 //Input:
 func (s *RedirectValidationService) GetRedirectValidationSettings() (output *models.RedirectValidationSettings, resp *http.Response, err error) {
+	return s.GetRedirectValidationSettingsWithContext(context.Background())
+}
+
+//GetRedirectValidationSettingsWithContext - Retrieve redirect validation settings.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *RedirectValidationService) GetRedirectValidationSettingsWithContext(ctx context.Context) (output *models.RedirectValidationSettings, resp *http.Response, err error) {
 	path := "/redirectValidation"
 	op := &request.Operation{
 		Name:       "GetRedirectValidationSettings",
@@ -52,6 +60,7 @@ func (s *RedirectValidationService) GetRedirectValidationSettings() (output *mod
 	}
 	output = &models.RedirectValidationSettings{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -63,6 +72,13 @@ func (s *RedirectValidationService) GetRedirectValidationSettings() (output *mod
 //RequestType: PUT
 //Input: input *UpdateRedirectValidationSettingsInput
 func (s *RedirectValidationService) UpdateRedirectValidationSettings(input *UpdateRedirectValidationSettingsInput) (output *models.RedirectValidationSettings, resp *http.Response, err error) {
+	return s.UpdateRedirectValidationSettingsWithContext(context.Background(), input)
+}
+
+//UpdateRedirectValidationSettingsWithContext - Update redirect validation settings.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateRedirectValidationSettingsInput
+func (s *RedirectValidationService) UpdateRedirectValidationSettingsWithContext(ctx context.Context, input *UpdateRedirectValidationSettingsInput) (output *models.RedirectValidationSettings, resp *http.Response, err error) {
 	path := "/redirectValidation"
 	op := &request.Operation{
 		Name:       "UpdateRedirectValidationSettings",
@@ -71,6 +87,7 @@ func (s *RedirectValidationService) UpdateRedirectValidationSettings(input *Upda
 	}
 	output = &models.RedirectValidationSettings{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

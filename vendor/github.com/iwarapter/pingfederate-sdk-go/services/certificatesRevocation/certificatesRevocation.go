@@ -1,6 +1,7 @@
 package certificatesRevocation
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -45,6 +46,13 @@ func (c *CertificatesRevocationService) newRequest(op *request.Operation, params
 //RequestType: GET
 //Input:
 func (s *CertificatesRevocationService) GetRevocationSettings() (output *models.CertificateRevocationSettings, resp *http.Response, err error) {
+	return s.GetRevocationSettingsWithContext(context.Background())
+}
+
+//GetRevocationSettingsWithContext - Get certificate revocation settings.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *CertificatesRevocationService) GetRevocationSettingsWithContext(ctx context.Context) (output *models.CertificateRevocationSettings, resp *http.Response, err error) {
 	path := "/certificates/revocation/settings"
 	op := &request.Operation{
 		Name:       "GetRevocationSettings",
@@ -53,6 +61,7 @@ func (s *CertificatesRevocationService) GetRevocationSettings() (output *models.
 	}
 	output = &models.CertificateRevocationSettings{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -64,6 +73,13 @@ func (s *CertificatesRevocationService) GetRevocationSettings() (output *models.
 //RequestType: PUT
 //Input: input *UpdateRevocationSettingsInput
 func (s *CertificatesRevocationService) UpdateRevocationSettings(input *UpdateRevocationSettingsInput) (output *models.CertificateRevocationSettings, resp *http.Response, err error) {
+	return s.UpdateRevocationSettingsWithContext(context.Background(), input)
+}
+
+//UpdateRevocationSettingsWithContext - Update certificate revocation settings.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateRevocationSettingsInput
+func (s *CertificatesRevocationService) UpdateRevocationSettingsWithContext(ctx context.Context, input *UpdateRevocationSettingsInput) (output *models.CertificateRevocationSettings, resp *http.Response, err error) {
 	path := "/certificates/revocation/settings"
 	op := &request.Operation{
 		Name:       "UpdateRevocationSettings",
@@ -72,6 +88,7 @@ func (s *CertificatesRevocationService) UpdateRevocationSettings(input *UpdateRe
 	}
 	output = &models.CertificateRevocationSettings{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -83,6 +100,13 @@ func (s *CertificatesRevocationService) UpdateRevocationSettings(input *UpdateRe
 //RequestType: GET
 //Input:
 func (s *CertificatesRevocationService) GetOcspCertificates() (output *models.CertViews, resp *http.Response, err error) {
+	return s.GetOcspCertificatesWithContext(context.Background())
+}
+
+//GetOcspCertificatesWithContext - Get the list of available OCSP responder signature verification certificates.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *CertificatesRevocationService) GetOcspCertificatesWithContext(ctx context.Context) (output *models.CertViews, resp *http.Response, err error) {
 	path := "/certificates/revocation/ocspCertificates"
 	op := &request.Operation{
 		Name:       "GetOcspCertificates",
@@ -91,6 +115,7 @@ func (s *CertificatesRevocationService) GetOcspCertificates() (output *models.Ce
 	}
 	output = &models.CertViews{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -102,6 +127,13 @@ func (s *CertificatesRevocationService) GetOcspCertificates() (output *models.Ce
 //RequestType: POST
 //Input: input *ImportOcspCertificateInput
 func (s *CertificatesRevocationService) ImportOcspCertificate(input *ImportOcspCertificateInput) (output *models.CertView, resp *http.Response, err error) {
+	return s.ImportOcspCertificateWithContext(context.Background(), input)
+}
+
+//ImportOcspCertificateWithContext - Import an OCSP responder signature verification certificate.
+//RequestType: POST
+//Input: ctx context.Context, input *ImportOcspCertificateInput
+func (s *CertificatesRevocationService) ImportOcspCertificateWithContext(ctx context.Context, input *ImportOcspCertificateInput) (output *models.CertView, resp *http.Response, err error) {
 	path := "/certificates/revocation/ocspCertificates"
 	op := &request.Operation{
 		Name:       "ImportOcspCertificate",
@@ -110,6 +142,7 @@ func (s *CertificatesRevocationService) ImportOcspCertificate(input *ImportOcspC
 	}
 	output = &models.CertView{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -121,6 +154,13 @@ func (s *CertificatesRevocationService) ImportOcspCertificate(input *ImportOcspC
 //RequestType: GET
 //Input: input *GetOcspCertificateByIdInput
 func (s *CertificatesRevocationService) GetOcspCertificateById(input *GetOcspCertificateByIdInput) (output *models.CertView, resp *http.Response, err error) {
+	return s.GetOcspCertificateByIdWithContext(context.Background(), input)
+}
+
+//GetOcspCertificateByIdWithContext - Get an OCSP responder signature verification certificate by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetOcspCertificateByIdInput
+func (s *CertificatesRevocationService) GetOcspCertificateByIdWithContext(ctx context.Context, input *GetOcspCertificateByIdInput) (output *models.CertView, resp *http.Response, err error) {
 	path := "/certificates/revocation/ocspCertificates/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -131,6 +171,7 @@ func (s *CertificatesRevocationService) GetOcspCertificateById(input *GetOcspCer
 	}
 	output = &models.CertView{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -142,6 +183,13 @@ func (s *CertificatesRevocationService) GetOcspCertificateById(input *GetOcspCer
 //RequestType: DELETE
 //Input: input *DeleteOcspCertificateByIdInput
 func (s *CertificatesRevocationService) DeleteOcspCertificateById(input *DeleteOcspCertificateByIdInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeleteOcspCertificateByIdWithContext(context.Background(), input)
+}
+
+//DeleteOcspCertificateByIdWithContext - Delete an OCSP responder signature verification certificate by ID.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteOcspCertificateByIdInput
+func (s *CertificatesRevocationService) DeleteOcspCertificateByIdWithContext(ctx context.Context, input *DeleteOcspCertificateByIdInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/certificates/revocation/ocspCertificates/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -152,6 +200,7 @@ func (s *CertificatesRevocationService) DeleteOcspCertificateById(input *DeleteO
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

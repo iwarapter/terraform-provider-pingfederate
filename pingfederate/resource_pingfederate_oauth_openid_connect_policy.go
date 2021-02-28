@@ -86,13 +86,13 @@ func resourcePingFederateOpenIdConnectPolicyResourceSchema() map[string]*schema.
 	}
 }
 
-func resourcePingFederateOpenIdConnectPolicyResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateOpenIdConnectPolicyResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthOpenIdConnect
 	input := oauthOpenIdConnect.CreatePolicyInput{
 		Body:                     *resourcePingFederateOpenIdConnectPolicyResourceReadData(d),
 		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
-	result, _, err := svc.CreatePolicy(&input)
+	result, _, err := svc.CreatePolicyWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to create OauthOpenIdConnectPolicy: %s", err)
 	}
@@ -100,26 +100,26 @@ func resourcePingFederateOpenIdConnectPolicyResourceCreate(_ context.Context, d 
 	return resourcePingFederateOpenIdConnectPolicyResourceReadResult(d, result)
 }
 
-func resourcePingFederateOpenIdConnectPolicyResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateOpenIdConnectPolicyResourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthOpenIdConnect
 	input := oauthOpenIdConnect.GetPolicyInput{
 		Id: d.Id(),
 	}
-	result, _, err := svc.GetPolicy(&input)
+	result, _, err := svc.GetPolicyWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to read OauthOpenIdConnectPolicy: %s", err)
 	}
 	return resourcePingFederateOpenIdConnectPolicyResourceReadResult(d, result)
 }
 
-func resourcePingFederateOpenIdConnectPolicyResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateOpenIdConnectPolicyResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthOpenIdConnect
 	input := oauthOpenIdConnect.UpdatePolicyInput{
 		Id:                       d.Id(),
 		Body:                     *resourcePingFederateOpenIdConnectPolicyResourceReadData(d),
 		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
-	result, _, err := svc.UpdatePolicy(&input)
+	result, _, err := svc.UpdatePolicyWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to update OauthOpenIdConnectPolicy: %s", err)
 	}
@@ -134,7 +134,7 @@ func resourcePingFederateOpenIdConnectPolicyResourceDelete(ctx context.Context, 
 	}
 	err := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
 
-		_, resp, err := svc.DeletePolicy(&input)
+		_, resp, err := svc.DeletePolicyWithContext(ctx, &input)
 		if resp != nil && resp.StatusCode == http.StatusUnprocessableEntity {
 			return resource.RetryableError(fmt.Errorf("unable to delete with retry OauthOpenIdConnectPolicy: %s", err))
 		}

@@ -27,13 +27,13 @@ func resourcePingFederateOauthAccessTokenManagersResource() *schema.Resource {
 		CustomizeDiff: func(ctx context.Context, d *schema.ResourceDiff, m interface{}) error {
 			svc := m.(pfClient).OauthAccessTokenManagers
 			if className, ok := d.GetOk("plugin_descriptor_ref.0.id"); ok {
-				desc, resp, err := svc.GetTokenManagerDescriptor(&oauthAccessTokenManagers.GetTokenManagerDescriptorInput{Id: className.(string)})
+				desc, resp, err := svc.GetTokenManagerDescriptorWithContext(ctx, &oauthAccessTokenManagers.GetTokenManagerDescriptorInput{Id: className.(string)})
 				if resp != nil && resp.StatusCode == http.StatusForbidden {
 					log.Printf("[WARN] Unable to query OAuthTokenManagerDescriptor, OAuth 2.0 authorization server role enabled")
 					return nil
 				}
 				if err != nil {
-					descs, _, err := svc.GetTokenManagerDescriptors()
+					descs, _, err := svc.GetTokenManagerDescriptorsWithContext(ctx)
 					if err == nil && descs != nil {
 						list := func(in *[]*pf.AccessTokenManagerDescriptor) string {
 							var plugins []string
@@ -141,12 +141,12 @@ func resourcePingFederateOauthAccessTokenManagersResourceSchema() map[string]*sc
 	}
 }
 
-func resourcePingFederateOauthAccessTokenManagersResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateOauthAccessTokenManagersResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthAccessTokenManagers
 	input := oauthAccessTokenManagers.CreateTokenManagerInput{
 		Body: *resourcePingFederateOauthAccessTokenManagersResourceReadData(d, svc),
 	}
-	result, _, err := svc.CreateTokenManager(&input)
+	result, _, err := svc.CreateTokenManagerWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to read OauthAccessTokenManagers: %s", err)
 	}
@@ -154,25 +154,25 @@ func resourcePingFederateOauthAccessTokenManagersResourceCreate(_ context.Contex
 	return resourcePingFederateOauthAccessTokenManagersResourceReadResult(d, result, svc)
 }
 
-func resourcePingFederateOauthAccessTokenManagersResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateOauthAccessTokenManagersResourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthAccessTokenManagers
 	input := oauthAccessTokenManagers.GetTokenManagerInput{
 		Id: d.Id(),
 	}
-	result, _, err := svc.GetTokenManager(&input)
+	result, _, err := svc.GetTokenManagerWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to read OauthAccessTokenManagers: %s", err)
 	}
 	return resourcePingFederateOauthAccessTokenManagersResourceReadResult(d, result, svc)
 }
 
-func resourcePingFederateOauthAccessTokenManagersResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateOauthAccessTokenManagersResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthAccessTokenManagers
 	input := oauthAccessTokenManagers.UpdateTokenManagerInput{
 		Id:   d.Id(),
 		Body: *resourcePingFederateOauthAccessTokenManagersResourceReadData(d, svc),
 	}
-	result, _, err := svc.UpdateTokenManager(&input)
+	result, _, err := svc.UpdateTokenManagerWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to update OauthAccessTokenManagers: %s", err)
 	}
@@ -180,12 +180,12 @@ func resourcePingFederateOauthAccessTokenManagersResourceUpdate(_ context.Contex
 	return resourcePingFederateOauthAccessTokenManagersResourceReadResult(d, result, svc)
 }
 
-func resourcePingFederateOauthAccessTokenManagersResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateOauthAccessTokenManagersResourceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthAccessTokenManagers
 	input := oauthAccessTokenManagers.DeleteTokenManagerInput{
 		Id: d.Id(),
 	}
-	_, _, err := svc.DeleteTokenManager(&input)
+	_, _, err := svc.DeleteTokenManagerWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to delete OauthAccessTokenManagers: %s", err)
 	}

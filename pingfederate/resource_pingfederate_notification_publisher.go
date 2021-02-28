@@ -25,9 +25,9 @@ func resourcePingFederateNotificationPublisherResource() *schema.Resource {
 		CustomizeDiff: func(ctx context.Context, d *schema.ResourceDiff, m interface{}) error {
 			svc := m.(pfClient).NotificationPublishers
 			if className, ok := d.GetOk("plugin_descriptor_ref.0.id"); ok {
-				desc, _, err := svc.GetNotificationPublisherPluginDescriptor(&notificationPublishers.GetNotificationPublisherPluginDescriptorInput{Id: className.(string)})
+				desc, _, err := svc.GetNotificationPublisherPluginDescriptorWithContext(ctx, &notificationPublishers.GetNotificationPublisherPluginDescriptorInput{Id: className.(string)})
 				if err != nil {
-					descs, _, err := svc.GetNotificationPublisherPluginDescriptors()
+					descs, _, err := svc.GetNotificationPublisherPluginDescriptorsWithContext(ctx)
 					if err == nil && descs != nil {
 						list := func(in *[]*pf.NotificationPublisherDescriptor) string {
 							var plugins []string
@@ -65,12 +65,12 @@ func resourcePingFederateNotificationPublisherResourceSchema() map[string]*schem
 	}
 }
 
-func resourcePingFederateNotificationPublisherResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateNotificationPublisherResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).NotificationPublishers
 	input := notificationPublishers.CreateNotificationPublisherInput{
 		Body: *resourcePingFederateNotificationPublisherResourceReadData(d),
 	}
-	result, _, err := svc.CreateNotificationPublisher(&input)
+	result, _, err := svc.CreateNotificationPublisherWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to create NotificationPublishers: %s", err)
 	}
@@ -78,25 +78,25 @@ func resourcePingFederateNotificationPublisherResourceCreate(_ context.Context, 
 	return resourcePingFederateNotificationPublisherResourceReadResult(d, result, svc)
 }
 
-func resourcePingFederateNotificationPublisherResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateNotificationPublisherResourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).NotificationPublishers
 	input := notificationPublishers.GetNotificationPublisherInput{
 		Id: d.Id(),
 	}
-	result, _, err := svc.GetNotificationPublisher(&input)
+	result, _, err := svc.GetNotificationPublisherWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to read NotificationPublishers: %s", err)
 	}
 	return resourcePingFederateNotificationPublisherResourceReadResult(d, result, svc)
 }
 
-func resourcePingFederateNotificationPublisherResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateNotificationPublisherResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).NotificationPublishers
 	input := notificationPublishers.UpdateNotificationPublisherInput{
 		Id:   d.Id(),
 		Body: *resourcePingFederateNotificationPublisherResourceReadData(d),
 	}
-	result, _, err := svc.UpdateNotificationPublisher(&input)
+	result, _, err := svc.UpdateNotificationPublisherWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to update NotificationPublishers: %s", err)
 	}
@@ -104,12 +104,12 @@ func resourcePingFederateNotificationPublisherResourceUpdate(_ context.Context, 
 	return resourcePingFederateNotificationPublisherResourceReadResult(d, result, svc)
 }
 
-func resourcePingFederateNotificationPublisherResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateNotificationPublisherResourceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).NotificationPublishers
 	input := notificationPublishers.DeleteNotificationPublisherInput{
 		Id: d.Id(),
 	}
-	_, _, err := svc.DeleteNotificationPublisher(&input)
+	_, _, err := svc.DeleteNotificationPublisherWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to delete NotificationPublishers: %s", err)
 	}

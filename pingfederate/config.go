@@ -74,7 +74,7 @@ import (
 	"github.com/iwarapter/pingfederate-sdk-go/services/virtualHostNames"
 )
 
-type Config struct {
+type pfConfig struct {
 	Username string
 	Password string
 	Context  string
@@ -148,11 +148,11 @@ type pfClient struct {
 }
 
 // Client configures and returns a fully initialized PAClient
-func (c *Config) Client() (interface{}, diag.Diagnostics) {
+func (c *pfConfig) Client() (interface{}, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	/* #nosec */
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-	url, err := url.ParseRequestURI(c.BaseURL)
+	baseURL, err := url.ParseRequestURI(c.BaseURL)
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
@@ -162,7 +162,7 @@ func (c *Config) Client() (interface{}, diag.Diagnostics) {
 		return nil, diags
 	}
 
-	cfg := config.NewConfig().WithEndpoint(url.String() + c.Context).WithUsername(c.Username).WithPassword(c.Password)
+	cfg := config.NewConfig().WithEndpoint(baseURL.String() + c.Context).WithUsername(c.Username).WithPassword(c.Password)
 
 	if os.Getenv("TF_LOG") == "DEBUG" || os.Getenv("TF_LOG") == "TRACE" {
 		cfg.WithDebug(true)
@@ -246,7 +246,7 @@ func (c *Config) Client() (interface{}, diag.Diagnostics) {
 	return client, nil
 }
 
-// Checks whether we are running against PingAccess 6.1 or above and can track password changes
+// Checks whether we are running against PingFederate 10.x
 func (c pfClient) IsPF10() bool {
 	re := regexp.MustCompile(`^(10\.[0-9])`)
 	return re.MatchString(c.apiVersion)

@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/iwarapter/pingfederate-sdk-go/services/authenticationPolicyContracts"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -135,9 +136,7 @@ func Test_resourcePingFederateAuthenticationPolicyContractResourceReadData(t *te
 			resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})
 			resourcePingFederateAuthenticationPolicyContractResourceReadResult(resourceLocalData, &tc.Resource)
 
-			if got := *resourcePingFederateAuthenticationPolicyContractResourceReadData(resourceLocalData); !cmp.Equal(got, tc.Resource) {
-				t.Errorf("resourcePingFederateAuthenticationPolicyContractResourceReadData() = %v", cmp.Diff(got, tc.Resource))
-			}
+			assert.Equal(t, tc.Resource, *resourcePingFederateAuthenticationPolicyContractResourceReadData(resourceLocalData))
 		})
 	}
 }

@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/iwarapter/pingfederate-sdk-go/services/idpSpConnections"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -1067,9 +1068,7 @@ func Test_resourcePingFederateIdpSpConnectionResourceReadData(t *testing.T) {
 			resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})
 			resourcePingFederateIdpSpConnectionResourceReadResult(resourceLocalData, &tc.Resource)
 
-			if got := *resourcePingFederateIdpSpConnectionResourceReadData(resourceLocalData); !cmp.Equal(got, tc.Resource) {
-				t.Errorf("resourcePingFederateIdpSpConnectionResourceReadData() = %v", cmp.Diff(got, tc.Resource))
-			}
+			assert.Equal(t, tc.Resource, *resourcePingFederateIdpSpConnectionResourceReadData(resourceLocalData))
 		})
 	}
 }

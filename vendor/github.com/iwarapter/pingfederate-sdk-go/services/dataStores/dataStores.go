@@ -1,6 +1,7 @@
 package dataStores
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -46,6 +47,13 @@ func (c *DataStoresService) newRequest(op *request.Operation, params, data inter
 //RequestType: GET
 //Input:
 func (s *DataStoresService) GetCustomDataStoreDescriptors() (output *models.CustomDataStoreDescriptors, resp *http.Response, err error) {
+	return s.GetCustomDataStoreDescriptorsWithContext(context.Background())
+}
+
+//GetCustomDataStoreDescriptorsWithContext - Get the list of available custom data store descriptors.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *DataStoresService) GetCustomDataStoreDescriptorsWithContext(ctx context.Context) (output *models.CustomDataStoreDescriptors, resp *http.Response, err error) {
 	path := "/dataStores/descriptors"
 	op := &request.Operation{
 		Name:       "GetCustomDataStoreDescriptors",
@@ -54,6 +62,7 @@ func (s *DataStoresService) GetCustomDataStoreDescriptors() (output *models.Cust
 	}
 	output = &models.CustomDataStoreDescriptors{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -65,6 +74,13 @@ func (s *DataStoresService) GetCustomDataStoreDescriptors() (output *models.Cust
 //RequestType: GET
 //Input: input *GetCustomDataStoreDescriptorInput
 func (s *DataStoresService) GetCustomDataStoreDescriptor(input *GetCustomDataStoreDescriptorInput) (output *models.CustomDataStoreDescriptor, resp *http.Response, err error) {
+	return s.GetCustomDataStoreDescriptorWithContext(context.Background(), input)
+}
+
+//GetCustomDataStoreDescriptorWithContext - Get the description of a custom data store plugin by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetCustomDataStoreDescriptorInput
+func (s *DataStoresService) GetCustomDataStoreDescriptorWithContext(ctx context.Context, input *GetCustomDataStoreDescriptorInput) (output *models.CustomDataStoreDescriptor, resp *http.Response, err error) {
 	path := "/dataStores/descriptors/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -75,6 +91,7 @@ func (s *DataStoresService) GetCustomDataStoreDescriptor(input *GetCustomDataSto
 	}
 	output = &models.CustomDataStoreDescriptor{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -86,6 +103,13 @@ func (s *DataStoresService) GetCustomDataStoreDescriptor(input *GetCustomDataSto
 //RequestType: GET
 //Input:
 func (s *DataStoresService) GetDataStores() (output *models.DataStores, resp *http.Response, err error) {
+	return s.GetDataStoresWithContext(context.Background())
+}
+
+//GetDataStoresWithContext - Get list of data stores.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *DataStoresService) GetDataStoresWithContext(ctx context.Context) (output *models.DataStores, resp *http.Response, err error) {
 	path := "/dataStores"
 	op := &request.Operation{
 		Name:       "GetDataStores",
@@ -94,6 +118,7 @@ func (s *DataStoresService) GetDataStores() (output *models.DataStores, resp *ht
 	}
 	output = &models.DataStores{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -105,6 +130,13 @@ func (s *DataStoresService) GetDataStores() (output *models.DataStores, resp *ht
 //RequestType: POST
 //Input: input *CreateJdbcDataStoreInput
 func (s *DataStoresService) CreateJdbcDataStore(input *CreateJdbcDataStoreInput) (output *models.JdbcDataStore, resp *http.Response, err error) {
+	return s.CreateJdbcDataStoreWithContext(context.Background(), input)
+}
+
+//CreateJdbcDataStoreWithContext - Create a new data store.
+//RequestType: POST
+//Input: ctx context.Context, input *CreateJdbcDataStoreInput
+func (s *DataStoresService) CreateJdbcDataStoreWithContext(ctx context.Context, input *CreateJdbcDataStoreInput) (output *models.JdbcDataStore, resp *http.Response, err error) {
 	path := "/dataStores"
 	op := &request.Operation{
 		Name:       "CreateJdbcDataStore",
@@ -113,6 +145,7 @@ func (s *DataStoresService) CreateJdbcDataStore(input *CreateJdbcDataStoreInput)
 	}
 	output = &models.JdbcDataStore{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -126,6 +159,13 @@ func (s *DataStoresService) CreateJdbcDataStore(input *CreateJdbcDataStoreInput)
 //RequestType: POST
 //Input: input *CreateLdapDataStoreInput
 func (s *DataStoresService) CreateLdapDataStore(input *CreateLdapDataStoreInput) (output *models.LdapDataStore, resp *http.Response, err error) {
+	return s.CreateLdapDataStoreWithContext(context.Background(), input)
+}
+
+//CreateLdapDataStoreWithContext - Create a new data store.
+//RequestType: POST
+//Input: ctx context.Context, input *CreateLdapDataStoreInput
+func (s *DataStoresService) CreateLdapDataStoreWithContext(ctx context.Context, input *CreateLdapDataStoreInput) (output *models.LdapDataStore, resp *http.Response, err error) {
 	path := "/dataStores"
 	op := &request.Operation{
 		Name:       "CreateLdapDataStore",
@@ -134,6 +174,7 @@ func (s *DataStoresService) CreateLdapDataStore(input *CreateLdapDataStoreInput)
 	}
 	output = &models.LdapDataStore{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -147,6 +188,13 @@ func (s *DataStoresService) CreateLdapDataStore(input *CreateLdapDataStoreInput)
 //RequestType: POST
 //Input: input *CreateCustomDataStoreInput
 func (s *DataStoresService) CreateCustomDataStore(input *CreateCustomDataStoreInput) (output *models.CustomDataStore, resp *http.Response, err error) {
+	return s.CreateCustomDataStoreWithContext(context.Background(), input)
+}
+
+//CreateCustomDataStoreWithContext - Create a new data store.
+//RequestType: POST
+//Input: ctx context.Context, input *CreateCustomDataStoreInput
+func (s *DataStoresService) CreateCustomDataStoreWithContext(ctx context.Context, input *CreateCustomDataStoreInput) (output *models.CustomDataStore, resp *http.Response, err error) {
 	path := "/dataStores"
 	op := &request.Operation{
 		Name:       "CreateCustomDataStore",
@@ -155,6 +203,7 @@ func (s *DataStoresService) CreateCustomDataStore(input *CreateCustomDataStoreIn
 	}
 	output = &models.CustomDataStore{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -168,6 +217,13 @@ func (s *DataStoresService) CreateCustomDataStore(input *CreateCustomDataStoreIn
 //RequestType: GET
 //Input: input *GetDataStoreInput
 func (s *DataStoresService) GetDataStore(input *GetDataStoreInput) (output *models.DataStore, resp *http.Response, err error) {
+	return s.GetDataStoreWithContext(context.Background(), input)
+}
+
+//GetDataStoreWithContext - Find data store by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetDataStoreInput
+func (s *DataStoresService) GetDataStoreWithContext(ctx context.Context, input *GetDataStoreInput) (output *models.DataStore, resp *http.Response, err error) {
 	path := "/dataStores/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -178,6 +234,7 @@ func (s *DataStoresService) GetDataStore(input *GetDataStoreInput) (output *mode
 	}
 	output = &models.DataStore{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -189,6 +246,13 @@ func (s *DataStoresService) GetDataStore(input *GetDataStoreInput) (output *mode
 //RequestType: DELETE
 //Input: input *DeleteDataStoreInput
 func (s *DataStoresService) DeleteDataStore(input *DeleteDataStoreInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeleteDataStoreWithContext(context.Background(), input)
+}
+
+//DeleteDataStoreWithContext - Delete a data store.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteDataStoreInput
+func (s *DataStoresService) DeleteDataStoreWithContext(ctx context.Context, input *DeleteDataStoreInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/dataStores/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -199,6 +263,7 @@ func (s *DataStoresService) DeleteDataStore(input *DeleteDataStoreInput) (output
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -210,6 +275,13 @@ func (s *DataStoresService) DeleteDataStore(input *DeleteDataStoreInput) (output
 //RequestType: GET
 //Input: input *GetJdbcDataStoreInput
 func (s *DataStoresService) GetJdbcDataStore(input *GetJdbcDataStoreInput) (output *models.JdbcDataStore, resp *http.Response, err error) {
+	return s.GetJdbcDataStoreWithContext(context.Background(), input)
+}
+
+//GetJdbcDataStoreWithContext - Find data store by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetJdbcDataStoreInput
+func (s *DataStoresService) GetJdbcDataStoreWithContext(ctx context.Context, input *GetJdbcDataStoreInput) (output *models.JdbcDataStore, resp *http.Response, err error) {
 	path := "/dataStores/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -220,6 +292,7 @@ func (s *DataStoresService) GetJdbcDataStore(input *GetJdbcDataStoreInput) (outp
 	}
 	output = &models.JdbcDataStore{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -231,6 +304,13 @@ func (s *DataStoresService) GetJdbcDataStore(input *GetJdbcDataStoreInput) (outp
 //RequestType: GET
 //Input: input *GetLdapDataStoreInput
 func (s *DataStoresService) GetLdapDataStore(input *GetLdapDataStoreInput) (output *models.LdapDataStore, resp *http.Response, err error) {
+	return s.GetLdapDataStoreWithContext(context.Background(), input)
+}
+
+//GetLdapDataStoreWithContext - Find data store by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetLdapDataStoreInput
+func (s *DataStoresService) GetLdapDataStoreWithContext(ctx context.Context, input *GetLdapDataStoreInput) (output *models.LdapDataStore, resp *http.Response, err error) {
 	path := "/dataStores/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -241,6 +321,7 @@ func (s *DataStoresService) GetLdapDataStore(input *GetLdapDataStoreInput) (outp
 	}
 	output = &models.LdapDataStore{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -252,6 +333,13 @@ func (s *DataStoresService) GetLdapDataStore(input *GetLdapDataStoreInput) (outp
 //RequestType: GET
 //Input: input *GetCustomDataStoreInput
 func (s *DataStoresService) GetCustomDataStore(input *GetCustomDataStoreInput) (output *models.CustomDataStore, resp *http.Response, err error) {
+	return s.GetCustomDataStoreWithContext(context.Background(), input)
+}
+
+//GetCustomDataStoreWithContext - Find data store by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetCustomDataStoreInput
+func (s *DataStoresService) GetCustomDataStoreWithContext(ctx context.Context, input *GetCustomDataStoreInput) (output *models.CustomDataStore, resp *http.Response, err error) {
 	path := "/dataStores/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -262,6 +350,7 @@ func (s *DataStoresService) GetCustomDataStore(input *GetCustomDataStoreInput) (
 	}
 	output = &models.CustomDataStore{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -273,6 +362,13 @@ func (s *DataStoresService) GetCustomDataStore(input *GetCustomDataStoreInput) (
 //RequestType: PUT
 //Input: input *UpdateJdbcDataStoreInput
 func (s *DataStoresService) UpdateJdbcDataStore(input *UpdateJdbcDataStoreInput) (output *models.JdbcDataStore, resp *http.Response, err error) {
+	return s.UpdateJdbcDataStoreWithContext(context.Background(), input)
+}
+
+//UpdateJdbcDataStoreWithContext - Update a data store.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateJdbcDataStoreInput
+func (s *DataStoresService) UpdateJdbcDataStoreWithContext(ctx context.Context, input *UpdateJdbcDataStoreInput) (output *models.JdbcDataStore, resp *http.Response, err error) {
 	path := "/dataStores/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -283,6 +379,7 @@ func (s *DataStoresService) UpdateJdbcDataStore(input *UpdateJdbcDataStoreInput)
 	}
 	output = &models.JdbcDataStore{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -296,6 +393,13 @@ func (s *DataStoresService) UpdateJdbcDataStore(input *UpdateJdbcDataStoreInput)
 //RequestType: PUT
 //Input: input *UpdateLdapDataStoreInput
 func (s *DataStoresService) UpdateLdapDataStore(input *UpdateLdapDataStoreInput) (output *models.LdapDataStore, resp *http.Response, err error) {
+	return s.UpdateLdapDataStoreWithContext(context.Background(), input)
+}
+
+//UpdateLdapDataStoreWithContext - Update a data store.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateLdapDataStoreInput
+func (s *DataStoresService) UpdateLdapDataStoreWithContext(ctx context.Context, input *UpdateLdapDataStoreInput) (output *models.LdapDataStore, resp *http.Response, err error) {
 	path := "/dataStores/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -306,6 +410,7 @@ func (s *DataStoresService) UpdateLdapDataStore(input *UpdateLdapDataStoreInput)
 	}
 	output = &models.LdapDataStore{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -319,6 +424,13 @@ func (s *DataStoresService) UpdateLdapDataStore(input *UpdateLdapDataStoreInput)
 //RequestType: PUT
 //Input: input *UpdateCustomDataStoreInput
 func (s *DataStoresService) UpdateCustomDataStore(input *UpdateCustomDataStoreInput) (output *models.CustomDataStore, resp *http.Response, err error) {
+	return s.UpdateCustomDataStoreWithContext(context.Background(), input)
+}
+
+//UpdateCustomDataStoreWithContext - Update a data store.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateCustomDataStoreInput
+func (s *DataStoresService) UpdateCustomDataStoreWithContext(ctx context.Context, input *UpdateCustomDataStoreInput) (output *models.CustomDataStore, resp *http.Response, err error) {
 	path := "/dataStores/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -329,6 +441,7 @@ func (s *DataStoresService) UpdateCustomDataStore(input *UpdateCustomDataStoreIn
 	}
 	output = &models.CustomDataStore{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -342,6 +455,13 @@ func (s *DataStoresService) UpdateCustomDataStore(input *UpdateCustomDataStoreIn
 //RequestType: GET
 //Input: input *GetActionsInput
 func (s *DataStoresService) GetActions(input *GetActionsInput) (output *models.Actions, resp *http.Response, err error) {
+	return s.GetActionsWithContext(context.Background(), input)
+}
+
+//GetActionsWithContext - List the actions for a data store instance.
+//RequestType: GET
+//Input: ctx context.Context, input *GetActionsInput
+func (s *DataStoresService) GetActionsWithContext(ctx context.Context, input *GetActionsInput) (output *models.Actions, resp *http.Response, err error) {
 	path := "/dataStores/{id}/actions"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -352,6 +472,7 @@ func (s *DataStoresService) GetActions(input *GetActionsInput) (output *models.A
 	}
 	output = &models.Actions{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -363,6 +484,13 @@ func (s *DataStoresService) GetActions(input *GetActionsInput) (output *models.A
 //RequestType: GET
 //Input: input *GetActionInput
 func (s *DataStoresService) GetAction(input *GetActionInput) (output *models.Action, resp *http.Response, err error) {
+	return s.GetActionWithContext(context.Background(), input)
+}
+
+//GetActionWithContext - Find a data store instance's action by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetActionInput
+func (s *DataStoresService) GetActionWithContext(ctx context.Context, input *GetActionInput) (output *models.Action, resp *http.Response, err error) {
 	path := "/dataStores/{id}/actions/{actionId}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -375,6 +503,7 @@ func (s *DataStoresService) GetAction(input *GetActionInput) (output *models.Act
 	}
 	output = &models.Action{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -386,6 +515,13 @@ func (s *DataStoresService) GetAction(input *GetActionInput) (output *models.Act
 //RequestType: POST
 //Input: input *InvokeActionInput
 func (s *DataStoresService) InvokeAction(input *InvokeActionInput) (output *models.ActionResult, resp *http.Response, err error) {
+	return s.InvokeActionWithContext(context.Background(), input)
+}
+
+//InvokeActionWithContext - Invokes an action for a data source instance.
+//RequestType: POST
+//Input: ctx context.Context, input *InvokeActionInput
+func (s *DataStoresService) InvokeActionWithContext(ctx context.Context, input *InvokeActionInput) (output *models.ActionResult, resp *http.Response, err error) {
 	path := "/dataStores/{id}/actions/{actionId}/invokeAction"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -398,6 +534,7 @@ func (s *DataStoresService) InvokeAction(input *InvokeActionInput) (output *mode
 	}
 	output = &models.ActionResult{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

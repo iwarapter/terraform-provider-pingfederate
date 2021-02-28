@@ -25,13 +25,13 @@ func dataSourcePingFederateKeyPairSigningCsr() *schema.Resource {
 	}
 }
 
-func dataSourcePingFederateKeyPairSigningCsrRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourcePingFederateKeyPairSigningCsrRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	svc := m.(pfClient).KeyPairsSigning
 	input := &keyPairsSigning.ExportCsrInput{
 		Id: d.Get("id").(string),
 	}
-	result, _, err := svc.ExportCsr(input)
+	result, _, err := svc.ExportCsrWithContext(ctx, input)
 	if err != nil {
 		return diag.Errorf("unable to read KeyPairSigningCsr: %s", err)
 

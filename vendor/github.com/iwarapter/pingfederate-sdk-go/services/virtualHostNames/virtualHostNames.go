@@ -1,6 +1,7 @@
 package virtualHostNames
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
@@ -44,6 +45,13 @@ func (c *VirtualHostNamesService) newRequest(op *request.Operation, params, data
 //RequestType: GET
 //Input:
 func (s *VirtualHostNamesService) GetVirtualHostNamesSettings() (output *models.VirtualHostNameSettings, resp *http.Response, err error) {
+	return s.GetVirtualHostNamesSettingsWithContext(context.Background())
+}
+
+//GetVirtualHostNamesSettingsWithContext - Retrieve virtual host names settings.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *VirtualHostNamesService) GetVirtualHostNamesSettingsWithContext(ctx context.Context) (output *models.VirtualHostNameSettings, resp *http.Response, err error) {
 	path := "/virtualHostNames"
 	op := &request.Operation{
 		Name:       "GetVirtualHostNamesSettings",
@@ -52,6 +60,7 @@ func (s *VirtualHostNamesService) GetVirtualHostNamesSettings() (output *models.
 	}
 	output = &models.VirtualHostNameSettings{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -63,6 +72,13 @@ func (s *VirtualHostNamesService) GetVirtualHostNamesSettings() (output *models.
 //RequestType: PUT
 //Input: input *UpdateVirtualHostNamesSettingsInput
 func (s *VirtualHostNamesService) UpdateVirtualHostNamesSettings(input *UpdateVirtualHostNamesSettingsInput) (output *models.VirtualHostNameSettings, resp *http.Response, err error) {
+	return s.UpdateVirtualHostNamesSettingsWithContext(context.Background(), input)
+}
+
+//UpdateVirtualHostNamesSettingsWithContext - Update virtual host names settings.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateVirtualHostNamesSettingsInput
+func (s *VirtualHostNamesService) UpdateVirtualHostNamesSettingsWithContext(ctx context.Context, input *UpdateVirtualHostNamesSettingsInput) (output *models.VirtualHostNameSettings, resp *http.Response, err error) {
 	path := "/virtualHostNames"
 	op := &request.Operation{
 		Name:       "UpdateVirtualHostNamesSettings",
@@ -71,6 +87,7 @@ func (s *VirtualHostNamesService) UpdateVirtualHostNamesSettings(input *UpdateVi
 	}
 	output = &models.VirtualHostNameSettings{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

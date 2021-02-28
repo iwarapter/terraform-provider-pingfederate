@@ -37,7 +37,7 @@ func resourcePingFederateAuthenticationPoliciesSettingsResourceSchema() map[stri
 	}
 }
 
-func resourcePingFederateAuthenticationPoliciesSettingsResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateAuthenticationPoliciesSettingsResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).AuthenticationPolicies
 	input := authenticationPolicies.UpdateSettingsInput{
 		Body: pf.AuthenticationPoliciesSettings{
@@ -45,7 +45,7 @@ func resourcePingFederateAuthenticationPoliciesSettingsResourceCreate(_ context.
 			EnableSpAuthnSelection:  Bool(d.Get("enable_sp_authn_selection").(bool)),
 		},
 	}
-	result, _, err := svc.UpdateSettings(&input)
+	result, _, err := svc.UpdateSettingsWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to set AuthenticationPoliciesSettings: %s", err)
 	}
@@ -53,16 +53,16 @@ func resourcePingFederateAuthenticationPoliciesSettingsResourceCreate(_ context.
 	return resourcePingFederateAuthenticationPoliciesSettingsResourceReadResult(d, result)
 }
 
-func resourcePingFederateAuthenticationPoliciesSettingsResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateAuthenticationPoliciesSettingsResourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).AuthenticationPolicies
-	result, _, err := svc.GetSettings()
+	result, _, err := svc.GetSettingsWithContext(ctx)
 	if err != nil {
 		return diag.Errorf("unable to read AuthenticationPoliciesSettings: %s", err)
 	}
 	return resourcePingFederateAuthenticationPoliciesSettingsResourceReadResult(d, result)
 }
 
-func resourcePingFederateAuthenticationPoliciesSettingsResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateAuthenticationPoliciesSettingsResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).AuthenticationPolicies
 	input := authenticationPolicies.UpdateSettingsInput{
 		Body: pf.AuthenticationPoliciesSettings{
@@ -70,7 +70,7 @@ func resourcePingFederateAuthenticationPoliciesSettingsResourceUpdate(_ context.
 			EnableSpAuthnSelection:  Bool(d.Get("enable_sp_authn_selection").(bool)),
 		},
 	}
-	result, _, err := svc.UpdateSettings(&input)
+	result, _, err := svc.UpdateSettingsWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to update AuthenticationPolicies: %s", err)
 	}

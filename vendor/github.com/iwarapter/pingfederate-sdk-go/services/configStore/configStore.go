@@ -1,6 +1,7 @@
 package configStore
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -45,6 +46,13 @@ func (c *ConfigStoreService) newRequest(op *request.Operation, params, data inte
 //RequestType: GET
 //Input: input *GetSettingInput
 func (s *ConfigStoreService) GetSetting(input *GetSettingInput) (output *models.ConfigStoreSetting, resp *http.Response, err error) {
+	return s.GetSettingWithContext(context.Background(), input)
+}
+
+//GetSettingWithContext - Get a single setting from a bundle.
+//RequestType: GET
+//Input: ctx context.Context, input *GetSettingInput
+func (s *ConfigStoreService) GetSettingWithContext(ctx context.Context, input *GetSettingInput) (output *models.ConfigStoreSetting, resp *http.Response, err error) {
 	path := "/configStore/{bundle}/{id}"
 	path = strings.Replace(path, "{bundle}", input.Bundle, -1)
 
@@ -57,6 +65,7 @@ func (s *ConfigStoreService) GetSetting(input *GetSettingInput) (output *models.
 	}
 	output = &models.ConfigStoreSetting{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -68,6 +77,13 @@ func (s *ConfigStoreService) GetSetting(input *GetSettingInput) (output *models.
 //RequestType: PUT
 //Input: input *UpdateSettingInput
 func (s *ConfigStoreService) UpdateSetting(input *UpdateSettingInput) (output *models.ConfigStoreSetting, resp *http.Response, err error) {
+	return s.UpdateSettingWithContext(context.Background(), input)
+}
+
+//UpdateSettingWithContext - Create or update a setting/bundle.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateSettingInput
+func (s *ConfigStoreService) UpdateSettingWithContext(ctx context.Context, input *UpdateSettingInput) (output *models.ConfigStoreSetting, resp *http.Response, err error) {
 	path := "/configStore/{bundle}/{id}"
 	path = strings.Replace(path, "{bundle}", input.Bundle, -1)
 
@@ -80,6 +96,7 @@ func (s *ConfigStoreService) UpdateSetting(input *UpdateSettingInput) (output *m
 	}
 	output = &models.ConfigStoreSetting{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -91,6 +108,13 @@ func (s *ConfigStoreService) UpdateSetting(input *UpdateSettingInput) (output *m
 //RequestType: DELETE
 //Input: input *DeleteSettingInput
 func (s *ConfigStoreService) DeleteSetting(input *DeleteSettingInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeleteSettingWithContext(context.Background(), input)
+}
+
+//DeleteSettingWithContext - Delete a setting.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteSettingInput
+func (s *ConfigStoreService) DeleteSettingWithContext(ctx context.Context, input *DeleteSettingInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/configStore/{bundle}/{id}"
 	path = strings.Replace(path, "{bundle}", input.Bundle, -1)
 
@@ -103,6 +127,7 @@ func (s *ConfigStoreService) DeleteSetting(input *DeleteSettingInput) (output *m
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -114,6 +139,13 @@ func (s *ConfigStoreService) DeleteSetting(input *DeleteSettingInput) (output *m
 //RequestType: GET
 //Input: input *GetSettingsInput
 func (s *ConfigStoreService) GetSettings(input *GetSettingsInput) (output *models.ConfigStoreBundle, resp *http.Response, err error) {
+	return s.GetSettingsWithContext(context.Background(), input)
+}
+
+//GetSettingsWithContext - Get all settings from a bundle.
+//RequestType: GET
+//Input: ctx context.Context, input *GetSettingsInput
+func (s *ConfigStoreService) GetSettingsWithContext(ctx context.Context, input *GetSettingsInput) (output *models.ConfigStoreBundle, resp *http.Response, err error) {
 	path := "/configStore/{bundle}"
 	path = strings.Replace(path, "{bundle}", input.Bundle, -1)
 
@@ -124,6 +156,7 @@ func (s *ConfigStoreService) GetSettings(input *GetSettingsInput) (output *model
 	}
 	output = &models.ConfigStoreBundle{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

@@ -24,7 +24,7 @@ func resourcePingFederateKeypairSigningResource() *schema.Resource {
 	}
 }
 
-func resourcePingFederateKeypairSigningResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateKeypairSigningResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).KeyPairsSigning
 	if _, ok := d.GetOk("file_data"); ok {
 		input := keyPairsSigning.ImportKeyPairInput{
@@ -33,7 +33,7 @@ func resourcePingFederateKeypairSigningResourceCreate(_ context.Context, d *sche
 				Password: String(d.Get("password").(string)),
 			},
 		}
-		result, _, err := svc.ImportKeyPair(&input)
+		result, _, err := svc.ImportKeyPairWithContext(ctx, &input)
 		if err != nil {
 			return diag.Errorf("unable to create SigningKeypair: %s", err)
 		}
@@ -44,7 +44,7 @@ func resourcePingFederateKeypairSigningResourceCreate(_ context.Context, d *sche
 	input := keyPairsSigning.CreateKeyPairInput{
 		Body: *resourcePingFederateKeypairResourceReadData(d),
 	}
-	result, _, err := svc.CreateKeyPair(&input)
+	result, _, err := svc.CreateKeyPairWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to generate SigningKeypair: %s", err)
 	}
@@ -53,24 +53,24 @@ func resourcePingFederateKeypairSigningResourceCreate(_ context.Context, d *sche
 	return resourceKeypairResourceReadResult(d, result)
 }
 
-func resourcePingFederateKeypairSigningResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateKeypairSigningResourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).KeyPairsSigning
 	input := keyPairsSigning.GetKeyPairInput{
 		Id: d.Id(),
 	}
-	result, _, err := svc.GetKeyPair(&input)
+	result, _, err := svc.GetKeyPairWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to read SigningKeypair: %s", err)
 	}
 	return resourceKeypairResourceReadResult(d, result)
 }
 
-func resourcePingFederateKeypairSigningResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateKeypairSigningResourceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).KeyPairsSigning
 	input := keyPairsSigning.DeleteKeyPairInput{
 		Id: d.Id(),
 	}
-	_, _, err := svc.DeleteKeyPair(&input)
+	_, _, err := svc.DeleteKeyPairWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to delete SigningKeypair: %s", err)
 	}
@@ -82,15 +82,15 @@ func resourcePingFederateKeypairSigningResourceImport(ctx context.Context, d *sc
 	input := keyPairsSigning.GetKeyPairInput{
 		Id: d.Id(),
 	}
-	result, _, err := svc.GetKeyPair(&input)
+	result, _, err := svc.GetKeyPairWithContext(ctx, &input)
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve read signing keypair for import %s", err)
 	}
 
-	return importKeyPairView(ctx, d, result, err)
+	return importKeyPairView(d, result, err)
 }
 
-func importKeyPairView(_ context.Context, d *schema.ResourceData, result *pf.KeyPairView, err error) ([]*schema.ResourceData, error) {
+func importKeyPairView(d *schema.ResourceData, result *pf.KeyPairView, err error) ([]*schema.ResourceData, error) {
 	diags := resourceKeypairResourceReadResult(d, result)
 	//import based on upload
 	//TODO unable to properly support upload style imports - https://discuss.hashicorp.com/t/importer-functions-reading-file-config/17624/2

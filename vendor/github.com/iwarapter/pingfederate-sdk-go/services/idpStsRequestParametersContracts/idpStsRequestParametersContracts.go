@@ -1,6 +1,7 @@
 package idpStsRequestParametersContracts
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -45,6 +46,13 @@ func (c *IdpStsRequestParametersContractsService) newRequest(op *request.Operati
 //RequestType: GET
 //Input:
 func (s *IdpStsRequestParametersContractsService) GetStsRequestParamContracts() (output *models.StsRequestParametersContracts, resp *http.Response, err error) {
+	return s.GetStsRequestParamContractsWithContext(context.Background())
+}
+
+//GetStsRequestParamContractsWithContext - Get the list of STS Request Parameters Contracts.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *IdpStsRequestParametersContractsService) GetStsRequestParamContractsWithContext(ctx context.Context) (output *models.StsRequestParametersContracts, resp *http.Response, err error) {
 	path := "/idp/stsRequestParametersContracts"
 	op := &request.Operation{
 		Name:       "GetStsRequestParamContracts",
@@ -53,6 +61,7 @@ func (s *IdpStsRequestParametersContractsService) GetStsRequestParamContracts() 
 	}
 	output = &models.StsRequestParametersContracts{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -64,6 +73,13 @@ func (s *IdpStsRequestParametersContractsService) GetStsRequestParamContracts() 
 //RequestType: POST
 //Input: input *CreateStsRequestParamContractInput
 func (s *IdpStsRequestParametersContractsService) CreateStsRequestParamContract(input *CreateStsRequestParamContractInput) (output *models.StsRequestParametersContract, resp *http.Response, err error) {
+	return s.CreateStsRequestParamContractWithContext(context.Background(), input)
+}
+
+//CreateStsRequestParamContractWithContext - Create a new STS Request Parameters Contract.
+//RequestType: POST
+//Input: ctx context.Context, input *CreateStsRequestParamContractInput
+func (s *IdpStsRequestParametersContractsService) CreateStsRequestParamContractWithContext(ctx context.Context, input *CreateStsRequestParamContractInput) (output *models.StsRequestParametersContract, resp *http.Response, err error) {
 	path := "/idp/stsRequestParametersContracts"
 	op := &request.Operation{
 		Name:       "CreateStsRequestParamContract",
@@ -72,6 +88,7 @@ func (s *IdpStsRequestParametersContractsService) CreateStsRequestParamContract(
 	}
 	output = &models.StsRequestParametersContract{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -83,6 +100,13 @@ func (s *IdpStsRequestParametersContractsService) CreateStsRequestParamContract(
 //RequestType: GET
 //Input: input *GetStsRequestParamContractByIdInput
 func (s *IdpStsRequestParametersContractsService) GetStsRequestParamContractById(input *GetStsRequestParamContractByIdInput) (output *models.StsRequestParametersContract, resp *http.Response, err error) {
+	return s.GetStsRequestParamContractByIdWithContext(context.Background(), input)
+}
+
+//GetStsRequestParamContractByIdWithContext - Get a STS Request Parameters Contract.
+//RequestType: GET
+//Input: ctx context.Context, input *GetStsRequestParamContractByIdInput
+func (s *IdpStsRequestParametersContractsService) GetStsRequestParamContractByIdWithContext(ctx context.Context, input *GetStsRequestParamContractByIdInput) (output *models.StsRequestParametersContract, resp *http.Response, err error) {
 	path := "/idp/stsRequestParametersContracts/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -93,6 +117,7 @@ func (s *IdpStsRequestParametersContractsService) GetStsRequestParamContractById
 	}
 	output = &models.StsRequestParametersContract{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -104,6 +129,13 @@ func (s *IdpStsRequestParametersContractsService) GetStsRequestParamContractById
 //RequestType: PUT
 //Input: input *UpdateStsRequestParamContractByIdInput
 func (s *IdpStsRequestParametersContractsService) UpdateStsRequestParamContractById(input *UpdateStsRequestParamContractByIdInput) (output *models.StsRequestParametersContract, resp *http.Response, err error) {
+	return s.UpdateStsRequestParamContractByIdWithContext(context.Background(), input)
+}
+
+//UpdateStsRequestParamContractByIdWithContext - Update a STS Request Parameters Contract.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateStsRequestParamContractByIdInput
+func (s *IdpStsRequestParametersContractsService) UpdateStsRequestParamContractByIdWithContext(ctx context.Context, input *UpdateStsRequestParamContractByIdInput) (output *models.StsRequestParametersContract, resp *http.Response, err error) {
 	path := "/idp/stsRequestParametersContracts/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -114,6 +146,7 @@ func (s *IdpStsRequestParametersContractsService) UpdateStsRequestParamContractB
 	}
 	output = &models.StsRequestParametersContract{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -125,6 +158,13 @@ func (s *IdpStsRequestParametersContractsService) UpdateStsRequestParamContractB
 //RequestType: DELETE
 //Input: input *DeleteStsRequestParamContractByIdInput
 func (s *IdpStsRequestParametersContractsService) DeleteStsRequestParamContractById(input *DeleteStsRequestParamContractByIdInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeleteStsRequestParamContractByIdWithContext(context.Background(), input)
+}
+
+//DeleteStsRequestParamContractByIdWithContext - Delete a STS Request Parameters Contract.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteStsRequestParamContractByIdInput
+func (s *IdpStsRequestParametersContractsService) DeleteStsRequestParamContractByIdWithContext(ctx context.Context, input *DeleteStsRequestParamContractByIdInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/idp/stsRequestParametersContracts/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -135,6 +175,7 @@ func (s *IdpStsRequestParametersContractsService) DeleteStsRequestParamContractB
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

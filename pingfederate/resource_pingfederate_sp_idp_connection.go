@@ -129,13 +129,13 @@ func resourcePingFederateSpIdpConnectionResourceSchema() map[string]*schema.Sche
 	}
 }
 
-func resourcePingFederateSpIdpConnectionResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateSpIdpConnectionResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).SpIdpConnections
 	input := spIdpConnections.CreateConnectionInput{
 		Body:                     *resourcePingFederateSpIdpConnectionResourceReadData(d),
 		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
-	result, _, err := svc.CreateConnection(&input)
+	result, _, err := svc.CreateConnectionWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to create SpIdpConnections: %s", err)
 	}
@@ -143,26 +143,26 @@ func resourcePingFederateSpIdpConnectionResourceCreate(_ context.Context, d *sch
 	return resourcePingFederateSpIdpConnectionResourceReadResult(d, result)
 }
 
-func resourcePingFederateSpIdpConnectionResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateSpIdpConnectionResourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).SpIdpConnections
 	input := spIdpConnections.GetConnectionInput{
 		Id: d.Id(),
 	}
-	result, _, err := svc.GetConnection(&input)
+	result, _, err := svc.GetConnectionWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to read SpIdpConnections: %s", err)
 	}
 	return resourcePingFederateSpIdpConnectionResourceReadResult(d, result)
 }
 
-func resourcePingFederateSpIdpConnectionResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateSpIdpConnectionResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).SpIdpConnections
 	input := spIdpConnections.UpdateConnectionInput{
 		Id:                       d.Id(),
 		Body:                     *resourcePingFederateSpIdpConnectionResourceReadData(d),
 		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
-	result, _, err := svc.UpdateConnection(&input)
+	result, _, err := svc.UpdateConnectionWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to update SpIdpConnections: %s", err)
 	}
@@ -170,12 +170,12 @@ func resourcePingFederateSpIdpConnectionResourceUpdate(_ context.Context, d *sch
 	return resourcePingFederateSpIdpConnectionResourceReadResult(d, result)
 }
 
-func resourcePingFederateSpIdpConnectionResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateSpIdpConnectionResourceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).SpIdpConnections
 	input := spIdpConnections.DeleteConnectionInput{
 		Id: d.Id(),
 	}
-	_, _, err := svc.DeleteConnection(&input)
+	_, _, err := svc.DeleteConnectionWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to delete SpIdpConnections: %s", err)
 	}

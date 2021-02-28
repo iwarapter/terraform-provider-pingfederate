@@ -1,6 +1,7 @@
 package oauthClientRegistrationPolicies
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -45,6 +46,13 @@ func (c *OauthClientRegistrationPoliciesService) newRequest(op *request.Operatio
 //RequestType: GET
 //Input:
 func (s *OauthClientRegistrationPoliciesService) GetDynamicClientRegistrationDescriptors() (output *models.ClientRegistrationPolicyDescriptors, resp *http.Response, err error) {
+	return s.GetDynamicClientRegistrationDescriptorsWithContext(context.Background())
+}
+
+//GetDynamicClientRegistrationDescriptorsWithContext - Get the list of available client registration policy plugin descriptors.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *OauthClientRegistrationPoliciesService) GetDynamicClientRegistrationDescriptorsWithContext(ctx context.Context) (output *models.ClientRegistrationPolicyDescriptors, resp *http.Response, err error) {
 	path := "/oauth/clientRegistrationPolicies/descriptors"
 	op := &request.Operation{
 		Name:       "GetDynamicClientRegistrationDescriptors",
@@ -53,6 +61,7 @@ func (s *OauthClientRegistrationPoliciesService) GetDynamicClientRegistrationDes
 	}
 	output = &models.ClientRegistrationPolicyDescriptors{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -64,6 +73,13 @@ func (s *OauthClientRegistrationPoliciesService) GetDynamicClientRegistrationDes
 //RequestType: GET
 //Input: input *GetDynamicClientRegistrationDescriptorInput
 func (s *OauthClientRegistrationPoliciesService) GetDynamicClientRegistrationDescriptor(input *GetDynamicClientRegistrationDescriptorInput) (output *models.ClientRegistrationPolicyDescriptor, resp *http.Response, err error) {
+	return s.GetDynamicClientRegistrationDescriptorWithContext(context.Background(), input)
+}
+
+//GetDynamicClientRegistrationDescriptorWithContext - Get the description of a client registration policy plugin descriptor.
+//RequestType: GET
+//Input: ctx context.Context, input *GetDynamicClientRegistrationDescriptorInput
+func (s *OauthClientRegistrationPoliciesService) GetDynamicClientRegistrationDescriptorWithContext(ctx context.Context, input *GetDynamicClientRegistrationDescriptorInput) (output *models.ClientRegistrationPolicyDescriptor, resp *http.Response, err error) {
 	path := "/oauth/clientRegistrationPolicies/descriptors/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -74,6 +90,7 @@ func (s *OauthClientRegistrationPoliciesService) GetDynamicClientRegistrationDes
 	}
 	output = &models.ClientRegistrationPolicyDescriptor{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -85,6 +102,13 @@ func (s *OauthClientRegistrationPoliciesService) GetDynamicClientRegistrationDes
 //RequestType: GET
 //Input:
 func (s *OauthClientRegistrationPoliciesService) GetDynamicClientRegistrationPolicies() (output *models.ClientRegistrationPolicies, resp *http.Response, err error) {
+	return s.GetDynamicClientRegistrationPoliciesWithContext(context.Background())
+}
+
+//GetDynamicClientRegistrationPoliciesWithContext - Get a list of client registration policy plugin instances.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *OauthClientRegistrationPoliciesService) GetDynamicClientRegistrationPoliciesWithContext(ctx context.Context) (output *models.ClientRegistrationPolicies, resp *http.Response, err error) {
 	path := "/oauth/clientRegistrationPolicies"
 	op := &request.Operation{
 		Name:       "GetDynamicClientRegistrationPolicies",
@@ -93,6 +117,7 @@ func (s *OauthClientRegistrationPoliciesService) GetDynamicClientRegistrationPol
 	}
 	output = &models.ClientRegistrationPolicies{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -104,6 +129,13 @@ func (s *OauthClientRegistrationPoliciesService) GetDynamicClientRegistrationPol
 //RequestType: POST
 //Input: input *CreateDynamicClientRegistrationPolicyInput
 func (s *OauthClientRegistrationPoliciesService) CreateDynamicClientRegistrationPolicy(input *CreateDynamicClientRegistrationPolicyInput) (output *models.ClientRegistrationPolicy, resp *http.Response, err error) {
+	return s.CreateDynamicClientRegistrationPolicyWithContext(context.Background(), input)
+}
+
+//CreateDynamicClientRegistrationPolicyWithContext - Create a client registration policy plugin instance.
+//RequestType: POST
+//Input: ctx context.Context, input *CreateDynamicClientRegistrationPolicyInput
+func (s *OauthClientRegistrationPoliciesService) CreateDynamicClientRegistrationPolicyWithContext(ctx context.Context, input *CreateDynamicClientRegistrationPolicyInput) (output *models.ClientRegistrationPolicy, resp *http.Response, err error) {
 	path := "/oauth/clientRegistrationPolicies"
 	op := &request.Operation{
 		Name:       "CreateDynamicClientRegistrationPolicy",
@@ -112,6 +144,7 @@ func (s *OauthClientRegistrationPoliciesService) CreateDynamicClientRegistration
 	}
 	output = &models.ClientRegistrationPolicy{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -123,6 +156,13 @@ func (s *OauthClientRegistrationPoliciesService) CreateDynamicClientRegistration
 //RequestType: GET
 //Input: input *GetDynamicClientRegistrationPolicyInput
 func (s *OauthClientRegistrationPoliciesService) GetDynamicClientRegistrationPolicy(input *GetDynamicClientRegistrationPolicyInput) (output *models.ClientRegistrationPolicy, resp *http.Response, err error) {
+	return s.GetDynamicClientRegistrationPolicyWithContext(context.Background(), input)
+}
+
+//GetDynamicClientRegistrationPolicyWithContext - Get a specific client registration policy plugin instance.
+//RequestType: GET
+//Input: ctx context.Context, input *GetDynamicClientRegistrationPolicyInput
+func (s *OauthClientRegistrationPoliciesService) GetDynamicClientRegistrationPolicyWithContext(ctx context.Context, input *GetDynamicClientRegistrationPolicyInput) (output *models.ClientRegistrationPolicy, resp *http.Response, err error) {
 	path := "/oauth/clientRegistrationPolicies/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -133,6 +173,7 @@ func (s *OauthClientRegistrationPoliciesService) GetDynamicClientRegistrationPol
 	}
 	output = &models.ClientRegistrationPolicy{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -144,6 +185,13 @@ func (s *OauthClientRegistrationPoliciesService) GetDynamicClientRegistrationPol
 //RequestType: PUT
 //Input: input *UpdateDynamicClientRegistrationPolicyInput
 func (s *OauthClientRegistrationPoliciesService) UpdateDynamicClientRegistrationPolicy(input *UpdateDynamicClientRegistrationPolicyInput) (output *models.ClientRegistrationPolicy, resp *http.Response, err error) {
+	return s.UpdateDynamicClientRegistrationPolicyWithContext(context.Background(), input)
+}
+
+//UpdateDynamicClientRegistrationPolicyWithContext - Update a client registration policy plugin instance.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateDynamicClientRegistrationPolicyInput
+func (s *OauthClientRegistrationPoliciesService) UpdateDynamicClientRegistrationPolicyWithContext(ctx context.Context, input *UpdateDynamicClientRegistrationPolicyInput) (output *models.ClientRegistrationPolicy, resp *http.Response, err error) {
 	path := "/oauth/clientRegistrationPolicies/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -154,6 +202,7 @@ func (s *OauthClientRegistrationPoliciesService) UpdateDynamicClientRegistration
 	}
 	output = &models.ClientRegistrationPolicy{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -165,6 +214,13 @@ func (s *OauthClientRegistrationPoliciesService) UpdateDynamicClientRegistration
 //RequestType: DELETE
 //Input: input *DeleteDynamicClientRegistrationPolicyInput
 func (s *OauthClientRegistrationPoliciesService) DeleteDynamicClientRegistrationPolicy(input *DeleteDynamicClientRegistrationPolicyInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeleteDynamicClientRegistrationPolicyWithContext(context.Background(), input)
+}
+
+//DeleteDynamicClientRegistrationPolicyWithContext - Delete a client registration policy plugin instance.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteDynamicClientRegistrationPolicyInput
+func (s *OauthClientRegistrationPoliciesService) DeleteDynamicClientRegistrationPolicyWithContext(ctx context.Context, input *DeleteDynamicClientRegistrationPolicyInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/oauth/clientRegistrationPolicies/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -175,6 +231,7 @@ func (s *OauthClientRegistrationPoliciesService) DeleteDynamicClientRegistration
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

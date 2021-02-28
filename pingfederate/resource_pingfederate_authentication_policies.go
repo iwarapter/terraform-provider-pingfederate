@@ -64,13 +64,13 @@ func resourcePingFederateAuthenticationPoliciesResourceSchema() map[string]*sche
 	}
 }
 
-func resourcePingFederateAuthenticationPoliciesResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateAuthenticationPoliciesResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).AuthenticationPolicies
 	input := authenticationPolicies.UpdateDefaultAuthenticationPolicyInput{
 		Body:                     *resourcePingFederateAuthenticationPoliciesResourceReadData(d),
 		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
-	result, _, err := svc.UpdateDefaultAuthenticationPolicy(&input)
+	result, _, err := svc.UpdateDefaultAuthenticationPolicyWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to create AuthenticationPolicies: %s", err)
 	}
@@ -78,22 +78,22 @@ func resourcePingFederateAuthenticationPoliciesResourceCreate(_ context.Context,
 	return resourcePingFederateAuthenticationPoliciesResourceReadResult(d, result)
 }
 
-func resourcePingFederateAuthenticationPoliciesResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateAuthenticationPoliciesResourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).AuthenticationPolicies
-	result, _, err := svc.GetDefaultAuthenticationPolicy()
+	result, _, err := svc.GetDefaultAuthenticationPolicyWithContext(ctx)
 	if err != nil {
 		return diag.Errorf("unable to read AuthenticationPolicies: %s", err)
 	}
 	return resourcePingFederateAuthenticationPoliciesResourceReadResult(d, result)
 }
 
-func resourcePingFederateAuthenticationPoliciesResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateAuthenticationPoliciesResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).AuthenticationPolicies
 	input := authenticationPolicies.UpdateDefaultAuthenticationPolicyInput{
 		Body:                     *resourcePingFederateAuthenticationPoliciesResourceReadData(d),
 		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
-	result, _, err := svc.UpdateDefaultAuthenticationPolicy(&input)
+	result, _, err := svc.UpdateDefaultAuthenticationPolicyWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to update AuthenticationPolicies: %s", err)
 	}
@@ -101,12 +101,12 @@ func resourcePingFederateAuthenticationPoliciesResourceUpdate(_ context.Context,
 	return resourcePingFederateAuthenticationPoliciesResourceReadResult(d, result)
 }
 
-func resourcePingFederateAuthenticationPoliciesResourceDelete(_ context.Context, _ *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateAuthenticationPoliciesResourceDelete(ctx context.Context, _ *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).AuthenticationPolicies
 	input := authenticationPolicies.UpdateDefaultAuthenticationPolicyInput{
 		Body: pf.AuthenticationPolicy{},
 	}
-	_, _, err := svc.UpdateDefaultAuthenticationPolicy(&input)
+	_, _, err := svc.UpdateDefaultAuthenticationPolicyWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to reset AuthenticationPolicies: %s", err)
 	}

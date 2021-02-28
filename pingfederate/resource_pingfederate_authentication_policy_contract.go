@@ -48,12 +48,12 @@ func resourcePingFederateAuthenticationPolicyContractResourceSchema() map[string
 	}
 }
 
-func resourcePingFederateAuthenticationPolicyContractResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateAuthenticationPolicyContractResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).AuthenticationPolicyContracts
 	input := authenticationPolicyContracts.CreateAuthenticationPolicyContractInput{
 		Body: *resourcePingFederateAuthenticationPolicyContractResourceReadData(d),
 	}
-	result, _, err := svc.CreateAuthenticationPolicyContract(&input)
+	result, _, err := svc.CreateAuthenticationPolicyContractWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to create AuthenticationPolicyContracts: %s", err)
 	}
@@ -61,25 +61,25 @@ func resourcePingFederateAuthenticationPolicyContractResourceCreate(_ context.Co
 	return resourcePingFederateAuthenticationPolicyContractResourceReadResult(d, result)
 }
 
-func resourcePingFederateAuthenticationPolicyContractResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateAuthenticationPolicyContractResourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).AuthenticationPolicyContracts
 	input := authenticationPolicyContracts.GetAuthenticationPolicyContractInput{
 		Id: d.Id(),
 	}
-	result, _, err := svc.GetAuthenticationPolicyContract(&input)
+	result, _, err := svc.GetAuthenticationPolicyContractWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to read AuthenticationPolicyContracts: %s", err)
 	}
 	return resourcePingFederateAuthenticationPolicyContractResourceReadResult(d, result)
 }
 
-func resourcePingFederateAuthenticationPolicyContractResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateAuthenticationPolicyContractResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).AuthenticationPolicyContracts
 	input := authenticationPolicyContracts.UpdateAuthenticationPolicyContractInput{
 		Id:   d.Id(),
 		Body: *resourcePingFederateAuthenticationPolicyContractResourceReadData(d),
 	}
-	result, _, err := svc.UpdateAuthenticationPolicyContract(&input)
+	result, _, err := svc.UpdateAuthenticationPolicyContractWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to update AuthenticationPolicyContracts: %s", err)
 	}
@@ -87,12 +87,12 @@ func resourcePingFederateAuthenticationPolicyContractResourceUpdate(_ context.Co
 	return resourcePingFederateAuthenticationPolicyContractResourceReadResult(d, result)
 }
 
-func resourcePingFederateAuthenticationPolicyContractResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateAuthenticationPolicyContractResourceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).AuthenticationPolicyContracts
 	input := authenticationPolicyContracts.DeleteAuthenticationPolicyContractInput{
 		Id: d.Id(),
 	}
-	_, _, err := svc.DeleteAuthenticationPolicyContract(&input)
+	_, _, err := svc.DeleteAuthenticationPolicyContractWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to delete AuthenticationPolicyContracts: %s", err)
 	}

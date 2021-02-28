@@ -1,6 +1,7 @@
 package spTokenGenerators
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -45,6 +46,13 @@ func (c *SpTokenGeneratorsService) newRequest(op *request.Operation, params, dat
 //RequestType: GET
 //Input:
 func (s *SpTokenGeneratorsService) GetTokenGeneratorDescriptors() (output *models.TokenGeneratorDescriptors, resp *http.Response, err error) {
+	return s.GetTokenGeneratorDescriptorsWithContext(context.Background())
+}
+
+//GetTokenGeneratorDescriptorsWithContext - Get the list of available token generators.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *SpTokenGeneratorsService) GetTokenGeneratorDescriptorsWithContext(ctx context.Context) (output *models.TokenGeneratorDescriptors, resp *http.Response, err error) {
 	path := "/sp/tokenGenerators/descriptors"
 	op := &request.Operation{
 		Name:       "GetTokenGeneratorDescriptors",
@@ -53,6 +61,7 @@ func (s *SpTokenGeneratorsService) GetTokenGeneratorDescriptors() (output *model
 	}
 	output = &models.TokenGeneratorDescriptors{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -64,6 +73,13 @@ func (s *SpTokenGeneratorsService) GetTokenGeneratorDescriptors() (output *model
 //RequestType: GET
 //Input: input *GetTokenGeneratorDescriptorsByIdInput
 func (s *SpTokenGeneratorsService) GetTokenGeneratorDescriptorsById(input *GetTokenGeneratorDescriptorsByIdInput) (output *models.TokenGeneratorDescriptor, resp *http.Response, err error) {
+	return s.GetTokenGeneratorDescriptorsByIdWithContext(context.Background(), input)
+}
+
+//GetTokenGeneratorDescriptorsByIdWithContext - Get the description of a token generator plugin by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetTokenGeneratorDescriptorsByIdInput
+func (s *SpTokenGeneratorsService) GetTokenGeneratorDescriptorsByIdWithContext(ctx context.Context, input *GetTokenGeneratorDescriptorsByIdInput) (output *models.TokenGeneratorDescriptor, resp *http.Response, err error) {
 	path := "/sp/tokenGenerators/descriptors/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -74,6 +90,7 @@ func (s *SpTokenGeneratorsService) GetTokenGeneratorDescriptorsById(input *GetTo
 	}
 	output = &models.TokenGeneratorDescriptor{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -85,6 +102,13 @@ func (s *SpTokenGeneratorsService) GetTokenGeneratorDescriptorsById(input *GetTo
 //RequestType: GET
 //Input:
 func (s *SpTokenGeneratorsService) GetTokenGenerators() (output *models.TokenGenerators, resp *http.Response, err error) {
+	return s.GetTokenGeneratorsWithContext(context.Background())
+}
+
+//GetTokenGeneratorsWithContext - Get the list of token generator instances.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *SpTokenGeneratorsService) GetTokenGeneratorsWithContext(ctx context.Context) (output *models.TokenGenerators, resp *http.Response, err error) {
 	path := "/sp/tokenGenerators"
 	op := &request.Operation{
 		Name:       "GetTokenGenerators",
@@ -93,6 +117,7 @@ func (s *SpTokenGeneratorsService) GetTokenGenerators() (output *models.TokenGen
 	}
 	output = &models.TokenGenerators{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -104,6 +129,13 @@ func (s *SpTokenGeneratorsService) GetTokenGenerators() (output *models.TokenGen
 //RequestType: POST
 //Input: input *CreateTokenGeneratorInput
 func (s *SpTokenGeneratorsService) CreateTokenGenerator(input *CreateTokenGeneratorInput) (output *models.TokenGenerator, resp *http.Response, err error) {
+	return s.CreateTokenGeneratorWithContext(context.Background(), input)
+}
+
+//CreateTokenGeneratorWithContext - Create a new token generator instance.
+//RequestType: POST
+//Input: ctx context.Context, input *CreateTokenGeneratorInput
+func (s *SpTokenGeneratorsService) CreateTokenGeneratorWithContext(ctx context.Context, input *CreateTokenGeneratorInput) (output *models.TokenGenerator, resp *http.Response, err error) {
 	path := "/sp/tokenGenerators"
 	op := &request.Operation{
 		Name:       "CreateTokenGenerator",
@@ -112,6 +144,7 @@ func (s *SpTokenGeneratorsService) CreateTokenGenerator(input *CreateTokenGenera
 	}
 	output = &models.TokenGenerator{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -123,6 +156,13 @@ func (s *SpTokenGeneratorsService) CreateTokenGenerator(input *CreateTokenGenera
 //RequestType: GET
 //Input: input *GetTokenGeneratorInput
 func (s *SpTokenGeneratorsService) GetTokenGenerator(input *GetTokenGeneratorInput) (output *models.TokenGenerator, resp *http.Response, err error) {
+	return s.GetTokenGeneratorWithContext(context.Background(), input)
+}
+
+//GetTokenGeneratorWithContext - Find a token generator instance by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetTokenGeneratorInput
+func (s *SpTokenGeneratorsService) GetTokenGeneratorWithContext(ctx context.Context, input *GetTokenGeneratorInput) (output *models.TokenGenerator, resp *http.Response, err error) {
 	path := "/sp/tokenGenerators/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -133,6 +173,7 @@ func (s *SpTokenGeneratorsService) GetTokenGenerator(input *GetTokenGeneratorInp
 	}
 	output = &models.TokenGenerator{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -144,6 +185,13 @@ func (s *SpTokenGeneratorsService) GetTokenGenerator(input *GetTokenGeneratorInp
 //RequestType: PUT
 //Input: input *UpdateTokenGeneratorInput
 func (s *SpTokenGeneratorsService) UpdateTokenGenerator(input *UpdateTokenGeneratorInput) (output *models.TokenGenerator, resp *http.Response, err error) {
+	return s.UpdateTokenGeneratorWithContext(context.Background(), input)
+}
+
+//UpdateTokenGeneratorWithContext - Update a token generator instance.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateTokenGeneratorInput
+func (s *SpTokenGeneratorsService) UpdateTokenGeneratorWithContext(ctx context.Context, input *UpdateTokenGeneratorInput) (output *models.TokenGenerator, resp *http.Response, err error) {
 	path := "/sp/tokenGenerators/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -154,6 +202,7 @@ func (s *SpTokenGeneratorsService) UpdateTokenGenerator(input *UpdateTokenGenera
 	}
 	output = &models.TokenGenerator{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -165,6 +214,13 @@ func (s *SpTokenGeneratorsService) UpdateTokenGenerator(input *UpdateTokenGenera
 //RequestType: DELETE
 //Input: input *DeleteTokenGeneratorInput
 func (s *SpTokenGeneratorsService) DeleteTokenGenerator(input *DeleteTokenGeneratorInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeleteTokenGeneratorWithContext(context.Background(), input)
+}
+
+//DeleteTokenGeneratorWithContext - Delete a token generator instance.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteTokenGeneratorInput
+func (s *SpTokenGeneratorsService) DeleteTokenGeneratorWithContext(ctx context.Context, input *DeleteTokenGeneratorInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/sp/tokenGenerators/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -175,6 +231,7 @@ func (s *SpTokenGeneratorsService) DeleteTokenGenerator(input *DeleteTokenGenera
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

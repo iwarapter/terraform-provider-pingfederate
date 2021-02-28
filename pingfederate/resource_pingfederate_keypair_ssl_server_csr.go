@@ -22,7 +22,7 @@ func resourcePingFederateKeypairSslServerCsrResource() *schema.Resource {
 	}
 }
 
-func resourcePingFederateKeypairSslServerCsrResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateKeypairSslServerCsrResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).KeyPairsSslServer
 	input := keyPairsSslServer.ImportCsrResponseInput{
 		Body: pf.CSRResponse{
@@ -30,7 +30,7 @@ func resourcePingFederateKeypairSslServerCsrResourceCreate(_ context.Context, d 
 		},
 		Id: d.Get("keypair_id").(string),
 	}
-	result, _, err := svc.ImportCsrResponse(&input)
+	result, _, err := svc.ImportCsrResponseWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to create SslServerCsr: %s", err)
 	}

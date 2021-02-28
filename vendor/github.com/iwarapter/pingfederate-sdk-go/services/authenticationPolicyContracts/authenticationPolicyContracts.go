@@ -1,6 +1,7 @@
 package authenticationPolicyContracts
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -45,6 +46,13 @@ func (c *AuthenticationPolicyContractsService) newRequest(op *request.Operation,
 //RequestType: GET
 //Input: input *GetAuthenticationPolicyContractsInput
 func (s *AuthenticationPolicyContractsService) GetAuthenticationPolicyContracts(input *GetAuthenticationPolicyContractsInput) (output *models.AuthenticationPolicyContracts, resp *http.Response, err error) {
+	return s.GetAuthenticationPolicyContractsWithContext(context.Background(), input)
+}
+
+//GetAuthenticationPolicyContractsWithContext - Gets the Authentication Policy Contracts.
+//RequestType: GET
+//Input: ctx context.Context, input *GetAuthenticationPolicyContractsInput
+func (s *AuthenticationPolicyContractsService) GetAuthenticationPolicyContractsWithContext(ctx context.Context, input *GetAuthenticationPolicyContractsInput) (output *models.AuthenticationPolicyContracts, resp *http.Response, err error) {
 	path := "/authenticationPolicyContracts"
 	op := &request.Operation{
 		Name:       "GetAuthenticationPolicyContracts",
@@ -58,6 +66,7 @@ func (s *AuthenticationPolicyContractsService) GetAuthenticationPolicyContracts(
 	}
 	output = &models.AuthenticationPolicyContracts{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -69,6 +78,13 @@ func (s *AuthenticationPolicyContractsService) GetAuthenticationPolicyContracts(
 //RequestType: POST
 //Input: input *CreateAuthenticationPolicyContractInput
 func (s *AuthenticationPolicyContractsService) CreateAuthenticationPolicyContract(input *CreateAuthenticationPolicyContractInput) (output *models.AuthenticationPolicyContract, resp *http.Response, err error) {
+	return s.CreateAuthenticationPolicyContractWithContext(context.Background(), input)
+}
+
+//CreateAuthenticationPolicyContractWithContext - Create a new Authentication Policy Contract.
+//RequestType: POST
+//Input: ctx context.Context, input *CreateAuthenticationPolicyContractInput
+func (s *AuthenticationPolicyContractsService) CreateAuthenticationPolicyContractWithContext(ctx context.Context, input *CreateAuthenticationPolicyContractInput) (output *models.AuthenticationPolicyContract, resp *http.Response, err error) {
 	path := "/authenticationPolicyContracts"
 	op := &request.Operation{
 		Name:       "CreateAuthenticationPolicyContract",
@@ -77,6 +93,7 @@ func (s *AuthenticationPolicyContractsService) CreateAuthenticationPolicyContrac
 	}
 	output = &models.AuthenticationPolicyContract{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -88,6 +105,13 @@ func (s *AuthenticationPolicyContractsService) CreateAuthenticationPolicyContrac
 //RequestType: GET
 //Input: input *GetAuthenticationPolicyContractInput
 func (s *AuthenticationPolicyContractsService) GetAuthenticationPolicyContract(input *GetAuthenticationPolicyContractInput) (output *models.AuthenticationPolicyContract, resp *http.Response, err error) {
+	return s.GetAuthenticationPolicyContractWithContext(context.Background(), input)
+}
+
+//GetAuthenticationPolicyContractWithContext - Gets the Authentication Policy Contract by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetAuthenticationPolicyContractInput
+func (s *AuthenticationPolicyContractsService) GetAuthenticationPolicyContractWithContext(ctx context.Context, input *GetAuthenticationPolicyContractInput) (output *models.AuthenticationPolicyContract, resp *http.Response, err error) {
 	path := "/authenticationPolicyContracts/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -98,6 +122,7 @@ func (s *AuthenticationPolicyContractsService) GetAuthenticationPolicyContract(i
 	}
 	output = &models.AuthenticationPolicyContract{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -109,6 +134,13 @@ func (s *AuthenticationPolicyContractsService) GetAuthenticationPolicyContract(i
 //RequestType: PUT
 //Input: input *UpdateAuthenticationPolicyContractInput
 func (s *AuthenticationPolicyContractsService) UpdateAuthenticationPolicyContract(input *UpdateAuthenticationPolicyContractInput) (output *models.AuthenticationPolicyContract, resp *http.Response, err error) {
+	return s.UpdateAuthenticationPolicyContractWithContext(context.Background(), input)
+}
+
+//UpdateAuthenticationPolicyContractWithContext - Update an Authentication Policy Contract by ID.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateAuthenticationPolicyContractInput
+func (s *AuthenticationPolicyContractsService) UpdateAuthenticationPolicyContractWithContext(ctx context.Context, input *UpdateAuthenticationPolicyContractInput) (output *models.AuthenticationPolicyContract, resp *http.Response, err error) {
 	path := "/authenticationPolicyContracts/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -119,6 +151,7 @@ func (s *AuthenticationPolicyContractsService) UpdateAuthenticationPolicyContrac
 	}
 	output = &models.AuthenticationPolicyContract{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -130,6 +163,13 @@ func (s *AuthenticationPolicyContractsService) UpdateAuthenticationPolicyContrac
 //RequestType: DELETE
 //Input: input *DeleteAuthenticationPolicyContractInput
 func (s *AuthenticationPolicyContractsService) DeleteAuthenticationPolicyContract(input *DeleteAuthenticationPolicyContractInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeleteAuthenticationPolicyContractWithContext(context.Background(), input)
+}
+
+//DeleteAuthenticationPolicyContractWithContext - Delete an Authentication Policy Contract.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteAuthenticationPolicyContractInput
+func (s *AuthenticationPolicyContractsService) DeleteAuthenticationPolicyContractWithContext(ctx context.Context, input *DeleteAuthenticationPolicyContractInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/authenticationPolicyContracts/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -140,6 +180,7 @@ func (s *AuthenticationPolicyContractsService) DeleteAuthenticationPolicyContrac
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

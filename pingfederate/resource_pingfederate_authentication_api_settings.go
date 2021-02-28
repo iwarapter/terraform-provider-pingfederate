@@ -40,12 +40,12 @@ func resourcePingFederateAuthnApiSettingsResourceSchema() map[string]*schema.Sch
 	}
 }
 
-func resourcePingFederateAuthnApiSettingsResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateAuthnApiSettingsResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).AuthenticationApi
 	input := authenticationApi.UpdateAuthenticationApiSettingsInput{
 		Body: *resourcePingFederateAuthnApiSettingsResourceReadData(d),
 	}
-	result, _, err := svc.UpdateAuthenticationApiSettings(&input)
+	result, _, err := svc.UpdateAuthenticationApiSettingsWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to create AuthnApiSettings: %s", err)
 	}
@@ -53,28 +53,28 @@ func resourcePingFederateAuthnApiSettingsResourceCreate(_ context.Context, d *sc
 	return resourcePingFederateAuthnApiSettingsResourceReadResult(d, result)
 }
 
-func resourcePingFederateAuthnApiSettingsResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateAuthnApiSettingsResourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).AuthenticationApi
-	result, _, err := svc.GetAuthenticationApiSettings()
+	result, _, err := svc.GetAuthenticationApiSettingsWithContext(ctx)
 	if err != nil {
 		return diag.Errorf("unable to read AuthnApiSettings: %s", err)
 	}
 	return resourcePingFederateAuthnApiSettingsResourceReadResult(d, result)
 }
 
-func resourcePingFederateAuthnApiSettingsResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateAuthnApiSettingsResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).AuthenticationApi
 	input := authenticationApi.UpdateAuthenticationApiSettingsInput{
 		Body: *resourcePingFederateAuthnApiSettingsResourceReadData(d),
 	}
-	result, _, err := svc.UpdateAuthenticationApiSettings(&input)
+	result, _, err := svc.UpdateAuthenticationApiSettingsWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to update AuthnApiSettings: %s", err)
 	}
 	return resourcePingFederateAuthnApiSettingsResourceReadResult(d, result)
 }
 
-func resourcePingFederateAuthnApiSettingsResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateAuthnApiSettingsResourceDelete(_ context.Context, _ *schema.ResourceData, _ interface{}) diag.Diagnostics {
 	return nil
 }
 

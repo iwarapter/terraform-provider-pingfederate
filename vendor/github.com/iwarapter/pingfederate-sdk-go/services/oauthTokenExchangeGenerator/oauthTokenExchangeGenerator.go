@@ -1,6 +1,7 @@
 package oauthTokenExchangeGenerator
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -46,6 +47,13 @@ func (c *OauthTokenExchangeGeneratorService) newRequest(op *request.Operation, p
 //RequestType: GET
 //Input:
 func (s *OauthTokenExchangeGeneratorService) GetSettings() (output *models.TokenExchangeGeneratorSettings, resp *http.Response, err error) {
+	return s.GetSettingsWithContext(context.Background())
+}
+
+//GetSettingsWithContext - Get general OAuth 2.0 Token Exchange Generator settings.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *OauthTokenExchangeGeneratorService) GetSettingsWithContext(ctx context.Context) (output *models.TokenExchangeGeneratorSettings, resp *http.Response, err error) {
 	path := "/oauth/tokenExchange/generator/settings"
 	op := &request.Operation{
 		Name:       "GetSettings",
@@ -54,6 +62,7 @@ func (s *OauthTokenExchangeGeneratorService) GetSettings() (output *models.Token
 	}
 	output = &models.TokenExchangeGeneratorSettings{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -65,6 +74,13 @@ func (s *OauthTokenExchangeGeneratorService) GetSettings() (output *models.Token
 //RequestType: PUT
 //Input: input *UpdateSettingsInput
 func (s *OauthTokenExchangeGeneratorService) UpdateSettings(input *UpdateSettingsInput) (output *models.TokenExchangeGeneratorSettings, resp *http.Response, err error) {
+	return s.UpdateSettingsWithContext(context.Background(), input)
+}
+
+//UpdateSettingsWithContext - Update general OAuth 2.0 Token Exchange Generator settings.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateSettingsInput
+func (s *OauthTokenExchangeGeneratorService) UpdateSettingsWithContext(ctx context.Context, input *UpdateSettingsInput) (output *models.TokenExchangeGeneratorSettings, resp *http.Response, err error) {
 	path := "/oauth/tokenExchange/generator/settings"
 	op := &request.Operation{
 		Name:       "UpdateSettings",
@@ -73,6 +89,7 @@ func (s *OauthTokenExchangeGeneratorService) UpdateSettings(input *UpdateSetting
 	}
 	output = &models.TokenExchangeGeneratorSettings{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("bypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -86,6 +103,13 @@ func (s *OauthTokenExchangeGeneratorService) UpdateSettings(input *UpdateSetting
 //RequestType: GET
 //Input:
 func (s *OauthTokenExchangeGeneratorService) GetGroups() (output *models.TokenExchangeGeneratorGroups, resp *http.Response, err error) {
+	return s.GetGroupsWithContext(context.Background())
+}
+
+//GetGroupsWithContext - Get list of OAuth 2.0 Token Exchange Generator groups.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *OauthTokenExchangeGeneratorService) GetGroupsWithContext(ctx context.Context) (output *models.TokenExchangeGeneratorGroups, resp *http.Response, err error) {
 	path := "/oauth/tokenExchange/generator/groups"
 	op := &request.Operation{
 		Name:       "GetGroups",
@@ -94,6 +118,7 @@ func (s *OauthTokenExchangeGeneratorService) GetGroups() (output *models.TokenEx
 	}
 	output = &models.TokenExchangeGeneratorGroups{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -105,6 +130,13 @@ func (s *OauthTokenExchangeGeneratorService) GetGroups() (output *models.TokenEx
 //RequestType: POST
 //Input: input *CreateGroupInput
 func (s *OauthTokenExchangeGeneratorService) CreateGroup(input *CreateGroupInput) (output *models.TokenExchangeGeneratorGroup, resp *http.Response, err error) {
+	return s.CreateGroupWithContext(context.Background(), input)
+}
+
+//CreateGroupWithContext - Create a new OAuth 2.0 Token Exchange Generator group.
+//RequestType: POST
+//Input: ctx context.Context, input *CreateGroupInput
+func (s *OauthTokenExchangeGeneratorService) CreateGroupWithContext(ctx context.Context, input *CreateGroupInput) (output *models.TokenExchangeGeneratorGroup, resp *http.Response, err error) {
 	path := "/oauth/tokenExchange/generator/groups"
 	op := &request.Operation{
 		Name:       "CreateGroup",
@@ -113,6 +145,7 @@ func (s *OauthTokenExchangeGeneratorService) CreateGroup(input *CreateGroupInput
 	}
 	output = &models.TokenExchangeGeneratorGroup{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("bypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -126,6 +159,13 @@ func (s *OauthTokenExchangeGeneratorService) CreateGroup(input *CreateGroupInput
 //RequestType: GET
 //Input: input *GetGroupInput
 func (s *OauthTokenExchangeGeneratorService) GetGroup(input *GetGroupInput) (output *models.TokenExchangeGeneratorGroup, resp *http.Response, err error) {
+	return s.GetGroupWithContext(context.Background(), input)
+}
+
+//GetGroupWithContext - Find an OAuth 2.0 Token Exchange Generator group by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetGroupInput
+func (s *OauthTokenExchangeGeneratorService) GetGroupWithContext(ctx context.Context, input *GetGroupInput) (output *models.TokenExchangeGeneratorGroup, resp *http.Response, err error) {
 	path := "/oauth/tokenExchange/generator/groups/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -136,6 +176,7 @@ func (s *OauthTokenExchangeGeneratorService) GetGroup(input *GetGroupInput) (out
 	}
 	output = &models.TokenExchangeGeneratorGroup{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -147,6 +188,13 @@ func (s *OauthTokenExchangeGeneratorService) GetGroup(input *GetGroupInput) (out
 //RequestType: PUT
 //Input: input *UpdateGroupInput
 func (s *OauthTokenExchangeGeneratorService) UpdateGroup(input *UpdateGroupInput) (output *models.TokenExchangeGeneratorGroup, resp *http.Response, err error) {
+	return s.UpdateGroupWithContext(context.Background(), input)
+}
+
+//UpdateGroupWithContext - Update an OAuth 2.0 Token Exchange Generator group.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateGroupInput
+func (s *OauthTokenExchangeGeneratorService) UpdateGroupWithContext(ctx context.Context, input *UpdateGroupInput) (output *models.TokenExchangeGeneratorGroup, resp *http.Response, err error) {
 	path := "/oauth/tokenExchange/generator/groups/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -157,6 +205,7 @@ func (s *OauthTokenExchangeGeneratorService) UpdateGroup(input *UpdateGroupInput
 	}
 	output = &models.TokenExchangeGeneratorGroup{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("bypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -170,6 +219,13 @@ func (s *OauthTokenExchangeGeneratorService) UpdateGroup(input *UpdateGroupInput
 //RequestType: DELETE
 //Input: input *DeleteGroupInput
 func (s *OauthTokenExchangeGeneratorService) DeleteGroup(input *DeleteGroupInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeleteGroupWithContext(context.Background(), input)
+}
+
+//DeleteGroupWithContext - Delete an OAuth 2.0 Token Exchange Generator group.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteGroupInput
+func (s *OauthTokenExchangeGeneratorService) DeleteGroupWithContext(ctx context.Context, input *DeleteGroupInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/oauth/tokenExchange/generator/groups/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -180,6 +236,7 @@ func (s *OauthTokenExchangeGeneratorService) DeleteGroup(input *DeleteGroupInput
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

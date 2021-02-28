@@ -1,6 +1,7 @@
 package idpAdapters
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -46,6 +47,13 @@ func (c *IdpAdaptersService) newRequest(op *request.Operation, params, data inte
 //RequestType: GET
 //Input:
 func (s *IdpAdaptersService) GetIdpAdapterDescriptors() (output *models.IdpAdapterDescriptors, resp *http.Response, err error) {
+	return s.GetIdpAdapterDescriptorsWithContext(context.Background())
+}
+
+//GetIdpAdapterDescriptorsWithContext - Get the list of available IdP adapter descriptors.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *IdpAdaptersService) GetIdpAdapterDescriptorsWithContext(ctx context.Context) (output *models.IdpAdapterDescriptors, resp *http.Response, err error) {
 	path := "/idp/adapters/descriptors"
 	op := &request.Operation{
 		Name:       "GetIdpAdapterDescriptors",
@@ -54,6 +62,7 @@ func (s *IdpAdaptersService) GetIdpAdapterDescriptors() (output *models.IdpAdapt
 	}
 	output = &models.IdpAdapterDescriptors{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -65,6 +74,13 @@ func (s *IdpAdaptersService) GetIdpAdapterDescriptors() (output *models.IdpAdapt
 //RequestType: GET
 //Input: input *GetIdpAdapterDescriptorsByIdInput
 func (s *IdpAdaptersService) GetIdpAdapterDescriptorsById(input *GetIdpAdapterDescriptorsByIdInput) (output *models.IdpAdapterDescriptor, resp *http.Response, err error) {
+	return s.GetIdpAdapterDescriptorsByIdWithContext(context.Background(), input)
+}
+
+//GetIdpAdapterDescriptorsByIdWithContext - Get the description of an IdP adapter plugin by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetIdpAdapterDescriptorsByIdInput
+func (s *IdpAdaptersService) GetIdpAdapterDescriptorsByIdWithContext(ctx context.Context, input *GetIdpAdapterDescriptorsByIdInput) (output *models.IdpAdapterDescriptor, resp *http.Response, err error) {
 	path := "/idp/adapters/descriptors/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -75,6 +91,7 @@ func (s *IdpAdaptersService) GetIdpAdapterDescriptorsById(input *GetIdpAdapterDe
 	}
 	output = &models.IdpAdapterDescriptor{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -86,6 +103,13 @@ func (s *IdpAdaptersService) GetIdpAdapterDescriptorsById(input *GetIdpAdapterDe
 //RequestType: GET
 //Input: input *GetIdpAdaptersInput
 func (s *IdpAdaptersService) GetIdpAdapters(input *GetIdpAdaptersInput) (output *models.IdpAdapters, resp *http.Response, err error) {
+	return s.GetIdpAdaptersWithContext(context.Background(), input)
+}
+
+//GetIdpAdaptersWithContext - Get the list of configured IdP adapter instances.
+//RequestType: GET
+//Input: ctx context.Context, input *GetIdpAdaptersInput
+func (s *IdpAdaptersService) GetIdpAdaptersWithContext(ctx context.Context, input *GetIdpAdaptersInput) (output *models.IdpAdapters, resp *http.Response, err error) {
 	path := "/idp/adapters"
 	op := &request.Operation{
 		Name:       "GetIdpAdapters",
@@ -99,6 +123,7 @@ func (s *IdpAdaptersService) GetIdpAdapters(input *GetIdpAdaptersInput) (output 
 	}
 	output = &models.IdpAdapters{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -110,6 +135,13 @@ func (s *IdpAdaptersService) GetIdpAdapters(input *GetIdpAdaptersInput) (output 
 //RequestType: POST
 //Input: input *CreateIdpAdapterInput
 func (s *IdpAdaptersService) CreateIdpAdapter(input *CreateIdpAdapterInput) (output *models.IdpAdapter, resp *http.Response, err error) {
+	return s.CreateIdpAdapterWithContext(context.Background(), input)
+}
+
+//CreateIdpAdapterWithContext - Create a new IdP adapter instance.
+//RequestType: POST
+//Input: ctx context.Context, input *CreateIdpAdapterInput
+func (s *IdpAdaptersService) CreateIdpAdapterWithContext(ctx context.Context, input *CreateIdpAdapterInput) (output *models.IdpAdapter, resp *http.Response, err error) {
 	path := "/idp/adapters"
 	op := &request.Operation{
 		Name:       "CreateIdpAdapter",
@@ -118,6 +150,7 @@ func (s *IdpAdaptersService) CreateIdpAdapter(input *CreateIdpAdapterInput) (out
 	}
 	output = &models.IdpAdapter{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -131,6 +164,13 @@ func (s *IdpAdaptersService) CreateIdpAdapter(input *CreateIdpAdapterInput) (out
 //RequestType: GET
 //Input: input *GetIdpAdapterInput
 func (s *IdpAdaptersService) GetIdpAdapter(input *GetIdpAdapterInput) (output *models.IdpAdapter, resp *http.Response, err error) {
+	return s.GetIdpAdapterWithContext(context.Background(), input)
+}
+
+//GetIdpAdapterWithContext - Find an IdP adapter instance by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetIdpAdapterInput
+func (s *IdpAdaptersService) GetIdpAdapterWithContext(ctx context.Context, input *GetIdpAdapterInput) (output *models.IdpAdapter, resp *http.Response, err error) {
 	path := "/idp/adapters/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -141,6 +181,7 @@ func (s *IdpAdaptersService) GetIdpAdapter(input *GetIdpAdapterInput) (output *m
 	}
 	output = &models.IdpAdapter{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -152,6 +193,13 @@ func (s *IdpAdaptersService) GetIdpAdapter(input *GetIdpAdapterInput) (output *m
 //RequestType: PUT
 //Input: input *UpdateIdpAdapterInput
 func (s *IdpAdaptersService) UpdateIdpAdapter(input *UpdateIdpAdapterInput) (output *models.IdpAdapter, resp *http.Response, err error) {
+	return s.UpdateIdpAdapterWithContext(context.Background(), input)
+}
+
+//UpdateIdpAdapterWithContext - Update an IdP adapter instance.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateIdpAdapterInput
+func (s *IdpAdaptersService) UpdateIdpAdapterWithContext(ctx context.Context, input *UpdateIdpAdapterInput) (output *models.IdpAdapter, resp *http.Response, err error) {
 	path := "/idp/adapters/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -162,6 +210,7 @@ func (s *IdpAdaptersService) UpdateIdpAdapter(input *UpdateIdpAdapterInput) (out
 	}
 	output = &models.IdpAdapter{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -175,6 +224,13 @@ func (s *IdpAdaptersService) UpdateIdpAdapter(input *UpdateIdpAdapterInput) (out
 //RequestType: DELETE
 //Input: input *DeleteIdpAdapterInput
 func (s *IdpAdaptersService) DeleteIdpAdapter(input *DeleteIdpAdapterInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeleteIdpAdapterWithContext(context.Background(), input)
+}
+
+//DeleteIdpAdapterWithContext - Delete an IdP adapter instance.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteIdpAdapterInput
+func (s *IdpAdaptersService) DeleteIdpAdapterWithContext(ctx context.Context, input *DeleteIdpAdapterInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/idp/adapters/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -185,6 +241,7 @@ func (s *IdpAdaptersService) DeleteIdpAdapter(input *DeleteIdpAdapterInput) (out
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -196,6 +253,13 @@ func (s *IdpAdaptersService) DeleteIdpAdapter(input *DeleteIdpAdapterInput) (out
 //RequestType: GET
 //Input: input *GetActionsInput
 func (s *IdpAdaptersService) GetActions(input *GetActionsInput) (output *models.Actions, resp *http.Response, err error) {
+	return s.GetActionsWithContext(context.Background(), input)
+}
+
+//GetActionsWithContext - List the actions for an IdP adapter instance.
+//RequestType: GET
+//Input: ctx context.Context, input *GetActionsInput
+func (s *IdpAdaptersService) GetActionsWithContext(ctx context.Context, input *GetActionsInput) (output *models.Actions, resp *http.Response, err error) {
 	path := "/idp/adapters/{id}/actions"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -206,6 +270,7 @@ func (s *IdpAdaptersService) GetActions(input *GetActionsInput) (output *models.
 	}
 	output = &models.Actions{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -217,6 +282,13 @@ func (s *IdpAdaptersService) GetActions(input *GetActionsInput) (output *models.
 //RequestType: GET
 //Input: input *GetActionInput
 func (s *IdpAdaptersService) GetAction(input *GetActionInput) (output *models.Action, resp *http.Response, err error) {
+	return s.GetActionWithContext(context.Background(), input)
+}
+
+//GetActionWithContext - Find an IdP adapter instance's action by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetActionInput
+func (s *IdpAdaptersService) GetActionWithContext(ctx context.Context, input *GetActionInput) (output *models.Action, resp *http.Response, err error) {
 	path := "/idp/adapters/{id}/actions/{actionId}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -229,6 +301,7 @@ func (s *IdpAdaptersService) GetAction(input *GetActionInput) (output *models.Ac
 	}
 	output = &models.Action{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -240,6 +313,13 @@ func (s *IdpAdaptersService) GetAction(input *GetActionInput) (output *models.Ac
 //RequestType: POST
 //Input: input *InvokeActionInput
 func (s *IdpAdaptersService) InvokeAction(input *InvokeActionInput) (output *models.ActionResult, resp *http.Response, err error) {
+	return s.InvokeActionWithContext(context.Background(), input)
+}
+
+//InvokeActionWithContext - Invokes an action for an IdP adapter instance.
+//RequestType: POST
+//Input: ctx context.Context, input *InvokeActionInput
+func (s *IdpAdaptersService) InvokeActionWithContext(ctx context.Context, input *InvokeActionInput) (output *models.ActionResult, resp *http.Response, err error) {
 	path := "/idp/adapters/{id}/actions/{actionId}/invokeAction"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -252,6 +332,7 @@ func (s *IdpAdaptersService) InvokeAction(input *InvokeActionInput) (output *mod
 	}
 	output = &models.ActionResult{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

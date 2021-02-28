@@ -207,12 +207,12 @@ func resourcePingFederateServerSettingsResourceSchema() map[string]*schema.Schem
 	}
 }
 
-func resourcePingFederateServerSettingsResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateServerSettingsResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).ServerSettings
 	input := serverSettings.UpdateServerSettingsInput{
 		Body: *resourcePingFederateServerSettingsResourceReadData(d),
 	}
-	result, _, err := svc.UpdateServerSettings(&input)
+	result, _, err := svc.UpdateServerSettingsWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to create ServerSettings: %s", err)
 	}
@@ -220,28 +220,28 @@ func resourcePingFederateServerSettingsResourceCreate(_ context.Context, d *sche
 	return resourcePingFederateServerSettingsResourceReadResult(d, result)
 }
 
-func resourcePingFederateServerSettingsResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateServerSettingsResourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).ServerSettings
-	result, _, err := svc.GetServerSettings()
+	result, _, err := svc.GetServerSettingsWithContext(ctx)
 	if err != nil {
 		return diag.Errorf("unable to read ServerSettings: %s", err)
 	}
 	return resourcePingFederateServerSettingsResourceReadResult(d, result)
 }
 
-func resourcePingFederateServerSettingsResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateServerSettingsResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).ServerSettings
 	input := serverSettings.UpdateServerSettingsInput{
 		Body: *resourcePingFederateServerSettingsResourceReadData(d),
 	}
-	result, _, err := svc.UpdateServerSettings(&input)
+	result, _, err := svc.UpdateServerSettingsWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to update ServerSettings: %s", err)
 	}
 	return resourcePingFederateServerSettingsResourceReadResult(d, result)
 }
 
-func resourcePingFederateServerSettingsResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateServerSettingsResourceDelete(_ context.Context, _ *schema.ResourceData, _ interface{}) diag.Diagnostics {
 
 	return nil
 }

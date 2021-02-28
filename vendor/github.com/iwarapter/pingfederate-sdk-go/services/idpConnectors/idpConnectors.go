@@ -1,6 +1,7 @@
 package idpConnectors
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -45,6 +46,13 @@ func (c *IdpConnectorsService) newRequest(op *request.Operation, params, data in
 //RequestType: GET
 //Input:
 func (s *IdpConnectorsService) GetIdpConnectorDescriptors() (output *models.SaasPluginDescriptors, resp *http.Response, err error) {
+	return s.GetIdpConnectorDescriptorsWithContext(context.Background())
+}
+
+//GetIdpConnectorDescriptorsWithContext - Get the list of available IdP connector descriptors.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *IdpConnectorsService) GetIdpConnectorDescriptorsWithContext(ctx context.Context) (output *models.SaasPluginDescriptors, resp *http.Response, err error) {
 	path := "/idp/connectors/descriptors"
 	op := &request.Operation{
 		Name:       "GetIdpConnectorDescriptors",
@@ -53,6 +61,7 @@ func (s *IdpConnectorsService) GetIdpConnectorDescriptors() (output *models.Saas
 	}
 	output = &models.SaasPluginDescriptors{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -64,6 +73,13 @@ func (s *IdpConnectorsService) GetIdpConnectorDescriptors() (output *models.Saas
 //RequestType: GET
 //Input: input *GetIdpConnectorDescriptorByIdInput
 func (s *IdpConnectorsService) GetIdpConnectorDescriptorById(input *GetIdpConnectorDescriptorByIdInput) (output *models.SaasPluginDescriptor, resp *http.Response, err error) {
+	return s.GetIdpConnectorDescriptorByIdWithContext(context.Background(), input)
+}
+
+//GetIdpConnectorDescriptorByIdWithContext - Get the list of available connector descriptors.
+//RequestType: GET
+//Input: ctx context.Context, input *GetIdpConnectorDescriptorByIdInput
+func (s *IdpConnectorsService) GetIdpConnectorDescriptorByIdWithContext(ctx context.Context, input *GetIdpConnectorDescriptorByIdInput) (output *models.SaasPluginDescriptor, resp *http.Response, err error) {
 	path := "/idp/connectors/descriptors/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -74,6 +90,7 @@ func (s *IdpConnectorsService) GetIdpConnectorDescriptorById(input *GetIdpConnec
 	}
 	output = &models.SaasPluginDescriptor{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

@@ -1,6 +1,7 @@
 package license
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
@@ -44,6 +45,13 @@ func (c *LicenseService) newRequest(op *request.Operation, params, data interfac
 //RequestType: GET
 //Input:
 func (s *LicenseService) GetLicenseAgreement() (output *models.LicenseAgreementInfo, resp *http.Response, err error) {
+	return s.GetLicenseAgreementWithContext(context.Background())
+}
+
+//GetLicenseAgreementWithContext - Get license agreement link.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *LicenseService) GetLicenseAgreementWithContext(ctx context.Context) (output *models.LicenseAgreementInfo, resp *http.Response, err error) {
 	path := "/license/agreement"
 	op := &request.Operation{
 		Name:       "GetLicenseAgreement",
@@ -52,6 +60,7 @@ func (s *LicenseService) GetLicenseAgreement() (output *models.LicenseAgreementI
 	}
 	output = &models.LicenseAgreementInfo{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -63,6 +72,13 @@ func (s *LicenseService) GetLicenseAgreement() (output *models.LicenseAgreementI
 //RequestType: PUT
 //Input: input *UpdateLicenseAgreementInput
 func (s *LicenseService) UpdateLicenseAgreement(input *UpdateLicenseAgreementInput) (output *models.LicenseAgreementInfo, resp *http.Response, err error) {
+	return s.UpdateLicenseAgreementWithContext(context.Background(), input)
+}
+
+//UpdateLicenseAgreementWithContext - Accept license agreement.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateLicenseAgreementInput
+func (s *LicenseService) UpdateLicenseAgreementWithContext(ctx context.Context, input *UpdateLicenseAgreementInput) (output *models.LicenseAgreementInfo, resp *http.Response, err error) {
 	path := "/license/agreement"
 	op := &request.Operation{
 		Name:       "UpdateLicenseAgreement",
@@ -71,6 +87,7 @@ func (s *LicenseService) UpdateLicenseAgreement(input *UpdateLicenseAgreementInp
 	}
 	output = &models.LicenseAgreementInfo{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -82,6 +99,13 @@ func (s *LicenseService) UpdateLicenseAgreement(input *UpdateLicenseAgreementInp
 //RequestType: GET
 //Input:
 func (s *LicenseService) GetLicense() (output *models.LicenseView, resp *http.Response, err error) {
+	return s.GetLicenseWithContext(context.Background())
+}
+
+//GetLicenseWithContext - Get a license summary.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *LicenseService) GetLicenseWithContext(ctx context.Context) (output *models.LicenseView, resp *http.Response, err error) {
 	path := "/license"
 	op := &request.Operation{
 		Name:       "GetLicense",
@@ -90,6 +114,7 @@ func (s *LicenseService) GetLicense() (output *models.LicenseView, resp *http.Re
 	}
 	output = &models.LicenseView{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -101,6 +126,13 @@ func (s *LicenseService) GetLicense() (output *models.LicenseView, resp *http.Re
 //RequestType: PUT
 //Input: input *UpdateLicenseInput
 func (s *LicenseService) UpdateLicense(input *UpdateLicenseInput) (output *models.LicenseView, resp *http.Response, err error) {
+	return s.UpdateLicenseWithContext(context.Background(), input)
+}
+
+//UpdateLicenseWithContext - Import a license.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateLicenseInput
+func (s *LicenseService) UpdateLicenseWithContext(ctx context.Context, input *UpdateLicenseInput) (output *models.LicenseView, resp *http.Response, err error) {
 	path := "/license"
 	op := &request.Operation{
 		Name:       "UpdateLicense",
@@ -109,6 +141,7 @@ func (s *LicenseService) UpdateLicense(input *UpdateLicenseInput) (output *model
 	}
 	output = &models.LicenseView{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

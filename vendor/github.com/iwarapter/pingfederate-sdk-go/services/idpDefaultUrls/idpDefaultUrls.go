@@ -1,6 +1,7 @@
 package idpDefaultUrls
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
@@ -44,6 +45,13 @@ func (c *IdpDefaultUrlsService) newRequest(op *request.Operation, params, data i
 //RequestType: GET
 //Input:
 func (s *IdpDefaultUrlsService) GetDefaultUrl() (output *models.IdpDefaultUrl, resp *http.Response, err error) {
+	return s.GetDefaultUrlWithContext(context.Background())
+}
+
+//GetDefaultUrlWithContext - Gets the IDP Default URL settings.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *IdpDefaultUrlsService) GetDefaultUrlWithContext(ctx context.Context) (output *models.IdpDefaultUrl, resp *http.Response, err error) {
 	path := "/idp/defaultUrls"
 	op := &request.Operation{
 		Name:       "GetDefaultUrl",
@@ -52,6 +60,7 @@ func (s *IdpDefaultUrlsService) GetDefaultUrl() (output *models.IdpDefaultUrl, r
 	}
 	output = &models.IdpDefaultUrl{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -63,6 +72,13 @@ func (s *IdpDefaultUrlsService) GetDefaultUrl() (output *models.IdpDefaultUrl, r
 //RequestType: PUT
 //Input: input *UpdateDefaultUrlSettingsInput
 func (s *IdpDefaultUrlsService) UpdateDefaultUrlSettings(input *UpdateDefaultUrlSettingsInput) (output *models.IdpDefaultUrl, resp *http.Response, err error) {
+	return s.UpdateDefaultUrlSettingsWithContext(context.Background(), input)
+}
+
+//UpdateDefaultUrlSettingsWithContext - Update the IDP Default URL settings.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateDefaultUrlSettingsInput
+func (s *IdpDefaultUrlsService) UpdateDefaultUrlSettingsWithContext(ctx context.Context, input *UpdateDefaultUrlSettingsInput) (output *models.IdpDefaultUrl, resp *http.Response, err error) {
 	path := "/idp/defaultUrls"
 	op := &request.Operation{
 		Name:       "UpdateDefaultUrlSettings",
@@ -71,6 +87,7 @@ func (s *IdpDefaultUrlsService) UpdateDefaultUrlSettings(input *UpdateDefaultUrl
 	}
 	output = &models.IdpDefaultUrl{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

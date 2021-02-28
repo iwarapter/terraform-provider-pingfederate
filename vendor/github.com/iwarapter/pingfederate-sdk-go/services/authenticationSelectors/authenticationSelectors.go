@@ -1,6 +1,7 @@
 package authenticationSelectors
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -45,6 +46,13 @@ func (c *AuthenticationSelectorsService) newRequest(op *request.Operation, param
 //RequestType: GET
 //Input:
 func (s *AuthenticationSelectorsService) GetAuthenticationSelectorDescriptors() (output *models.AuthenticationSelectorDescriptors, resp *http.Response, err error) {
+	return s.GetAuthenticationSelectorDescriptorsWithContext(context.Background())
+}
+
+//GetAuthenticationSelectorDescriptorsWithContext - Get the list of available Authentication Selector descriptors.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *AuthenticationSelectorsService) GetAuthenticationSelectorDescriptorsWithContext(ctx context.Context) (output *models.AuthenticationSelectorDescriptors, resp *http.Response, err error) {
 	path := "/authenticationSelectors/descriptors"
 	op := &request.Operation{
 		Name:       "GetAuthenticationSelectorDescriptors",
@@ -53,6 +61,7 @@ func (s *AuthenticationSelectorsService) GetAuthenticationSelectorDescriptors() 
 	}
 	output = &models.AuthenticationSelectorDescriptors{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -64,6 +73,13 @@ func (s *AuthenticationSelectorsService) GetAuthenticationSelectorDescriptors() 
 //RequestType: GET
 //Input: input *GetAuthenticationSelectorDescriptorsByIdInput
 func (s *AuthenticationSelectorsService) GetAuthenticationSelectorDescriptorsById(input *GetAuthenticationSelectorDescriptorsByIdInput) (output *models.AuthenticationSelectorDescriptor, resp *http.Response, err error) {
+	return s.GetAuthenticationSelectorDescriptorsByIdWithContext(context.Background(), input)
+}
+
+//GetAuthenticationSelectorDescriptorsByIdWithContext - Get the description of an Authentication Selector plugin by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetAuthenticationSelectorDescriptorsByIdInput
+func (s *AuthenticationSelectorsService) GetAuthenticationSelectorDescriptorsByIdWithContext(ctx context.Context, input *GetAuthenticationSelectorDescriptorsByIdInput) (output *models.AuthenticationSelectorDescriptor, resp *http.Response, err error) {
 	path := "/authenticationSelectors/descriptors/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -74,6 +90,7 @@ func (s *AuthenticationSelectorsService) GetAuthenticationSelectorDescriptorsByI
 	}
 	output = &models.AuthenticationSelectorDescriptor{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -85,6 +102,13 @@ func (s *AuthenticationSelectorsService) GetAuthenticationSelectorDescriptorsByI
 //RequestType: GET
 //Input: input *GetAuthenticationSelectorsInput
 func (s *AuthenticationSelectorsService) GetAuthenticationSelectors(input *GetAuthenticationSelectorsInput) (output *models.AuthenticationSelectors, resp *http.Response, err error) {
+	return s.GetAuthenticationSelectorsWithContext(context.Background(), input)
+}
+
+//GetAuthenticationSelectorsWithContext - Get the list of configured Authentication Selector instances.
+//RequestType: GET
+//Input: ctx context.Context, input *GetAuthenticationSelectorsInput
+func (s *AuthenticationSelectorsService) GetAuthenticationSelectorsWithContext(ctx context.Context, input *GetAuthenticationSelectorsInput) (output *models.AuthenticationSelectors, resp *http.Response, err error) {
 	path := "/authenticationSelectors"
 	op := &request.Operation{
 		Name:       "GetAuthenticationSelectors",
@@ -98,6 +122,7 @@ func (s *AuthenticationSelectorsService) GetAuthenticationSelectors(input *GetAu
 	}
 	output = &models.AuthenticationSelectors{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -109,6 +134,13 @@ func (s *AuthenticationSelectorsService) GetAuthenticationSelectors(input *GetAu
 //RequestType: POST
 //Input: input *CreateAuthenticationSelectorInput
 func (s *AuthenticationSelectorsService) CreateAuthenticationSelector(input *CreateAuthenticationSelectorInput) (output *models.AuthenticationSelector, resp *http.Response, err error) {
+	return s.CreateAuthenticationSelectorWithContext(context.Background(), input)
+}
+
+//CreateAuthenticationSelectorWithContext - Create a new authentication selector instance.
+//RequestType: POST
+//Input: ctx context.Context, input *CreateAuthenticationSelectorInput
+func (s *AuthenticationSelectorsService) CreateAuthenticationSelectorWithContext(ctx context.Context, input *CreateAuthenticationSelectorInput) (output *models.AuthenticationSelector, resp *http.Response, err error) {
 	path := "/authenticationSelectors"
 	op := &request.Operation{
 		Name:       "CreateAuthenticationSelector",
@@ -117,6 +149,7 @@ func (s *AuthenticationSelectorsService) CreateAuthenticationSelector(input *Cre
 	}
 	output = &models.AuthenticationSelector{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -128,6 +161,13 @@ func (s *AuthenticationSelectorsService) CreateAuthenticationSelector(input *Cre
 //RequestType: GET
 //Input: input *GetAuthenticationSelectorInput
 func (s *AuthenticationSelectorsService) GetAuthenticationSelector(input *GetAuthenticationSelectorInput) (output *models.AuthenticationSelector, resp *http.Response, err error) {
+	return s.GetAuthenticationSelectorWithContext(context.Background(), input)
+}
+
+//GetAuthenticationSelectorWithContext - Get an Authentication Selector instance by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetAuthenticationSelectorInput
+func (s *AuthenticationSelectorsService) GetAuthenticationSelectorWithContext(ctx context.Context, input *GetAuthenticationSelectorInput) (output *models.AuthenticationSelector, resp *http.Response, err error) {
 	path := "/authenticationSelectors/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -138,6 +178,7 @@ func (s *AuthenticationSelectorsService) GetAuthenticationSelector(input *GetAut
 	}
 	output = &models.AuthenticationSelector{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -149,6 +190,13 @@ func (s *AuthenticationSelectorsService) GetAuthenticationSelector(input *GetAut
 //RequestType: PUT
 //Input: input *UpdateAuthenticationSelectorInput
 func (s *AuthenticationSelectorsService) UpdateAuthenticationSelector(input *UpdateAuthenticationSelectorInput) (output *models.AuthenticationSelector, resp *http.Response, err error) {
+	return s.UpdateAuthenticationSelectorWithContext(context.Background(), input)
+}
+
+//UpdateAuthenticationSelectorWithContext - Update an authentication selector instance.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateAuthenticationSelectorInput
+func (s *AuthenticationSelectorsService) UpdateAuthenticationSelectorWithContext(ctx context.Context, input *UpdateAuthenticationSelectorInput) (output *models.AuthenticationSelector, resp *http.Response, err error) {
 	path := "/authenticationSelectors/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -159,6 +207,7 @@ func (s *AuthenticationSelectorsService) UpdateAuthenticationSelector(input *Upd
 	}
 	output = &models.AuthenticationSelector{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -170,6 +219,13 @@ func (s *AuthenticationSelectorsService) UpdateAuthenticationSelector(input *Upd
 //RequestType: DELETE
 //Input: input *DeleteAuthenticationSelectorInput
 func (s *AuthenticationSelectorsService) DeleteAuthenticationSelector(input *DeleteAuthenticationSelectorInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeleteAuthenticationSelectorWithContext(context.Background(), input)
+}
+
+//DeleteAuthenticationSelectorWithContext - Delete an Authentication Selector instance.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteAuthenticationSelectorInput
+func (s *AuthenticationSelectorsService) DeleteAuthenticationSelectorWithContext(ctx context.Context, input *DeleteAuthenticationSelectorInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/authenticationSelectors/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -180,6 +236,7 @@ func (s *AuthenticationSelectorsService) DeleteAuthenticationSelector(input *Del
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

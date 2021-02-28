@@ -1,6 +1,7 @@
 package version
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
@@ -44,6 +45,13 @@ func (c *VersionService) newRequest(op *request.Operation, params, data interfac
 //RequestType: GET
 //Input:
 func (s *VersionService) GetVersion() (output *models.Version, resp *http.Response, err error) {
+	return s.GetVersionWithContext(context.Background())
+}
+
+//GetVersionWithContext - Gets the server version.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *VersionService) GetVersionWithContext(ctx context.Context) (output *models.Version, resp *http.Response, err error) {
 	path := "/version"
 	op := &request.Operation{
 		Name:       "GetVersion",
@@ -52,6 +60,7 @@ func (s *VersionService) GetVersion() (output *models.Version, resp *http.Respon
 	}
 	output = &models.Version{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

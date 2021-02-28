@@ -1,6 +1,7 @@
 package authenticationPolicies
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
@@ -45,6 +46,13 @@ func (c *AuthenticationPoliciesService) newRequest(op *request.Operation, params
 //RequestType: GET
 //Input:
 func (s *AuthenticationPoliciesService) GetSettings() (output *models.AuthenticationPoliciesSettings, resp *http.Response, err error) {
+	return s.GetSettingsWithContext(context.Background())
+}
+
+//GetSettingsWithContext - Get the authentication policies settings.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *AuthenticationPoliciesService) GetSettingsWithContext(ctx context.Context) (output *models.AuthenticationPoliciesSettings, resp *http.Response, err error) {
 	path := "/authenticationPolicies/settings"
 	op := &request.Operation{
 		Name:       "GetSettings",
@@ -53,6 +61,7 @@ func (s *AuthenticationPoliciesService) GetSettings() (output *models.Authentica
 	}
 	output = &models.AuthenticationPoliciesSettings{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -64,6 +73,13 @@ func (s *AuthenticationPoliciesService) GetSettings() (output *models.Authentica
 //RequestType: PUT
 //Input: input *UpdateSettingsInput
 func (s *AuthenticationPoliciesService) UpdateSettings(input *UpdateSettingsInput) (output *models.AuthenticationPoliciesSettings, resp *http.Response, err error) {
+	return s.UpdateSettingsWithContext(context.Background(), input)
+}
+
+//UpdateSettingsWithContext - Set the authentication policies settings.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateSettingsInput
+func (s *AuthenticationPoliciesService) UpdateSettingsWithContext(ctx context.Context, input *UpdateSettingsInput) (output *models.AuthenticationPoliciesSettings, resp *http.Response, err error) {
 	path := "/authenticationPolicies/settings"
 	op := &request.Operation{
 		Name:       "UpdateSettings",
@@ -72,6 +88,7 @@ func (s *AuthenticationPoliciesService) UpdateSettings(input *UpdateSettingsInpu
 	}
 	output = &models.AuthenticationPoliciesSettings{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -83,6 +100,13 @@ func (s *AuthenticationPoliciesService) UpdateSettings(input *UpdateSettingsInpu
 //RequestType: GET
 //Input:
 func (s *AuthenticationPoliciesService) GetDefaultAuthenticationPolicy() (output *models.AuthenticationPolicy, resp *http.Response, err error) {
+	return s.GetDefaultAuthenticationPolicyWithContext(context.Background())
+}
+
+//GetDefaultAuthenticationPolicyWithContext - Get the default configured authentication policy.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *AuthenticationPoliciesService) GetDefaultAuthenticationPolicyWithContext(ctx context.Context) (output *models.AuthenticationPolicy, resp *http.Response, err error) {
 	path := "/authenticationPolicies/default"
 	op := &request.Operation{
 		Name:       "GetDefaultAuthenticationPolicy",
@@ -91,6 +115,7 @@ func (s *AuthenticationPoliciesService) GetDefaultAuthenticationPolicy() (output
 	}
 	output = &models.AuthenticationPolicy{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -102,6 +127,13 @@ func (s *AuthenticationPoliciesService) GetDefaultAuthenticationPolicy() (output
 //RequestType: PUT
 //Input: input *UpdateDefaultAuthenticationPolicyInput
 func (s *AuthenticationPoliciesService) UpdateDefaultAuthenticationPolicy(input *UpdateDefaultAuthenticationPolicyInput) (output *models.AuthenticationPolicy, resp *http.Response, err error) {
+	return s.UpdateDefaultAuthenticationPolicyWithContext(context.Background(), input)
+}
+
+//UpdateDefaultAuthenticationPolicyWithContext - Set the default authentication policy.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateDefaultAuthenticationPolicyInput
+func (s *AuthenticationPoliciesService) UpdateDefaultAuthenticationPolicyWithContext(ctx context.Context, input *UpdateDefaultAuthenticationPolicyInput) (output *models.AuthenticationPolicy, resp *http.Response, err error) {
 	path := "/authenticationPolicies/default"
 	op := &request.Operation{
 		Name:       "UpdateDefaultAuthenticationPolicy",
@@ -110,6 +142,7 @@ func (s *AuthenticationPoliciesService) UpdateDefaultAuthenticationPolicy(input 
 	}
 	output = &models.AuthenticationPolicy{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}

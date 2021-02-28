@@ -1,6 +1,7 @@
 package passwordCredentialValidators
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -45,6 +46,13 @@ func (c *PasswordCredentialValidatorsService) newRequest(op *request.Operation, 
 //RequestType: GET
 //Input:
 func (s *PasswordCredentialValidatorsService) GetPasswordCredentialValidatorDescriptors() (output *models.PasswordCredentialValidatorDescriptors, resp *http.Response, err error) {
+	return s.GetPasswordCredentialValidatorDescriptorsWithContext(context.Background())
+}
+
+//GetPasswordCredentialValidatorDescriptorsWithContext - Get a list of available password credential validator descriptors.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *PasswordCredentialValidatorsService) GetPasswordCredentialValidatorDescriptorsWithContext(ctx context.Context) (output *models.PasswordCredentialValidatorDescriptors, resp *http.Response, err error) {
 	path := "/passwordCredentialValidators/descriptors"
 	op := &request.Operation{
 		Name:       "GetPasswordCredentialValidatorDescriptors",
@@ -53,6 +61,7 @@ func (s *PasswordCredentialValidatorsService) GetPasswordCredentialValidatorDesc
 	}
 	output = &models.PasswordCredentialValidatorDescriptors{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -64,6 +73,13 @@ func (s *PasswordCredentialValidatorsService) GetPasswordCredentialValidatorDesc
 //RequestType: GET
 //Input: input *GetPasswordCredentialValidatorDescriptorInput
 func (s *PasswordCredentialValidatorsService) GetPasswordCredentialValidatorDescriptor(input *GetPasswordCredentialValidatorDescriptorInput) (output *models.PasswordCredentialValidatorDescriptor, resp *http.Response, err error) {
+	return s.GetPasswordCredentialValidatorDescriptorWithContext(context.Background(), input)
+}
+
+//GetPasswordCredentialValidatorDescriptorWithContext - Get the description of a password credential validator by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetPasswordCredentialValidatorDescriptorInput
+func (s *PasswordCredentialValidatorsService) GetPasswordCredentialValidatorDescriptorWithContext(ctx context.Context, input *GetPasswordCredentialValidatorDescriptorInput) (output *models.PasswordCredentialValidatorDescriptor, resp *http.Response, err error) {
 	path := "/passwordCredentialValidators/descriptors/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -74,6 +90,7 @@ func (s *PasswordCredentialValidatorsService) GetPasswordCredentialValidatorDesc
 	}
 	output = &models.PasswordCredentialValidatorDescriptor{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -85,6 +102,13 @@ func (s *PasswordCredentialValidatorsService) GetPasswordCredentialValidatorDesc
 //RequestType: GET
 //Input:
 func (s *PasswordCredentialValidatorsService) GetPasswordCredentialValidators() (output *models.PasswordCredentialValidators, resp *http.Response, err error) {
+	return s.GetPasswordCredentialValidatorsWithContext(context.Background())
+}
+
+//GetPasswordCredentialValidatorsWithContext - Get the list of available password credential validators
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *PasswordCredentialValidatorsService) GetPasswordCredentialValidatorsWithContext(ctx context.Context) (output *models.PasswordCredentialValidators, resp *http.Response, err error) {
 	path := "/passwordCredentialValidators"
 	op := &request.Operation{
 		Name:       "GetPasswordCredentialValidators",
@@ -93,6 +117,7 @@ func (s *PasswordCredentialValidatorsService) GetPasswordCredentialValidators() 
 	}
 	output = &models.PasswordCredentialValidators{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -104,6 +129,13 @@ func (s *PasswordCredentialValidatorsService) GetPasswordCredentialValidators() 
 //RequestType: POST
 //Input: input *CreatePasswordCredentialValidatorInput
 func (s *PasswordCredentialValidatorsService) CreatePasswordCredentialValidator(input *CreatePasswordCredentialValidatorInput) (output *models.PasswordCredentialValidator, resp *http.Response, err error) {
+	return s.CreatePasswordCredentialValidatorWithContext(context.Background(), input)
+}
+
+//CreatePasswordCredentialValidatorWithContext - Create a new password credential validator instance
+//RequestType: POST
+//Input: ctx context.Context, input *CreatePasswordCredentialValidatorInput
+func (s *PasswordCredentialValidatorsService) CreatePasswordCredentialValidatorWithContext(ctx context.Context, input *CreatePasswordCredentialValidatorInput) (output *models.PasswordCredentialValidator, resp *http.Response, err error) {
 	path := "/passwordCredentialValidators"
 	op := &request.Operation{
 		Name:       "CreatePasswordCredentialValidator",
@@ -112,6 +144,7 @@ func (s *PasswordCredentialValidatorsService) CreatePasswordCredentialValidator(
 	}
 	output = &models.PasswordCredentialValidator{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -123,6 +156,13 @@ func (s *PasswordCredentialValidatorsService) CreatePasswordCredentialValidator(
 //RequestType: GET
 //Input: input *GetPasswordCredentialValidatorInput
 func (s *PasswordCredentialValidatorsService) GetPasswordCredentialValidator(input *GetPasswordCredentialValidatorInput) (output *models.PasswordCredentialValidator, resp *http.Response, err error) {
+	return s.GetPasswordCredentialValidatorWithContext(context.Background(), input)
+}
+
+//GetPasswordCredentialValidatorWithContext - Find a password credential validator by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetPasswordCredentialValidatorInput
+func (s *PasswordCredentialValidatorsService) GetPasswordCredentialValidatorWithContext(ctx context.Context, input *GetPasswordCredentialValidatorInput) (output *models.PasswordCredentialValidator, resp *http.Response, err error) {
 	path := "/passwordCredentialValidators/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -133,6 +173,7 @@ func (s *PasswordCredentialValidatorsService) GetPasswordCredentialValidator(inp
 	}
 	output = &models.PasswordCredentialValidator{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -144,6 +185,13 @@ func (s *PasswordCredentialValidatorsService) GetPasswordCredentialValidator(inp
 //RequestType: PUT
 //Input: input *UpdatePasswordCredentialValidatorInput
 func (s *PasswordCredentialValidatorsService) UpdatePasswordCredentialValidator(input *UpdatePasswordCredentialValidatorInput) (output *models.PasswordCredentialValidator, resp *http.Response, err error) {
+	return s.UpdatePasswordCredentialValidatorWithContext(context.Background(), input)
+}
+
+//UpdatePasswordCredentialValidatorWithContext - Update a password credential validator instance.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdatePasswordCredentialValidatorInput
+func (s *PasswordCredentialValidatorsService) UpdatePasswordCredentialValidatorWithContext(ctx context.Context, input *UpdatePasswordCredentialValidatorInput) (output *models.PasswordCredentialValidator, resp *http.Response, err error) {
 	path := "/passwordCredentialValidators/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -154,6 +202,7 @@ func (s *PasswordCredentialValidatorsService) UpdatePasswordCredentialValidator(
 	}
 	output = &models.PasswordCredentialValidator{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -165,6 +214,13 @@ func (s *PasswordCredentialValidatorsService) UpdatePasswordCredentialValidator(
 //RequestType: DELETE
 //Input: input *DeletePasswordCredentialValidatorInput
 func (s *PasswordCredentialValidatorsService) DeletePasswordCredentialValidator(input *DeletePasswordCredentialValidatorInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeletePasswordCredentialValidatorWithContext(context.Background(), input)
+}
+
+//DeletePasswordCredentialValidatorWithContext - Delete a password credential validator instance.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeletePasswordCredentialValidatorInput
+func (s *PasswordCredentialValidatorsService) DeletePasswordCredentialValidatorWithContext(ctx context.Context, input *DeletePasswordCredentialValidatorInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/passwordCredentialValidators/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -175,6 +231,7 @@ func (s *PasswordCredentialValidatorsService) DeletePasswordCredentialValidator(
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

@@ -1,6 +1,7 @@
 package oauthResourceOwnerCredentialsMappings
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -46,6 +47,13 @@ func (c *OauthResourceOwnerCredentialsMappingsService) newRequest(op *request.Op
 //RequestType: GET
 //Input:
 func (s *OauthResourceOwnerCredentialsMappingsService) GetResourceOwnerCredentialsMappings() (output *models.ResourceOwnerCredentialsMappings, resp *http.Response, err error) {
+	return s.GetResourceOwnerCredentialsMappingsWithContext(context.Background())
+}
+
+//GetResourceOwnerCredentialsMappingsWithContext - Get the list of Resource Owner Credentials mappings.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *OauthResourceOwnerCredentialsMappingsService) GetResourceOwnerCredentialsMappingsWithContext(ctx context.Context) (output *models.ResourceOwnerCredentialsMappings, resp *http.Response, err error) {
 	path := "/oauth/resourceOwnerCredentialsMappings"
 	op := &request.Operation{
 		Name:       "GetResourceOwnerCredentialsMappings",
@@ -54,6 +62,7 @@ func (s *OauthResourceOwnerCredentialsMappingsService) GetResourceOwnerCredentia
 	}
 	output = &models.ResourceOwnerCredentialsMappings{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -65,6 +74,13 @@ func (s *OauthResourceOwnerCredentialsMappingsService) GetResourceOwnerCredentia
 //RequestType: POST
 //Input: input *CreateResourceOwnerCredentialsMappingInput
 func (s *OauthResourceOwnerCredentialsMappingsService) CreateResourceOwnerCredentialsMapping(input *CreateResourceOwnerCredentialsMappingInput) (output *models.ResourceOwnerCredentialsMapping, resp *http.Response, err error) {
+	return s.CreateResourceOwnerCredentialsMappingWithContext(context.Background(), input)
+}
+
+//CreateResourceOwnerCredentialsMappingWithContext - Create a new Resource Owner Credentials mapping.
+//RequestType: POST
+//Input: ctx context.Context, input *CreateResourceOwnerCredentialsMappingInput
+func (s *OauthResourceOwnerCredentialsMappingsService) CreateResourceOwnerCredentialsMappingWithContext(ctx context.Context, input *CreateResourceOwnerCredentialsMappingInput) (output *models.ResourceOwnerCredentialsMapping, resp *http.Response, err error) {
 	path := "/oauth/resourceOwnerCredentialsMappings"
 	op := &request.Operation{
 		Name:       "CreateResourceOwnerCredentialsMapping",
@@ -73,6 +89,7 @@ func (s *OauthResourceOwnerCredentialsMappingsService) CreateResourceOwnerCreden
 	}
 	output = &models.ResourceOwnerCredentialsMapping{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -86,6 +103,13 @@ func (s *OauthResourceOwnerCredentialsMappingsService) CreateResourceOwnerCreden
 //RequestType: GET
 //Input: input *GetResourceOwnerCredentialsMappingInput
 func (s *OauthResourceOwnerCredentialsMappingsService) GetResourceOwnerCredentialsMapping(input *GetResourceOwnerCredentialsMappingInput) (output *models.ResourceOwnerCredentialsMapping, resp *http.Response, err error) {
+	return s.GetResourceOwnerCredentialsMappingWithContext(context.Background(), input)
+}
+
+//GetResourceOwnerCredentialsMappingWithContext - Find the Resource Owner Credentials mapping by the ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetResourceOwnerCredentialsMappingInput
+func (s *OauthResourceOwnerCredentialsMappingsService) GetResourceOwnerCredentialsMappingWithContext(ctx context.Context, input *GetResourceOwnerCredentialsMappingInput) (output *models.ResourceOwnerCredentialsMapping, resp *http.Response, err error) {
 	path := "/oauth/resourceOwnerCredentialsMappings/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -96,6 +120,7 @@ func (s *OauthResourceOwnerCredentialsMappingsService) GetResourceOwnerCredentia
 	}
 	output = &models.ResourceOwnerCredentialsMapping{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -107,6 +132,13 @@ func (s *OauthResourceOwnerCredentialsMappingsService) GetResourceOwnerCredentia
 //RequestType: PUT
 //Input: input *UpdateResourceOwnerCredentialsMappingInput
 func (s *OauthResourceOwnerCredentialsMappingsService) UpdateResourceOwnerCredentialsMapping(input *UpdateResourceOwnerCredentialsMappingInput) (output *models.ResourceOwnerCredentialsMapping, resp *http.Response, err error) {
+	return s.UpdateResourceOwnerCredentialsMappingWithContext(context.Background(), input)
+}
+
+//UpdateResourceOwnerCredentialsMappingWithContext - Update a Resource Owner Credentials mapping.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateResourceOwnerCredentialsMappingInput
+func (s *OauthResourceOwnerCredentialsMappingsService) UpdateResourceOwnerCredentialsMappingWithContext(ctx context.Context, input *UpdateResourceOwnerCredentialsMappingInput) (output *models.ResourceOwnerCredentialsMapping, resp *http.Response, err error) {
 	path := "/oauth/resourceOwnerCredentialsMappings/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -117,6 +149,7 @@ func (s *OauthResourceOwnerCredentialsMappingsService) UpdateResourceOwnerCreden
 	}
 	output = &models.ResourceOwnerCredentialsMapping{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -130,6 +163,13 @@ func (s *OauthResourceOwnerCredentialsMappingsService) UpdateResourceOwnerCreden
 //RequestType: DELETE
 //Input: input *DeleteResourceOwnerCredentialsMappingInput
 func (s *OauthResourceOwnerCredentialsMappingsService) DeleteResourceOwnerCredentialsMapping(input *DeleteResourceOwnerCredentialsMappingInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeleteResourceOwnerCredentialsMappingWithContext(context.Background(), input)
+}
+
+//DeleteResourceOwnerCredentialsMappingWithContext - Delete a Resource Owner Credentials mapping.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteResourceOwnerCredentialsMappingInput
+func (s *OauthResourceOwnerCredentialsMappingsService) DeleteResourceOwnerCredentialsMappingWithContext(ctx context.Context, input *DeleteResourceOwnerCredentialsMappingInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/oauth/resourceOwnerCredentialsMappings/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -140,6 +180,7 @@ func (s *OauthResourceOwnerCredentialsMappingsService) DeleteResourceOwnerCreden
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

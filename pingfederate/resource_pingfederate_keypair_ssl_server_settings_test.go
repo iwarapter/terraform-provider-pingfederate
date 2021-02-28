@@ -5,11 +5,12 @@ import (
 	"os"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/iwarapter/pingfederate-sdk-go/services/keyPairsSslServer"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
@@ -151,9 +152,7 @@ func Test_resourcePingFederateKeypairSslServerSettingsResourceReadData(t *testin
 			resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})
 			resourcePingFederateKeypairSslServerSettingsResourceReadResult(resourceLocalData, &tc.Resource)
 
-			if got := *resourcePingFederateKeypairSslServerSettingsResourceReadData(resourceLocalData); !cmp.Equal(got, tc.Resource) {
-				t.Errorf("resourcePingFederateKeypairSslServerSettingsResourceReadData() = %v", cmp.Diff(got, tc.Resource))
-			}
+			assert.Equal(t, tc.Resource, *resourcePingFederateKeypairSslServerSettingsResourceReadData(resourceLocalData))
 		})
 	}
 }

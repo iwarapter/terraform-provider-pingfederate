@@ -27,13 +27,13 @@ func resourcePingFederateAuthenticationSelectorResource() *schema.Resource {
 		CustomizeDiff: func(ctx context.Context, d *schema.ResourceDiff, m interface{}) error {
 			svc := m.(pfClient).AuthenticationSelectors
 			if className, ok := d.GetOk("plugin_descriptor_ref.0.id"); ok {
-				desc, resp, err := svc.GetAuthenticationSelectorDescriptorsById(&authenticationSelectors.GetAuthenticationSelectorDescriptorsByIdInput{Id: className.(string)})
+				desc, resp, err := svc.GetAuthenticationSelectorDescriptorsByIdWithContext(ctx, &authenticationSelectors.GetAuthenticationSelectorDescriptorsByIdInput{Id: className.(string)})
 				if resp != nil && resp.StatusCode == http.StatusForbidden {
 					log.Printf("[WARN] Unable to query AuthenticationSelectorDescriptor, appropriate IdP/SP role not enabled")
 					return nil
 				}
 				if err != nil {
-					descs, _, err := svc.GetAuthenticationSelectorDescriptors()
+					descs, _, err := svc.GetAuthenticationSelectorDescriptorsWithContext(ctx)
 					if err == nil && descs != nil {
 						list := func(in *[]*pf.AuthenticationSelectorDescriptor) string {
 							var plugins []string
@@ -71,12 +71,12 @@ func resourcePingFederateAuthenticationSelectorResourceSchema() map[string]*sche
 	}
 }
 
-func resourcePingFederateAuthenticationSelectorResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateAuthenticationSelectorResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).AuthenticationSelectors
 	input := authenticationSelectors.CreateAuthenticationSelectorInput{
 		Body: *resourcePingFederateAuthenticationSelectorResourceReadData(d),
 	}
-	result, _, err := svc.CreateAuthenticationSelector(&input)
+	result, _, err := svc.CreateAuthenticationSelectorWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to create AuthenticationSelectors: %s", err)
 	}
@@ -84,25 +84,25 @@ func resourcePingFederateAuthenticationSelectorResourceCreate(_ context.Context,
 	return resourcePingFederateAuthenticationSelectorResourceReadResult(d, result, svc)
 }
 
-func resourcePingFederateAuthenticationSelectorResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateAuthenticationSelectorResourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).AuthenticationSelectors
 	input := authenticationSelectors.GetAuthenticationSelectorInput{
 		Id: d.Id(),
 	}
-	result, _, err := svc.GetAuthenticationSelector(&input)
+	result, _, err := svc.GetAuthenticationSelectorWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to read AuthenticationSelectors: %s", err)
 	}
 	return resourcePingFederateAuthenticationSelectorResourceReadResult(d, result, svc)
 }
 
-func resourcePingFederateAuthenticationSelectorResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateAuthenticationSelectorResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).AuthenticationSelectors
 	input := authenticationSelectors.UpdateAuthenticationSelectorInput{
 		Id:   d.Id(),
 		Body: *resourcePingFederateAuthenticationSelectorResourceReadData(d),
 	}
-	result, _, err := svc.UpdateAuthenticationSelector(&input)
+	result, _, err := svc.UpdateAuthenticationSelectorWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to update AuthenticationSelectors: %s", err)
 	}
@@ -110,12 +110,12 @@ func resourcePingFederateAuthenticationSelectorResourceUpdate(_ context.Context,
 	return resourcePingFederateAuthenticationSelectorResourceReadResult(d, result, svc)
 }
 
-func resourcePingFederateAuthenticationSelectorResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateAuthenticationSelectorResourceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).AuthenticationSelectors
 	input := authenticationSelectors.DeleteAuthenticationSelectorInput{
 		Id: d.Id(),
 	}
-	_, _, err := svc.DeleteAuthenticationSelector(&input)
+	_, _, err := svc.DeleteAuthenticationSelectorWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to delete AuthenticationSelectors: %s", err)
 	}

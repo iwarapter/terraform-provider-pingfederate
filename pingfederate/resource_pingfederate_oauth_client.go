@@ -325,7 +325,7 @@ func resourcePingFederateOauthClientResourceCreate(ctx context.Context, d *schem
 	err := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
 		var err error
 		var resp *http.Response
-		result, resp, err = svc.CreateClient(&input)
+		result, resp, err = svc.CreateClientWithContext(ctx, &input)
 		if resp != nil && resp.StatusCode == http.StatusUnprocessableEntity {
 			return resource.RetryableError(fmt.Errorf("unable to create with retry OauthClients: %s", err))
 		}
@@ -341,25 +341,25 @@ func resourcePingFederateOauthClientResourceCreate(ctx context.Context, d *schem
 	return resourcePingFederateOauthClientResourceReadResult(d, result)
 }
 
-func resourcePingFederateOauthClientResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateOauthClientResourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthClients
 	input := oauthClients.GetClientInput{
 		Id: d.Id(),
 	}
-	result, _, err := svc.GetClient(&input)
+	result, _, err := svc.GetClientWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to read OauthClients: %s", err)
 	}
 	return resourcePingFederateOauthClientResourceReadResult(d, result)
 }
 
-func resourcePingFederateOauthClientResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateOauthClientResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthClients
 	input := oauthClients.UpdateClientInput{
 		Id:   d.Id(),
 		Body: *resourcePingFederateOauthClientResourceReadData(d),
 	}
-	result, _, err := svc.UpdateClient(&input)
+	result, _, err := svc.UpdateClientWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to update OauthClients: %s", err)
 	}
@@ -367,12 +367,12 @@ func resourcePingFederateOauthClientResourceUpdate(_ context.Context, d *schema.
 	return resourcePingFederateOauthClientResourceReadResult(d, result)
 }
 
-func resourcePingFederateOauthClientResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateOauthClientResourceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthClients
 	input := oauthClients.DeleteClientInput{
 		Id: d.Id(),
 	}
-	_, _, err := svc.DeleteClient(&input)
+	_, _, err := svc.DeleteClientWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to delete OauthClients: %s", err)
 	}

@@ -1,6 +1,7 @@
 package keyPairs
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
@@ -44,6 +45,13 @@ func (c *KeyPairsService) newRequest(op *request.Operation, params, data interfa
 //RequestType: GET
 //Input:
 func (s *KeyPairsService) GetKeyAlgorithms() (output *models.KeyAlgorithms, resp *http.Response, err error) {
+	return s.GetKeyAlgorithmsWithContext(context.Background())
+}
+
+//GetKeyAlgorithmsWithContext - Get list of the key algorithms supported for key pair generation.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *KeyPairsService) GetKeyAlgorithmsWithContext(ctx context.Context) (output *models.KeyAlgorithms, resp *http.Response, err error) {
 	path := "/keyPairs/keyAlgorithms"
 	op := &request.Operation{
 		Name:       "GetKeyAlgorithms",
@@ -52,6 +60,7 @@ func (s *KeyPairsService) GetKeyAlgorithms() (output *models.KeyAlgorithms, resp
 	}
 	output = &models.KeyAlgorithms{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

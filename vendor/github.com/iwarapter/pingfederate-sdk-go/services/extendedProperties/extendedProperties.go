@@ -1,6 +1,7 @@
 package extendedProperties
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
@@ -44,6 +45,13 @@ func (c *ExtendedPropertiesService) newRequest(op *request.Operation, params, da
 //RequestType: GET
 //Input:
 func (s *ExtendedPropertiesService) GetExtendedProperties() (output *models.ExtendedProperties, resp *http.Response, err error) {
+	return s.GetExtendedPropertiesWithContext(context.Background())
+}
+
+//GetExtendedPropertiesWithContext - Get the defined Extended Properties.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *ExtendedPropertiesService) GetExtendedPropertiesWithContext(ctx context.Context) (output *models.ExtendedProperties, resp *http.Response, err error) {
 	path := "/extendedProperties"
 	op := &request.Operation{
 		Name:       "GetExtendedProperties",
@@ -52,6 +60,7 @@ func (s *ExtendedPropertiesService) GetExtendedProperties() (output *models.Exte
 	}
 	output = &models.ExtendedProperties{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -63,6 +72,13 @@ func (s *ExtendedPropertiesService) GetExtendedProperties() (output *models.Exte
 //RequestType: PUT
 //Input: input *UpdateExtendedPropertiesInput
 func (s *ExtendedPropertiesService) UpdateExtendedProperties(input *UpdateExtendedPropertiesInput) (output *models.ExtendedProperties, resp *http.Response, err error) {
+	return s.UpdateExtendedPropertiesWithContext(context.Background(), input)
+}
+
+//UpdateExtendedPropertiesWithContext - Update the Extended Properties.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateExtendedPropertiesInput
+func (s *ExtendedPropertiesService) UpdateExtendedPropertiesWithContext(ctx context.Context, input *UpdateExtendedPropertiesInput) (output *models.ExtendedProperties, resp *http.Response, err error) {
 	path := "/extendedProperties"
 	op := &request.Operation{
 		Name:       "UpdateExtendedProperties",
@@ -71,6 +87,7 @@ func (s *ExtendedPropertiesService) UpdateExtendedProperties(input *UpdateExtend
 	}
 	output = &models.ExtendedProperties{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

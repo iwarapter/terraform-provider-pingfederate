@@ -46,12 +46,12 @@ func resourcePingFederateAuthnApiApplicationResourceSchema() map[string]*schema.
 	}
 }
 
-func resourcePingFederateAuthnApiApplicationResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateAuthnApiApplicationResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).AuthenticationApi
 	input := authenticationApi.CreateApplicationInput{
 		Body: *resourcePingFederateAuthnApiApplicationResourceReadData(d),
 	}
-	result, _, err := svc.CreateApplication(&input)
+	result, _, err := svc.CreateApplicationWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to create AuthnApiApplication: %s", err)
 	}
@@ -59,25 +59,25 @@ func resourcePingFederateAuthnApiApplicationResourceCreate(_ context.Context, d 
 	return resourcePingFederateAuthnApiApplicationResourceReadResult(d, result)
 }
 
-func resourcePingFederateAuthnApiApplicationResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateAuthnApiApplicationResourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).AuthenticationApi
 	input := authenticationApi.GetApplicationInput{
 		Id: d.Id(),
 	}
-	result, _, err := svc.GetApplication(&input)
+	result, _, err := svc.GetApplicationWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to read AuthnApiApplication: %s", err)
 	}
 	return resourcePingFederateAuthnApiApplicationResourceReadResult(d, result)
 }
 
-func resourcePingFederateAuthnApiApplicationResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateAuthnApiApplicationResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).AuthenticationApi
 	input := authenticationApi.UpdateApplicationInput{
 		Id:   d.Id(),
 		Body: *resourcePingFederateAuthnApiApplicationResourceReadData(d),
 	}
-	result, _, err := svc.UpdateApplication(&input)
+	result, _, err := svc.UpdateApplicationWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to update AuthnApiApplication: %s", err)
 	}
@@ -85,12 +85,12 @@ func resourcePingFederateAuthnApiApplicationResourceUpdate(_ context.Context, d 
 	return resourcePingFederateAuthnApiApplicationResourceReadResult(d, result)
 }
 
-func resourcePingFederateAuthnApiApplicationResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateAuthnApiApplicationResourceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).AuthenticationApi
 	input := authenticationApi.DeleteApplicationInput{
 		Id: d.Id(),
 	}
-	_, _, err := svc.DeleteApplication(&input)
+	_, _, err := svc.DeleteApplicationWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to delete AuthnApiApplication: %s", err)
 	}

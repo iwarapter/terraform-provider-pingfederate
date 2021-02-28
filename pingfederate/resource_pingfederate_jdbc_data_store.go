@@ -21,7 +21,6 @@ func resourcePingFederateJdbcDataStoreResource() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-
 		Schema: resourcePingFederateJdbcDataStoreResourceSchema(),
 	}
 }
@@ -112,14 +111,14 @@ func resourcePingFederateJdbcDataStoreResourceSchema() map[string]*schema.Schema
 	}
 }
 
-func resourcePingFederateJdbcDataStoreResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateJdbcDataStoreResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).DataStores
 	ds := resourcePingFederateJdbcDataStoreResourceReadData(d)
 	input := dataStores.CreateJdbcDataStoreInput{
 		Body:                     *ds,
 		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
-	store, _, err := svc.CreateJdbcDataStore(&input)
+	store, _, err := svc.CreateJdbcDataStoreWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to create JdbcDataStores: %s", err)
 	}
@@ -127,19 +126,19 @@ func resourcePingFederateJdbcDataStoreResourceCreate(_ context.Context, d *schem
 	return resourcePingFederateJdbcDataStoreResourceReadResult(d, store)
 }
 
-func resourcePingFederateJdbcDataStoreResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateJdbcDataStoreResourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).DataStores
 	input := dataStores.GetJdbcDataStoreInput{
 		Id: d.Id(),
 	}
-	result, _, err := svc.GetJdbcDataStore(&input)
+	result, _, err := svc.GetJdbcDataStoreWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to read JdbcDataStores: %s", err)
 	}
 	return resourcePingFederateJdbcDataStoreResourceReadResult(d, result)
 }
 
-func resourcePingFederateJdbcDataStoreResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateJdbcDataStoreResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).DataStores
 	ds := resourcePingFederateJdbcDataStoreResourceReadData(d)
 	input := dataStores.UpdateJdbcDataStoreInput{
@@ -147,19 +146,19 @@ func resourcePingFederateJdbcDataStoreResourceUpdate(_ context.Context, d *schem
 		Body:                     *ds,
 		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
-	store, _, err := svc.UpdateJdbcDataStore(&input)
+	store, _, err := svc.UpdateJdbcDataStoreWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to update JdbcDataStores: %s", err)
 	}
 	return resourcePingFederateJdbcDataStoreResourceReadResult(d, store)
 }
 
-func resourcePingFederateJdbcDataStoreResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateJdbcDataStoreResourceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).DataStores
 	input := dataStores.DeleteDataStoreInput{
 		Id: d.Id(),
 	}
-	_, _, err := svc.DeleteDataStore(&input)
+	_, _, err := svc.DeleteDataStoreWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to delete JdbcDataStores: %s", err)
 	}

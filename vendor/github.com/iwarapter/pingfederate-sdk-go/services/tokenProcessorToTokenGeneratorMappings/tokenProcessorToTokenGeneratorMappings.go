@@ -1,6 +1,7 @@
 package tokenProcessorToTokenGeneratorMappings
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -46,6 +47,13 @@ func (c *TokenProcessorToTokenGeneratorMappingsService) newRequest(op *request.O
 //RequestType: GET
 //Input:
 func (s *TokenProcessorToTokenGeneratorMappingsService) GetTokenToTokenMappings() (output *models.TokenToTokenMappings, resp *http.Response, err error) {
+	return s.GetTokenToTokenMappingsWithContext(context.Background())
+}
+
+//GetTokenToTokenMappingsWithContext - Get the list of Token Processor to Token Generator Mappings.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *TokenProcessorToTokenGeneratorMappingsService) GetTokenToTokenMappingsWithContext(ctx context.Context) (output *models.TokenToTokenMappings, resp *http.Response, err error) {
 	path := "/tokenProcessorToTokenGeneratorMappings"
 	op := &request.Operation{
 		Name:       "GetTokenToTokenMappings",
@@ -54,6 +62,7 @@ func (s *TokenProcessorToTokenGeneratorMappingsService) GetTokenToTokenMappings(
 	}
 	output = &models.TokenToTokenMappings{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -65,6 +74,13 @@ func (s *TokenProcessorToTokenGeneratorMappingsService) GetTokenToTokenMappings(
 //RequestType: POST
 //Input: input *CreateTokenToTokenMappingInput
 func (s *TokenProcessorToTokenGeneratorMappingsService) CreateTokenToTokenMapping(input *CreateTokenToTokenMappingInput) (output *models.TokenToTokenMapping, resp *http.Response, err error) {
+	return s.CreateTokenToTokenMappingWithContext(context.Background(), input)
+}
+
+//CreateTokenToTokenMappingWithContext - Create a new Token Processor to Token Generator Mapping.
+//RequestType: POST
+//Input: ctx context.Context, input *CreateTokenToTokenMappingInput
+func (s *TokenProcessorToTokenGeneratorMappingsService) CreateTokenToTokenMappingWithContext(ctx context.Context, input *CreateTokenToTokenMappingInput) (output *models.TokenToTokenMapping, resp *http.Response, err error) {
 	path := "/tokenProcessorToTokenGeneratorMappings"
 	op := &request.Operation{
 		Name:       "CreateTokenToTokenMapping",
@@ -73,6 +89,7 @@ func (s *TokenProcessorToTokenGeneratorMappingsService) CreateTokenToTokenMappin
 	}
 	output = &models.TokenToTokenMapping{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -86,6 +103,13 @@ func (s *TokenProcessorToTokenGeneratorMappingsService) CreateTokenToTokenMappin
 //RequestType: GET
 //Input: input *GetTokenToTokenMappingByIdInput
 func (s *TokenProcessorToTokenGeneratorMappingsService) GetTokenToTokenMappingById(input *GetTokenToTokenMappingByIdInput) (output *models.TokenToTokenMapping, resp *http.Response, err error) {
+	return s.GetTokenToTokenMappingByIdWithContext(context.Background(), input)
+}
+
+//GetTokenToTokenMappingByIdWithContext - Get a Token Processor to Token Generator Mapping.
+//RequestType: GET
+//Input: ctx context.Context, input *GetTokenToTokenMappingByIdInput
+func (s *TokenProcessorToTokenGeneratorMappingsService) GetTokenToTokenMappingByIdWithContext(ctx context.Context, input *GetTokenToTokenMappingByIdInput) (output *models.TokenToTokenMapping, resp *http.Response, err error) {
 	path := "/tokenProcessorToTokenGeneratorMappings/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -96,6 +120,7 @@ func (s *TokenProcessorToTokenGeneratorMappingsService) GetTokenToTokenMappingBy
 	}
 	output = &models.TokenToTokenMapping{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -107,6 +132,13 @@ func (s *TokenProcessorToTokenGeneratorMappingsService) GetTokenToTokenMappingBy
 //RequestType: PUT
 //Input: input *UpdateTokenToTokenMappingByIdInput
 func (s *TokenProcessorToTokenGeneratorMappingsService) UpdateTokenToTokenMappingById(input *UpdateTokenToTokenMappingByIdInput) (output *models.TokenToTokenMapping, resp *http.Response, err error) {
+	return s.UpdateTokenToTokenMappingByIdWithContext(context.Background(), input)
+}
+
+//UpdateTokenToTokenMappingByIdWithContext - Update a Token Processor to Token Generator Mapping.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateTokenToTokenMappingByIdInput
+func (s *TokenProcessorToTokenGeneratorMappingsService) UpdateTokenToTokenMappingByIdWithContext(ctx context.Context, input *UpdateTokenToTokenMappingByIdInput) (output *models.TokenToTokenMapping, resp *http.Response, err error) {
 	path := "/tokenProcessorToTokenGeneratorMappings/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -117,6 +149,7 @@ func (s *TokenProcessorToTokenGeneratorMappingsService) UpdateTokenToTokenMappin
 	}
 	output = &models.TokenToTokenMapping{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -130,6 +163,13 @@ func (s *TokenProcessorToTokenGeneratorMappingsService) UpdateTokenToTokenMappin
 //RequestType: DELETE
 //Input: input *DeleteTokenToTokenMappingByIdInput
 func (s *TokenProcessorToTokenGeneratorMappingsService) DeleteTokenToTokenMappingById(input *DeleteTokenToTokenMappingByIdInput) (output *models.TokenToTokenMapping, resp *http.Response, err error) {
+	return s.DeleteTokenToTokenMappingByIdWithContext(context.Background(), input)
+}
+
+//DeleteTokenToTokenMappingByIdWithContext - Delete a Token Processor to Token Generator Mapping.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteTokenToTokenMappingByIdInput
+func (s *TokenProcessorToTokenGeneratorMappingsService) DeleteTokenToTokenMappingByIdWithContext(ctx context.Context, input *DeleteTokenToTokenMappingByIdInput) (output *models.TokenToTokenMapping, resp *http.Response, err error) {
 	path := "/tokenProcessorToTokenGeneratorMappings/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -140,6 +180,7 @@ func (s *TokenProcessorToTokenGeneratorMappingsService) DeleteTokenToTokenMappin
 	}
 	output = &models.TokenToTokenMapping{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

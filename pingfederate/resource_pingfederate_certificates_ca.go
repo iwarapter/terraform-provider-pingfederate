@@ -101,7 +101,7 @@ func resourcePingFederateCertificatesCaResourceSchema() map[string]*schema.Schem
 	}
 }
 
-func resourcePingFederateCertificatesCaResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateCertificatesCaResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).CertificatesCa
 	input := certificatesCa.ImportTrustedCAInput{
 		Body: pf.X509File{
@@ -114,7 +114,7 @@ func resourcePingFederateCertificatesCaResourceCreate(_ context.Context, d *sche
 	if v, ok := d.GetOk("crypto_provider"); ok {
 		input.Body.CryptoProvider = String(v.(string))
 	}
-	result, _, err := svc.ImportTrustedCA(&input)
+	result, _, err := svc.ImportTrustedCAWithContext(ctx, &input)
 
 	if err != nil {
 		return diag.Errorf("unable to create CertificatesCa: %s", err)
@@ -123,13 +123,13 @@ func resourcePingFederateCertificatesCaResourceCreate(_ context.Context, d *sche
 	return resourcePingFederateCertificatesCaResourceReadResult(d, result)
 }
 
-func resourcePingFederateCertificatesCaResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateCertificatesCaResourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).CertificatesCa
 	input := certificatesCa.GetTrustedCertInput{
 		Id: d.Id(),
 	}
 
-	result, _, err := svc.GetTrustedCert(&input)
+	result, _, err := svc.GetTrustedCertWithContext(ctx, &input)
 
 	if err != nil {
 		return diag.Errorf("unable to read CertificatesCa: %s", err)
@@ -137,13 +137,13 @@ func resourcePingFederateCertificatesCaResourceRead(_ context.Context, d *schema
 	return resourcePingFederateCertificatesCaResourceReadResult(d, result)
 }
 
-func resourcePingFederateCertificatesCaResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateCertificatesCaResourceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).CertificatesCa
 	input := certificatesCa.DeleteTrustedCAInput{
 		Id: d.Id(),
 	}
 
-	_, _, err := svc.DeleteTrustedCA(&input)
+	_, _, err := svc.DeleteTrustedCAWithContext(ctx, &input)
 
 	if err != nil {
 		return diag.Errorf("unable to delete CertificatesCa: %s", err)
@@ -165,7 +165,7 @@ func resourcePingFederateCertificatesCaResourceImport(ctx context.Context, d *sc
 	input := certificatesCa.ExportCertificateFileInput{
 		Id: d.Id(),
 	}
-	result, _, err := svc.ExportCertificateFile(&input)
+	result, _, err := svc.ExportCertificateFileWithContext(ctx, &input)
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve certifcate file data %s", err)
 	}
