@@ -14,7 +14,7 @@ Requirements
 ------------
 
 - [Terraform](https://www.terraform.io/downloads.html) 0.12+
-- [Go](https://golang.org/doc/install) 1.12 (to build the provider plugin)
+- [Go](https://golang.org/doc/install) 1.16 (to build the provider plugin)
 - [Docker](https://www.docker.com/products/docker-desktop) latest
 
 

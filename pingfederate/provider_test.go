@@ -198,7 +198,7 @@ func dataSetup() error {
 		}
 	}
 	authnSel := authenticationSelectors.New(cfg)
-	if _, _, err := authnSel.GetAuthenticationSelector(&authenticationSelectors.GetAuthenticationSelectorInput{Id: "idptestme"}); err != nil {
+	if _, _, err := authnSel.GetAuthenticationSelector(&authenticationSelectors.GetAuthenticationSelectorInput{Id: "authseltestme"}); err != nil {
 		if _, _, err := authnSel.CreateAuthenticationSelector(&authenticationSelectors.CreateAuthenticationSelectorInput{
 			Body: pf.AuthenticationSelector{
 				Configuration: &pf.PluginConfiguration{

@@ -13,6 +13,28 @@ import (
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
+func init() {
+	resource.AddTestSweepers("kerberos_realm", &resource.Sweeper{
+		Name:         "kerberos_realm",
+		Dependencies: []string{},
+		F: func(r string) error {
+			svc := kerberosRealms.New(cfg)
+			results, _, err := svc.GetKerberosRealms()
+			if err != nil {
+				return fmt.Errorf("unable to kerberos realms stores %s", err)
+			}
+			for _, item := range *results.Items {
+				_, _, err := svc.DeleteKerberosRealm(&kerberosRealms.DeleteKerberosRealmInput{Id: *item.Id})
+				if err != nil {
+					return fmt.Errorf("unable to sweep kerberos realm %s because %s", *item.Id, err)
+				}
+			}
+
+			return nil
+		},
+	})
+}
+
 func TestAccPingFederateKerberosRealmResource(t *testing.T) {
 	resourceName := "pingfederate_kerberos_realm.demo"
 
