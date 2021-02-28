@@ -1,6 +1,7 @@
 package idpTokenProcessors
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -45,6 +46,13 @@ func (c *IdpTokenProcessorsService) newRequest(op *request.Operation, params, da
 //RequestType: GET
 //Input:
 func (s *IdpTokenProcessorsService) GetTokenProcessorDescriptors() (output *models.TokenProcessorDescriptors, resp *http.Response, err error) {
+	return s.GetTokenProcessorDescriptorsWithContext(context.Background())
+}
+
+//GetTokenProcessorDescriptorsWithContext - Get the list of available token processors.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *IdpTokenProcessorsService) GetTokenProcessorDescriptorsWithContext(ctx context.Context) (output *models.TokenProcessorDescriptors, resp *http.Response, err error) {
 	path := "/idp/tokenProcessors/descriptors"
 	op := &request.Operation{
 		Name:       "GetTokenProcessorDescriptors",
@@ -53,6 +61,7 @@ func (s *IdpTokenProcessorsService) GetTokenProcessorDescriptors() (output *mode
 	}
 	output = &models.TokenProcessorDescriptors{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -64,6 +73,13 @@ func (s *IdpTokenProcessorsService) GetTokenProcessorDescriptors() (output *mode
 //RequestType: GET
 //Input: input *GetTokenProcessorDescriptorsByIdInput
 func (s *IdpTokenProcessorsService) GetTokenProcessorDescriptorsById(input *GetTokenProcessorDescriptorsByIdInput) (output *models.TokenProcessorDescriptor, resp *http.Response, err error) {
+	return s.GetTokenProcessorDescriptorsByIdWithContext(context.Background(), input)
+}
+
+//GetTokenProcessorDescriptorsByIdWithContext - Get the description of a token processor plugin by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetTokenProcessorDescriptorsByIdInput
+func (s *IdpTokenProcessorsService) GetTokenProcessorDescriptorsByIdWithContext(ctx context.Context, input *GetTokenProcessorDescriptorsByIdInput) (output *models.TokenProcessorDescriptor, resp *http.Response, err error) {
 	path := "/idp/tokenProcessors/descriptors/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -74,6 +90,7 @@ func (s *IdpTokenProcessorsService) GetTokenProcessorDescriptorsById(input *GetT
 	}
 	output = &models.TokenProcessorDescriptor{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -85,6 +102,13 @@ func (s *IdpTokenProcessorsService) GetTokenProcessorDescriptorsById(input *GetT
 //RequestType: GET
 //Input:
 func (s *IdpTokenProcessorsService) GetTokenProcessors() (output *models.TokenProcessors, resp *http.Response, err error) {
+	return s.GetTokenProcessorsWithContext(context.Background())
+}
+
+//GetTokenProcessorsWithContext - Get the list of token processor instances.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *IdpTokenProcessorsService) GetTokenProcessorsWithContext(ctx context.Context) (output *models.TokenProcessors, resp *http.Response, err error) {
 	path := "/idp/tokenProcessors"
 	op := &request.Operation{
 		Name:       "GetTokenProcessors",
@@ -93,6 +117,7 @@ func (s *IdpTokenProcessorsService) GetTokenProcessors() (output *models.TokenPr
 	}
 	output = &models.TokenProcessors{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -104,6 +129,13 @@ func (s *IdpTokenProcessorsService) GetTokenProcessors() (output *models.TokenPr
 //RequestType: POST
 //Input: input *CreateTokenProcessorInput
 func (s *IdpTokenProcessorsService) CreateTokenProcessor(input *CreateTokenProcessorInput) (output *models.TokenProcessor, resp *http.Response, err error) {
+	return s.CreateTokenProcessorWithContext(context.Background(), input)
+}
+
+//CreateTokenProcessorWithContext - Create a new token processor instance.
+//RequestType: POST
+//Input: ctx context.Context, input *CreateTokenProcessorInput
+func (s *IdpTokenProcessorsService) CreateTokenProcessorWithContext(ctx context.Context, input *CreateTokenProcessorInput) (output *models.TokenProcessor, resp *http.Response, err error) {
 	path := "/idp/tokenProcessors"
 	op := &request.Operation{
 		Name:       "CreateTokenProcessor",
@@ -112,6 +144,7 @@ func (s *IdpTokenProcessorsService) CreateTokenProcessor(input *CreateTokenProce
 	}
 	output = &models.TokenProcessor{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -123,6 +156,13 @@ func (s *IdpTokenProcessorsService) CreateTokenProcessor(input *CreateTokenProce
 //RequestType: GET
 //Input: input *GetTokenProcessorInput
 func (s *IdpTokenProcessorsService) GetTokenProcessor(input *GetTokenProcessorInput) (output *models.TokenProcessor, resp *http.Response, err error) {
+	return s.GetTokenProcessorWithContext(context.Background(), input)
+}
+
+//GetTokenProcessorWithContext - Find a token processor instance by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetTokenProcessorInput
+func (s *IdpTokenProcessorsService) GetTokenProcessorWithContext(ctx context.Context, input *GetTokenProcessorInput) (output *models.TokenProcessor, resp *http.Response, err error) {
 	path := "/idp/tokenProcessors/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -133,6 +173,7 @@ func (s *IdpTokenProcessorsService) GetTokenProcessor(input *GetTokenProcessorIn
 	}
 	output = &models.TokenProcessor{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -144,6 +185,13 @@ func (s *IdpTokenProcessorsService) GetTokenProcessor(input *GetTokenProcessorIn
 //RequestType: PUT
 //Input: input *UpdateTokenProcessorInput
 func (s *IdpTokenProcessorsService) UpdateTokenProcessor(input *UpdateTokenProcessorInput) (output *models.TokenProcessor, resp *http.Response, err error) {
+	return s.UpdateTokenProcessorWithContext(context.Background(), input)
+}
+
+//UpdateTokenProcessorWithContext - Update a token processor instance.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateTokenProcessorInput
+func (s *IdpTokenProcessorsService) UpdateTokenProcessorWithContext(ctx context.Context, input *UpdateTokenProcessorInput) (output *models.TokenProcessor, resp *http.Response, err error) {
 	path := "/idp/tokenProcessors/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -154,6 +202,7 @@ func (s *IdpTokenProcessorsService) UpdateTokenProcessor(input *UpdateTokenProce
 	}
 	output = &models.TokenProcessor{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -165,6 +214,13 @@ func (s *IdpTokenProcessorsService) UpdateTokenProcessor(input *UpdateTokenProce
 //RequestType: DELETE
 //Input: input *DeleteTokenProcessorInput
 func (s *IdpTokenProcessorsService) DeleteTokenProcessor(input *DeleteTokenProcessorInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeleteTokenProcessorWithContext(context.Background(), input)
+}
+
+//DeleteTokenProcessorWithContext - Delete a token processor instance.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteTokenProcessorInput
+func (s *IdpTokenProcessorsService) DeleteTokenProcessorWithContext(ctx context.Context, input *DeleteTokenProcessorInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/idp/tokenProcessors/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -175,6 +231,7 @@ func (s *IdpTokenProcessorsService) DeleteTokenProcessor(input *DeleteTokenProce
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

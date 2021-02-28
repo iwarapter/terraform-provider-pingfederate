@@ -1,6 +1,7 @@
 package oauthTokenExchangeProcessor
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -46,6 +47,13 @@ func (c *OauthTokenExchangeProcessorService) newRequest(op *request.Operation, p
 //RequestType: GET
 //Input:
 func (s *OauthTokenExchangeProcessorService) GetSettings() (output *models.TokenExchangeProcessorSettings, resp *http.Response, err error) {
+	return s.GetSettingsWithContext(context.Background())
+}
+
+//GetSettingsWithContext - Get general OAuth 2.0 Token Exchange Processor settings.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *OauthTokenExchangeProcessorService) GetSettingsWithContext(ctx context.Context) (output *models.TokenExchangeProcessorSettings, resp *http.Response, err error) {
 	path := "/oauth/tokenExchange/processor/settings"
 	op := &request.Operation{
 		Name:       "GetSettings",
@@ -54,6 +62,7 @@ func (s *OauthTokenExchangeProcessorService) GetSettings() (output *models.Token
 	}
 	output = &models.TokenExchangeProcessorSettings{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -65,6 +74,13 @@ func (s *OauthTokenExchangeProcessorService) GetSettings() (output *models.Token
 //RequestType: PUT
 //Input: input *UpdateSettingsInput
 func (s *OauthTokenExchangeProcessorService) UpdateSettings(input *UpdateSettingsInput) (output *models.TokenExchangeProcessorSettings, resp *http.Response, err error) {
+	return s.UpdateSettingsWithContext(context.Background(), input)
+}
+
+//UpdateSettingsWithContext - Update general OAuth 2.0 Token Exchange Processor settings.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateSettingsInput
+func (s *OauthTokenExchangeProcessorService) UpdateSettingsWithContext(ctx context.Context, input *UpdateSettingsInput) (output *models.TokenExchangeProcessorSettings, resp *http.Response, err error) {
 	path := "/oauth/tokenExchange/processor/settings"
 	op := &request.Operation{
 		Name:       "UpdateSettings",
@@ -73,6 +89,7 @@ func (s *OauthTokenExchangeProcessorService) UpdateSettings(input *UpdateSetting
 	}
 	output = &models.TokenExchangeProcessorSettings{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("bypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -86,6 +103,13 @@ func (s *OauthTokenExchangeProcessorService) UpdateSettings(input *UpdateSetting
 //RequestType: GET
 //Input:
 func (s *OauthTokenExchangeProcessorService) GetPolicies() (output *models.TokenExchangeProcessorPolicies, resp *http.Response, err error) {
+	return s.GetPoliciesWithContext(context.Background())
+}
+
+//GetPoliciesWithContext - Get list of OAuth 2.0 Token Exchange Processor policies.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *OauthTokenExchangeProcessorService) GetPoliciesWithContext(ctx context.Context) (output *models.TokenExchangeProcessorPolicies, resp *http.Response, err error) {
 	path := "/oauth/tokenExchange/processor/policies"
 	op := &request.Operation{
 		Name:       "GetPolicies",
@@ -94,6 +118,7 @@ func (s *OauthTokenExchangeProcessorService) GetPolicies() (output *models.Token
 	}
 	output = &models.TokenExchangeProcessorPolicies{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -105,6 +130,13 @@ func (s *OauthTokenExchangeProcessorService) GetPolicies() (output *models.Token
 //RequestType: POST
 //Input: input *CreatePolicyInput
 func (s *OauthTokenExchangeProcessorService) CreatePolicy(input *CreatePolicyInput) (output *models.TokenExchangeProcessorPolicy, resp *http.Response, err error) {
+	return s.CreatePolicyWithContext(context.Background(), input)
+}
+
+//CreatePolicyWithContext - Create a new OAuth 2.0 Token Exchange Processor policy.
+//RequestType: POST
+//Input: ctx context.Context, input *CreatePolicyInput
+func (s *OauthTokenExchangeProcessorService) CreatePolicyWithContext(ctx context.Context, input *CreatePolicyInput) (output *models.TokenExchangeProcessorPolicy, resp *http.Response, err error) {
 	path := "/oauth/tokenExchange/processor/policies"
 	op := &request.Operation{
 		Name:       "CreatePolicy",
@@ -113,6 +145,7 @@ func (s *OauthTokenExchangeProcessorService) CreatePolicy(input *CreatePolicyInp
 	}
 	output = &models.TokenExchangeProcessorPolicy{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("bypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -126,6 +159,13 @@ func (s *OauthTokenExchangeProcessorService) CreatePolicy(input *CreatePolicyInp
 //RequestType: GET
 //Input: input *GetPolicyInput
 func (s *OauthTokenExchangeProcessorService) GetPolicy(input *GetPolicyInput) (output *models.TokenExchangeProcessorPolicy, resp *http.Response, err error) {
+	return s.GetPolicyWithContext(context.Background(), input)
+}
+
+//GetPolicyWithContext - Find an OAuth 2.0 Token Exchange Processor policy by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetPolicyInput
+func (s *OauthTokenExchangeProcessorService) GetPolicyWithContext(ctx context.Context, input *GetPolicyInput) (output *models.TokenExchangeProcessorPolicy, resp *http.Response, err error) {
 	path := "/oauth/tokenExchange/processor/policies/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -136,6 +176,7 @@ func (s *OauthTokenExchangeProcessorService) GetPolicy(input *GetPolicyInput) (o
 	}
 	output = &models.TokenExchangeProcessorPolicy{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -147,6 +188,13 @@ func (s *OauthTokenExchangeProcessorService) GetPolicy(input *GetPolicyInput) (o
 //RequestType: PUT
 //Input: input *UpdatePolicyInput
 func (s *OauthTokenExchangeProcessorService) UpdatePolicy(input *UpdatePolicyInput) (output *models.TokenExchangeProcessorPolicy, resp *http.Response, err error) {
+	return s.UpdatePolicyWithContext(context.Background(), input)
+}
+
+//UpdatePolicyWithContext - Update an OAuth 2.0 Token Exchange Processor policy.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdatePolicyInput
+func (s *OauthTokenExchangeProcessorService) UpdatePolicyWithContext(ctx context.Context, input *UpdatePolicyInput) (output *models.TokenExchangeProcessorPolicy, resp *http.Response, err error) {
 	path := "/oauth/tokenExchange/processor/policies/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -157,6 +205,7 @@ func (s *OauthTokenExchangeProcessorService) UpdatePolicy(input *UpdatePolicyInp
 	}
 	output = &models.TokenExchangeProcessorPolicy{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("bypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -170,6 +219,13 @@ func (s *OauthTokenExchangeProcessorService) UpdatePolicy(input *UpdatePolicyInp
 //RequestType: DELETE
 //Input: input *DeletePolicyInput
 func (s *OauthTokenExchangeProcessorService) DeletePolicy(input *DeletePolicyInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeletePolicyWithContext(context.Background(), input)
+}
+
+//DeletePolicyWithContext - Delete an OAuth 2.0 Token Exchange Processor policy.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeletePolicyInput
+func (s *OauthTokenExchangeProcessorService) DeletePolicyWithContext(ctx context.Context, input *DeletePolicyInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/oauth/tokenExchange/processor/policies/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -180,6 +236,7 @@ func (s *OauthTokenExchangeProcessorService) DeletePolicy(input *DeletePolicyInp
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

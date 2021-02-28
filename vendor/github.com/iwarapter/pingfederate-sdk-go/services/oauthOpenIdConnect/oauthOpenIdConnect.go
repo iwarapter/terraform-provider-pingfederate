@@ -1,6 +1,7 @@
 package oauthOpenIdConnect
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -46,6 +47,13 @@ func (c *OauthOpenIdConnectService) newRequest(op *request.Operation, params, da
 //RequestType: GET
 //Input:
 func (s *OauthOpenIdConnectService) GetSettings() (output *models.OpenIdConnectSettings, resp *http.Response, err error) {
+	return s.GetSettingsWithContext(context.Background())
+}
+
+//GetSettingsWithContext - Get the OpenID Connect Settings.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *OauthOpenIdConnectService) GetSettingsWithContext(ctx context.Context) (output *models.OpenIdConnectSettings, resp *http.Response, err error) {
 	path := "/oauth/openIdConnect/settings"
 	op := &request.Operation{
 		Name:       "GetSettings",
@@ -54,6 +62,7 @@ func (s *OauthOpenIdConnectService) GetSettings() (output *models.OpenIdConnectS
 	}
 	output = &models.OpenIdConnectSettings{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -65,6 +74,13 @@ func (s *OauthOpenIdConnectService) GetSettings() (output *models.OpenIdConnectS
 //RequestType: PUT
 //Input: input *UpdateSettingsInput
 func (s *OauthOpenIdConnectService) UpdateSettings(input *UpdateSettingsInput) (output *models.OpenIdConnectSettings, resp *http.Response, err error) {
+	return s.UpdateSettingsWithContext(context.Background(), input)
+}
+
+//UpdateSettingsWithContext - Set the OpenID Connect Settings.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateSettingsInput
+func (s *OauthOpenIdConnectService) UpdateSettingsWithContext(ctx context.Context, input *UpdateSettingsInput) (output *models.OpenIdConnectSettings, resp *http.Response, err error) {
 	path := "/oauth/openIdConnect/settings"
 	op := &request.Operation{
 		Name:       "UpdateSettings",
@@ -73,6 +89,7 @@ func (s *OauthOpenIdConnectService) UpdateSettings(input *UpdateSettingsInput) (
 	}
 	output = &models.OpenIdConnectSettings{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -84,6 +101,13 @@ func (s *OauthOpenIdConnectService) UpdateSettings(input *UpdateSettingsInput) (
 //RequestType: GET
 //Input:
 func (s *OauthOpenIdConnectService) GetPolicies() (output *models.OpenIdConnectPolicies, resp *http.Response, err error) {
+	return s.GetPoliciesWithContext(context.Background())
+}
+
+//GetPoliciesWithContext - Get list of OpenID Connect Policies.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *OauthOpenIdConnectService) GetPoliciesWithContext(ctx context.Context) (output *models.OpenIdConnectPolicies, resp *http.Response, err error) {
 	path := "/oauth/openIdConnect/policies"
 	op := &request.Operation{
 		Name:       "GetPolicies",
@@ -92,6 +116,7 @@ func (s *OauthOpenIdConnectService) GetPolicies() (output *models.OpenIdConnectP
 	}
 	output = &models.OpenIdConnectPolicies{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -103,6 +128,13 @@ func (s *OauthOpenIdConnectService) GetPolicies() (output *models.OpenIdConnectP
 //RequestType: POST
 //Input: input *CreatePolicyInput
 func (s *OauthOpenIdConnectService) CreatePolicy(input *CreatePolicyInput) (output *models.OpenIdConnectPolicy, resp *http.Response, err error) {
+	return s.CreatePolicyWithContext(context.Background(), input)
+}
+
+//CreatePolicyWithContext - Create a new OpenID Connect Policy.
+//RequestType: POST
+//Input: ctx context.Context, input *CreatePolicyInput
+func (s *OauthOpenIdConnectService) CreatePolicyWithContext(ctx context.Context, input *CreatePolicyInput) (output *models.OpenIdConnectPolicy, resp *http.Response, err error) {
 	path := "/oauth/openIdConnect/policies"
 	op := &request.Operation{
 		Name:       "CreatePolicy",
@@ -111,6 +143,7 @@ func (s *OauthOpenIdConnectService) CreatePolicy(input *CreatePolicyInput) (outp
 	}
 	output = &models.OpenIdConnectPolicy{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -124,6 +157,13 @@ func (s *OauthOpenIdConnectService) CreatePolicy(input *CreatePolicyInput) (outp
 //RequestType: GET
 //Input: input *GetPolicyInput
 func (s *OauthOpenIdConnectService) GetPolicy(input *GetPolicyInput) (output *models.OpenIdConnectPolicy, resp *http.Response, err error) {
+	return s.GetPolicyWithContext(context.Background(), input)
+}
+
+//GetPolicyWithContext - Find OpenID Connect Policy by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetPolicyInput
+func (s *OauthOpenIdConnectService) GetPolicyWithContext(ctx context.Context, input *GetPolicyInput) (output *models.OpenIdConnectPolicy, resp *http.Response, err error) {
 	path := "/oauth/openIdConnect/policies/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -134,6 +174,7 @@ func (s *OauthOpenIdConnectService) GetPolicy(input *GetPolicyInput) (output *mo
 	}
 	output = &models.OpenIdConnectPolicy{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -145,6 +186,13 @@ func (s *OauthOpenIdConnectService) GetPolicy(input *GetPolicyInput) (output *mo
 //RequestType: PUT
 //Input: input *UpdatePolicyInput
 func (s *OauthOpenIdConnectService) UpdatePolicy(input *UpdatePolicyInput) (output *models.OpenIdConnectPolicy, resp *http.Response, err error) {
+	return s.UpdatePolicyWithContext(context.Background(), input)
+}
+
+//UpdatePolicyWithContext - Update an OpenID Connect Policy.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdatePolicyInput
+func (s *OauthOpenIdConnectService) UpdatePolicyWithContext(ctx context.Context, input *UpdatePolicyInput) (output *models.OpenIdConnectPolicy, resp *http.Response, err error) {
 	path := "/oauth/openIdConnect/policies/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -155,6 +203,7 @@ func (s *OauthOpenIdConnectService) UpdatePolicy(input *UpdatePolicyInput) (outp
 	}
 	output = &models.OpenIdConnectPolicy{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -168,6 +217,13 @@ func (s *OauthOpenIdConnectService) UpdatePolicy(input *UpdatePolicyInput) (outp
 //RequestType: DELETE
 //Input: input *DeletePolicyInput
 func (s *OauthOpenIdConnectService) DeletePolicy(input *DeletePolicyInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeletePolicyWithContext(context.Background(), input)
+}
+
+//DeletePolicyWithContext - Delete an OpenID Connect Policy.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeletePolicyInput
+func (s *OauthOpenIdConnectService) DeletePolicyWithContext(ctx context.Context, input *DeletePolicyInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/oauth/openIdConnect/policies/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -178,6 +234,7 @@ func (s *OauthOpenIdConnectService) DeletePolicy(input *DeletePolicyInput) (outp
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

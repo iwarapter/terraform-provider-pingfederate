@@ -6,11 +6,12 @@ import (
 	"regexp"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/iwarapter/pingfederate-sdk-go/services/serverSettings"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/spAdapters"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -351,9 +352,7 @@ func Test_resourcePingFederateSpAdapterResourceReadData(t *testing.T) {
 			resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})
 			resourcePingFederateSpAdapterResourceReadResult(resourceLocalData, &tc.Resource, m)
 
-			if got := *resourcePingFederateSpAdapterResourceReadData(resourceLocalData); !cmp.Equal(got, tc.Resource) {
-				t.Errorf("resourcePingFederateSpAdapterResourceReadData() = %v", cmp.Diff(got, tc.Resource))
-			}
+			assert.Equal(t, tc.Resource, *resourcePingFederateSpAdapterResourceReadData(resourceLocalData))
 		})
 	}
 }

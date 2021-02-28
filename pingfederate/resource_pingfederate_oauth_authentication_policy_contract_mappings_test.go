@@ -5,7 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -321,9 +322,7 @@ func Test_resourcePingFederateOauthAuthenticationPolicyContractMappingResourceRe
 			resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})
 			resourcePingFederateOauthAuthenticationPolicyContractMappingsResourceReadResult(resourceLocalData, &tc.Resource)
 
-			if got := *resourcePingFederateOauthAuthenticationPolicyContractMappingsResourceReadData(resourceLocalData); !cmp.Equal(got, tc.Resource) {
-				t.Errorf("resourcePingFederateOauthAuthenticationPolicyContractMappingResourceReadData() = %v", cmp.Diff(got, tc.Resource))
-			}
+			assert.Equal(t, tc.Resource, *resourcePingFederateOauthAuthenticationPolicyContractMappingsResourceReadData(resourceLocalData))
 		})
 	}
 }

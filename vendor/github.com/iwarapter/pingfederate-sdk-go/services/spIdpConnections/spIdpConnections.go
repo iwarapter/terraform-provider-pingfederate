@@ -1,6 +1,7 @@
 package spIdpConnections
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -46,6 +47,13 @@ func (c *SpIdpConnectionsService) newRequest(op *request.Operation, params, data
 //RequestType: GET
 //Input: input *GetConnectionsInput
 func (s *SpIdpConnectionsService) GetConnections(input *GetConnectionsInput) (output *models.IdpConnections, resp *http.Response, err error) {
+	return s.GetConnectionsWithContext(context.Background(), input)
+}
+
+//GetConnectionsWithContext - Get list of IdP connections.
+//RequestType: GET
+//Input: ctx context.Context, input *GetConnectionsInput
+func (s *SpIdpConnectionsService) GetConnectionsWithContext(ctx context.Context, input *GetConnectionsInput) (output *models.IdpConnections, resp *http.Response, err error) {
 	path := "/sp/idpConnections"
 	op := &request.Operation{
 		Name:       "GetConnections",
@@ -60,6 +68,7 @@ func (s *SpIdpConnectionsService) GetConnections(input *GetConnectionsInput) (ou
 	}
 	output = &models.IdpConnections{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -71,6 +80,13 @@ func (s *SpIdpConnectionsService) GetConnections(input *GetConnectionsInput) (ou
 //RequestType: POST
 //Input: input *CreateConnectionInput
 func (s *SpIdpConnectionsService) CreateConnection(input *CreateConnectionInput) (output *models.IdpConnection, resp *http.Response, err error) {
+	return s.CreateConnectionWithContext(context.Background(), input)
+}
+
+//CreateConnectionWithContext - Create a new IdP connection.
+//RequestType: POST
+//Input: ctx context.Context, input *CreateConnectionInput
+func (s *SpIdpConnectionsService) CreateConnectionWithContext(ctx context.Context, input *CreateConnectionInput) (output *models.IdpConnection, resp *http.Response, err error) {
 	path := "/sp/idpConnections"
 	op := &request.Operation{
 		Name:       "CreateConnection",
@@ -79,6 +95,7 @@ func (s *SpIdpConnectionsService) CreateConnection(input *CreateConnectionInput)
 	}
 	output = &models.IdpConnection{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -92,6 +109,13 @@ func (s *SpIdpConnectionsService) CreateConnection(input *CreateConnectionInput)
 //RequestType: GET
 //Input: input *GetConnectionInput
 func (s *SpIdpConnectionsService) GetConnection(input *GetConnectionInput) (output *models.IdpConnection, resp *http.Response, err error) {
+	return s.GetConnectionWithContext(context.Background(), input)
+}
+
+//GetConnectionWithContext - Find IdP connection by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetConnectionInput
+func (s *SpIdpConnectionsService) GetConnectionWithContext(ctx context.Context, input *GetConnectionInput) (output *models.IdpConnection, resp *http.Response, err error) {
 	path := "/sp/idpConnections/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -102,6 +126,7 @@ func (s *SpIdpConnectionsService) GetConnection(input *GetConnectionInput) (outp
 	}
 	output = &models.IdpConnection{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -113,6 +138,13 @@ func (s *SpIdpConnectionsService) GetConnection(input *GetConnectionInput) (outp
 //RequestType: PUT
 //Input: input *UpdateConnectionInput
 func (s *SpIdpConnectionsService) UpdateConnection(input *UpdateConnectionInput) (output *models.IdpConnection, resp *http.Response, err error) {
+	return s.UpdateConnectionWithContext(context.Background(), input)
+}
+
+//UpdateConnectionWithContext - Update an IdP connection.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateConnectionInput
+func (s *SpIdpConnectionsService) UpdateConnectionWithContext(ctx context.Context, input *UpdateConnectionInput) (output *models.IdpConnection, resp *http.Response, err error) {
 	path := "/sp/idpConnections/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -123,6 +155,7 @@ func (s *SpIdpConnectionsService) UpdateConnection(input *UpdateConnectionInput)
 	}
 	output = &models.IdpConnection{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -136,6 +169,13 @@ func (s *SpIdpConnectionsService) UpdateConnection(input *UpdateConnectionInput)
 //RequestType: DELETE
 //Input: input *DeleteConnectionInput
 func (s *SpIdpConnectionsService) DeleteConnection(input *DeleteConnectionInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeleteConnectionWithContext(context.Background(), input)
+}
+
+//DeleteConnectionWithContext - Delete an IdP connection.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteConnectionInput
+func (s *SpIdpConnectionsService) DeleteConnectionWithContext(ctx context.Context, input *DeleteConnectionInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/sp/idpConnections/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -146,6 +186,7 @@ func (s *SpIdpConnectionsService) DeleteConnection(input *DeleteConnectionInput)
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -157,6 +198,13 @@ func (s *SpIdpConnectionsService) DeleteConnection(input *DeleteConnectionInput)
 //RequestType: GET
 //Input: input *GetSigningSettingsInput
 func (s *SpIdpConnectionsService) GetSigningSettings(input *GetSigningSettingsInput) (output *models.SigningSettings, resp *http.Response, err error) {
+	return s.GetSigningSettingsWithContext(context.Background(), input)
+}
+
+//GetSigningSettingsWithContext - Get the IdP connection's signature settings.
+//RequestType: GET
+//Input: ctx context.Context, input *GetSigningSettingsInput
+func (s *SpIdpConnectionsService) GetSigningSettingsWithContext(ctx context.Context, input *GetSigningSettingsInput) (output *models.SigningSettings, resp *http.Response, err error) {
 	path := "/sp/idpConnections/{id}/credentials/signingSettings"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -167,6 +215,7 @@ func (s *SpIdpConnectionsService) GetSigningSettings(input *GetSigningSettingsIn
 	}
 	output = &models.SigningSettings{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -178,6 +227,13 @@ func (s *SpIdpConnectionsService) GetSigningSettings(input *GetSigningSettingsIn
 //RequestType: PUT
 //Input: input *UpdateSigningSettingsInput
 func (s *SpIdpConnectionsService) UpdateSigningSettings(input *UpdateSigningSettingsInput) (output *models.SigningSettings, resp *http.Response, err error) {
+	return s.UpdateSigningSettingsWithContext(context.Background(), input)
+}
+
+//UpdateSigningSettingsWithContext - Update the IdP connection's signature settings.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateSigningSettingsInput
+func (s *SpIdpConnectionsService) UpdateSigningSettingsWithContext(ctx context.Context, input *UpdateSigningSettingsInput) (output *models.SigningSettings, resp *http.Response, err error) {
 	path := "/sp/idpConnections/{id}/credentials/signingSettings"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -188,6 +244,7 @@ func (s *SpIdpConnectionsService) UpdateSigningSettings(input *UpdateSigningSett
 	}
 	output = &models.SigningSettings{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -199,6 +256,13 @@ func (s *SpIdpConnectionsService) UpdateSigningSettings(input *UpdateSigningSett
 //RequestType: POST
 //Input: input *AddConnectionCertInput
 func (s *SpIdpConnectionsService) AddConnectionCert(input *AddConnectionCertInput) (output *models.ConnectionCert, resp *http.Response, err error) {
+	return s.AddConnectionCertWithContext(context.Background(), input)
+}
+
+//AddConnectionCertWithContext - Add a new IdP connection certificate.
+//RequestType: POST
+//Input: ctx context.Context, input *AddConnectionCertInput
+func (s *SpIdpConnectionsService) AddConnectionCertWithContext(ctx context.Context, input *AddConnectionCertInput) (output *models.ConnectionCert, resp *http.Response, err error) {
 	path := "/sp/idpConnections/{id}/credentials/certs"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -209,6 +273,7 @@ func (s *SpIdpConnectionsService) AddConnectionCert(input *AddConnectionCertInpu
 	}
 	output = &models.ConnectionCert{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -220,6 +285,13 @@ func (s *SpIdpConnectionsService) AddConnectionCert(input *AddConnectionCertInpu
 //RequestType: GET
 //Input: input *GetConnectionCertsInput
 func (s *SpIdpConnectionsService) GetConnectionCerts(input *GetConnectionCertsInput) (output *models.ConnectionCerts, resp *http.Response, err error) {
+	return s.GetConnectionCertsWithContext(context.Background(), input)
+}
+
+//GetConnectionCertsWithContext - Get the IdP connection's certificates.
+//RequestType: GET
+//Input: ctx context.Context, input *GetConnectionCertsInput
+func (s *SpIdpConnectionsService) GetConnectionCertsWithContext(ctx context.Context, input *GetConnectionCertsInput) (output *models.ConnectionCerts, resp *http.Response, err error) {
 	path := "/sp/idpConnections/{id}/credentials/certs"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -230,6 +302,7 @@ func (s *SpIdpConnectionsService) GetConnectionCerts(input *GetConnectionCertsIn
 	}
 	output = &models.ConnectionCerts{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -241,6 +314,13 @@ func (s *SpIdpConnectionsService) GetConnectionCerts(input *GetConnectionCertsIn
 //RequestType: PUT
 //Input: input *UpdateConnectionCertsInput
 func (s *SpIdpConnectionsService) UpdateConnectionCerts(input *UpdateConnectionCertsInput) (output *models.ConnectionCerts, resp *http.Response, err error) {
+	return s.UpdateConnectionCertsWithContext(context.Background(), input)
+}
+
+//UpdateConnectionCertsWithContext - Update the IdP connection's certificates.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateConnectionCertsInput
+func (s *SpIdpConnectionsService) UpdateConnectionCertsWithContext(ctx context.Context, input *UpdateConnectionCertsInput) (output *models.ConnectionCerts, resp *http.Response, err error) {
 	path := "/sp/idpConnections/{id}/credentials/certs"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -251,6 +331,7 @@ func (s *SpIdpConnectionsService) UpdateConnectionCerts(input *UpdateConnectionC
 	}
 	output = &models.ConnectionCerts{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -262,6 +343,13 @@ func (s *SpIdpConnectionsService) UpdateConnectionCerts(input *UpdateConnectionC
 //RequestType: GET
 //Input: input *GetDecryptionKeysInput
 func (s *SpIdpConnectionsService) GetDecryptionKeys(input *GetDecryptionKeysInput) (output *models.DecryptionKeys, resp *http.Response, err error) {
+	return s.GetDecryptionKeysWithContext(context.Background(), input)
+}
+
+//GetDecryptionKeysWithContext - Get the decryption keys of an IdP connection.
+//RequestType: GET
+//Input: ctx context.Context, input *GetDecryptionKeysInput
+func (s *SpIdpConnectionsService) GetDecryptionKeysWithContext(ctx context.Context, input *GetDecryptionKeysInput) (output *models.DecryptionKeys, resp *http.Response, err error) {
 	path := "/sp/idpConnections/{id}/credentials/decryptionKeys"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -272,6 +360,7 @@ func (s *SpIdpConnectionsService) GetDecryptionKeys(input *GetDecryptionKeysInpu
 	}
 	output = &models.DecryptionKeys{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -283,6 +372,13 @@ func (s *SpIdpConnectionsService) GetDecryptionKeys(input *GetDecryptionKeysInpu
 //RequestType: PUT
 //Input: input *UpdateDecryptionKeysInput
 func (s *SpIdpConnectionsService) UpdateDecryptionKeys(input *UpdateDecryptionKeysInput) (output *models.DecryptionKeys, resp *http.Response, err error) {
+	return s.UpdateDecryptionKeysWithContext(context.Background(), input)
+}
+
+//UpdateDecryptionKeysWithContext - Updating the IdP connection's decryption keys.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateDecryptionKeysInput
+func (s *SpIdpConnectionsService) UpdateDecryptionKeysWithContext(ctx context.Context, input *UpdateDecryptionKeysInput) (output *models.DecryptionKeys, resp *http.Response, err error) {
 	path := "/sp/idpConnections/{id}/credentials/decryptionKeys"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -293,6 +389,7 @@ func (s *SpIdpConnectionsService) UpdateDecryptionKeys(input *UpdateDecryptionKe
 	}
 	output = &models.DecryptionKeys{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

@@ -22,7 +22,7 @@ func resourcePingFederateKeypairSslServerResource() *schema.Resource {
 	}
 }
 
-func resourcePingFederateKeypairSslServerResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateKeypairSslServerResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).KeyPairsSslServer
 	if _, ok := d.GetOk("file_data"); ok {
 		input := keyPairsSslServer.ImportKeyPairInput{
@@ -34,7 +34,7 @@ func resourcePingFederateKeypairSslServerResourceCreate(_ context.Context, d *sc
 		if val, ok := d.GetOk("keypair_id"); ok {
 			input.Body.Id = String(val.(string))
 		}
-		result, _, err := svc.ImportKeyPair(&input)
+		result, _, err := svc.ImportKeyPairWithContext(ctx, &input)
 		if err != nil {
 			return diag.Errorf("unable to create SslServerKeypair: %s", err)
 		}
@@ -46,7 +46,7 @@ func resourcePingFederateKeypairSslServerResourceCreate(_ context.Context, d *sc
 	input := keyPairsSslServer.CreateKeyPairInput{
 		Body: *resourcePingFederateKeypairResourceReadData(d),
 	}
-	result, _, err := svc.CreateKeyPair(&input)
+	result, _, err := svc.CreateKeyPairWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to generate SslServerKeypair: %s", err)
 	}
@@ -56,24 +56,24 @@ func resourcePingFederateKeypairSslServerResourceCreate(_ context.Context, d *sc
 
 }
 
-func resourcePingFederateKeypairSslServerResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateKeypairSslServerResourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).KeyPairsSslServer
 	input := keyPairsSslServer.GetKeyPairInput{
 		Id: d.Id(),
 	}
-	result, _, err := svc.GetKeyPair(&input)
+	result, _, err := svc.GetKeyPairWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to read SslServerKeypair: %s", err)
 	}
 	return resourceKeypairResourceReadResult(d, result)
 }
 
-func resourcePingFederateKeypairSslServerResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateKeypairSslServerResourceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).KeyPairsSslServer
 	input := keyPairsSslServer.DeleteKeyPairInput{
 		Id: d.Id(),
 	}
-	_, _, err := svc.DeleteKeyPair(&input)
+	_, _, err := svc.DeleteKeyPairWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to delete SslServerKeypair: %s", err)
 	}
@@ -85,10 +85,10 @@ func resourcePingFederateKeypairSslServerResourceImport(ctx context.Context, d *
 	input := keyPairsSslServer.GetKeyPairInput{
 		Id: d.Id(),
 	}
-	result, _, err := svc.GetKeyPair(&input)
+	result, _, err := svc.GetKeyPairWithContext(ctx, &input)
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve read ssl server keypair for import %s", err)
 	}
 
-	return importKeyPairView(ctx, d, result, err)
+	return importKeyPairView(d, result, err)
 }

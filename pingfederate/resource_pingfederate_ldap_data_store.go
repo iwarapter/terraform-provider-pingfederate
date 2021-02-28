@@ -157,14 +157,14 @@ func resourcePingFederateLdapDataStoreResourceSchema() map[string]*schema.Schema
 	}
 }
 
-func resourcePingFederateLdapDataStoreResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateLdapDataStoreResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).DataStores
 	ds := resourcePingFederateLdapDataStoreResourceReadData(d)
 	input := dataStores.CreateLdapDataStoreInput{
 		Body:                     *ds,
 		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
-	store, _, err := svc.CreateLdapDataStore(&input)
+	store, _, err := svc.CreateLdapDataStoreWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to create LdapDataStores: %s", err)
 	}
@@ -172,19 +172,19 @@ func resourcePingFederateLdapDataStoreResourceCreate(_ context.Context, d *schem
 	return resourcePingFederateLdapDataStoreResourceReadResult(d, store)
 }
 
-func resourcePingFederateLdapDataStoreResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateLdapDataStoreResourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).DataStores
 	input := dataStores.GetLdapDataStoreInput{
 		Id: d.Id(),
 	}
-	result, _, err := svc.GetLdapDataStore(&input)
+	result, _, err := svc.GetLdapDataStoreWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to read LdapDataStores: %s", err)
 	}
 	return resourcePingFederateLdapDataStoreResourceReadResult(d, result)
 }
 
-func resourcePingFederateLdapDataStoreResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateLdapDataStoreResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).DataStores
 	ds := resourcePingFederateLdapDataStoreResourceReadData(d)
 	input := dataStores.UpdateLdapDataStoreInput{
@@ -192,19 +192,19 @@ func resourcePingFederateLdapDataStoreResourceUpdate(_ context.Context, d *schem
 		Body:                     *ds,
 		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
-	store, _, err := svc.UpdateLdapDataStore(&input)
+	store, _, err := svc.UpdateLdapDataStoreWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to update LdapDataStores: %s", err)
 	}
 	return resourcePingFederateLdapDataStoreResourceReadResult(d, store)
 }
 
-func resourcePingFederateLdapDataStoreResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateLdapDataStoreResourceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).DataStores
 	input := dataStores.DeleteDataStoreInput{
 		Id: d.Id(),
 	}
-	_, _, err := svc.DeleteDataStore(&input)
+	_, _, err := svc.DeleteDataStoreWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to delete LdapDataStores: %s", err)
 	}

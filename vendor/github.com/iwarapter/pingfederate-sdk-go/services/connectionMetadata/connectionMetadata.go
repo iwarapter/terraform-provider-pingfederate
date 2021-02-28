@@ -1,6 +1,7 @@
 package connectionMetadata
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
@@ -44,6 +45,13 @@ func (c *ConnectionMetadataService) newRequest(op *request.Operation, params, da
 //RequestType: POST
 //Input: input *ExportInput
 func (s *ConnectionMetadataService) Export(input *ExportInput) (output *string, resp *http.Response, err error) {
+	return s.ExportWithContext(context.Background(), input)
+}
+
+//ExportWithContext - Export a connection's SAML metadata that can be given to a partner.
+//RequestType: POST
+//Input: ctx context.Context, input *ExportInput
+func (s *ConnectionMetadataService) ExportWithContext(ctx context.Context, input *ExportInput) (output *string, resp *http.Response, err error) {
 	path := "/connectionMetadata/export"
 	op := &request.Operation{
 		Name:       "Export",
@@ -52,6 +60,7 @@ func (s *ConnectionMetadataService) Export(input *ExportInput) (output *string, 
 	}
 	output = pingfederate.String("")
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -63,6 +72,13 @@ func (s *ConnectionMetadataService) Export(input *ExportInput) (output *string, 
 //RequestType: POST
 //Input: input *ConvertInput
 func (s *ConnectionMetadataService) Convert(input *ConvertInput) (output *models.ConvertMetadataResponse, resp *http.Response, err error) {
+	return s.ConvertWithContext(context.Background(), input)
+}
+
+//ConvertWithContext - Convert a partner's SAML metadata into a JSON representation.
+//RequestType: POST
+//Input: ctx context.Context, input *ConvertInput
+func (s *ConnectionMetadataService) ConvertWithContext(ctx context.Context, input *ConvertInput) (output *models.ConvertMetadataResponse, resp *http.Response, err error) {
 	path := "/connectionMetadata/convert"
 	op := &request.Operation{
 		Name:       "Convert",
@@ -71,6 +87,7 @@ func (s *ConnectionMetadataService) Convert(input *ConvertInput) (output *models
 	}
 	output = &models.ConvertMetadataResponse{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

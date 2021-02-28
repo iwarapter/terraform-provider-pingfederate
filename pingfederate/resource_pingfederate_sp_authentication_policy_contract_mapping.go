@@ -76,7 +76,7 @@ func resourcePingFederateSpAuthenticationPolicyContractMappingResourceCreate(ctx
 		Body:                     *resourcePingFederateSpAuthenticationPolicyContractMappingResourceReadData(d),
 		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
-	result, _, err := svc.CreateApcToSpAdapterMapping(&input)
+	result, _, err := svc.CreateApcToSpAdapterMappingWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to create SpAuthenticationPolicyContractMapping: %s", err)
 	}
@@ -89,7 +89,7 @@ func resourcePingFederateSpAuthenticationPolicyContractMappingResourceRead(ctx c
 	input := spAuthenticationPolicyContractMappings.GetApcToSpAdapterMappingByIdInput{
 		Id: d.Id(),
 	}
-	result, _, err := svc.GetApcToSpAdapterMappingById(&input)
+	result, _, err := svc.GetApcToSpAdapterMappingByIdWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to read SpAuthenticationPolicyContractMapping: %s", err)
 	}
@@ -103,7 +103,7 @@ func resourcePingFederateSpAuthenticationPolicyContractMappingResourceUpdate(ctx
 		Body:                     *resourcePingFederateSpAuthenticationPolicyContractMappingResourceReadData(d),
 		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
-	result, _, err := svc.UpdateApcToSpAdapterMappingById(&input)
+	result, _, err := svc.UpdateApcToSpAdapterMappingByIdWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to update SpAuthenticationPolicyContractMapping: %s", err)
 	}
@@ -116,7 +116,7 @@ func resourcePingFederateSpAuthenticationPolicyContractMappingResourceDelete(ctx
 	input := spAuthenticationPolicyContractMappings.DeleteApcToSpAdapterMappingByIdInput{
 		Id: d.Id(),
 	}
-	_, _, err := svc.DeleteApcToSpAdapterMappingById(&input)
+	_, _, err := svc.DeleteApcToSpAdapterMappingByIdWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to delete SpAuthenticationPolicyContractMapping: %s", err)
 	}

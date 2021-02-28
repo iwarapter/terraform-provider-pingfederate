@@ -1,6 +1,7 @@
 package oauthAccessTokenMappings
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -46,6 +47,13 @@ func (c *OauthAccessTokenMappingsService) newRequest(op *request.Operation, para
 //RequestType: GET
 //Input:
 func (s *OauthAccessTokenMappingsService) GetMappings() (output *models.AccessTokenMappings, resp *http.Response, err error) {
+	return s.GetMappingsWithContext(context.Background())
+}
+
+//GetMappingsWithContext - Get the list of Access Token Mappings.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *OauthAccessTokenMappingsService) GetMappingsWithContext(ctx context.Context) (output *models.AccessTokenMappings, resp *http.Response, err error) {
 	path := "/oauth/accessTokenMappings"
 	op := &request.Operation{
 		Name:       "GetMappings",
@@ -54,6 +62,7 @@ func (s *OauthAccessTokenMappingsService) GetMappings() (output *models.AccessTo
 	}
 	output = &models.AccessTokenMappings{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -65,6 +74,13 @@ func (s *OauthAccessTokenMappingsService) GetMappings() (output *models.AccessTo
 //RequestType: POST
 //Input: input *CreateMappingInput
 func (s *OauthAccessTokenMappingsService) CreateMapping(input *CreateMappingInput) (output *models.AccessTokenMapping, resp *http.Response, err error) {
+	return s.CreateMappingWithContext(context.Background(), input)
+}
+
+//CreateMappingWithContext - Create a new Access Token Mapping.
+//RequestType: POST
+//Input: ctx context.Context, input *CreateMappingInput
+func (s *OauthAccessTokenMappingsService) CreateMappingWithContext(ctx context.Context, input *CreateMappingInput) (output *models.AccessTokenMapping, resp *http.Response, err error) {
 	path := "/oauth/accessTokenMappings"
 	op := &request.Operation{
 		Name:       "CreateMapping",
@@ -73,6 +89,7 @@ func (s *OauthAccessTokenMappingsService) CreateMapping(input *CreateMappingInpu
 	}
 	output = &models.AccessTokenMapping{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -86,6 +103,13 @@ func (s *OauthAccessTokenMappingsService) CreateMapping(input *CreateMappingInpu
 //RequestType: GET
 //Input: input *GetMappingInput
 func (s *OauthAccessTokenMappingsService) GetMapping(input *GetMappingInput) (output *models.AccessTokenMapping, resp *http.Response, err error) {
+	return s.GetMappingWithContext(context.Background(), input)
+}
+
+//GetMappingWithContext - Find the Access Token Mapping by its ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetMappingInput
+func (s *OauthAccessTokenMappingsService) GetMappingWithContext(ctx context.Context, input *GetMappingInput) (output *models.AccessTokenMapping, resp *http.Response, err error) {
 	path := "/oauth/accessTokenMappings/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -96,6 +120,7 @@ func (s *OauthAccessTokenMappingsService) GetMapping(input *GetMappingInput) (ou
 	}
 	output = &models.AccessTokenMapping{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -107,6 +132,13 @@ func (s *OauthAccessTokenMappingsService) GetMapping(input *GetMappingInput) (ou
 //RequestType: PUT
 //Input: input *UpdateMappingInput
 func (s *OauthAccessTokenMappingsService) UpdateMapping(input *UpdateMappingInput) (output *models.AccessTokenMapping, resp *http.Response, err error) {
+	return s.UpdateMappingWithContext(context.Background(), input)
+}
+
+//UpdateMappingWithContext - Update an Access Token Mapping.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateMappingInput
+func (s *OauthAccessTokenMappingsService) UpdateMappingWithContext(ctx context.Context, input *UpdateMappingInput) (output *models.AccessTokenMapping, resp *http.Response, err error) {
 	path := "/oauth/accessTokenMappings/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -117,6 +149,7 @@ func (s *OauthAccessTokenMappingsService) UpdateMapping(input *UpdateMappingInpu
 	}
 	output = &models.AccessTokenMapping{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -130,6 +163,13 @@ func (s *OauthAccessTokenMappingsService) UpdateMapping(input *UpdateMappingInpu
 //RequestType: DELETE
 //Input: input *DeleteMappingInput
 func (s *OauthAccessTokenMappingsService) DeleteMapping(input *DeleteMappingInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeleteMappingWithContext(context.Background(), input)
+}
+
+//DeleteMappingWithContext - Delete an Access Token Mapping.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteMappingInput
+func (s *OauthAccessTokenMappingsService) DeleteMappingWithContext(ctx context.Context, input *DeleteMappingInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/oauth/accessTokenMappings/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -140,6 +180,7 @@ func (s *OauthAccessTokenMappingsService) DeleteMapping(input *DeleteMappingInpu
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

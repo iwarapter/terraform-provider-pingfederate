@@ -51,11 +51,11 @@ func resourcePingFederateKeypairSslServerSettingsResourceSchema() map[string]*sc
 	}
 }
 
-func resourcePingFederateKeypairSslServerSettingsResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateKeypairSslServerSettingsResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).KeyPairsSslServer
 
 	input := &keyPairsSslServer.UpdateSettingsInput{Body: *resourcePingFederateKeypairSslServerSettingsResourceReadData(d)}
-	result, _, err := svc.UpdateSettings(input)
+	result, _, err := svc.UpdateSettingsWithContext(ctx, input)
 	if err != nil {
 		return diag.Errorf("unable to create SslServerSettings: %s", err)
 	}
@@ -65,27 +65,27 @@ func resourcePingFederateKeypairSslServerSettingsResourceCreate(_ context.Contex
 
 }
 
-func resourcePingFederateKeypairSslServerSettingsResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateKeypairSslServerSettingsResourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).KeyPairsSslServer
-	result, _, err := svc.GetSettings()
+	result, _, err := svc.GetSettingsWithContext(ctx)
 	if err != nil {
 		return diag.Errorf("unable to read SslServerSettings: %s", err)
 	}
 	return resourcePingFederateKeypairSslServerSettingsResourceReadResult(d, result)
 }
 
-func resourcePingFederateKeypairSslServerSettingsResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateKeypairSslServerSettingsResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).KeyPairsSslServer
 
 	input := &keyPairsSslServer.UpdateSettingsInput{Body: *resourcePingFederateKeypairSslServerSettingsResourceReadData(d)}
-	result, _, err := svc.UpdateSettings(input)
+	result, _, err := svc.UpdateSettingsWithContext(ctx, input)
 	if err != nil {
 		return diag.Errorf("unable to create SslServerSettings: %s", err)
 	}
 	return resourcePingFederateKeypairSslServerSettingsResourceReadResult(d, result)
 }
 
-func resourcePingFederateKeypairSslServerSettingsResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateKeypairSslServerSettingsResourceDelete(_ context.Context, _ *schema.ResourceData, _ interface{}) diag.Diagnostics {
 	return nil
 }
 

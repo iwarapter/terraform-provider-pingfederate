@@ -7,7 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 
@@ -282,13 +284,10 @@ func Test_resourcePingFederatePasswordCredentialValidatorResourceReadData(t *tes
 
 			resourceSchema := resourcePingFederatePasswordCredentialValidatorResourceSchema()
 			resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})
-			resourceLocalData.Set("configuration", flattenPluginConfiguration(tc.Resource.Configuration))
+			require.Nil(t, resourceLocalData.Set("configuration", flattenPluginConfiguration(tc.Resource.Configuration)))
 			resourcePingFederatePasswordCredentialValidatorResourceReadResult(resourceLocalData, &tc.Resource, m)
 
-			//TODO fix me
-			if got := *resourcePingFederatePasswordCredentialValidatorResourceReadData(resourceLocalData); !cmp.Equal(got, tc.Resource) {
-				t.Errorf("resourcePingFederatePasswordCredentialValidatorResourceReadData() = %v", cmp.Diff(got, tc.Resource))
-			}
+			assert.Equal(t, tc.Resource, *resourcePingFederatePasswordCredentialValidatorResourceReadData(resourceLocalData))
 		})
 	}
 }

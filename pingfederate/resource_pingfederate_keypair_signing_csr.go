@@ -21,7 +21,7 @@ func resourcePingFederateKeypairSigningCsrResource() *schema.Resource {
 	}
 }
 
-func resourcePingFederateKeypairSigningCsrResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateKeypairSigningCsrResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).KeyPairsSigning
 	input := keyPairsSigning.ImportCsrResponseInput{
 		Body: pf.CSRResponse{
@@ -29,7 +29,7 @@ func resourcePingFederateKeypairSigningCsrResourceCreate(_ context.Context, d *s
 		},
 		Id: d.Get("keypair_id").(string),
 	}
-	result, _, err := svc.ImportCsrResponse(&input)
+	result, _, err := svc.ImportCsrResponseWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to create SigningCSR: %s", err)
 	}

@@ -1,6 +1,7 @@
 package bulk
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
@@ -45,6 +46,13 @@ func (c *BulkService) newRequest(op *request.Operation, params, data interface{}
 //RequestType: GET
 //Input: input *ExportConfigurationInput
 func (s *BulkService) ExportConfiguration(input *ExportConfigurationInput) (output *models.BulkConfig, resp *http.Response, err error) {
+	return s.ExportConfigurationWithContext(context.Background(), input)
+}
+
+//ExportConfigurationWithContext - Export all API resources to a JSON file.
+//RequestType: GET
+//Input: ctx context.Context, input *ExportConfigurationInput
+func (s *BulkService) ExportConfigurationWithContext(ctx context.Context, input *ExportConfigurationInput) (output *models.BulkConfig, resp *http.Response, err error) {
 	path := "/bulk/export"
 	op := &request.Operation{
 		Name:       "ExportConfiguration",
@@ -56,6 +64,7 @@ func (s *BulkService) ExportConfiguration(input *ExportConfigurationInput) (outp
 	}
 	output = &models.BulkConfig{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -67,6 +76,13 @@ func (s *BulkService) ExportConfiguration(input *ExportConfigurationInput) (outp
 //RequestType: POST
 //Input: input *ImportConfigurationInput
 func (s *BulkService) ImportConfiguration(input *ImportConfigurationInput) (resp *http.Response, err error) {
+	return s.ImportConfigurationWithContext(context.Background(), input)
+}
+
+//ImportConfigurationWithContext - Import configuration for a PingFederate deployment from a JSON file.
+//RequestType: POST
+//Input: ctx context.Context, input *ImportConfigurationInput
+func (s *BulkService) ImportConfigurationWithContext(ctx context.Context, input *ImportConfigurationInput) (resp *http.Response, err error) {
 	path := "/bulk/import"
 	op := &request.Operation{
 		Name:       "ImportConfiguration",
@@ -78,6 +94,7 @@ func (s *BulkService) ImportConfiguration(input *ImportConfigurationInput) (resp
 	}
 
 	req := s.newRequest(op, input.Body, nil)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}

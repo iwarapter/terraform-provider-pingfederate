@@ -1,6 +1,7 @@
 package configArchive
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
@@ -44,6 +45,13 @@ func (c *ConfigArchiveService) newRequest(op *request.Operation, params, data in
 //RequestType: POST
 //Input: input *ImportConfigArchiveInput
 func (s *ConfigArchiveService) ImportConfigArchive(input *ImportConfigArchiveInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.ImportConfigArchiveWithContext(context.Background(), input)
+}
+
+//ImportConfigArchiveWithContext - Import a configuration archive.
+//RequestType: POST
+//Input: ctx context.Context, input *ImportConfigArchiveInput
+func (s *ConfigArchiveService) ImportConfigArchiveWithContext(ctx context.Context, input *ImportConfigArchiveInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/configArchive/import"
 	op := &request.Operation{
 		Name:       "ImportConfigArchive",
@@ -55,6 +63,7 @@ func (s *ConfigArchiveService) ImportConfigArchive(input *ImportConfigArchiveInp
 	}
 
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -66,6 +75,13 @@ func (s *ConfigArchiveService) ImportConfigArchive(input *ImportConfigArchiveInp
 //RequestType: GET
 //Input:
 func (s *ConfigArchiveService) ExportConfigArchive() (resp *http.Response, err error) {
+	return s.ExportConfigArchiveWithContext(context.Background())
+}
+
+//ExportConfigArchiveWithContext - Export a configuration archive.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *ConfigArchiveService) ExportConfigArchiveWithContext(ctx context.Context) (resp *http.Response, err error) {
 	path := "/configArchive/export"
 	op := &request.Operation{
 		Name:       "ExportConfigArchive",
@@ -74,6 +90,7 @@ func (s *ConfigArchiveService) ExportConfigArchive() (resp *http.Response, err e
 	}
 
 	req := s.newRequest(op, nil, nil)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return req.HTTPResponse, nil

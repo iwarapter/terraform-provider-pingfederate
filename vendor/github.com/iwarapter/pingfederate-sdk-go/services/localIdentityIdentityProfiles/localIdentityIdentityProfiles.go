@@ -1,6 +1,7 @@
 package localIdentityIdentityProfiles
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -46,6 +47,13 @@ func (c *LocalIdentityIdentityProfilesService) newRequest(op *request.Operation,
 //RequestType: GET
 //Input: input *GetIdentityProfilesInput
 func (s *LocalIdentityIdentityProfilesService) GetIdentityProfiles(input *GetIdentityProfilesInput) (output *models.LocalIdentityProfiles, resp *http.Response, err error) {
+	return s.GetIdentityProfilesWithContext(context.Background(), input)
+}
+
+//GetIdentityProfilesWithContext - Get the list of configured local identity profiles.
+//RequestType: GET
+//Input: ctx context.Context, input *GetIdentityProfilesInput
+func (s *LocalIdentityIdentityProfilesService) GetIdentityProfilesWithContext(ctx context.Context, input *GetIdentityProfilesInput) (output *models.LocalIdentityProfiles, resp *http.Response, err error) {
 	path := "/localIdentity/identityProfiles"
 	op := &request.Operation{
 		Name:       "GetIdentityProfiles",
@@ -59,6 +67,7 @@ func (s *LocalIdentityIdentityProfilesService) GetIdentityProfiles(input *GetIde
 	}
 	output = &models.LocalIdentityProfiles{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -70,6 +79,13 @@ func (s *LocalIdentityIdentityProfilesService) GetIdentityProfiles(input *GetIde
 //RequestType: POST
 //Input: input *CreateIdentityProfileInput
 func (s *LocalIdentityIdentityProfilesService) CreateIdentityProfile(input *CreateIdentityProfileInput) (output *models.LocalIdentityProfile, resp *http.Response, err error) {
+	return s.CreateIdentityProfileWithContext(context.Background(), input)
+}
+
+//CreateIdentityProfileWithContext - Create a new local identity profile.
+//RequestType: POST
+//Input: ctx context.Context, input *CreateIdentityProfileInput
+func (s *LocalIdentityIdentityProfilesService) CreateIdentityProfileWithContext(ctx context.Context, input *CreateIdentityProfileInput) (output *models.LocalIdentityProfile, resp *http.Response, err error) {
 	path := "/localIdentity/identityProfiles"
 	op := &request.Operation{
 		Name:       "CreateIdentityProfile",
@@ -78,6 +94,7 @@ func (s *LocalIdentityIdentityProfilesService) CreateIdentityProfile(input *Crea
 	}
 	output = &models.LocalIdentityProfile{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -91,6 +108,13 @@ func (s *LocalIdentityIdentityProfilesService) CreateIdentityProfile(input *Crea
 //RequestType: GET
 //Input: input *GetIdentityProfileInput
 func (s *LocalIdentityIdentityProfilesService) GetIdentityProfile(input *GetIdentityProfileInput) (output *models.LocalIdentityProfile, resp *http.Response, err error) {
+	return s.GetIdentityProfileWithContext(context.Background(), input)
+}
+
+//GetIdentityProfileWithContext - Get the local identity profile by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetIdentityProfileInput
+func (s *LocalIdentityIdentityProfilesService) GetIdentityProfileWithContext(ctx context.Context, input *GetIdentityProfileInput) (output *models.LocalIdentityProfile, resp *http.Response, err error) {
 	path := "/localIdentity/identityProfiles/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -101,6 +125,7 @@ func (s *LocalIdentityIdentityProfilesService) GetIdentityProfile(input *GetIden
 	}
 	output = &models.LocalIdentityProfile{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -112,6 +137,13 @@ func (s *LocalIdentityIdentityProfilesService) GetIdentityProfile(input *GetIden
 //RequestType: PUT
 //Input: input *UpdateIdentityProfileInput
 func (s *LocalIdentityIdentityProfilesService) UpdateIdentityProfile(input *UpdateIdentityProfileInput) (output *models.LocalIdentityProfile, resp *http.Response, err error) {
+	return s.UpdateIdentityProfileWithContext(context.Background(), input)
+}
+
+//UpdateIdentityProfileWithContext - Update the local identity profile by ID.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateIdentityProfileInput
+func (s *LocalIdentityIdentityProfilesService) UpdateIdentityProfileWithContext(ctx context.Context, input *UpdateIdentityProfileInput) (output *models.LocalIdentityProfile, resp *http.Response, err error) {
 	path := "/localIdentity/identityProfiles/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -122,6 +154,7 @@ func (s *LocalIdentityIdentityProfilesService) UpdateIdentityProfile(input *Upda
 	}
 	output = &models.LocalIdentityProfile{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -135,6 +168,13 @@ func (s *LocalIdentityIdentityProfilesService) UpdateIdentityProfile(input *Upda
 //RequestType: DELETE
 //Input: input *DeleteIdentityProfileInput
 func (s *LocalIdentityIdentityProfilesService) DeleteIdentityProfile(input *DeleteIdentityProfileInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeleteIdentityProfileWithContext(context.Background(), input)
+}
+
+//DeleteIdentityProfileWithContext - Delete the local identity profile by ID.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteIdentityProfileInput
+func (s *LocalIdentityIdentityProfilesService) DeleteIdentityProfileWithContext(ctx context.Context, input *DeleteIdentityProfileInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/localIdentity/identityProfiles/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -145,6 +185,7 @@ func (s *LocalIdentityIdentityProfilesService) DeleteIdentityProfile(input *Dele
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

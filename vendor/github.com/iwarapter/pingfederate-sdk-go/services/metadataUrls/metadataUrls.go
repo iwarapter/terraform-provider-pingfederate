@@ -1,6 +1,7 @@
 package metadataUrls
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -45,6 +46,13 @@ func (c *MetadataUrlsService) newRequest(op *request.Operation, params, data int
 //RequestType: GET
 //Input:
 func (s *MetadataUrlsService) GetMetadataUrls() (output *models.MetadataUrls, resp *http.Response, err error) {
+	return s.GetMetadataUrlsWithContext(context.Background())
+}
+
+//GetMetadataUrlsWithContext - Get a list of Metadata URLs
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *MetadataUrlsService) GetMetadataUrlsWithContext(ctx context.Context) (output *models.MetadataUrls, resp *http.Response, err error) {
 	path := "/metadataUrls"
 	op := &request.Operation{
 		Name:       "GetMetadataUrls",
@@ -53,6 +61,7 @@ func (s *MetadataUrlsService) GetMetadataUrls() (output *models.MetadataUrls, re
 	}
 	output = &models.MetadataUrls{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -64,6 +73,13 @@ func (s *MetadataUrlsService) GetMetadataUrls() (output *models.MetadataUrls, re
 //RequestType: POST
 //Input: input *AddMetadataUrlInput
 func (s *MetadataUrlsService) AddMetadataUrl(input *AddMetadataUrlInput) (output *models.MetadataUrl, resp *http.Response, err error) {
+	return s.AddMetadataUrlWithContext(context.Background(), input)
+}
+
+//AddMetadataUrlWithContext - Add a new Metadata URL.
+//RequestType: POST
+//Input: ctx context.Context, input *AddMetadataUrlInput
+func (s *MetadataUrlsService) AddMetadataUrlWithContext(ctx context.Context, input *AddMetadataUrlInput) (output *models.MetadataUrl, resp *http.Response, err error) {
 	path := "/metadataUrls"
 	op := &request.Operation{
 		Name:       "AddMetadataUrl",
@@ -72,6 +88,7 @@ func (s *MetadataUrlsService) AddMetadataUrl(input *AddMetadataUrlInput) (output
 	}
 	output = &models.MetadataUrl{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -83,6 +100,13 @@ func (s *MetadataUrlsService) AddMetadataUrl(input *AddMetadataUrlInput) (output
 //RequestType: GET
 //Input: input *GetMetadataUrlInput
 func (s *MetadataUrlsService) GetMetadataUrl(input *GetMetadataUrlInput) (output *models.MetadataUrl, resp *http.Response, err error) {
+	return s.GetMetadataUrlWithContext(context.Background(), input)
+}
+
+//GetMetadataUrlWithContext - Get a Metadata URL by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetMetadataUrlInput
+func (s *MetadataUrlsService) GetMetadataUrlWithContext(ctx context.Context, input *GetMetadataUrlInput) (output *models.MetadataUrl, resp *http.Response, err error) {
 	path := "/metadataUrls/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -93,6 +117,7 @@ func (s *MetadataUrlsService) GetMetadataUrl(input *GetMetadataUrlInput) (output
 	}
 	output = &models.MetadataUrl{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -104,6 +129,13 @@ func (s *MetadataUrlsService) GetMetadataUrl(input *GetMetadataUrlInput) (output
 //RequestType: PUT
 //Input: input *UpdateMetadataUrlInput
 func (s *MetadataUrlsService) UpdateMetadataUrl(input *UpdateMetadataUrlInput) (output *models.MetadataUrl, resp *http.Response, err error) {
+	return s.UpdateMetadataUrlWithContext(context.Background(), input)
+}
+
+//UpdateMetadataUrlWithContext - Update a Metadata URL by ID.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateMetadataUrlInput
+func (s *MetadataUrlsService) UpdateMetadataUrlWithContext(ctx context.Context, input *UpdateMetadataUrlInput) (output *models.MetadataUrl, resp *http.Response, err error) {
 	path := "/metadataUrls/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -114,6 +146,7 @@ func (s *MetadataUrlsService) UpdateMetadataUrl(input *UpdateMetadataUrlInput) (
 	}
 	output = &models.MetadataUrl{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -125,6 +158,13 @@ func (s *MetadataUrlsService) UpdateMetadataUrl(input *UpdateMetadataUrlInput) (
 //RequestType: DELETE
 //Input: input *DeleteMetadataUrlInput
 func (s *MetadataUrlsService) DeleteMetadataUrl(input *DeleteMetadataUrlInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeleteMetadataUrlWithContext(context.Background(), input)
+}
+
+//DeleteMetadataUrlWithContext - Delete a Metadata URL by ID.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteMetadataUrlInput
+func (s *MetadataUrlsService) DeleteMetadataUrlWithContext(ctx context.Context, input *DeleteMetadataUrlInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/metadataUrls/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -135,6 +175,7 @@ func (s *MetadataUrlsService) DeleteMetadataUrl(input *DeleteMetadataUrlInput) (
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

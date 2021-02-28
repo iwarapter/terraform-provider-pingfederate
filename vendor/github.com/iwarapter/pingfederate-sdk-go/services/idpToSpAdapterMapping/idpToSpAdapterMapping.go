@@ -1,6 +1,7 @@
 package idpToSpAdapterMapping
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -46,6 +47,13 @@ func (c *IdpToSpAdapterMappingService) newRequest(op *request.Operation, params,
 //RequestType: GET
 //Input:
 func (s *IdpToSpAdapterMappingService) GetIdpToSpAdapterMappings() (output *models.IdpToSpAdapterMappings, resp *http.Response, err error) {
+	return s.GetIdpToSpAdapterMappingsWithContext(context.Background())
+}
+
+//GetIdpToSpAdapterMappingsWithContext - Get list of IdP-to-SP Adapter Mappings.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *IdpToSpAdapterMappingService) GetIdpToSpAdapterMappingsWithContext(ctx context.Context) (output *models.IdpToSpAdapterMappings, resp *http.Response, err error) {
 	path := "/idpToSpAdapterMapping"
 	op := &request.Operation{
 		Name:       "GetIdpToSpAdapterMappings",
@@ -54,6 +62,7 @@ func (s *IdpToSpAdapterMappingService) GetIdpToSpAdapterMappings() (output *mode
 	}
 	output = &models.IdpToSpAdapterMappings{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -65,6 +74,13 @@ func (s *IdpToSpAdapterMappingService) GetIdpToSpAdapterMappings() (output *mode
 //RequestType: POST
 //Input: input *CreateIdpToSpAdapterMappingInput
 func (s *IdpToSpAdapterMappingService) CreateIdpToSpAdapterMapping(input *CreateIdpToSpAdapterMappingInput) (output *models.IdpToSpAdapterMapping, resp *http.Response, err error) {
+	return s.CreateIdpToSpAdapterMappingWithContext(context.Background(), input)
+}
+
+//CreateIdpToSpAdapterMappingWithContext - Create a new IdP-to-SP Adapter mapping.
+//RequestType: POST
+//Input: ctx context.Context, input *CreateIdpToSpAdapterMappingInput
+func (s *IdpToSpAdapterMappingService) CreateIdpToSpAdapterMappingWithContext(ctx context.Context, input *CreateIdpToSpAdapterMappingInput) (output *models.IdpToSpAdapterMapping, resp *http.Response, err error) {
 	path := "/idpToSpAdapterMapping"
 	op := &request.Operation{
 		Name:       "CreateIdpToSpAdapterMapping",
@@ -73,6 +89,7 @@ func (s *IdpToSpAdapterMappingService) CreateIdpToSpAdapterMapping(input *Create
 	}
 	output = &models.IdpToSpAdapterMapping{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -86,6 +103,13 @@ func (s *IdpToSpAdapterMappingService) CreateIdpToSpAdapterMapping(input *Create
 //RequestType: GET
 //Input: input *GetIdpToSpAdapterMappingsByIdInput
 func (s *IdpToSpAdapterMappingService) GetIdpToSpAdapterMappingsById(input *GetIdpToSpAdapterMappingsByIdInput) (output *models.IdpToSpAdapterMapping, resp *http.Response, err error) {
+	return s.GetIdpToSpAdapterMappingsByIdWithContext(context.Background(), input)
+}
+
+//GetIdpToSpAdapterMappingsByIdWithContext - Get an IdP-to-SP Adapter Mapping.
+//RequestType: GET
+//Input: ctx context.Context, input *GetIdpToSpAdapterMappingsByIdInput
+func (s *IdpToSpAdapterMappingService) GetIdpToSpAdapterMappingsByIdWithContext(ctx context.Context, input *GetIdpToSpAdapterMappingsByIdInput) (output *models.IdpToSpAdapterMapping, resp *http.Response, err error) {
 	path := "/idpToSpAdapterMapping/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -96,6 +120,7 @@ func (s *IdpToSpAdapterMappingService) GetIdpToSpAdapterMappingsById(input *GetI
 	}
 	output = &models.IdpToSpAdapterMapping{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -107,6 +132,13 @@ func (s *IdpToSpAdapterMappingService) GetIdpToSpAdapterMappingsById(input *GetI
 //RequestType: PUT
 //Input: input *UpdateIdpToSpAdapterMappingInput
 func (s *IdpToSpAdapterMappingService) UpdateIdpToSpAdapterMapping(input *UpdateIdpToSpAdapterMappingInput) (output *models.IdpToSpAdapterMapping, resp *http.Response, err error) {
+	return s.UpdateIdpToSpAdapterMappingWithContext(context.Background(), input)
+}
+
+//UpdateIdpToSpAdapterMappingWithContext - Update the specified IdP-to-SP Adapter mapping.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateIdpToSpAdapterMappingInput
+func (s *IdpToSpAdapterMappingService) UpdateIdpToSpAdapterMappingWithContext(ctx context.Context, input *UpdateIdpToSpAdapterMappingInput) (output *models.IdpToSpAdapterMapping, resp *http.Response, err error) {
 	path := "/idpToSpAdapterMapping/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -117,6 +149,7 @@ func (s *IdpToSpAdapterMappingService) UpdateIdpToSpAdapterMapping(input *Update
 	}
 	output = &models.IdpToSpAdapterMapping{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -130,6 +163,13 @@ func (s *IdpToSpAdapterMappingService) UpdateIdpToSpAdapterMapping(input *Update
 //RequestType: DELETE
 //Input: input *DeleteIdpToSpAdapterMappingsByIdInput
 func (s *IdpToSpAdapterMappingService) DeleteIdpToSpAdapterMappingsById(input *DeleteIdpToSpAdapterMappingsByIdInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeleteIdpToSpAdapterMappingsByIdWithContext(context.Background(), input)
+}
+
+//DeleteIdpToSpAdapterMappingsByIdWithContext - Delete an Adapter to Adapter Mapping.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteIdpToSpAdapterMappingsByIdInput
+func (s *IdpToSpAdapterMappingService) DeleteIdpToSpAdapterMappingsByIdWithContext(ctx context.Context, input *DeleteIdpToSpAdapterMappingsByIdInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/idpToSpAdapterMapping/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -140,6 +180,7 @@ func (s *IdpToSpAdapterMappingService) DeleteIdpToSpAdapterMappingsById(input *D
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

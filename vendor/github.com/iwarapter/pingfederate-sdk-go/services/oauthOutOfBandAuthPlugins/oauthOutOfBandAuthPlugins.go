@@ -1,6 +1,7 @@
 package oauthOutOfBandAuthPlugins
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -45,6 +46,13 @@ func (c *OauthOutOfBandAuthPluginsService) newRequest(op *request.Operation, par
 //RequestType: GET
 //Input:
 func (s *OauthOutOfBandAuthPluginsService) GetOOBAuthPluginDescriptors() (output *models.OutOfBandAuthPluginDescriptors, resp *http.Response, err error) {
+	return s.GetOOBAuthPluginDescriptorsWithContext(context.Background())
+}
+
+//GetOOBAuthPluginDescriptorsWithContext - Get the list of available Out of Band authenticator plugin descriptors.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *OauthOutOfBandAuthPluginsService) GetOOBAuthPluginDescriptorsWithContext(ctx context.Context) (output *models.OutOfBandAuthPluginDescriptors, resp *http.Response, err error) {
 	path := "/oauth/outOfBandAuthPlugins/descriptors"
 	op := &request.Operation{
 		Name:       "GetOOBAuthPluginDescriptors",
@@ -53,6 +61,7 @@ func (s *OauthOutOfBandAuthPluginsService) GetOOBAuthPluginDescriptors() (output
 	}
 	output = &models.OutOfBandAuthPluginDescriptors{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -64,6 +73,13 @@ func (s *OauthOutOfBandAuthPluginsService) GetOOBAuthPluginDescriptors() (output
 //RequestType: GET
 //Input: input *GetOOBAuthPluginDescriptorInput
 func (s *OauthOutOfBandAuthPluginsService) GetOOBAuthPluginDescriptor(input *GetOOBAuthPluginDescriptorInput) (output *models.OutOfBandAuthPluginDescriptor, resp *http.Response, err error) {
+	return s.GetOOBAuthPluginDescriptorWithContext(context.Background(), input)
+}
+
+//GetOOBAuthPluginDescriptorWithContext - Get the descriptor of an Out of Band authenticator plugin.
+//RequestType: GET
+//Input: ctx context.Context, input *GetOOBAuthPluginDescriptorInput
+func (s *OauthOutOfBandAuthPluginsService) GetOOBAuthPluginDescriptorWithContext(ctx context.Context, input *GetOOBAuthPluginDescriptorInput) (output *models.OutOfBandAuthPluginDescriptor, resp *http.Response, err error) {
 	path := "/oauth/outOfBandAuthPlugins/descriptors/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -74,6 +90,7 @@ func (s *OauthOutOfBandAuthPluginsService) GetOOBAuthPluginDescriptor(input *Get
 	}
 	output = &models.OutOfBandAuthPluginDescriptor{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -85,6 +102,13 @@ func (s *OauthOutOfBandAuthPluginsService) GetOOBAuthPluginDescriptor(input *Get
 //RequestType: GET
 //Input:
 func (s *OauthOutOfBandAuthPluginsService) GetOOBAuthenticators() (output *models.OutOfBandAuthenticators, resp *http.Response, err error) {
+	return s.GetOOBAuthenticatorsWithContext(context.Background())
+}
+
+//GetOOBAuthenticatorsWithContext - Get a list of Out of Band authenticator plugin instances.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *OauthOutOfBandAuthPluginsService) GetOOBAuthenticatorsWithContext(ctx context.Context) (output *models.OutOfBandAuthenticators, resp *http.Response, err error) {
 	path := "/oauth/outOfBandAuthPlugins"
 	op := &request.Operation{
 		Name:       "GetOOBAuthenticators",
@@ -93,6 +117,7 @@ func (s *OauthOutOfBandAuthPluginsService) GetOOBAuthenticators() (output *model
 	}
 	output = &models.OutOfBandAuthenticators{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -104,6 +129,13 @@ func (s *OauthOutOfBandAuthPluginsService) GetOOBAuthenticators() (output *model
 //RequestType: POST
 //Input: input *CreateOOBAuthenticatorInput
 func (s *OauthOutOfBandAuthPluginsService) CreateOOBAuthenticator(input *CreateOOBAuthenticatorInput) (output *models.OutOfBandAuthenticator, resp *http.Response, err error) {
+	return s.CreateOOBAuthenticatorWithContext(context.Background(), input)
+}
+
+//CreateOOBAuthenticatorWithContext - Create an Out of Band authenticator plugin instance.
+//RequestType: POST
+//Input: ctx context.Context, input *CreateOOBAuthenticatorInput
+func (s *OauthOutOfBandAuthPluginsService) CreateOOBAuthenticatorWithContext(ctx context.Context, input *CreateOOBAuthenticatorInput) (output *models.OutOfBandAuthenticator, resp *http.Response, err error) {
 	path := "/oauth/outOfBandAuthPlugins"
 	op := &request.Operation{
 		Name:       "CreateOOBAuthenticator",
@@ -112,6 +144,7 @@ func (s *OauthOutOfBandAuthPluginsService) CreateOOBAuthenticator(input *CreateO
 	}
 	output = &models.OutOfBandAuthenticator{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -123,6 +156,13 @@ func (s *OauthOutOfBandAuthPluginsService) CreateOOBAuthenticator(input *CreateO
 //RequestType: GET
 //Input: input *GetOOBAuthenticatorInput
 func (s *OauthOutOfBandAuthPluginsService) GetOOBAuthenticator(input *GetOOBAuthenticatorInput) (output *models.OutOfBandAuthenticator, resp *http.Response, err error) {
+	return s.GetOOBAuthenticatorWithContext(context.Background(), input)
+}
+
+//GetOOBAuthenticatorWithContext - Get a specific Out of Band authenticator plugin instance.
+//RequestType: GET
+//Input: ctx context.Context, input *GetOOBAuthenticatorInput
+func (s *OauthOutOfBandAuthPluginsService) GetOOBAuthenticatorWithContext(ctx context.Context, input *GetOOBAuthenticatorInput) (output *models.OutOfBandAuthenticator, resp *http.Response, err error) {
 	path := "/oauth/outOfBandAuthPlugins/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -133,6 +173,7 @@ func (s *OauthOutOfBandAuthPluginsService) GetOOBAuthenticator(input *GetOOBAuth
 	}
 	output = &models.OutOfBandAuthenticator{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -144,6 +185,13 @@ func (s *OauthOutOfBandAuthPluginsService) GetOOBAuthenticator(input *GetOOBAuth
 //RequestType: PUT
 //Input: input *UpdateOOBAuthenticatorInput
 func (s *OauthOutOfBandAuthPluginsService) UpdateOOBAuthenticator(input *UpdateOOBAuthenticatorInput) (output *models.OutOfBandAuthenticator, resp *http.Response, err error) {
+	return s.UpdateOOBAuthenticatorWithContext(context.Background(), input)
+}
+
+//UpdateOOBAuthenticatorWithContext - Update an Out of Band authenticator plugin instance.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateOOBAuthenticatorInput
+func (s *OauthOutOfBandAuthPluginsService) UpdateOOBAuthenticatorWithContext(ctx context.Context, input *UpdateOOBAuthenticatorInput) (output *models.OutOfBandAuthenticator, resp *http.Response, err error) {
 	path := "/oauth/outOfBandAuthPlugins/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -154,6 +202,7 @@ func (s *OauthOutOfBandAuthPluginsService) UpdateOOBAuthenticator(input *UpdateO
 	}
 	output = &models.OutOfBandAuthenticator{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -165,6 +214,13 @@ func (s *OauthOutOfBandAuthPluginsService) UpdateOOBAuthenticator(input *UpdateO
 //RequestType: DELETE
 //Input: input *DeleteOOBAuthenticatorInput
 func (s *OauthOutOfBandAuthPluginsService) DeleteOOBAuthenticator(input *DeleteOOBAuthenticatorInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeleteOOBAuthenticatorWithContext(context.Background(), input)
+}
+
+//DeleteOOBAuthenticatorWithContext - Delete an Out of Band authenticator plugin instance.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteOOBAuthenticatorInput
+func (s *OauthOutOfBandAuthPluginsService) DeleteOOBAuthenticatorWithContext(ctx context.Context, input *DeleteOOBAuthenticatorInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/oauth/outOfBandAuthPlugins/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -175,6 +231,7 @@ func (s *OauthOutOfBandAuthPluginsService) DeleteOOBAuthenticator(input *DeleteO
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -186,6 +243,13 @@ func (s *OauthOutOfBandAuthPluginsService) DeleteOOBAuthenticator(input *DeleteO
 //RequestType: GET
 //Input: input *GetActionsInput
 func (s *OauthOutOfBandAuthPluginsService) GetActions(input *GetActionsInput) (output *models.Actions, resp *http.Response, err error) {
+	return s.GetActionsWithContext(context.Background(), input)
+}
+
+//GetActionsWithContext - List of actions for an Out of Band authenticator plugin instance.
+//RequestType: GET
+//Input: ctx context.Context, input *GetActionsInput
+func (s *OauthOutOfBandAuthPluginsService) GetActionsWithContext(ctx context.Context, input *GetActionsInput) (output *models.Actions, resp *http.Response, err error) {
 	path := "/oauth/outOfBandAuthPlugins/{id}/actions"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -196,6 +260,7 @@ func (s *OauthOutOfBandAuthPluginsService) GetActions(input *GetActionsInput) (o
 	}
 	output = &models.Actions{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -207,6 +272,13 @@ func (s *OauthOutOfBandAuthPluginsService) GetActions(input *GetActionsInput) (o
 //RequestType: GET
 //Input: input *GetActionInput
 func (s *OauthOutOfBandAuthPluginsService) GetAction(input *GetActionInput) (output *models.Action, resp *http.Response, err error) {
+	return s.GetActionWithContext(context.Background(), input)
+}
+
+//GetActionWithContext - Find an Out of Band authenticator plugin instance's action by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetActionInput
+func (s *OauthOutOfBandAuthPluginsService) GetActionWithContext(ctx context.Context, input *GetActionInput) (output *models.Action, resp *http.Response, err error) {
 	path := "/oauth/outOfBandAuthPlugins/{id}/actions/{actionId}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -219,6 +291,7 @@ func (s *OauthOutOfBandAuthPluginsService) GetAction(input *GetActionInput) (out
 	}
 	output = &models.Action{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -230,6 +303,13 @@ func (s *OauthOutOfBandAuthPluginsService) GetAction(input *GetActionInput) (out
 //RequestType: POST
 //Input: input *InvokeActionInput
 func (s *OauthOutOfBandAuthPluginsService) InvokeAction(input *InvokeActionInput) (output *models.ActionResult, resp *http.Response, err error) {
+	return s.InvokeActionWithContext(context.Background(), input)
+}
+
+//InvokeActionWithContext - Invokes an action for Out of Band authenticator plugin instance.
+//RequestType: POST
+//Input: ctx context.Context, input *InvokeActionInput
+func (s *OauthOutOfBandAuthPluginsService) InvokeActionWithContext(ctx context.Context, input *InvokeActionInput) (output *models.ActionResult, resp *http.Response, err error) {
 	path := "/oauth/outOfBandAuthPlugins/{id}/actions/{actionId}/invokeAction"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -242,6 +322,7 @@ func (s *OauthOutOfBandAuthPluginsService) InvokeAction(input *InvokeActionInput
 	}
 	output = &models.ActionResult{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

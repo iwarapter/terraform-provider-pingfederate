@@ -1,6 +1,7 @@
 package oauthClientSettings
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
@@ -44,6 +45,13 @@ func (c *OauthClientSettingsService) newRequest(op *request.Operation, params, d
 //RequestType: GET
 //Input:
 func (s *OauthClientSettingsService) GetClientSettings() (output *models.ClientSettings, resp *http.Response, err error) {
+	return s.GetClientSettingsWithContext(context.Background())
+}
+
+//GetClientSettingsWithContext - Configure the client settings.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *OauthClientSettingsService) GetClientSettingsWithContext(ctx context.Context) (output *models.ClientSettings, resp *http.Response, err error) {
 	path := "/oauth/clientSettings"
 	op := &request.Operation{
 		Name:       "GetClientSettings",
@@ -52,6 +60,7 @@ func (s *OauthClientSettingsService) GetClientSettings() (output *models.ClientS
 	}
 	output = &models.ClientSettings{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -63,6 +72,13 @@ func (s *OauthClientSettingsService) GetClientSettings() (output *models.ClientS
 //RequestType: PUT
 //Input: input *UpdateClientSettingsInput
 func (s *OauthClientSettingsService) UpdateClientSettings(input *UpdateClientSettingsInput) (output *models.ClientSettings, resp *http.Response, err error) {
+	return s.UpdateClientSettingsWithContext(context.Background(), input)
+}
+
+//UpdateClientSettingsWithContext - Update the client settings.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateClientSettingsInput
+func (s *OauthClientSettingsService) UpdateClientSettingsWithContext(ctx context.Context, input *UpdateClientSettingsInput) (output *models.ClientSettings, resp *http.Response, err error) {
 	path := "/oauth/clientSettings"
 	op := &request.Operation{
 		Name:       "UpdateClientSettings",
@@ -71,6 +87,7 @@ func (s *OauthClientSettingsService) UpdateClientSettings(input *UpdateClientSet
 	}
 	output = &models.ClientSettings{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/dataStores"
+	"github.com/stretchr/testify/assert"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -31,7 +31,6 @@ func init() {
 						return fmt.Errorf("unable to sweep data store %s because %s", *v.Id, err)
 					}
 				}
-
 			}
 			return nil
 		},
@@ -49,13 +48,30 @@ func TestAccPingFederateLdapDataStoreResource(t *testing.T) {
 				Config: testAccPingFederateLdapDataStoreResourceConfig("1000"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateLdapDataStoreResourceExists(resourceName),
-					// testAccCheckPingFederateLdapDataStoreResourceAttributes(),
+					resource.TestCheckResourceAttr(resourceName, "name", "terraform_ldap"),
+					resource.TestCheckResourceAttr(resourceName, "ldap_type", "PING_DIRECTORY"),
+					resource.TestCheckResourceAttr(resourceName, "hostnames.0", "host.docker.internal:1389"),
+					resource.TestCheckResourceAttr(resourceName, "user_dn", "test"),
+					resource.TestCheckResourceAttr(resourceName, "password", "secret"),
+					resource.TestCheckResourceAttrSet(resourceName, "encrypted_password"),
+					resource.TestCheckResourceAttr(resourceName, "bind_anonymously", "false"),
+					resource.TestCheckResourceAttr(resourceName, "min_connections", "1"),
+					resource.TestCheckResourceAttr(resourceName, "max_connections", "1000"),
 				),
 			},
 			{
 				Config: testAccPingFederateLdapDataStoreResourceConfig("1001"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateLdapDataStoreResourceExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", "terraform_ldap"),
+					resource.TestCheckResourceAttr(resourceName, "ldap_type", "PING_DIRECTORY"),
+					resource.TestCheckResourceAttr(resourceName, "hostnames.0", "host.docker.internal:1389"),
+					resource.TestCheckResourceAttr(resourceName, "user_dn", "test"),
+					resource.TestCheckResourceAttr(resourceName, "password", "secret"),
+					resource.TestCheckResourceAttrSet(resourceName, "encrypted_password"),
+					resource.TestCheckResourceAttr(resourceName, "bind_anonymously", "false"),
+					resource.TestCheckResourceAttr(resourceName, "min_connections", "1"),
+					resource.TestCheckResourceAttr(resourceName, "max_connections", "1001"),
 				),
 			},
 			{
@@ -163,9 +179,7 @@ func Test_resourcePingFederateLdapDataStoreResourceReadData(t *testing.T) {
 			resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})
 			resourcePingFederateLdapDataStoreResourceReadResult(resourceLocalData, &tc.Resource)
 
-			if got := *resourcePingFederateLdapDataStoreResourceReadData(resourceLocalData); !cmp.Equal(got, tc.Resource) {
-				t.Errorf("resourcePingFederateLdapDataStoreResourceReadData() = %v", cmp.Diff(got, tc.Resource))
-			}
+			assert.Equal(t, tc.Resource, *resourcePingFederateLdapDataStoreResourceReadData(resourceLocalData))
 		})
 	}
 }

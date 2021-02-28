@@ -1,6 +1,7 @@
 package keyPairsSslClient
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -45,6 +46,13 @@ func (c *KeyPairsSslClientService) newRequest(op *request.Operation, params, dat
 //RequestType: GET
 //Input:
 func (s *KeyPairsSslClientService) GetKeyPairs() (output *models.KeyPairViews, resp *http.Response, err error) {
+	return s.GetKeyPairsWithContext(context.Background())
+}
+
+//GetKeyPairsWithContext - Get list of key pairs.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *KeyPairsSslClientService) GetKeyPairsWithContext(ctx context.Context) (output *models.KeyPairViews, resp *http.Response, err error) {
 	path := "/keyPairs/sslClient"
 	op := &request.Operation{
 		Name:       "GetKeyPairs",
@@ -53,6 +61,7 @@ func (s *KeyPairsSslClientService) GetKeyPairs() (output *models.KeyPairViews, r
 	}
 	output = &models.KeyPairViews{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -64,6 +73,13 @@ func (s *KeyPairsSslClientService) GetKeyPairs() (output *models.KeyPairViews, r
 //RequestType: POST
 //Input: input *ImportKeyPairInput
 func (s *KeyPairsSslClientService) ImportKeyPair(input *ImportKeyPairInput) (output *models.KeyPairView, resp *http.Response, err error) {
+	return s.ImportKeyPairWithContext(context.Background(), input)
+}
+
+//ImportKeyPairWithContext - Import a new key pair.
+//RequestType: POST
+//Input: ctx context.Context, input *ImportKeyPairInput
+func (s *KeyPairsSslClientService) ImportKeyPairWithContext(ctx context.Context, input *ImportKeyPairInput) (output *models.KeyPairView, resp *http.Response, err error) {
 	path := "/keyPairs/sslClient/import"
 	op := &request.Operation{
 		Name:       "ImportKeyPair",
@@ -72,6 +88,7 @@ func (s *KeyPairsSslClientService) ImportKeyPair(input *ImportKeyPairInput) (out
 	}
 	output = &models.KeyPairView{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -83,6 +100,13 @@ func (s *KeyPairsSslClientService) ImportKeyPair(input *ImportKeyPairInput) (out
 //RequestType: POST
 //Input: input *CreateKeyPairInput
 func (s *KeyPairsSslClientService) CreateKeyPair(input *CreateKeyPairInput) (output *models.KeyPairView, resp *http.Response, err error) {
+	return s.CreateKeyPairWithContext(context.Background(), input)
+}
+
+//CreateKeyPairWithContext - Generate a new key pair.
+//RequestType: POST
+//Input: ctx context.Context, input *CreateKeyPairInput
+func (s *KeyPairsSslClientService) CreateKeyPairWithContext(ctx context.Context, input *CreateKeyPairInput) (output *models.KeyPairView, resp *http.Response, err error) {
 	path := "/keyPairs/sslClient/generate"
 	op := &request.Operation{
 		Name:       "CreateKeyPair",
@@ -91,6 +115,7 @@ func (s *KeyPairsSslClientService) CreateKeyPair(input *CreateKeyPairInput) (out
 	}
 	output = &models.KeyPairView{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -102,6 +127,13 @@ func (s *KeyPairsSslClientService) CreateKeyPair(input *CreateKeyPairInput) (out
 //RequestType: GET
 //Input: input *GetKeyPairInput
 func (s *KeyPairsSslClientService) GetKeyPair(input *GetKeyPairInput) (output *models.KeyPairView, resp *http.Response, err error) {
+	return s.GetKeyPairWithContext(context.Background(), input)
+}
+
+//GetKeyPairWithContext - Retrieve details of a key pair.
+//RequestType: GET
+//Input: ctx context.Context, input *GetKeyPairInput
+func (s *KeyPairsSslClientService) GetKeyPairWithContext(ctx context.Context, input *GetKeyPairInput) (output *models.KeyPairView, resp *http.Response, err error) {
 	path := "/keyPairs/sslClient/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -112,6 +144,7 @@ func (s *KeyPairsSslClientService) GetKeyPair(input *GetKeyPairInput) (output *m
 	}
 	output = &models.KeyPairView{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -123,6 +156,13 @@ func (s *KeyPairsSslClientService) GetKeyPair(input *GetKeyPairInput) (output *m
 //RequestType: DELETE
 //Input: input *DeleteKeyPairInput
 func (s *KeyPairsSslClientService) DeleteKeyPair(input *DeleteKeyPairInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeleteKeyPairWithContext(context.Background(), input)
+}
+
+//DeleteKeyPairWithContext - Delete a key pair.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteKeyPairInput
+func (s *KeyPairsSslClientService) DeleteKeyPairWithContext(ctx context.Context, input *DeleteKeyPairInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/keyPairs/sslClient/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -133,6 +173,7 @@ func (s *KeyPairsSslClientService) DeleteKeyPair(input *DeleteKeyPairInput) (out
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -144,6 +185,13 @@ func (s *KeyPairsSslClientService) DeleteKeyPair(input *DeleteKeyPairInput) (out
 //RequestType: GET
 //Input: input *ExportCsrInput
 func (s *KeyPairsSslClientService) ExportCsr(input *ExportCsrInput) (output *string, resp *http.Response, err error) {
+	return s.ExportCsrWithContext(context.Background(), input)
+}
+
+//ExportCsrWithContext - Generate a new certificate signing request (CSR) for this key pair.
+//RequestType: GET
+//Input: ctx context.Context, input *ExportCsrInput
+func (s *KeyPairsSslClientService) ExportCsrWithContext(ctx context.Context, input *ExportCsrInput) (output *string, resp *http.Response, err error) {
 	path := "/keyPairs/sslClient/{id}/csr"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -154,6 +202,7 @@ func (s *KeyPairsSslClientService) ExportCsr(input *ExportCsrInput) (output *str
 	}
 	output = pingfederate.String("")
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -165,6 +214,13 @@ func (s *KeyPairsSslClientService) ExportCsr(input *ExportCsrInput) (output *str
 //RequestType: POST
 //Input: input *ImportCsrResponseInput
 func (s *KeyPairsSslClientService) ImportCsrResponse(input *ImportCsrResponseInput) (output *models.KeyPairView, resp *http.Response, err error) {
+	return s.ImportCsrResponseWithContext(context.Background(), input)
+}
+
+//ImportCsrResponseWithContext - Import a CSR response for this key pair.
+//RequestType: POST
+//Input: ctx context.Context, input *ImportCsrResponseInput
+func (s *KeyPairsSslClientService) ImportCsrResponseWithContext(ctx context.Context, input *ImportCsrResponseInput) (output *models.KeyPairView, resp *http.Response, err error) {
 	path := "/keyPairs/sslClient/{id}/csr"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -175,6 +231,7 @@ func (s *KeyPairsSslClientService) ImportCsrResponse(input *ImportCsrResponseInp
 	}
 	output = &models.KeyPairView{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -186,6 +243,13 @@ func (s *KeyPairsSslClientService) ImportCsrResponse(input *ImportCsrResponseInp
 //RequestType: POST
 //Input: input *ExportPKCS12FileInput
 func (s *KeyPairsSslClientService) ExportPKCS12File(input *ExportPKCS12FileInput) (resp *http.Response, err error) {
+	return s.ExportPKCS12FileWithContext(context.Background(), input)
+}
+
+//ExportPKCS12FileWithContext - Download the key pair in PKCS12 format.
+//RequestType: POST
+//Input: ctx context.Context, input *ExportPKCS12FileInput
+func (s *KeyPairsSslClientService) ExportPKCS12FileWithContext(ctx context.Context, input *ExportPKCS12FileInput) (resp *http.Response, err error) {
 	path := "/keyPairs/sslClient/{id}/pkcs12"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -196,6 +260,7 @@ func (s *KeyPairsSslClientService) ExportPKCS12File(input *ExportPKCS12FileInput
 	}
 
 	req := s.newRequest(op, input.Body, nil)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return req.HTTPResponse, nil
@@ -207,6 +272,13 @@ func (s *KeyPairsSslClientService) ExportPKCS12File(input *ExportPKCS12FileInput
 //RequestType: GET
 //Input: input *ExportCertificateFileInput
 func (s *KeyPairsSslClientService) ExportCertificateFile(input *ExportCertificateFileInput) (output *string, resp *http.Response, err error) {
+	return s.ExportCertificateFileWithContext(context.Background(), input)
+}
+
+//ExportCertificateFileWithContext - Download the certificate from a given key pair.
+//RequestType: GET
+//Input: ctx context.Context, input *ExportCertificateFileInput
+func (s *KeyPairsSslClientService) ExportCertificateFileWithContext(ctx context.Context, input *ExportCertificateFileInput) (output *string, resp *http.Response, err error) {
 	path := "/keyPairs/sslClient/{id}/certificate"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -217,6 +289,7 @@ func (s *KeyPairsSslClientService) ExportCertificateFile(input *ExportCertificat
 	}
 	output = pingfederate.String("")
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

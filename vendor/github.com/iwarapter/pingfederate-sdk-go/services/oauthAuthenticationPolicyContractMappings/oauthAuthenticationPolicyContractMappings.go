@@ -1,6 +1,7 @@
 package oauthAuthenticationPolicyContractMappings
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -46,6 +47,13 @@ func (c *OauthAuthenticationPolicyContractMappingsService) newRequest(op *reques
 //RequestType: GET
 //Input:
 func (s *OauthAuthenticationPolicyContractMappingsService) GetApcMappings() (output *models.ApcToPersistentGrantMappings, resp *http.Response, err error) {
+	return s.GetApcMappingsWithContext(context.Background())
+}
+
+//GetApcMappingsWithContext - Get the list of authentication policy contract to persistent grant mappings.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *OauthAuthenticationPolicyContractMappingsService) GetApcMappingsWithContext(ctx context.Context) (output *models.ApcToPersistentGrantMappings, resp *http.Response, err error) {
 	path := "/oauth/authenticationPolicyContractMappings"
 	op := &request.Operation{
 		Name:       "GetApcMappings",
@@ -54,6 +62,7 @@ func (s *OauthAuthenticationPolicyContractMappingsService) GetApcMappings() (out
 	}
 	output = &models.ApcToPersistentGrantMappings{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -65,6 +74,13 @@ func (s *OauthAuthenticationPolicyContractMappingsService) GetApcMappings() (out
 //RequestType: POST
 //Input: input *CreateApcMappingInput
 func (s *OauthAuthenticationPolicyContractMappingsService) CreateApcMapping(input *CreateApcMappingInput) (output *models.ApcToPersistentGrantMapping, resp *http.Response, err error) {
+	return s.CreateApcMappingWithContext(context.Background(), input)
+}
+
+//CreateApcMappingWithContext - Create a new authentication policy contract to persistent grant mapping.
+//RequestType: POST
+//Input: ctx context.Context, input *CreateApcMappingInput
+func (s *OauthAuthenticationPolicyContractMappingsService) CreateApcMappingWithContext(ctx context.Context, input *CreateApcMappingInput) (output *models.ApcToPersistentGrantMapping, resp *http.Response, err error) {
 	path := "/oauth/authenticationPolicyContractMappings"
 	op := &request.Operation{
 		Name:       "CreateApcMapping",
@@ -73,6 +89,7 @@ func (s *OauthAuthenticationPolicyContractMappingsService) CreateApcMapping(inpu
 	}
 	output = &models.ApcToPersistentGrantMapping{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -86,6 +103,13 @@ func (s *OauthAuthenticationPolicyContractMappingsService) CreateApcMapping(inpu
 //RequestType: GET
 //Input: input *GetApcMappingInput
 func (s *OauthAuthenticationPolicyContractMappingsService) GetApcMapping(input *GetApcMappingInput) (output *models.ApcToPersistentGrantMapping, resp *http.Response, err error) {
+	return s.GetApcMappingWithContext(context.Background(), input)
+}
+
+//GetApcMappingWithContext - Find the authentication policy contract to persistent grant mapping by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetApcMappingInput
+func (s *OauthAuthenticationPolicyContractMappingsService) GetApcMappingWithContext(ctx context.Context, input *GetApcMappingInput) (output *models.ApcToPersistentGrantMapping, resp *http.Response, err error) {
 	path := "/oauth/authenticationPolicyContractMappings/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -96,6 +120,7 @@ func (s *OauthAuthenticationPolicyContractMappingsService) GetApcMapping(input *
 	}
 	output = &models.ApcToPersistentGrantMapping{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -107,6 +132,13 @@ func (s *OauthAuthenticationPolicyContractMappingsService) GetApcMapping(input *
 //RequestType: PUT
 //Input: input *UpdateApcMappingInput
 func (s *OauthAuthenticationPolicyContractMappingsService) UpdateApcMapping(input *UpdateApcMappingInput) (output *models.ApcToPersistentGrantMapping, resp *http.Response, err error) {
+	return s.UpdateApcMappingWithContext(context.Background(), input)
+}
+
+//UpdateApcMappingWithContext - Update an authentication policy contract to persistent grant mapping.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateApcMappingInput
+func (s *OauthAuthenticationPolicyContractMappingsService) UpdateApcMappingWithContext(ctx context.Context, input *UpdateApcMappingInput) (output *models.ApcToPersistentGrantMapping, resp *http.Response, err error) {
 	path := "/oauth/authenticationPolicyContractMappings/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -117,6 +149,7 @@ func (s *OauthAuthenticationPolicyContractMappingsService) UpdateApcMapping(inpu
 	}
 	output = &models.ApcToPersistentGrantMapping{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -130,6 +163,13 @@ func (s *OauthAuthenticationPolicyContractMappingsService) UpdateApcMapping(inpu
 //RequestType: DELETE
 //Input: input *DeleteApcMappingInput
 func (s *OauthAuthenticationPolicyContractMappingsService) DeleteApcMapping(input *DeleteApcMappingInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeleteApcMappingWithContext(context.Background(), input)
+}
+
+//DeleteApcMappingWithContext - Delete an authentication policy contract to persistent grant mapping.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteApcMappingInput
+func (s *OauthAuthenticationPolicyContractMappingsService) DeleteApcMappingWithContext(ctx context.Context, input *DeleteApcMappingInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/oauth/authenticationPolicyContractMappings/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -140,6 +180,7 @@ func (s *OauthAuthenticationPolicyContractMappingsService) DeleteApcMapping(inpu
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

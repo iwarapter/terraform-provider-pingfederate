@@ -6,9 +6,10 @@ import (
 	"regexp"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/iwarapter/pingfederate-sdk-go/services/notificationPublishers"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -253,9 +254,7 @@ func Test_resourcePingFederateNotificationPublisherResourceReadData(t *testing.T
 			resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})
 			resourcePingFederateNotificationPublisherResourceReadResult(resourceLocalData, &tc.Resource, m)
 
-			if got := *resourcePingFederateNotificationPublisherResourceReadData(resourceLocalData); !cmp.Equal(got, tc.Resource) {
-				t.Errorf("resourcePingFederateNotificationPublisherResourceReadData() = %v", cmp.Diff(got, tc.Resource))
-			}
+			assert.Equal(t, tc.Resource, *resourcePingFederateNotificationPublisherResourceReadData(resourceLocalData))
 		})
 	}
 }

@@ -176,16 +176,16 @@ func resourcePingFederateOauthAuthServerSettingsResourceCreate(ctx context.Conte
 	return resourcePingFederateOauthAuthServerSettingsResourceUpdate(ctx, d, m)
 }
 
-func resourcePingFederateOauthAuthServerSettingsResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateOauthAuthServerSettingsResourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthAuthServerSettings
-	result, _, err := svc.GetAuthorizationServerSettings()
+	result, _, err := svc.GetAuthorizationServerSettingsWithContext(ctx)
 	if err != nil {
 		return diag.Errorf("unable to read OauthAuthServerSettings: %s", err)
 	}
 	return resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result, m.(pfClient).IsPF10())
 }
 
-func resourcePingFederateOauthAuthServerSettingsResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateOauthAuthServerSettingsResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	defaultScopeDescription := d.Get("default_scope_description").(string)
 	authorizationCodeTimeout := d.Get("authorization_code_timeout").(int)
 	authorizationCodeEntropy := d.Get("authorization_code_entropy").(int)
@@ -277,7 +277,7 @@ func resourcePingFederateOauthAuthServerSettingsResourceUpdate(_ context.Context
 		Body: *authSettings,
 	}
 
-	result, _, err := svc.UpdateAuthorizationServerSettings(input)
+	result, _, err := svc.UpdateAuthorizationServerSettingsWithContext(ctx, input)
 	if err != nil {
 		return diag.Errorf("unable to update OauthAuthServerSettings: %s", err)
 	}
@@ -289,11 +289,11 @@ func resourcePingFederateOauthAuthServerSettingsResourceDelete(_ context.Context
 	return nil
 }
 
-func resourcePingFederateOauthAuthServerSettingsResourceImport(_ context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+func resourcePingFederateOauthAuthServerSettingsResourceImport(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 	svc := m.(pfClient).OauthAuthServerSettings
-	result, _, err := svc.GetAuthorizationServerSettings()
+	result, _, err := svc.GetAuthorizationServerSettingsWithContext(ctx)
 	if err != nil {
-		return []*schema.ResourceData{d}, fmt.Errorf(err.Error())
+		return nil, fmt.Errorf(err.Error())
 	}
 	resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result, m.(pfClient).IsPF10())
 	return []*schema.ResourceData{d}, nil

@@ -1,6 +1,7 @@
 package certificatesCa
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -45,6 +46,13 @@ func (c *CertificatesCaService) newRequest(op *request.Operation, params, data i
 //RequestType: GET
 //Input:
 func (s *CertificatesCaService) GetTrustedCAs() (output *models.CertViews, resp *http.Response, err error) {
+	return s.GetTrustedCAsWithContext(context.Background())
+}
+
+//GetTrustedCAsWithContext - Get list of trusted certificate authorities.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *CertificatesCaService) GetTrustedCAsWithContext(ctx context.Context) (output *models.CertViews, resp *http.Response, err error) {
 	path := "/certificates/ca"
 	op := &request.Operation{
 		Name:       "GetTrustedCAs",
@@ -53,6 +61,7 @@ func (s *CertificatesCaService) GetTrustedCAs() (output *models.CertViews, resp 
 	}
 	output = &models.CertViews{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -64,6 +73,13 @@ func (s *CertificatesCaService) GetTrustedCAs() (output *models.CertViews, resp 
 //RequestType: GET
 //Input: input *GetTrustedCertInput
 func (s *CertificatesCaService) GetTrustedCert(input *GetTrustedCertInput) (output *models.CertView, resp *http.Response, err error) {
+	return s.GetTrustedCertWithContext(context.Background(), input)
+}
+
+//GetTrustedCertWithContext - Retrieve details of a trusted certificate authority.
+//RequestType: GET
+//Input: ctx context.Context, input *GetTrustedCertInput
+func (s *CertificatesCaService) GetTrustedCertWithContext(ctx context.Context, input *GetTrustedCertInput) (output *models.CertView, resp *http.Response, err error) {
 	path := "/certificates/ca/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -74,6 +90,7 @@ func (s *CertificatesCaService) GetTrustedCert(input *GetTrustedCertInput) (outp
 	}
 	output = &models.CertView{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -85,6 +102,13 @@ func (s *CertificatesCaService) GetTrustedCert(input *GetTrustedCertInput) (outp
 //RequestType: DELETE
 //Input: input *DeleteTrustedCAInput
 func (s *CertificatesCaService) DeleteTrustedCA(input *DeleteTrustedCAInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeleteTrustedCAWithContext(context.Background(), input)
+}
+
+//DeleteTrustedCAWithContext - Delete a trusted certificate authority.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteTrustedCAInput
+func (s *CertificatesCaService) DeleteTrustedCAWithContext(ctx context.Context, input *DeleteTrustedCAInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/certificates/ca/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -95,6 +119,7 @@ func (s *CertificatesCaService) DeleteTrustedCA(input *DeleteTrustedCAInput) (ou
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -106,6 +131,13 @@ func (s *CertificatesCaService) DeleteTrustedCA(input *DeleteTrustedCAInput) (ou
 //RequestType: POST
 //Input: input *ImportTrustedCAInput
 func (s *CertificatesCaService) ImportTrustedCA(input *ImportTrustedCAInput) (output *models.CertView, resp *http.Response, err error) {
+	return s.ImportTrustedCAWithContext(context.Background(), input)
+}
+
+//ImportTrustedCAWithContext - Import a new trusted certificate authority.
+//RequestType: POST
+//Input: ctx context.Context, input *ImportTrustedCAInput
+func (s *CertificatesCaService) ImportTrustedCAWithContext(ctx context.Context, input *ImportTrustedCAInput) (output *models.CertView, resp *http.Response, err error) {
 	path := "/certificates/ca/import"
 	op := &request.Operation{
 		Name:       "ImportTrustedCA",
@@ -114,6 +146,7 @@ func (s *CertificatesCaService) ImportTrustedCA(input *ImportTrustedCAInput) (ou
 	}
 	output = &models.CertView{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -125,6 +158,13 @@ func (s *CertificatesCaService) ImportTrustedCA(input *ImportTrustedCAInput) (ou
 //RequestType: GET
 //Input: input *ExportCertificateFileInput
 func (s *CertificatesCaService) ExportCertificateFile(input *ExportCertificateFileInput) (output *string, resp *http.Response, err error) {
+	return s.ExportCertificateFileWithContext(context.Background(), input)
+}
+
+//ExportCertificateFileWithContext - Download the certificate from a given trusted certificate authority.
+//RequestType: GET
+//Input: ctx context.Context, input *ExportCertificateFileInput
+func (s *CertificatesCaService) ExportCertificateFileWithContext(ctx context.Context, input *ExportCertificateFileInput) (output *string, resp *http.Response, err error) {
 	path := "/certificates/ca/{id}/file"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -135,6 +175,7 @@ func (s *CertificatesCaService) ExportCertificateFile(input *ExportCertificateFi
 	}
 	output = pingfederate.String("")
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

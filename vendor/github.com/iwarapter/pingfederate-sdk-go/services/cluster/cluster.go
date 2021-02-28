@@ -1,6 +1,7 @@
 package cluster
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
@@ -44,6 +45,13 @@ func (c *ClusterService) newRequest(op *request.Operation, params, data interfac
 //RequestType: GET
 //Input:
 func (s *ClusterService) GetClusterStatus() (output *models.ClusterStatus, resp *http.Response, err error) {
+	return s.GetClusterStatusWithContext(context.Background())
+}
+
+//GetClusterStatusWithContext - Get information on the current status of the cluster.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *ClusterService) GetClusterStatusWithContext(ctx context.Context) (output *models.ClusterStatus, resp *http.Response, err error) {
 	path := "/cluster/status"
 	op := &request.Operation{
 		Name:       "GetClusterStatus",
@@ -52,6 +60,7 @@ func (s *ClusterService) GetClusterStatus() (output *models.ClusterStatus, resp 
 	}
 	output = &models.ClusterStatus{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -63,6 +72,13 @@ func (s *ClusterService) GetClusterStatus() (output *models.ClusterStatus, resp 
 //RequestType: POST
 //Input:
 func (s *ClusterService) StartReplication() (output *models.ApiResult, resp *http.Response, err error) {
+	return s.StartReplicationWithContext(context.Background())
+}
+
+//StartReplicationWithContext - Replicate configuration updates to all nodes in the cluster.
+//RequestType: POST
+//Input: ctx context.Context,
+func (s *ClusterService) StartReplicationWithContext(ctx context.Context) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/cluster/replicate"
 	op := &request.Operation{
 		Name:       "StartReplication",
@@ -71,6 +87,7 @@ func (s *ClusterService) StartReplication() (output *models.ApiResult, resp *htt
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

@@ -1,6 +1,7 @@
 package authenticationApi
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -45,6 +46,13 @@ func (c *AuthenticationApiService) newRequest(op *request.Operation, params, dat
 //RequestType: GET
 //Input:
 func (s *AuthenticationApiService) GetAuthenticationApiSettings() (output *models.AuthnApiSettings, resp *http.Response, err error) {
+	return s.GetAuthenticationApiSettingsWithContext(context.Background())
+}
+
+//GetAuthenticationApiSettingsWithContext - Get the Authentication API settings.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *AuthenticationApiService) GetAuthenticationApiSettingsWithContext(ctx context.Context) (output *models.AuthnApiSettings, resp *http.Response, err error) {
 	path := "/authenticationApi/settings"
 	op := &request.Operation{
 		Name:       "GetAuthenticationApiSettings",
@@ -53,6 +61,7 @@ func (s *AuthenticationApiService) GetAuthenticationApiSettings() (output *model
 	}
 	output = &models.AuthnApiSettings{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -64,6 +73,13 @@ func (s *AuthenticationApiService) GetAuthenticationApiSettings() (output *model
 //RequestType: PUT
 //Input: input *UpdateAuthenticationApiSettingsInput
 func (s *AuthenticationApiService) UpdateAuthenticationApiSettings(input *UpdateAuthenticationApiSettingsInput) (output *models.AuthnApiSettings, resp *http.Response, err error) {
+	return s.UpdateAuthenticationApiSettingsWithContext(context.Background(), input)
+}
+
+//UpdateAuthenticationApiSettingsWithContext - Set the Authentication API settings.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateAuthenticationApiSettingsInput
+func (s *AuthenticationApiService) UpdateAuthenticationApiSettingsWithContext(ctx context.Context, input *UpdateAuthenticationApiSettingsInput) (output *models.AuthnApiSettings, resp *http.Response, err error) {
 	path := "/authenticationApi/settings"
 	op := &request.Operation{
 		Name:       "UpdateAuthenticationApiSettings",
@@ -72,6 +88,7 @@ func (s *AuthenticationApiService) UpdateAuthenticationApiSettings(input *Update
 	}
 	output = &models.AuthnApiSettings{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -83,6 +100,13 @@ func (s *AuthenticationApiService) UpdateAuthenticationApiSettings(input *Update
 //RequestType: GET
 //Input:
 func (s *AuthenticationApiService) GetAuthenticationApiApplications() (output *models.AuthnApiApplications, resp *http.Response, err error) {
+	return s.GetAuthenticationApiApplicationsWithContext(context.Background())
+}
+
+//GetAuthenticationApiApplicationsWithContext - Get the collection of Authentication API Applications.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *AuthenticationApiService) GetAuthenticationApiApplicationsWithContext(ctx context.Context) (output *models.AuthnApiApplications, resp *http.Response, err error) {
 	path := "/authenticationApi/applications"
 	op := &request.Operation{
 		Name:       "GetAuthenticationApiApplications",
@@ -91,6 +115,7 @@ func (s *AuthenticationApiService) GetAuthenticationApiApplications() (output *m
 	}
 	output = &models.AuthnApiApplications{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -102,6 +127,13 @@ func (s *AuthenticationApiService) GetAuthenticationApiApplications() (output *m
 //RequestType: POST
 //Input: input *CreateApplicationInput
 func (s *AuthenticationApiService) CreateApplication(input *CreateApplicationInput) (output *models.AuthnApiApplication, resp *http.Response, err error) {
+	return s.CreateApplicationWithContext(context.Background(), input)
+}
+
+//CreateApplicationWithContext - Create a new Authentication API Application.
+//RequestType: POST
+//Input: ctx context.Context, input *CreateApplicationInput
+func (s *AuthenticationApiService) CreateApplicationWithContext(ctx context.Context, input *CreateApplicationInput) (output *models.AuthnApiApplication, resp *http.Response, err error) {
 	path := "/authenticationApi/applications"
 	op := &request.Operation{
 		Name:       "CreateApplication",
@@ -110,6 +142,7 @@ func (s *AuthenticationApiService) CreateApplication(input *CreateApplicationInp
 	}
 	output = &models.AuthnApiApplication{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -121,6 +154,13 @@ func (s *AuthenticationApiService) CreateApplication(input *CreateApplicationInp
 //RequestType: GET
 //Input: input *GetApplicationInput
 func (s *AuthenticationApiService) GetApplication(input *GetApplicationInput) (output *models.AuthnApiApplication, resp *http.Response, err error) {
+	return s.GetApplicationWithContext(context.Background(), input)
+}
+
+//GetApplicationWithContext - Find Authentication API Application by ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetApplicationInput
+func (s *AuthenticationApiService) GetApplicationWithContext(ctx context.Context, input *GetApplicationInput) (output *models.AuthnApiApplication, resp *http.Response, err error) {
 	path := "/authenticationApi/applications/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -131,6 +171,7 @@ func (s *AuthenticationApiService) GetApplication(input *GetApplicationInput) (o
 	}
 	output = &models.AuthnApiApplication{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -142,6 +183,13 @@ func (s *AuthenticationApiService) GetApplication(input *GetApplicationInput) (o
 //RequestType: PUT
 //Input: input *UpdateApplicationInput
 func (s *AuthenticationApiService) UpdateApplication(input *UpdateApplicationInput) (output *models.AuthnApiApplication, resp *http.Response, err error) {
+	return s.UpdateApplicationWithContext(context.Background(), input)
+}
+
+//UpdateApplicationWithContext - Update an Authentication API Application.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateApplicationInput
+func (s *AuthenticationApiService) UpdateApplicationWithContext(ctx context.Context, input *UpdateApplicationInput) (output *models.AuthnApiApplication, resp *http.Response, err error) {
 	path := "/authenticationApi/applications/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -152,6 +200,7 @@ func (s *AuthenticationApiService) UpdateApplication(input *UpdateApplicationInp
 	}
 	output = &models.AuthnApiApplication{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -163,6 +212,13 @@ func (s *AuthenticationApiService) UpdateApplication(input *UpdateApplicationInp
 //RequestType: DELETE
 //Input: input *DeleteApplicationInput
 func (s *AuthenticationApiService) DeleteApplication(input *DeleteApplicationInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeleteApplicationWithContext(context.Background(), input)
+}
+
+//DeleteApplicationWithContext - Delete an Authentication API Application.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteApplicationInput
+func (s *AuthenticationApiService) DeleteApplicationWithContext(ctx context.Context, input *DeleteApplicationInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/authenticationApi/applications/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -173,6 +229,7 @@ func (s *AuthenticationApiService) DeleteApplication(input *DeleteApplicationInp
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

@@ -7,9 +7,10 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthAccessTokenManagers"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -256,9 +257,7 @@ func Test_resourcePingFederateOauthAccessTokenManagerResourceReadData(t *testing
 			resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})
 			resourcePingFederateOauthAccessTokenManagersResourceReadResult(resourceLocalData, &tc.Resource, m)
 
-			if got := *resourcePingFederateOauthAccessTokenManagersResourceReadData(resourceLocalData, m); !cmp.Equal(got, tc.Resource) {
-				t.Errorf("resourcePingFederateOauthAccessTokenManagerResourceReadData() = %v", cmp.Diff(got, tc.Resource))
-			}
+			assert.Equal(t, tc.Resource, *resourcePingFederateOauthAccessTokenManagersResourceReadData(resourceLocalData, m))
 		})
 	}
 }

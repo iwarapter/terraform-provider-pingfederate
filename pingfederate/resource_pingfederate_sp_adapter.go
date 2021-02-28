@@ -27,13 +27,13 @@ func resourcePingFederateSpAdapterResource() *schema.Resource {
 		CustomizeDiff: func(ctx context.Context, d *schema.ResourceDiff, m interface{}) error {
 			svc := m.(pfClient).SpAdapters
 			if className, ok := d.GetOk("plugin_descriptor_ref.0.id"); ok {
-				desc, resp, err := svc.GetSpAdapterDescriptorsById(&spAdapters.GetSpAdapterDescriptorsByIdInput{Id: className.(string)})
+				desc, resp, err := svc.GetSpAdapterDescriptorsByIdWithContext(ctx, &spAdapters.GetSpAdapterDescriptorsByIdInput{Id: className.(string)})
 				if resp != nil && resp.StatusCode == http.StatusForbidden {
 					log.Printf("[WARN] Unable to query SpAdapterDescriptor, SP role not enabled")
 					return nil
 				}
 				if err != nil {
-					descs, _, err := svc.GetSpAdapterDescriptors()
+					descs, _, err := svc.GetSpAdapterDescriptorsWithContext(ctx)
 					if err == nil && descs != nil {
 						list := func(in *[]*pf.SpAdapterDescriptor) string {
 							var plugins []string
@@ -82,12 +82,12 @@ func resourcePingFederateSpAdapterResourceSchema() map[string]*schema.Schema {
 	}
 }
 
-func resourcePingFederateSpAdapterResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateSpAdapterResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).SpAdapters
 	input := spAdapters.CreateSpAdapterInput{
 		Body: *resourcePingFederateSpAdapterResourceReadData(d),
 	}
-	result, _, err := svc.CreateSpAdapter(&input)
+	result, _, err := svc.CreateSpAdapterWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to create SpAdapters: %s", err)
 	}
@@ -95,25 +95,25 @@ func resourcePingFederateSpAdapterResourceCreate(_ context.Context, d *schema.Re
 	return resourcePingFederateSpAdapterResourceReadResult(d, result, svc)
 }
 
-func resourcePingFederateSpAdapterResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateSpAdapterResourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).SpAdapters
 	input := spAdapters.GetSpAdapterInput{
 		Id: d.Id(),
 	}
-	result, _, err := svc.GetSpAdapter(&input)
+	result, _, err := svc.GetSpAdapterWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to read SpAdapters: %s", err)
 	}
 	return resourcePingFederateSpAdapterResourceReadResult(d, result, svc)
 }
 
-func resourcePingFederateSpAdapterResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateSpAdapterResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).SpAdapters
 	input := spAdapters.UpdateSpAdapterInput{
 		Id:   d.Id(),
 		Body: *resourcePingFederateSpAdapterResourceReadData(d),
 	}
-	result, _, err := svc.UpdateSpAdapter(&input)
+	result, _, err := svc.UpdateSpAdapterWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to update SpAdapters: %s", err)
 	}
@@ -121,12 +121,12 @@ func resourcePingFederateSpAdapterResourceUpdate(_ context.Context, d *schema.Re
 	return resourcePingFederateSpAdapterResourceReadResult(d, result, svc)
 }
 
-func resourcePingFederateSpAdapterResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateSpAdapterResourceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).SpAdapters
 	input := spAdapters.DeleteSpAdapterInput{
 		Id: d.Id(),
 	}
-	_, _, err := svc.DeleteSpAdapter(&input)
+	_, _, err := svc.DeleteSpAdapterWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to delete SpAdapters: %s", err)
 	}

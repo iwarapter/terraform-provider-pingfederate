@@ -13,6 +13,7 @@ type Config struct {
 	LogDebug          *bool
 	MaskAuthorization *bool
 	Endpoint          *string
+	Token             *string
 
 	// The HTTP client to use when sending requests. Defaults to
 	// `http.DefaultClient`.
@@ -38,6 +39,11 @@ func (c *Config) WithPassword(password string) *Config {
 
 func (c *Config) WithUsername(username string) *Config {
 	c.Username = pingfederate.String(username)
+	return c
+}
+
+func (c *Config) WithToken(token string) *Config {
+	c.Token = pingfederate.String(token)
 	return c
 }
 

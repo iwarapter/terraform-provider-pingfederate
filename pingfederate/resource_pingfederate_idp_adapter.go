@@ -27,13 +27,13 @@ func resourcePingFederateIdpAdapterResource() *schema.Resource {
 		CustomizeDiff: func(ctx context.Context, d *schema.ResourceDiff, m interface{}) error {
 			svc := m.(pfClient).IdpAdapters
 			if className, ok := d.GetOk("plugin_descriptor_ref.0.id"); ok {
-				desc, resp, err := svc.GetIdpAdapterDescriptorsById(&idpAdapters.GetIdpAdapterDescriptorsByIdInput{Id: className.(string)})
+				desc, resp, err := svc.GetIdpAdapterDescriptorsByIdWithContext(ctx, &idpAdapters.GetIdpAdapterDescriptorsByIdInput{Id: className.(string)})
 				if resp != nil && resp.StatusCode == http.StatusForbidden {
 					log.Printf("[WARN] Unable to query IdpAdapterDescriptor, IdP role not enabled")
 					return nil
 				}
 				if err != nil {
-					descs, _, err := svc.GetIdpAdapterDescriptors()
+					descs, _, err := svc.GetIdpAdapterDescriptorsWithContext(ctx)
 					if err == nil && descs != nil {
 						list := func(in *[]*pf.IdpAdapterDescriptor) string {
 							var plugins []string
@@ -81,14 +81,14 @@ func resourcePingFederateIdpAdapterResourceSchema() map[string]*schema.Schema {
 	}
 }
 
-func resourcePingFederateIdpAdapterResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateIdpAdapterResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).IdpAdapters
 	input := idpAdapters.CreateIdpAdapterInput{
 		Body:                     *resourcePingFederateIdpAdapterResourceReadData(d),
 		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
 	input.Body.Id = input.Body.Name
-	result, _, err := svc.CreateIdpAdapter(&input)
+	result, _, err := svc.CreateIdpAdapterWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to create IdpAdapters: %s", err)
 	}
@@ -96,26 +96,26 @@ func resourcePingFederateIdpAdapterResourceCreate(_ context.Context, d *schema.R
 	return resourcePingFederateIdpAdapterResourceReadResult(d, result, svc)
 }
 
-func resourcePingFederateIdpAdapterResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateIdpAdapterResourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).IdpAdapters
 	input := idpAdapters.GetIdpAdapterInput{
 		Id: d.Id(),
 	}
-	result, _, err := svc.GetIdpAdapter(&input)
+	result, _, err := svc.GetIdpAdapterWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to read IdpAdapters: %s", err)
 	}
 	return resourcePingFederateIdpAdapterResourceReadResult(d, result, svc)
 }
 
-func resourcePingFederateIdpAdapterResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateIdpAdapterResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).IdpAdapters
 	input := idpAdapters.UpdateIdpAdapterInput{
 		Id:                       d.Id(),
 		Body:                     *resourcePingFederateIdpAdapterResourceReadData(d),
 		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
-	result, _, err := svc.UpdateIdpAdapter(&input)
+	result, _, err := svc.UpdateIdpAdapterWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to update IdpAdapters: %s", err)
 	}
@@ -123,12 +123,12 @@ func resourcePingFederateIdpAdapterResourceUpdate(_ context.Context, d *schema.R
 	return resourcePingFederateIdpAdapterResourceReadResult(d, result, svc)
 }
 
-func resourcePingFederateIdpAdapterResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateIdpAdapterResourceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).IdpAdapters
 	input := idpAdapters.DeleteIdpAdapterInput{
 		Id: d.Id(),
 	}
-	_, _, err := svc.DeleteIdpAdapter(&input)
+	_, _, err := svc.DeleteIdpAdapterWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to delete IdpAdapters: %s", err)
 	}

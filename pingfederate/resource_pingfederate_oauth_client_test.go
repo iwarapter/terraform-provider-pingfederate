@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthClients"
@@ -234,9 +235,7 @@ func Test_resourcePingFederateOauthClientResourceReadData(t *testing.T) {
 
 			resourcePingFederateOauthClientResourceReadResult(resourceLocalData, &tc.Resource)
 
-			if got := *resourcePingFederateOauthClientResourceReadData(resourceLocalData); !cmp.Equal(got, tc.Resource) {
-				t.Errorf("resourcePingFederateOauthClientResourceReadData() = %v", cmp.Diff(got, tc.Resource))
-			}
+			assert.Equal(t, tc.Resource, *resourcePingFederateOauthClientResourceReadData(resourceLocalData))
 		})
 	}
 }

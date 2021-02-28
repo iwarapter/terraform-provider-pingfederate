@@ -1,6 +1,7 @@
 package oauthIdpAdapterMappings
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -46,6 +47,13 @@ func (c *OauthIdpAdapterMappingsService) newRequest(op *request.Operation, param
 //RequestType: GET
 //Input:
 func (s *OauthIdpAdapterMappingsService) GetIdpAdapterMappings() (output *models.IdpAdapterMappings, resp *http.Response, err error) {
+	return s.GetIdpAdapterMappingsWithContext(context.Background())
+}
+
+//GetIdpAdapterMappingsWithContext - Get the list of IdP adapter mappings.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *OauthIdpAdapterMappingsService) GetIdpAdapterMappingsWithContext(ctx context.Context) (output *models.IdpAdapterMappings, resp *http.Response, err error) {
 	path := "/oauth/idpAdapterMappings"
 	op := &request.Operation{
 		Name:       "GetIdpAdapterMappings",
@@ -54,6 +62,7 @@ func (s *OauthIdpAdapterMappingsService) GetIdpAdapterMappings() (output *models
 	}
 	output = &models.IdpAdapterMappings{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -65,6 +74,13 @@ func (s *OauthIdpAdapterMappingsService) GetIdpAdapterMappings() (output *models
 //RequestType: POST
 //Input: input *CreateIdpAdapterMappingInput
 func (s *OauthIdpAdapterMappingsService) CreateIdpAdapterMapping(input *CreateIdpAdapterMappingInput) (output *models.IdpAdapterMapping, resp *http.Response, err error) {
+	return s.CreateIdpAdapterMappingWithContext(context.Background(), input)
+}
+
+//CreateIdpAdapterMappingWithContext - Create a new IdP adapter mapping.
+//RequestType: POST
+//Input: ctx context.Context, input *CreateIdpAdapterMappingInput
+func (s *OauthIdpAdapterMappingsService) CreateIdpAdapterMappingWithContext(ctx context.Context, input *CreateIdpAdapterMappingInput) (output *models.IdpAdapterMapping, resp *http.Response, err error) {
 	path := "/oauth/idpAdapterMappings"
 	op := &request.Operation{
 		Name:       "CreateIdpAdapterMapping",
@@ -73,6 +89,7 @@ func (s *OauthIdpAdapterMappingsService) CreateIdpAdapterMapping(input *CreateId
 	}
 	output = &models.IdpAdapterMapping{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -86,6 +103,13 @@ func (s *OauthIdpAdapterMappingsService) CreateIdpAdapterMapping(input *CreateId
 //RequestType: GET
 //Input: input *GetIdpAdapterMappingInput
 func (s *OauthIdpAdapterMappingsService) GetIdpAdapterMapping(input *GetIdpAdapterMappingInput) (output *models.IdpAdapterMapping, resp *http.Response, err error) {
+	return s.GetIdpAdapterMappingWithContext(context.Background(), input)
+}
+
+//GetIdpAdapterMappingWithContext - Find the IdP adapter mapping by the ID.
+//RequestType: GET
+//Input: ctx context.Context, input *GetIdpAdapterMappingInput
+func (s *OauthIdpAdapterMappingsService) GetIdpAdapterMappingWithContext(ctx context.Context, input *GetIdpAdapterMappingInput) (output *models.IdpAdapterMapping, resp *http.Response, err error) {
 	path := "/oauth/idpAdapterMappings/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -96,6 +120,7 @@ func (s *OauthIdpAdapterMappingsService) GetIdpAdapterMapping(input *GetIdpAdapt
 	}
 	output = &models.IdpAdapterMapping{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -107,6 +132,13 @@ func (s *OauthIdpAdapterMappingsService) GetIdpAdapterMapping(input *GetIdpAdapt
 //RequestType: PUT
 //Input: input *UpdateIdpAdapterMappingInput
 func (s *OauthIdpAdapterMappingsService) UpdateIdpAdapterMapping(input *UpdateIdpAdapterMappingInput) (output *models.IdpAdapterMapping, resp *http.Response, err error) {
+	return s.UpdateIdpAdapterMappingWithContext(context.Background(), input)
+}
+
+//UpdateIdpAdapterMappingWithContext - Update an IdP adapter mapping.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateIdpAdapterMappingInput
+func (s *OauthIdpAdapterMappingsService) UpdateIdpAdapterMappingWithContext(ctx context.Context, input *UpdateIdpAdapterMappingInput) (output *models.IdpAdapterMapping, resp *http.Response, err error) {
 	path := "/oauth/idpAdapterMappings/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -117,6 +149,7 @@ func (s *OauthIdpAdapterMappingsService) UpdateIdpAdapterMapping(input *UpdateId
 	}
 	output = &models.IdpAdapterMapping{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -130,6 +163,13 @@ func (s *OauthIdpAdapterMappingsService) UpdateIdpAdapterMapping(input *UpdateId
 //RequestType: DELETE
 //Input: input *DeleteIdpAdapterMappingInput
 func (s *OauthIdpAdapterMappingsService) DeleteIdpAdapterMapping(input *DeleteIdpAdapterMappingInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeleteIdpAdapterMappingWithContext(context.Background(), input)
+}
+
+//DeleteIdpAdapterMappingWithContext - Delete an IdP adapter mapping.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteIdpAdapterMappingInput
+func (s *OauthIdpAdapterMappingsService) DeleteIdpAdapterMappingWithContext(ctx context.Context, input *DeleteIdpAdapterMappingInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/oauth/idpAdapterMappings/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -140,6 +180,7 @@ func (s *OauthIdpAdapterMappingsService) DeleteIdpAdapterMapping(input *DeleteId
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

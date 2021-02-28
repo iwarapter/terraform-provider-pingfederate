@@ -24,9 +24,9 @@ func resourcePingFederatePasswordCredentialValidatorResource() *schema.Resource 
 		CustomizeDiff: func(ctx context.Context, d *schema.ResourceDiff, m interface{}) error {
 			svc := m.(pfClient).PasswordCredentialValidators
 			if className, ok := d.GetOk("plugin_descriptor_ref.0.id"); ok {
-				desc, _, err := svc.GetPasswordCredentialValidatorDescriptor(&passwordCredentialValidators.GetPasswordCredentialValidatorDescriptorInput{Id: className.(string)})
+				desc, _, err := svc.GetPasswordCredentialValidatorDescriptorWithContext(ctx, &passwordCredentialValidators.GetPasswordCredentialValidatorDescriptorInput{Id: className.(string)})
 				if err != nil {
-					descs, _, err := svc.GetPasswordCredentialValidatorDescriptors()
+					descs, _, err := svc.GetPasswordCredentialValidatorDescriptorsWithContext(ctx)
 					if err == nil && descs != nil {
 						list := func(in *[]*pf.PasswordCredentialValidatorDescriptor) string {
 							var plugins []string
@@ -64,13 +64,13 @@ func resourcePingFederatePasswordCredentialValidatorResourceSchema() map[string]
 	}
 }
 
-func resourcePingFederatePasswordCredentialValidatorResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederatePasswordCredentialValidatorResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).PasswordCredentialValidators
 	input := passwordCredentialValidators.CreatePasswordCredentialValidatorInput{
 		Body: *resourcePingFederatePasswordCredentialValidatorResourceReadData(d),
 	}
 	input.Body.Id = input.Body.Name
-	result, _, err := svc.CreatePasswordCredentialValidator(&input)
+	result, _, err := svc.CreatePasswordCredentialValidatorWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to create PasswordCredentialValidators: %s", err)
 	}
@@ -78,25 +78,25 @@ func resourcePingFederatePasswordCredentialValidatorResourceCreate(_ context.Con
 	return resourcePingFederatePasswordCredentialValidatorResourceReadResult(d, result, svc)
 }
 
-func resourcePingFederatePasswordCredentialValidatorResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederatePasswordCredentialValidatorResourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).PasswordCredentialValidators
 	input := passwordCredentialValidators.GetPasswordCredentialValidatorInput{
 		Id: d.Id(),
 	}
-	result, _, err := svc.GetPasswordCredentialValidator(&input)
+	result, _, err := svc.GetPasswordCredentialValidatorWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to read PasswordCredentialValidators: %s", err)
 	}
 	return resourcePingFederatePasswordCredentialValidatorResourceReadResult(d, result, svc)
 }
 
-func resourcePingFederatePasswordCredentialValidatorResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederatePasswordCredentialValidatorResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).PasswordCredentialValidators
 	input := passwordCredentialValidators.UpdatePasswordCredentialValidatorInput{
 		Id:   d.Id(),
 		Body: *resourcePingFederatePasswordCredentialValidatorResourceReadData(d),
 	}
-	result, _, err := svc.UpdatePasswordCredentialValidator(&input)
+	result, _, err := svc.UpdatePasswordCredentialValidatorWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to update PasswordCredentialValidators: %s", err)
 	}
@@ -104,12 +104,12 @@ func resourcePingFederatePasswordCredentialValidatorResourceUpdate(_ context.Con
 	return resourcePingFederatePasswordCredentialValidatorResourceReadResult(d, result, svc)
 }
 
-func resourcePingFederatePasswordCredentialValidatorResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederatePasswordCredentialValidatorResourceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).PasswordCredentialValidators
 	input := passwordCredentialValidators.DeletePasswordCredentialValidatorInput{
 		Id: d.Id(),
 	}
-	_, _, err := svc.DeletePasswordCredentialValidator(&input)
+	_, _, err := svc.DeletePasswordCredentialValidatorWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to delete PasswordCredentialValidators: %s", err)
 	}

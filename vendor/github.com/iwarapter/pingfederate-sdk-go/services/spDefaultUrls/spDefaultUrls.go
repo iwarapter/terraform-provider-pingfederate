@@ -1,6 +1,7 @@
 package spDefaultUrls
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
@@ -44,6 +45,13 @@ func (c *SpDefaultUrlsService) newRequest(op *request.Operation, params, data in
 //RequestType: GET
 //Input:
 func (s *SpDefaultUrlsService) GetDefaultUrls() (output *models.SpDefaultUrls, resp *http.Response, err error) {
+	return s.GetDefaultUrlsWithContext(context.Background())
+}
+
+//GetDefaultUrlsWithContext - Gets the SP Default URLs. These are Values that affect the user's experience when executing SP-initiated SSO operations.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *SpDefaultUrlsService) GetDefaultUrlsWithContext(ctx context.Context) (output *models.SpDefaultUrls, resp *http.Response, err error) {
 	path := "/sp/defaultUrls"
 	op := &request.Operation{
 		Name:       "GetDefaultUrls",
@@ -52,6 +60,7 @@ func (s *SpDefaultUrlsService) GetDefaultUrls() (output *models.SpDefaultUrls, r
 	}
 	output = &models.SpDefaultUrls{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -63,6 +72,13 @@ func (s *SpDefaultUrlsService) GetDefaultUrls() (output *models.SpDefaultUrls, r
 //RequestType: PUT
 //Input: input *UpdateDefaultUrlsInput
 func (s *SpDefaultUrlsService) UpdateDefaultUrls(input *UpdateDefaultUrlsInput) (output *models.SpDefaultUrls, resp *http.Response, err error) {
+	return s.UpdateDefaultUrlsWithContext(context.Background(), input)
+}
+
+//UpdateDefaultUrlsWithContext - Update the SP Default URLs. Enter values that affect the user's experience when executing SP-initiated SSO operations.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateDefaultUrlsInput
+func (s *SpDefaultUrlsService) UpdateDefaultUrlsWithContext(ctx context.Context, input *UpdateDefaultUrlsInput) (output *models.SpDefaultUrls, resp *http.Response, err error) {
 	path := "/sp/defaultUrls"
 	op := &request.Operation{
 		Name:       "UpdateDefaultUrls",
@@ -71,6 +87,7 @@ func (s *SpDefaultUrlsService) UpdateDefaultUrls(input *UpdateDefaultUrlsInput) 
 	}
 	output = &models.SpDefaultUrls{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

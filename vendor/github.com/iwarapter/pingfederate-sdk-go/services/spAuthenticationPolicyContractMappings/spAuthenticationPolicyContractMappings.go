@@ -1,6 +1,7 @@
 package spAuthenticationPolicyContractMappings
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -46,6 +47,13 @@ func (c *SpAuthenticationPolicyContractMappingsService) newRequest(op *request.O
 //RequestType: GET
 //Input:
 func (s *SpAuthenticationPolicyContractMappingsService) GetApcToSpAdapterMappings() (output *models.ApcToSpAdapterMappings, resp *http.Response, err error) {
+	return s.GetApcToSpAdapterMappingsWithContext(context.Background())
+}
+
+//GetApcToSpAdapterMappingsWithContext - Get the list of APC-to-SP Adapter Mappings.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *SpAuthenticationPolicyContractMappingsService) GetApcToSpAdapterMappingsWithContext(ctx context.Context) (output *models.ApcToSpAdapterMappings, resp *http.Response, err error) {
 	path := "/sp/authenticationPolicyContractMappings"
 	op := &request.Operation{
 		Name:       "GetApcToSpAdapterMappings",
@@ -54,6 +62,7 @@ func (s *SpAuthenticationPolicyContractMappingsService) GetApcToSpAdapterMapping
 	}
 	output = &models.ApcToSpAdapterMappings{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -65,6 +74,13 @@ func (s *SpAuthenticationPolicyContractMappingsService) GetApcToSpAdapterMapping
 //RequestType: POST
 //Input: input *CreateApcToSpAdapterMappingInput
 func (s *SpAuthenticationPolicyContractMappingsService) CreateApcToSpAdapterMapping(input *CreateApcToSpAdapterMappingInput) (output *models.ApcToSpAdapterMapping, resp *http.Response, err error) {
+	return s.CreateApcToSpAdapterMappingWithContext(context.Background(), input)
+}
+
+//CreateApcToSpAdapterMappingWithContext - Create a new APC-to-SP Adapter Mapping.
+//RequestType: POST
+//Input: ctx context.Context, input *CreateApcToSpAdapterMappingInput
+func (s *SpAuthenticationPolicyContractMappingsService) CreateApcToSpAdapterMappingWithContext(ctx context.Context, input *CreateApcToSpAdapterMappingInput) (output *models.ApcToSpAdapterMapping, resp *http.Response, err error) {
 	path := "/sp/authenticationPolicyContractMappings"
 	op := &request.Operation{
 		Name:       "CreateApcToSpAdapterMapping",
@@ -73,6 +89,7 @@ func (s *SpAuthenticationPolicyContractMappingsService) CreateApcToSpAdapterMapp
 	}
 	output = &models.ApcToSpAdapterMapping{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -86,6 +103,13 @@ func (s *SpAuthenticationPolicyContractMappingsService) CreateApcToSpAdapterMapp
 //RequestType: GET
 //Input: input *GetApcToSpAdapterMappingByIdInput
 func (s *SpAuthenticationPolicyContractMappingsService) GetApcToSpAdapterMappingById(input *GetApcToSpAdapterMappingByIdInput) (output *models.ApcToSpAdapterMapping, resp *http.Response, err error) {
+	return s.GetApcToSpAdapterMappingByIdWithContext(context.Background(), input)
+}
+
+//GetApcToSpAdapterMappingByIdWithContext - Get an APC-to-SP Adapter Mapping.
+//RequestType: GET
+//Input: ctx context.Context, input *GetApcToSpAdapterMappingByIdInput
+func (s *SpAuthenticationPolicyContractMappingsService) GetApcToSpAdapterMappingByIdWithContext(ctx context.Context, input *GetApcToSpAdapterMappingByIdInput) (output *models.ApcToSpAdapterMapping, resp *http.Response, err error) {
 	path := "/sp/authenticationPolicyContractMappings/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -96,6 +120,7 @@ func (s *SpAuthenticationPolicyContractMappingsService) GetApcToSpAdapterMapping
 	}
 	output = &models.ApcToSpAdapterMapping{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -107,6 +132,13 @@ func (s *SpAuthenticationPolicyContractMappingsService) GetApcToSpAdapterMapping
 //RequestType: PUT
 //Input: input *UpdateApcToSpAdapterMappingByIdInput
 func (s *SpAuthenticationPolicyContractMappingsService) UpdateApcToSpAdapterMappingById(input *UpdateApcToSpAdapterMappingByIdInput) (output *models.ApcToSpAdapterMapping, resp *http.Response, err error) {
+	return s.UpdateApcToSpAdapterMappingByIdWithContext(context.Background(), input)
+}
+
+//UpdateApcToSpAdapterMappingByIdWithContext - Update an APC-to-SP Adapter Mapping.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateApcToSpAdapterMappingByIdInput
+func (s *SpAuthenticationPolicyContractMappingsService) UpdateApcToSpAdapterMappingByIdWithContext(ctx context.Context, input *UpdateApcToSpAdapterMappingByIdInput) (output *models.ApcToSpAdapterMapping, resp *http.Response, err error) {
 	path := "/sp/authenticationPolicyContractMappings/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -117,6 +149,7 @@ func (s *SpAuthenticationPolicyContractMappingsService) UpdateApcToSpAdapterMapp
 	}
 	output = &models.ApcToSpAdapterMapping{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -130,6 +163,13 @@ func (s *SpAuthenticationPolicyContractMappingsService) UpdateApcToSpAdapterMapp
 //RequestType: DELETE
 //Input: input *DeleteApcToSpAdapterMappingByIdInput
 func (s *SpAuthenticationPolicyContractMappingsService) DeleteApcToSpAdapterMappingById(input *DeleteApcToSpAdapterMappingByIdInput) (output *models.ApiResult, resp *http.Response, err error) {
+	return s.DeleteApcToSpAdapterMappingByIdWithContext(context.Background(), input)
+}
+
+//DeleteApcToSpAdapterMappingByIdWithContext - Delete an APC-to-SP Adapter Mapping.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteApcToSpAdapterMappingByIdInput
+func (s *SpAuthenticationPolicyContractMappingsService) DeleteApcToSpAdapterMappingByIdWithContext(ctx context.Context, input *DeleteApcToSpAdapterMappingByIdInput) (output *models.ApiResult, resp *http.Response, err error) {
 	path := "/sp/authenticationPolicyContractMappings/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -140,6 +180,7 @@ func (s *SpAuthenticationPolicyContractMappingsService) DeleteApcToSpAdapterMapp
 	}
 
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

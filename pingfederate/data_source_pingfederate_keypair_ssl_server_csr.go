@@ -25,13 +25,13 @@ func dataSourcePingFederateKeyPairSslServerCsr() *schema.Resource {
 	}
 }
 
-func dataSourcePingFederateKeyPairSslServerCsrRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourcePingFederateKeyPairSslServerCsrRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	svc := m.(pfClient).KeyPairsSslServer
 	input := &keyPairsSslServer.ExportCsrInput{
 		Id: d.Get("id").(string),
 	}
-	result, _, err := svc.ExportCsr(input)
+	result, _, err := svc.ExportCsrWithContext(ctx, input)
 	if err != nil {
 		return diag.Errorf("unable to read KeyPairSslServerCsr: %s", err)
 

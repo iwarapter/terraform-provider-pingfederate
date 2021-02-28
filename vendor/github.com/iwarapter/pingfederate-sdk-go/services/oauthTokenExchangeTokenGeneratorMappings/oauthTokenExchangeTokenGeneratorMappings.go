@@ -1,6 +1,7 @@
 package oauthTokenExchangeTokenGeneratorMappings
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -46,6 +47,13 @@ func (c *OauthTokenExchangeTokenGeneratorMappingsService) newRequest(op *request
 //RequestType: GET
 //Input:
 func (s *OauthTokenExchangeTokenGeneratorMappingsService) GetTokenGeneratorMappings() (output *models.ProcessorPolicyToGeneratorMappings, resp *http.Response, err error) {
+	return s.GetTokenGeneratorMappingsWithContext(context.Background())
+}
+
+//GetTokenGeneratorMappingsWithContext - Get the list of Token Exchange Processor policy to Token Generator Mappings.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *OauthTokenExchangeTokenGeneratorMappingsService) GetTokenGeneratorMappingsWithContext(ctx context.Context) (output *models.ProcessorPolicyToGeneratorMappings, resp *http.Response, err error) {
 	path := "/oauth/tokenExchange/tokenGeneratorMappings"
 	op := &request.Operation{
 		Name:       "GetTokenGeneratorMappings",
@@ -54,6 +62,7 @@ func (s *OauthTokenExchangeTokenGeneratorMappingsService) GetTokenGeneratorMappi
 	}
 	output = &models.ProcessorPolicyToGeneratorMappings{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -65,6 +74,13 @@ func (s *OauthTokenExchangeTokenGeneratorMappingsService) GetTokenGeneratorMappi
 //RequestType: POST
 //Input: input *CreateTokenGeneratorMappingInput
 func (s *OauthTokenExchangeTokenGeneratorMappingsService) CreateTokenGeneratorMapping(input *CreateTokenGeneratorMappingInput) (output *models.ProcessorPolicyToGeneratorMapping, resp *http.Response, err error) {
+	return s.CreateTokenGeneratorMappingWithContext(context.Background(), input)
+}
+
+//CreateTokenGeneratorMappingWithContext - Create a new Token Exchange Processor policy to Token Generator Mapping.
+//RequestType: POST
+//Input: ctx context.Context, input *CreateTokenGeneratorMappingInput
+func (s *OauthTokenExchangeTokenGeneratorMappingsService) CreateTokenGeneratorMappingWithContext(ctx context.Context, input *CreateTokenGeneratorMappingInput) (output *models.ProcessorPolicyToGeneratorMapping, resp *http.Response, err error) {
 	path := "/oauth/tokenExchange/tokenGeneratorMappings"
 	op := &request.Operation{
 		Name:       "CreateTokenGeneratorMapping",
@@ -73,6 +89,7 @@ func (s *OauthTokenExchangeTokenGeneratorMappingsService) CreateTokenGeneratorMa
 	}
 	output = &models.ProcessorPolicyToGeneratorMapping{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -86,6 +103,13 @@ func (s *OauthTokenExchangeTokenGeneratorMappingsService) CreateTokenGeneratorMa
 //RequestType: GET
 //Input: input *GetTokenGeneratorMappingByIdInput
 func (s *OauthTokenExchangeTokenGeneratorMappingsService) GetTokenGeneratorMappingById(input *GetTokenGeneratorMappingByIdInput) (output *models.ProcessorPolicyToGeneratorMapping, resp *http.Response, err error) {
+	return s.GetTokenGeneratorMappingByIdWithContext(context.Background(), input)
+}
+
+//GetTokenGeneratorMappingByIdWithContext - Get a Token Exchange Processor policy to Token Generator Mapping.
+//RequestType: GET
+//Input: ctx context.Context, input *GetTokenGeneratorMappingByIdInput
+func (s *OauthTokenExchangeTokenGeneratorMappingsService) GetTokenGeneratorMappingByIdWithContext(ctx context.Context, input *GetTokenGeneratorMappingByIdInput) (output *models.ProcessorPolicyToGeneratorMapping, resp *http.Response, err error) {
 	path := "/oauth/tokenExchange/tokenGeneratorMappings/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -96,6 +120,7 @@ func (s *OauthTokenExchangeTokenGeneratorMappingsService) GetTokenGeneratorMappi
 	}
 	output = &models.ProcessorPolicyToGeneratorMapping{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -107,6 +132,13 @@ func (s *OauthTokenExchangeTokenGeneratorMappingsService) GetTokenGeneratorMappi
 //RequestType: PUT
 //Input: input *UpdateTokenGeneratorMappingByIdInput
 func (s *OauthTokenExchangeTokenGeneratorMappingsService) UpdateTokenGeneratorMappingById(input *UpdateTokenGeneratorMappingByIdInput) (output *models.ProcessorPolicyToGeneratorMapping, resp *http.Response, err error) {
+	return s.UpdateTokenGeneratorMappingByIdWithContext(context.Background(), input)
+}
+
+//UpdateTokenGeneratorMappingByIdWithContext - Update a Token Exchange Processor policy to Token Generator Mapping.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateTokenGeneratorMappingByIdInput
+func (s *OauthTokenExchangeTokenGeneratorMappingsService) UpdateTokenGeneratorMappingByIdWithContext(ctx context.Context, input *UpdateTokenGeneratorMappingByIdInput) (output *models.ProcessorPolicyToGeneratorMapping, resp *http.Response, err error) {
 	path := "/oauth/tokenExchange/tokenGeneratorMappings/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -117,6 +149,7 @@ func (s *OauthTokenExchangeTokenGeneratorMappingsService) UpdateTokenGeneratorMa
 	}
 	output = &models.ProcessorPolicyToGeneratorMapping{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 	if input.BypassExternalValidation != nil {
 		req.HTTPRequest.Header.Add("X-BypassExternalValidation", fmt.Sprintf("%v", *input.BypassExternalValidation))
 	}
@@ -130,6 +163,13 @@ func (s *OauthTokenExchangeTokenGeneratorMappingsService) UpdateTokenGeneratorMa
 //RequestType: DELETE
 //Input: input *DeleteTokenGeneratorMappingByIdInput
 func (s *OauthTokenExchangeTokenGeneratorMappingsService) DeleteTokenGeneratorMappingById(input *DeleteTokenGeneratorMappingByIdInput) (output *models.ProcessorPolicyToGeneratorMapping, resp *http.Response, err error) {
+	return s.DeleteTokenGeneratorMappingByIdWithContext(context.Background(), input)
+}
+
+//DeleteTokenGeneratorMappingByIdWithContext - Delete a Token Exchange Processor policy to Token Generator Mapping.
+//RequestType: DELETE
+//Input: ctx context.Context, input *DeleteTokenGeneratorMappingByIdInput
+func (s *OauthTokenExchangeTokenGeneratorMappingsService) DeleteTokenGeneratorMappingByIdWithContext(ctx context.Context, input *DeleteTokenGeneratorMappingByIdInput) (output *models.ProcessorPolicyToGeneratorMapping, resp *http.Response, err error) {
 	path := "/oauth/tokenExchange/tokenGeneratorMappings/{id}"
 	path = strings.Replace(path, "{id}", input.Id, -1)
 
@@ -140,6 +180,7 @@ func (s *OauthTokenExchangeTokenGeneratorMappingsService) DeleteTokenGeneratorMa
 	}
 	output = &models.ProcessorPolicyToGeneratorMapping{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil

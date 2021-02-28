@@ -56,12 +56,12 @@ func resourcePingFederateOauthAuthenticationPolicyContractMappingsResourceSchema
 	}
 }
 
-func resourcePingFederateOauthAuthenticationPolicyContractMappingsResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateOauthAuthenticationPolicyContractMappingsResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthAuthenticationPolicyContractMappings
 	input := oauthAuthenticationPolicyContractMappings.CreateApcMappingInput{
 		Body: *resourcePingFederateOauthAuthenticationPolicyContractMappingsResourceReadData(d),
 	}
-	result, _, err := svc.CreateApcMapping(&input)
+	result, _, err := svc.CreateApcMappingWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to create OauthAuthenticationPolicyContractMappings: %s", err)
 	}
@@ -69,25 +69,25 @@ func resourcePingFederateOauthAuthenticationPolicyContractMappingsResourceCreate
 	return resourcePingFederateOauthAuthenticationPolicyContractMappingsResourceReadResult(d, result)
 }
 
-func resourcePingFederateOauthAuthenticationPolicyContractMappingsResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateOauthAuthenticationPolicyContractMappingsResourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthAuthenticationPolicyContractMappings
 	input := oauthAuthenticationPolicyContractMappings.GetApcMappingInput{
 		Id: d.Id(),
 	}
-	result, _, err := svc.GetApcMapping(&input)
+	result, _, err := svc.GetApcMappingWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to read OauthAuthenticationPolicyContractMappings: %s", err)
 	}
 	return resourcePingFederateOauthAuthenticationPolicyContractMappingsResourceReadResult(d, result)
 }
 
-func resourcePingFederateOauthAuthenticationPolicyContractMappingsResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateOauthAuthenticationPolicyContractMappingsResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthAuthenticationPolicyContractMappings
 	input := oauthAuthenticationPolicyContractMappings.UpdateApcMappingInput{
 		Id:   d.Id(),
 		Body: *resourcePingFederateOauthAuthenticationPolicyContractMappingsResourceReadData(d),
 	}
-	result, _, err := svc.UpdateApcMapping(&input)
+	result, _, err := svc.UpdateApcMappingWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to update OauthAuthenticationPolicyContractMappings: %s", err)
 	}
@@ -95,12 +95,12 @@ func resourcePingFederateOauthAuthenticationPolicyContractMappingsResourceUpdate
 	return resourcePingFederateOauthAuthenticationPolicyContractMappingsResourceReadResult(d, result)
 }
 
-func resourcePingFederateOauthAuthenticationPolicyContractMappingsResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateOauthAuthenticationPolicyContractMappingsResourceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthAuthenticationPolicyContractMappings
 	input := oauthAuthenticationPolicyContractMappings.DeleteApcMappingInput{
 		Id: d.Id(),
 	}
-	_, _, err := svc.DeleteApcMapping(&input)
+	_, _, err := svc.DeleteApcMappingWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to delete OauthAuthenticationPolicyContractMappings: %s", err)
 	}

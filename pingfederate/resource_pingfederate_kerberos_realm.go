@@ -57,12 +57,12 @@ func resourcePingFederateKerberosRealmResourceSchema() map[string]*schema.Schema
 	}
 }
 
-func resourcePingFederateKerberosRealmResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateKerberosRealmResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).KerberosRealms
 	input := kerberosRealms.CreateKerberosRealmInput{
 		Body: *resourcePingFederateKerberosRealmResourceReadData(d),
 	}
-	result, _, err := svc.CreateKerberosRealm(&input)
+	result, _, err := svc.CreateKerberosRealmWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to create KerberosRealm: %s", err)
 	}
@@ -70,25 +70,25 @@ func resourcePingFederateKerberosRealmResourceCreate(_ context.Context, d *schem
 	return resourcePingFederateKerberosRealmResourceReadResult(d, result)
 }
 
-func resourcePingFederateKerberosRealmResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateKerberosRealmResourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).KerberosRealms
 	input := kerberosRealms.GetKerberosRealmInput{
 		Id: d.Id(),
 	}
-	result, _, err := svc.GetKerberosRealm(&input)
+	result, _, err := svc.GetKerberosRealmWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to read KerberosRealm: %s", err)
 	}
 	return resourcePingFederateKerberosRealmResourceReadResult(d, result)
 }
 
-func resourcePingFederateKerberosRealmResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateKerberosRealmResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).KerberosRealms
 	input := kerberosRealms.UpdateKerberosRealmInput{
 		Id:   d.Id(),
 		Body: *resourcePingFederateKerberosRealmResourceReadData(d),
 	}
-	result, _, err := svc.UpdateKerberosRealm(&input)
+	result, _, err := svc.UpdateKerberosRealmWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to update KerberosRealm: %s", err)
 	}
@@ -96,12 +96,12 @@ func resourcePingFederateKerberosRealmResourceUpdate(_ context.Context, d *schem
 	return resourcePingFederateKerberosRealmResourceReadResult(d, result)
 }
 
-func resourcePingFederateKerberosRealmResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateKerberosRealmResourceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).KerberosRealms
 	input := kerberosRealms.DeleteKerberosRealmInput{
 		Id: d.Id(),
 	}
-	_, _, err := svc.DeleteKerberosRealm(&input)
+	_, _, err := svc.DeleteKerberosRealmWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to delete KerberosRealm: %s", err)
 	}

@@ -27,14 +27,14 @@ func TestConfig_Client(t *testing.T) {
 		name     string
 		username string
 		password string
-		baseUrl  string
+		baseURL  string
 		want     diag.Diagnostics
 	}{
 		{
 			name:     "handle malformed urls",
 			username: "foo",
 			password: "bar",
-			baseUrl:  "not a url",
+			baseURL:  "not a url",
 			want: diag.Diagnostics{
 				diag.Diagnostic{
 					Severity: diag.Error,
@@ -47,7 +47,7 @@ func TestConfig_Client(t *testing.T) {
 			name:     "handle unresponsive server",
 			username: "foo",
 			password: "bar",
-			baseUrl:  "https://localhost:19999",
+			baseURL:  "https://localhost:19999",
 			want: diag.Diagnostics{
 				diag.Diagnostic{
 					Severity: diag.Error,
@@ -60,7 +60,7 @@ func TestConfig_Client(t *testing.T) {
 			name:     "unauthenticated",
 			username: "foo",
 			password: "bar",
-			baseUrl:  server.URL,
+			baseURL:  server.URL,
 			want: diag.Diagnostics{
 				diag.Diagnostic{
 					Severity: diag.Error,
@@ -72,10 +72,10 @@ func TestConfig_Client(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := &Config{
+			c := &pfConfig{
 				Username: tt.username,
 				Password: tt.password,
-				BaseURL:  tt.baseUrl,
+				BaseURL:  tt.baseURL,
 			}
 			_, diags := c.Client()
 			if !reflect.DeepEqual(diags, tt.want) {

@@ -19,7 +19,6 @@ func resourcePingFederateOauthAccessTokenMappingsResource() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-
 		Schema: resourcePingFederateOauthAccessTokenMappingsResourceSchema(),
 	}
 }
@@ -71,13 +70,13 @@ func resourcePingFederateOauthAccessTokenMappingsResourceSchema() map[string]*sc
 	}
 }
 
-func resourcePingFederateOauthAccessTokenMappingsResourceCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateOauthAccessTokenMappingsResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthAccessTokenMappings
 	input := oauthAccessTokenMappings.CreateMappingInput{
 		Body:                     *resourcePingFederateOauthAccessTokenMappingsResourceReadData(d),
 		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
-	result, _, err := svc.CreateMapping(&input)
+	result, _, err := svc.CreateMappingWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to create OauthAccessTokenMappings: %s", err)
 	}
@@ -85,26 +84,26 @@ func resourcePingFederateOauthAccessTokenMappingsResourceCreate(_ context.Contex
 	return resourcePingFederateOauthAccessTokenMappingsResourceReadResult(d, result)
 }
 
-func resourcePingFederateOauthAccessTokenMappingsResourceRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateOauthAccessTokenMappingsResourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthAccessTokenMappings
 	input := oauthAccessTokenMappings.GetMappingInput{
 		Id: d.Id(),
 	}
-	result, _, err := svc.GetMapping(&input)
+	result, _, err := svc.GetMappingWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to read OauthAccessTokenMappings: %s", err)
 	}
 	return resourcePingFederateOauthAccessTokenMappingsResourceReadResult(d, result)
 }
 
-func resourcePingFederateOauthAccessTokenMappingsResourceUpdate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateOauthAccessTokenMappingsResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthAccessTokenMappings
 	input := oauthAccessTokenMappings.UpdateMappingInput{
 		Id:                       d.Id(),
 		Body:                     *resourcePingFederateOauthAccessTokenMappingsResourceReadData(d),
 		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
-	result, _, err := svc.UpdateMapping(&input)
+	result, _, err := svc.UpdateMappingWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to update OauthAccessTokenMappings: %s", err)
 	}
@@ -112,12 +111,12 @@ func resourcePingFederateOauthAccessTokenMappingsResourceUpdate(_ context.Contex
 	return resourcePingFederateOauthAccessTokenMappingsResourceReadResult(d, result)
 }
 
-func resourcePingFederateOauthAccessTokenMappingsResourceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePingFederateOauthAccessTokenMappingsResourceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).OauthAccessTokenMappings
 	input := oauthAccessTokenMappings.DeleteMappingInput{
 		Id: d.Id(),
 	}
-	_, _, err := svc.DeleteMapping(&input)
+	_, _, err := svc.DeleteMappingWithContext(ctx, &input)
 	if err != nil {
 		return diag.Errorf("unable to delete OauthAccessTokenMappings: %s", err)
 	}

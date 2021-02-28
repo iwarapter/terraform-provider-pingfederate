@@ -1,6 +1,7 @@
 package keyPairsOauthOpenIdConnect
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate"
@@ -44,6 +45,13 @@ func (c *KeyPairsOauthOpenIdConnectService) newRequest(op *request.Operation, pa
 //RequestType: GET
 //Input:
 func (s *KeyPairsOauthOpenIdConnectService) GetOauthOidcKeysSettings() (output *models.OAuthOidcKeysSettings, resp *http.Response, err error) {
+	return s.GetOauthOidcKeysSettingsWithContext(context.Background())
+}
+
+//GetOauthOidcKeysSettingsWithContext - Retrieve OAuth/Open ID Connect key settings.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *KeyPairsOauthOpenIdConnectService) GetOauthOidcKeysSettingsWithContext(ctx context.Context) (output *models.OAuthOidcKeysSettings, resp *http.Response, err error) {
 	path := "/keyPairs/oauthOpenIdConnect"
 	op := &request.Operation{
 		Name:       "GetOauthOidcKeysSettings",
@@ -52,6 +60,7 @@ func (s *KeyPairsOauthOpenIdConnectService) GetOauthOidcKeysSettings() (output *
 	}
 	output = &models.OAuthOidcKeysSettings{}
 	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
@@ -63,6 +72,13 @@ func (s *KeyPairsOauthOpenIdConnectService) GetOauthOidcKeysSettings() (output *
 //RequestType: PUT
 //Input: input *UpdateOAuthOidcKeysSettingsInput
 func (s *KeyPairsOauthOpenIdConnectService) UpdateOAuthOidcKeysSettings(input *UpdateOAuthOidcKeysSettingsInput) (output *models.OAuthOidcKeysSettings, resp *http.Response, err error) {
+	return s.UpdateOAuthOidcKeysSettingsWithContext(context.Background(), input)
+}
+
+//UpdateOAuthOidcKeysSettingsWithContext - Update OAuth/Open ID Connect key settings.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateOAuthOidcKeysSettingsInput
+func (s *KeyPairsOauthOpenIdConnectService) UpdateOAuthOidcKeysSettingsWithContext(ctx context.Context, input *UpdateOAuthOidcKeysSettingsInput) (output *models.OAuthOidcKeysSettings, resp *http.Response, err error) {
 	path := "/keyPairs/oauthOpenIdConnect"
 	op := &request.Operation{
 		Name:       "UpdateOAuthOidcKeysSettings",
@@ -71,6 +87,7 @@ func (s *KeyPairsOauthOpenIdConnectService) UpdateOAuthOidcKeysSettings(input *U
 	}
 	output = &models.OAuthOidcKeysSettings{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {
 		return output, req.HTTPResponse, nil
