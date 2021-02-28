@@ -1,3 +1,18 @@
+## 0.0.11 (Feb 28th, 2021)
+
+NOTES:
+
+* This is an early release experimental build for PingFederate 10.x
+
+FEATURES:
+
+* Add support for `darwin/arm64` release. ([#52](https://github.com/iwarapter/terraform-provider-pingaccess/issues/52))
+
+BUG FIXES:
+
+* resource/pingfederate_authentication_policies: Increase depth of nested policies.
+* resource/pingfederate_jdbc_data_store: Fix idempotency on `encrypted_password` field. ([#51](https://github.com/iwarapter/terraform-provider-pingaccess/issues/51))
+
 ## 0.0.10 (Feb 11th, 2021)
 
 NOTES:
