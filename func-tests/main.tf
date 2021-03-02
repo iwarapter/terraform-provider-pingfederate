@@ -235,6 +235,39 @@ resource "pingfederate_oauth_access_token_mappings" "auth_policy_mapping_demo" {
   }
 }
 
+resource "pingfederate_oauth_resource_owner_credentials_mappings" "demo" {
+  password_validator_ref {
+    id = pingfederate_password_credential_validator.demo.id
+  }
+
+  attribute_contract_fulfillment {
+    key_name = "USER_KEY"
+    source {
+      type = "NO_MAPPING"
+    }
+  }
+
+  attribute_contract_fulfillment {
+    key_name = "woot"
+    source {
+      type = "NO_MAPPING"
+    }
+  }
+  issuance_criteria {
+    conditional_criteria {
+      attribute_name = "username"
+      condition      = "EQUALS"
+      error_result   = "deny"
+      value          = "foo"
+
+      source {
+        type = "PASSWORD_CREDENTIAL_VALIDATOR"
+      }
+    }
+  }
+
+}
+
 resource "pingfederate_password_credential_validator" "demo" {
   name = "foo"
   plugin_descriptor_ref {
