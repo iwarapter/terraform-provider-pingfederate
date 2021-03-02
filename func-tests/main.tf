@@ -216,6 +216,25 @@ resource "pingfederate_authentication_policy_contract" "apc_foo" {
   extended_attributes = ["foo", "bar"]
 }
 
+resource "pingfederate_oauth_access_token_mappings" "auth_policy_mapping_demo" {
+  access_token_manager_ref {
+    id = pingfederate_oauth_access_token_manager.my_atm.id
+  }
+
+  context {
+    type = "AUTHENTICATION_POLICY_CONTRACT"
+    context_ref {
+      id = pingfederate_authentication_policy_contract.apc_foo.id
+    }
+  }
+  attribute_contract_fulfillment {
+    key_name = "sub"
+    source {
+      type = "NO_MAPPING"
+    }
+  }
+}
+
 resource "pingfederate_password_credential_validator" "demo" {
   name = "foo"
   plugin_descriptor_ref {
