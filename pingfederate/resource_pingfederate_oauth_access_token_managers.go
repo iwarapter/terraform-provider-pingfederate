@@ -64,7 +64,7 @@ func resourcePingFederateOauthAccessTokenManagersResourceSchema() map[string]*sc
 			Type:     schema.TypeString,
 			Required: true,
 		},
-		"plugin_descriptor_ref": resourceLinkSchema(),
+		"plugin_descriptor_ref": resourcePluginDescriptorRefSchema(),
 		"configuration":         resourcePluginConfiguration(),
 		"parent_ref":            resourceLinkSchema(),
 		"attribute_contract": {

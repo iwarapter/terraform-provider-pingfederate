@@ -549,12 +549,25 @@ func resourceRequiredLinkSchema() *schema.Schema {
 	return s
 }
 
-func resourceRequiredForceNewLinkSchema() *schema.Schema {
-	s := resourceLinkSchema()
-	s.Required = true
-	s.ForceNew = true
-	s.Optional = false
-	return s
+func resourceForceNewLinkSchemaRef() *schema.Schema {
+	return &schema.Schema{
+		Type:     schema.TypeList,
+		Optional: true,
+		MaxItems: 1,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"id": {
+					Type:     schema.TypeString,
+					Required: true,
+					ForceNew: true,
+				},
+				"location": {
+					Type:     schema.TypeString,
+					Computed: true,
+				},
+			},
+		},
+	}
 }
 
 func resourcePluginConfiguration() *schema.Schema {
@@ -1735,7 +1748,7 @@ func resourceIdpAdapter() *schema.Resource {
 				Required: true,
 			},
 			"parent_ref":            resourceRequiredLinkSchema(),
-			"plugin_descriptor_ref": resourceRequiredLinkSchema(),
+			"plugin_descriptor_ref": resourcePluginDescriptorRefSchema(),
 		},
 	}
 }
@@ -2973,7 +2986,7 @@ func resourceSpAdapter() *schema.Resource {
 				Required: true,
 			},
 			"parent_ref":            resourceRequiredLinkSchema(),
-			"plugin_descriptor_ref": resourceRequiredLinkSchema(),
+			"plugin_descriptor_ref": resourcePluginDescriptorRefSchema(),
 			"target_application_info": {
 				Type:     schema.TypeList,
 				Elem:     resourceSpAdapterTargetApplicationInfo(),

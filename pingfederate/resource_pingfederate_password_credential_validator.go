@@ -52,7 +52,7 @@ func resourcePingFederatePasswordCredentialValidatorResourceSchema() map[string]
 			Type:     schema.TypeString,
 			Required: true,
 		},
-		"plugin_descriptor_ref": resourceLinkSchema(),
+		"plugin_descriptor_ref": resourcePluginDescriptorRefSchema(),
 		"parent_ref":            resourceLinkSchema(),
 		"configuration":         resourcePluginConfiguration(),
 		"attribute_contract": {
