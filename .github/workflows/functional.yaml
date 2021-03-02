@@ -7,6 +7,7 @@ on:
       - 'go.sum'
       - 'main.go'
       - '.github/workflows/functional.yaml'
+      - 'func-tests/**'
   pull_request:
     paths:
       - 'pingfederate/**'
@@ -15,7 +16,7 @@ on:
       - 'go.sum'
       - 'main.go'
       - '.github/workflows/functional.yaml'
-      -
+      - 'func-tests/**'
 name: e2e
 jobs:
   e2e:
@@ -75,3 +76,8 @@ jobs:
           TF_VAR_pf_version: ${{ matrix.pingfederate-version }}
         run: terraform plan -detailed-exitcode
         working-directory: func-tests
+
+      - name: Terraform Destroy
+        env:
+          TF_VAR_pf_version: ${{ matrix.pingfederate-version }}
+        run: make func-destroy
