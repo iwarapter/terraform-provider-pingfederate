@@ -81,3 +81,7 @@ jobs:
         env:
           TF_VAR_pf_version: ${{ matrix.pingfederate-version }}
         run: make func-destroy
+
+      - name: Container logs
+        if: ${{ failure() }}
+        run: docker logs `docker ps --filter expose=9999 -q`
