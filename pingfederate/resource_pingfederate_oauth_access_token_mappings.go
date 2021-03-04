@@ -36,11 +36,11 @@ func resourcePingFederateOauthAccessTokenMappingsResourceSchema() map[string]*sc
 						Required: true,
 						//TODO ValidateFunc: 'DEFAULT' or 'PCV' or 'IDP_CONNECTION' or 'IDP_ADAPTER' or 'AUTHENTICATION_POLICY_CONTRACT' or 'CLIENT_CREDENTIALS' or 'TOKEN_EXCHANGE_PROCESSOR_POLICY']: The Access Token Mapping Context type.
 					},
-					"context_ref": resourceLinkSchema(),
+					"context_ref": resourceForceNewLinkSchemaRef(),
 				},
 			},
 		},
-		"access_token_manager_ref": resourceRequiredLinkSchema(),
+		"access_token_manager_ref": resourcePluginDescriptorRefSchema(),
 		"ldap_attribute_source": {
 			Type:     schema.TypeList,
 			Optional: true,
