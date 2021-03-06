@@ -10,6 +10,9 @@ pf-init:
 		-e PING_IDENTITY_DEVOPS_KEY=$(PING_IDENTITY_DEVOPS_KEY) \
 		-e PING_IDENTITY_DEVOPS_USER=$(PING_IDENTITY_DEVOPS_USER) \
 		-e PING_IDENTITY_ACCEPT_EULA=YES \
+		-e PF_LOG_LEVEL=DEBUG \
+		-e TAIL_LOG_PARALLEL="y" \
+		-e TAIL_LOG_FILES="/opt/out/instance/log/server.log /opt/out/instance/log/admin-api.log" \
 		-e SERVER_PROFILE_URL=https://github.com/pingidentity/pingidentity-server-profiles.git \
 		-e SERVER_PROFILE_PATH=getting-started/pingfederate \
 		--publish 9999:9999 \
