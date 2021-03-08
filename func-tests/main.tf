@@ -151,7 +151,8 @@ resource "pingfederate_oauth_client" "woot" {
   }
 
   depends_on = [
-    pingfederate_server_settings.settings
+    pingfederate_server_settings.settings,
+    pingfederate_oauth_auth_server_settings.settings
   ]
 }
 
@@ -209,6 +210,11 @@ resource "pingfederate_oauth_access_token_manager" "my_atm" {
     extended_attributes = [
     "sub"]
   }
+  
+  depends_on = [
+    pingfederate_server_settings.settings,
+    pingfederate_oauth_auth_server_settings.settings
+  ]
 }
 
 resource "pingfederate_authentication_policy_contract" "apc_foo" {
@@ -233,6 +239,43 @@ resource "pingfederate_oauth_access_token_mappings" "auth_policy_mapping_demo" {
       type = "NO_MAPPING"
     }
   }
+}
+
+resource "pingfederate_oauth_resource_owner_credentials_mappings" "demo" {
+  password_validator_ref {
+    id = pingfederate_password_credential_validator.demo.id
+  }
+
+  attribute_contract_fulfillment {
+    key_name = "USER_KEY"
+    source {
+      type = "NO_MAPPING"
+    }
+  }
+
+  attribute_contract_fulfillment {
+    key_name = "woot"
+    source {
+      type = "NO_MAPPING"
+    }
+  }
+  issuance_criteria {
+    conditional_criteria {
+      attribute_name = "username"
+      condition      = "EQUALS"
+      error_result   = "deny"
+      value          = "foo"
+
+      source {
+        type = "PASSWORD_CREDENTIAL_VALIDATOR"
+      }
+    }
+  }
+
+  depends_on = [
+    pingfederate_server_settings.settings,
+    pingfederate_oauth_auth_server_settings.settings
+  ]
 }
 
 resource "pingfederate_password_credential_validator" "demo" {
