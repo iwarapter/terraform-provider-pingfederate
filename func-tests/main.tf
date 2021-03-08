@@ -151,7 +151,8 @@ resource "pingfederate_oauth_client" "woot" {
   }
 
   depends_on = [
-    pingfederate_server_settings.settings
+    pingfederate_server_settings.settings,
+    pingfederate_oauth_auth_server_settings.settings
   ]
 }
 
@@ -209,6 +210,11 @@ resource "pingfederate_oauth_access_token_manager" "my_atm" {
     extended_attributes = [
     "sub"]
   }
+  
+  depends_on = [
+    pingfederate_server_settings.settings,
+    pingfederate_oauth_auth_server_settings.settings
+  ]
 }
 
 resource "pingfederate_authentication_policy_contract" "apc_foo" {
@@ -266,6 +272,10 @@ resource "pingfederate_oauth_resource_owner_credentials_mappings" "demo" {
     }
   }
 
+  depends_on = [
+    pingfederate_server_settings.settings,
+    pingfederate_oauth_auth_server_settings.settings
+  ]
 }
 
 resource "pingfederate_password_credential_validator" "demo" {
