@@ -1,3 +1,19 @@
+## 0.0.12 (Unreleased)
+
+NOTES:
+
+* This is an early release experimental build for PingFederate 10.x
+
+FEATURES:
+
+* **New Resource:** `pingfederate_oauth_resource_owner_credentials_mappings` ([#55](https://github.com/iwarapter/terraform-provider-pingfederate/issues/55))
+
+BUG FIXES:
+
+* Ensure certain reference fields force new resource if changed.
+    * `plugin_descriptor_ref` on `pingfederate_authentication_selector`, `pingfederate_oauth_access_token_manager`,`resource_pingfederate_idp_adapter`,`resource_pingfederate_sp_adapter` and `pingfederate_password_credential_validator`
+    * `access_token_manager_ref` / `context_ref` on `resource_pingfederate_oauth_access_token_mappings`
+
 ## 0.0.11 (Feb 28th, 2021)
 
 NOTES:
@@ -6,12 +22,12 @@ NOTES:
 
 FEATURES:
 
-* Add support for `darwin/arm64` release. ([#52](https://github.com/iwarapter/terraform-provider-pingaccess/issues/52))
+* Add support for `darwin/arm64` release. ([#52](https://github.com/iwarapter/terraform-provider-pingfederate/issues/52))
 
 BUG FIXES:
 
 * resource/pingfederate_authentication_policies: Increase depth of nested policies.
-* resource/pingfederate_jdbc_data_store: Fix idempotency on `encrypted_password` field. ([#51](https://github.com/iwarapter/terraform-provider-pingaccess/issues/51))
+* resource/pingfederate_jdbc_data_store: Fix idempotency on `encrypted_password` field. ([#51](https://github.com/iwarapter/terraform-provider-pingfederate/issues/51))
 
 ## 0.0.10 (Feb 11th, 2021)
 
