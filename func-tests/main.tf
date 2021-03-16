@@ -210,7 +210,7 @@ resource "pingfederate_oauth_access_token_manager" "my_atm" {
     extended_attributes = [
     "sub"]
   }
-  
+
   depends_on = [
     pingfederate_server_settings.settings,
     pingfederate_oauth_auth_server_settings.settings
@@ -774,4 +774,10 @@ resource "pingfederate_authentication_policies" "demo" {
       }
     }
   }
+}
+
+resource "pingfederate_certificates_ca" "demo" {
+  count          = 20
+  certificate_id = "example${count.index}"
+  file_data      = base64encode(file("certificate_ca/cacert${count.index}.pem"))
 }

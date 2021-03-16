@@ -3,6 +3,8 @@ package pingfederate
 import (
 	"context"
 
+	"github.com/iwarapter/terraform-provider-pingfederate/internal/mutexkv"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -82,6 +84,9 @@ func Provider() *schema.Provider {
 		ConfigureContextFunc: providerConfigure,
 	}
 }
+
+// This is a global MutexKV for use within this plugin.
+var awsMutexKV = mutexkv.NewMutexKV()
 
 var descriptions map[string]string
 
