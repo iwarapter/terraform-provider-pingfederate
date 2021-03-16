@@ -102,6 +102,9 @@ func resourcePingFederateCertificatesCaResourceSchema() map[string]*schema.Schem
 }
 
 func resourcePingFederateCertificatesCaResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	awsMutexKV.Lock("certificates_ca")
+	defer awsMutexKV.Unlock("certificates_ca")
+
 	svc := m.(pfClient).CertificatesCa
 	input := certificatesCa.ImportTrustedCAInput{
 		Body: pf.X509File{
@@ -138,6 +141,9 @@ func resourcePingFederateCertificatesCaResourceRead(ctx context.Context, d *sche
 }
 
 func resourcePingFederateCertificatesCaResourceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	awsMutexKV.Lock("certificates_ca")
+	defer awsMutexKV.Unlock("certificates_ca")
+
 	svc := m.(pfClient).CertificatesCa
 	input := certificatesCa.DeleteTrustedCAInput{
 		Id: d.Id(),
