@@ -781,3 +781,53 @@ resource "pingfederate_certificates_ca" "demo" {
   certificate_id = "example${count.index}"
   file_data      = base64encode(file("certificate_ca/cacert${count.index}.pem"))
 }
+
+resource "pingfederate_idp_sp_connection" "demo" {
+  name         = "acc_test_foo"
+  entity_id    = "foo"
+  active       = true
+  logging_mode = "STANDARD"
+  credentials {
+    certs {
+      x509_file {
+        file_data = file("amazon_root_ca1.pem")
+      }
+    }
+    inbound_back_channel_auth {
+      type                    = "INBOUND"
+      digital_signature       = false
+      require_ssl             = false
+      verification_subject_dn = "cn=bar"
+    }
+  }
+  attribute_query {
+    jdbc_attribute_source {
+      filter      = "*"
+      description = "foo"
+      schema      = "INFORMATION_SCHEMA"
+      table       = "ADMINISTRABLE_ROLE_AUTHORIZATIONS"
+      id          = "foo"
+      data_store_ref {
+        id = "ProvisionerDS"
+      }
+    }
+
+    attribute_contract_fulfillment {
+      key_name = "foo"
+      source {
+        type = "JDBC_DATA_STORE"
+        id   = "foo"
+      }
+      value = "GRANTEE"
+    }
+
+    attributes = ["foo"]
+    policy {
+      sign_response                  = false
+      sign_assertion                 = false
+      encrypt_assertion              = false
+      require_signed_attribute_query = false
+      require_encrypted_name_id      = false
+    }
+  }
+}

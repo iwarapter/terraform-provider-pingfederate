@@ -1374,13 +1374,13 @@ func expandIdpBrowserSsoAttribute(in map[string]interface{}) *pf.IdpBrowserSsoAt
 
 func expandX509File(in map[string]interface{}) *pf.X509File {
 	var result pf.X509File
-	if val, ok := in["id"]; ok {
+	if val, ok := in["id"]; ok && val.(string) != "" {
 		result.Id = String(val.(string))
 	}
 	if val, ok := in["file_data"]; ok {
 		result.FileData = String(val.(string))
 	}
-	if val, ok := in["crypto_provider"]; ok {
+	if val, ok := in["crypto_provider"]; ok && val.(string) != "" {
 		result.CryptoProvider = String(val.(string))
 	}
 	return &result
@@ -2132,7 +2132,7 @@ func expandCertView(in map[string]interface{}) *pf.CertView {
 	if val, ok := in["version"]; ok {
 		result.Version = Int(val.(int))
 	}
-	if val, ok := in["crypto_provider"]; ok {
+	if val, ok := in["crypto_provider"]; ok && val.(string) != "" {
 		result.CryptoProvider = String(val.(string))
 	}
 	if val, ok := in["id"]; ok {
