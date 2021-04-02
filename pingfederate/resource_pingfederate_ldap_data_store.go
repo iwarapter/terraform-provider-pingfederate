@@ -200,6 +200,9 @@ func resourcePingFederateLdapDataStoreResourceUpdate(ctx context.Context, d *sch
 }
 
 func resourcePingFederateLdapDataStoreResourceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	awsMutexKV.Lock("issue66")
+	defer awsMutexKV.Unlock("issue66")
+
 	svc := m.(pfClient).DataStores
 	input := dataStores.DeleteDataStoreInput{
 		Id: d.Id(),

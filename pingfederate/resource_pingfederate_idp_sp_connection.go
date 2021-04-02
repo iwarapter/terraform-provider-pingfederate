@@ -172,6 +172,9 @@ func resourcePingFederateIdpSpConnectionResourceUpdate(ctx context.Context, d *s
 }
 
 func resourcePingFederateIdpSpConnectionResourceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	awsMutexKV.Lock("issue66")
+	defer awsMutexKV.Unlock("issue66")
+
 	svc := m.(pfClient).IdpSpConnections
 	input := idpSpConnections.DeleteConnectionInput{
 		Id: d.Id(),
