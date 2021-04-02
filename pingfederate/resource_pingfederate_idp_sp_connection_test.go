@@ -48,13 +48,38 @@ func TestAccPingFederateIdpSpConnection(t *testing.T) {
 				Config: testAccPingFederateIdpSpConnectionConfig("foo"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateIdpSpConnectionExists(resourceName),
-					//testAccCheckPingFederateIdpSpConnectionAttributes(),
+					resource.TestCheckResourceAttrSet(resourceName, "credentials.0.certs.0.cert_view.0.id"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.certs.0.cert_view.0.expires", "2038-01-17T00:00:00.000Z"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.certs.0.cert_view.0.issuer_dn", "CN=Amazon Root CA 1, O=Amazon, C=US"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.certs.0.cert_view.0.key_algorithm", "RSA"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.certs.0.cert_view.0.key_size", "2048"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.certs.0.cert_view.0.serial_number", "143266978916655856878034712317230054538369994"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.certs.0.cert_view.0.sha1_fingerprint", "8DA7F965EC5EFC37910F1C6E59FDC1CC6A6EDE16"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.certs.0.cert_view.0.sha256_fingerprint", "8ECDE6884F3D87B1125BA31AC3FCB13D7016DE7F57CC904FE1CB97C6AE98196E"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.certs.0.cert_view.0.signature_algorithm", "SHA256withRSA"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.certs.0.cert_view.0.status", "VALID"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.certs.0.cert_view.0.subject_dn", "CN=Amazon Root CA 1, O=Amazon, C=US"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.certs.0.cert_view.0.valid_from", "2015-05-26T00:00:00.000Z"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.certs.0.cert_view.0.version", "3"),
 				),
 			},
 			{
 				Config: testAccPingFederateIdpSpConnectionConfig("bar"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateIdpSpConnectionExists(resourceName),
+					resource.TestCheckResourceAttrSet(resourceName, "credentials.0.certs.0.cert_view.0.id"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.certs.0.cert_view.0.expires", "2038-01-17T00:00:00.000Z"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.certs.0.cert_view.0.issuer_dn", "CN=Amazon Root CA 1, O=Amazon, C=US"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.certs.0.cert_view.0.key_algorithm", "RSA"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.certs.0.cert_view.0.key_size", "2048"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.certs.0.cert_view.0.serial_number", "143266978916655856878034712317230054538369994"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.certs.0.cert_view.0.sha1_fingerprint", "8DA7F965EC5EFC37910F1C6E59FDC1CC6A6EDE16"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.certs.0.cert_view.0.sha256_fingerprint", "8ECDE6884F3D87B1125BA31AC3FCB13D7016DE7F57CC904FE1CB97C6AE98196E"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.certs.0.cert_view.0.signature_algorithm", "SHA256withRSA"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.certs.0.cert_view.0.status", "VALID"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.certs.0.cert_view.0.subject_dn", "CN=Amazon Root CA 1, O=Amazon, C=US"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.certs.0.cert_view.0.valid_from", "2015-05-26T00:00:00.000Z"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.certs.0.cert_view.0.version", "3"),
 				),
 			},
 			{
@@ -78,6 +103,11 @@ resource "pingfederate_idp_sp_connection" "demo" {
   active = true
   logging_mode = "STANDARD"
   credentials {
+	certs {
+	  x509_file {
+		file_data = file("test_cases/amazon_root_ca1.pem")
+	  }
+	}
     inbound_back_channel_auth {
       type = "INBOUND"
       digital_signature = false

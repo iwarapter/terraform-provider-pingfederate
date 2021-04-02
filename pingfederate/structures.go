@@ -1402,6 +1402,7 @@ func resourceX509File() *schema.Resource {
 			"id": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 		},
 	}
@@ -1472,6 +1473,7 @@ func resourceConnectionCert() *schema.Resource {
 				Type:     schema.TypeList,
 				Elem:     resourceCertView(),
 				Optional: true,
+				Computed: true,
 			},
 			"encryption_cert": {
 				Type:     schema.TypeBool,
