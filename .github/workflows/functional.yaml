@@ -88,4 +88,4 @@ jobs:
 
       - name: Container logs
         if: ${{ failure() }}
-        run: docker logs `docker ps --filter expose=9999 -q`
+        run: docker logs `docker ps --filter expose=9999 -q` && cat pingfederate/terraform.log
