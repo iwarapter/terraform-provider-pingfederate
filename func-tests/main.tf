@@ -831,3 +831,8 @@ resource "pingfederate_idp_sp_connection" "demo" {
     }
   }
 }
+
+resource "pingfederate_keypair_signing" "demo" {
+  file_data = filebase64("identity.p12")
+  password  = "changeit"
+}
