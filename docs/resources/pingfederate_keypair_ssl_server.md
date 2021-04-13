@@ -43,7 +43,7 @@ The following arguments are supported:
     - `country` - (Required) Country.
     - `crypto_provider` - (Optional) Cryptographic Provider. This is only applicable if Hybrid HSM mode is true.
     - `key_algorithm` - (Required) Key generation algorithm. Supported algorithms are available through the /keyPairs/keyAlgorithms endpoint.
-    - `key_size` - (Optional) Key size, in bits. If this property is unset, the default size for the key algorithm will be used. Supported key sizes are available through the /keyPairs/keyAlgorithms endpoint.
+    - `key_size` - (Required) Key size, in bits. Supported key sizes are available through the /keyPairs/keyAlgorithms endpoint.
     - `organization` - (Required) Organization.
     - `organization_unit` - (Optional) Organization unit.
     - `signature_algorithm` - (Optional) Signature algorithm. If this property is unset, the default signature algorithm for the key algorithm will be used. Supported signature algorithms are available through the /keyPairs/keyAlgorithms endpoint.

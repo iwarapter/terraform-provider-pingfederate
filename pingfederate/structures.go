@@ -91,14 +91,14 @@ func resourceKeypairResourceSchema() map[string]*schema.Schema {
 			Optional:      true,
 			ForceNew:      true,
 			ConflictsWith: []string{"file_data", "password"},
-			RequiredWith:  []string{"city", "common_name", "country", "key_algorithm", "key_size", "organization", "organization_unit", "state", "valid_days"},
+			RequiredWith:  []string{"city", "common_name", "country", "key_algorithm", "organization", "organization_unit", "state", "valid_days"},
 		},
 		"country": {
 			Type:          schema.TypeString,
 			Optional:      true,
 			ForceNew:      true,
 			ConflictsWith: []string{"file_data", "password"},
-			RequiredWith:  []string{"city", "common_name", "country", "key_algorithm", "key_size", "organization", "organization_unit", "state", "valid_days"},
+			RequiredWith:  []string{"city", "common_name", "country", "key_algorithm", "organization", "organization_unit", "state", "valid_days"},
 		},
 		"key_algorithm": {
 			Type:          schema.TypeString,
@@ -109,11 +109,11 @@ func resourceKeypairResourceSchema() map[string]*schema.Schema {
 			RequiredWith:  []string{"city", "common_name", "country", "key_algorithm", "key_size", "organization", "organization_unit", "state", "valid_days"},
 		},
 		"key_size": {
-			Type:          schema.TypeInt,
-			Optional:      true,
-			ForceNew:      true,
-			Default:       2048,
-			ConflictsWith: []string{"file_data", "password"},
+			Type:         schema.TypeInt,
+			Optional:     true,
+			Computed:     true,
+			ForceNew:     true,
+			RequiredWith: []string{"city", "common_name", "country", "key_algorithm", "organization", "organization_unit", "state", "valid_days"},
 		},
 		"organization": {
 			Type:          schema.TypeString,
