@@ -1,3 +1,25 @@
+## 0.0.14 (Apr 13th, 2021)
+
+NOTES:
+
+* This is an early release experimental build for PingFederate 10.x
+
+BUG FIXES:
+
+* Fix issue with imported keypairs and `key_size` fields. ([#68](https://github.com/iwarapter/terraform-provider-pingfederate/issues/68))
+
+## 0.0.13 (Apr 12th, 2021)
+
+NOTES:
+
+* This is an early release experimental build for PingFederate 10.x
+
+BUG FIXES:
+
+* Fix `idp_sp_connections` credentials.certs to correctly compute the `cert_view` block.
+* Add workaround for PingFederate bug with race conditions deleting data stores and sp connections. ([#66](https://github.com/iwarapter/terraform-provider-pingfederate/issues/66))
+* Add workaround for PingFederate bug with race conditions when managing `certificate_ca`. ([#63](https://github.com/iwarapter/terraform-provider-pingfederate/issues/63))
+
 ## 0.0.12 (Mar 11th, 2021)
 
 NOTES:
