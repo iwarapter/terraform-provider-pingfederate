@@ -55,6 +55,7 @@ func resourcePingFederateLdapDataStoreResourceSchema() map[string]*schema.Schema
 		"name": {
 			Type:     schema.TypeString,
 			Optional: true,
+			Computed: true,
 		},
 		"ldap_type": {
 			Type:     schema.TypeString,
