@@ -1398,6 +1398,10 @@ func resourceX509File() *schema.Resource {
 			"file_data": {
 				Type:     schema.TypeString,
 				Required: true,
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					eq := strings.ReplaceAll(old, "\n", "") == strings.ReplaceAll(new, "\n", "")
+					return eq
+				},
 			},
 			"id": {
 				Type:     schema.TypeString,
