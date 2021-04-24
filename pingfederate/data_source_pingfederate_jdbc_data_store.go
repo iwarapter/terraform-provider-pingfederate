@@ -10,7 +10,7 @@ import (
 
 func dataSourcePingFederateJdbcDataStore() *schema.Resource {
 	var dsSchema = resourcePingFederateJdbcDataStoreResourceSchema()
-	for s, _ := range dsSchema {
+	for s := range dsSchema {
 		dsSchema[s].Computed = true
 		dsSchema[s].Required = false
 		dsSchema[s].Optional = false
