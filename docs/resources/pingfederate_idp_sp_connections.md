@@ -224,6 +224,15 @@ The `sp_browser_sso` block - The SAML settings used to enable secure browser-bas
 
 - `ws_trust_version` - (Optional) The WS-Trust version for a WS-Federation connection. The default version is WSTRUST12.
 
+### EncryptionPolicy
+
+The `encryption_policy` block - Defines what to encrypt in the browser-based SSO profile.
+
+- `encrypt_assertion` - Whether the outgoing SAML assertion will be encrypted.
+- `encrypted_attributes` - The list of outgoing SAML assertion attributes that will be encrypted. The `encrypt_assertion` property takes precedence over this.
+- `encrypt_slo_subject_name_id` - Encrypt the name-identifier attribute in outbound SLO messages. This can be set if the name id is encrypted.
+- `slo_subject_name_id_encrypted` - Allow the encryption of the name-identifier attribute for inbound SLO messages. This can be set if SP initiated SLO is enabled.
+
 ### SpWsTrust
 
 The `sp_ws_trust` block - Ws-Trust STS provides security-token validation and creation to extend SSO access to identity-enabled Web Services
