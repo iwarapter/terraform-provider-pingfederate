@@ -102,6 +102,8 @@ resource "pingfederate_idp_sp_connection" "demo" {
   entity_id = "foo"
   active = true
   logging_mode = "STANDARD"
+  contact_info {
+  }
   credentials {
 	certs {
 	  x509_file {
@@ -177,9 +179,11 @@ func testAccCheckPingFederateIdpSpConnectionExists(n string) resource.TestCheckF
 
 func Test_resourcePingFederateIdpSpConnectionResourceReadData(t *testing.T) {
 	cases := []struct {
+		Name     string
 		Resource pf.SpConnection
 	}{
 		{
+			Name: "we can marshal absolutely every field",
 			Resource: pf.SpConnection{
 				Active: Bool(false),
 				AdditionalAllowedEntitiesConfiguration: &pf.AdditionalAllowedEntitiesConfiguration{
@@ -1090,9 +1094,41 @@ func Test_resourcePingFederateIdpSpConnectionResourceReadData(t *testing.T) {
 				},
 			},
 		},
+		{
+			Name: "we can read a full contact info",
+			Resource: pf.SpConnection{
+				Active:           Bool(false),
+				Type:             String("SP"),
+				VirtualEntityIds: &[]*string{},
+				ContactInfo: &pf.ContactInfo{
+					FirstName: String("foo"),
+					LastName:  String("foo"),
+					Company:   String("foo"),
+					Email:     String("foo"),
+					Phone:     String("foo"),
+				},
+			},
+		},
+		{
+			Name: "we can read a empty contact info",
+			Resource: pf.SpConnection{
+				Active:           Bool(false),
+				Type:             String("SP"),
+				VirtualEntityIds: &[]*string{},
+				ContactInfo:      &pf.ContactInfo{},
+			},
+		},
+		{
+			Name: "we can handle no contact info",
+			Resource: pf.SpConnection{
+				Active:           Bool(false),
+				Type:             String("SP"),
+				VirtualEntityIds: &[]*string{},
+			},
+		},
 	}
-	for i, tc := range cases {
-		t.Run(fmt.Sprintf("tc:%v", i), func(t *testing.T) {
+	for _, tc := range cases {
+		t.Run(fmt.Sprintf("tc:%v", tc.Name), func(t *testing.T) {
 
 			resourceSchema := resourcePingFederateIdpSpConnectionResourceSchema()
 			resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})

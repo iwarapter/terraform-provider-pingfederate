@@ -291,7 +291,11 @@ func resourcePingFederateIdpSpConnectionResourceReadData(d *schema.ResourceData)
 		result.VirtualEntityIds = &strs
 	}
 	if val, ok := d.GetOk("contact_info"); ok && len(val.([]interface{})) > 0 {
-		result.ContactInfo = expandContactInfo(val.([]interface{})[0].(map[string]interface{}))
+		if val.([]interface{})[0] == nil {
+			result.ContactInfo = &pf.ContactInfo{}
+		} else {
+			result.ContactInfo = expandContactInfo(val.([]interface{})[0].(map[string]interface{}))
+		}
 	}
 	if val, ok := d.GetOk("license_connection_group"); ok {
 		result.LicenseConnectionGroup = String(val.(string))
