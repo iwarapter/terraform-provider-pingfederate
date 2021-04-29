@@ -344,6 +344,9 @@ func flattenScopes(in []*pf.ScopeEntry) []map[string]interface{} {
 		s := make(map[string]interface{})
 		s["name"] = *v.Name
 		s["description"] = *v.Description
+		if v.Dynamic != nil {
+			s["dynamic"] = *v.Dynamic
+		}
 		m = append(m, s)
 	}
 	return m
