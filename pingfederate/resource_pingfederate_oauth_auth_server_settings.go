@@ -28,6 +28,11 @@ func resourcePingFederateOauthAuthServerSettingsResource() *schema.Resource {
 					Type:     schema.TypeString,
 					Required: true,
 				},
+				"dynamic": {
+					Type:     schema.TypeBool,
+					Optional: true,
+					Default:  false,
+				},
 			},
 		},
 	}

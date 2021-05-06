@@ -22,7 +22,7 @@ func TestAccPingFederateOauthAuthServerSettings(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccPingFederateOauthAuthServerSettingsConfig("scopes {\nname = \"example\"\ndescription = \"example\"\n}"),
+				Config: testAccPingFederateOauthAuthServerSettingsConfig("scopes {\nname = \"example\"\ndescription = \"example\"\n}\nscopes {\nname = \"example:*\"\ndescription = \"example dynamic\"\ndynamic = true\n}"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateOauthAuthServerSettingsExists(resourceName),
 				),

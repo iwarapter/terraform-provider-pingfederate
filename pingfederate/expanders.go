@@ -41,6 +41,7 @@ func expandScopes(in []interface{}) *[]*pf.ScopeEntry {
 		s := &pf.ScopeEntry{
 			Name:        String(l["name"].(string)),
 			Description: String(l["description"].(string)),
+			Dynamic:     Bool(l["dynamic"].(bool)),
 		}
 		scopeList = append(scopeList, s)
 	}
