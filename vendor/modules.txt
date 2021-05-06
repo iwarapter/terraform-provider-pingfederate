@@ -177,6 +177,7 @@ github.com/iwarapter/pingfederate-sdk-go/services/idpSpConnections
 github.com/iwarapter/pingfederate-sdk-go/services/idpStsRequestParametersContracts
 github.com/iwarapter/pingfederate-sdk-go/services/idpToSpAdapterMapping
 github.com/iwarapter/pingfederate-sdk-go/services/idpTokenProcessors
+github.com/iwarapter/pingfederate-sdk-go/services/incomingProxySettings
 github.com/iwarapter/pingfederate-sdk-go/services/kerberosRealms
 github.com/iwarapter/pingfederate-sdk-go/services/keyPairs
 github.com/iwarapter/pingfederate-sdk-go/services/keyPairsOauthOpenIdConnect
@@ -453,3 +454,4 @@ google.golang.org/protobuf/types/known/timestamppb
 google.golang.org/protobuf/types/pluginpb
 # gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c
 gopkg.in/yaml.v3
+# github.com/go-git/go-git-fixtures/v4 v4.0.2-0.20200613231340-f56387b50c12 => github.com/go-git/go-git-fixtures/v4 v4.0.1

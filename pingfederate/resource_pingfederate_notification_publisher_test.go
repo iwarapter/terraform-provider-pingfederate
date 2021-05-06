@@ -86,6 +86,11 @@ resource "pingfederate_notification_publisher" "demo" {
   }
 
   configuration {
+	fields {
+	  inherited = false
+	  name      = "UTF-8 Message Header Support"
+	  value     = "false"
+	}
     fields {
 	  inherited = false
 	  name      = "UTF-8 Message Header Support"
