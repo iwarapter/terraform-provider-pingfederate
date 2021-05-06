@@ -234,7 +234,7 @@ func Test_resourcePingFederateAuthenticationSelectorResourceReadData(t *testing.
 							Inherited: Bool(false),
 							Rows: &[]*pf.ConfigRow{
 								{
-									//DefaultRow: Bool(false),
+									DefaultRow: Bool(false),
 									Fields: &[]*pf.ConfigField{
 										{
 											Name:      String("Network Range (CIDR notation)"),

@@ -323,7 +323,7 @@ func Test_resourcePingFederateSpAdapterResourceReadData(t *testing.T) {
 							Inherited: Bool(false),
 							Rows: &[]*pf.ConfigRow{
 								{
-									//DefaultRow: Bool(false),
+									DefaultRow: Bool(false),
 									Fields: &[]*pf.ConfigField{
 										{
 											Name:      String("Network Range (CIDR notation)"),

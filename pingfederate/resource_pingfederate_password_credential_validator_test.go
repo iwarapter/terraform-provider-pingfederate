@@ -261,6 +261,7 @@ func Test_resourcePingFederatePasswordCredentialValidatorResourceReadData(t *tes
 											Inherited: Bool(false),
 										},
 									},
+									DefaultRow: Bool(false),
 								},
 							},
 							Inherited: Bool(false),
