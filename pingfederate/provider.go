@@ -46,6 +46,7 @@ func Provider() *schema.Provider {
 			},
 		},
 		DataSourcesMap: map[string]*schema.Resource{
+			"pingfederate_custom_data_store":      dataSourcePingFederateCustomDataStore(),
 			"pingfederate_jdbc_data_store":        dataSourcePingFederateJdbcDataStore(),
 			"pingfederate_ldap_data_store":        dataSourcePingFederateLdapDataStore(),
 			"pingfederate_keypair_signing_csr":    dataSourcePingFederateKeyPairSigningCsr(),
@@ -59,6 +60,7 @@ func Provider() *schema.Provider {
 			"pingfederate_authentication_policy_contract":               resourcePingFederateAuthenticationPolicyContractResource(),
 			"pingfederate_authentication_selector":                      resourcePingFederateAuthenticationSelectorResource(),
 			"pingfederate_certificates_ca":                              resourcePingFederateCertificatesCaResource(),
+			"pingfederate_custom_data_store":                            resourcePingFederateCustomDataStoreResource(),
 			"pingfederate_jdbc_data_store":                              resourcePingFederateJdbcDataStoreResource(),
 			"pingfederate_ldap_data_store":                              resourcePingFederateLdapDataStoreResource(),
 			"pingfederate_idp_sp_connection":                            resourcePingFederateIdpSpConnectionResource(),
