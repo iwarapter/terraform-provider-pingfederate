@@ -501,7 +501,13 @@ func expandPolicyAction(in []interface{}) *pf.PolicyAction {
 			action.InputUserIdMapping = expandAttributeFulfillmentValue(v.([]interface{})[0].(map[string]interface{}))
 		}
 		if v, ok := l["attribute_rules"]; ok && len(v.([]interface{})) > 0 {
-			action.AttributeRules = expandAttributeRules(v.([]interface{}))
+			action.AuthnSourcePolicyAction.AttributeRules = expandAttributeRules(v.([]interface{}))
+		}
+		if v, ok := l["fragment_mapping"]; ok && len(v.([]interface{})) > 0 {
+			action.FragmentMapping = expandAttributeMapping(v.([]interface{}))
+		}
+		if v, ok := l["fragment"]; ok && len(v.([]interface{})) > 0 {
+			action.Fragment = expandResourceLink(v.([]interface{})[0].(map[string]interface{}))
 		}
 	}
 	return action

@@ -219,7 +219,7 @@ resource "pingfederate_oauth_access_token_manager" "my_atm" {
 
 resource "pingfederate_authentication_policy_contract" "apc_foo" {
   policy_contract_id  = "example"
-  name                = "wee"
+  name                = "example"
   extended_attributes = ["foo", "bar"]
 }
 
@@ -775,6 +775,57 @@ resource "pingfederate_authentication_policies" "demo" {
       }
     }
   }
+  dynamic "authn_selection_trees" {
+    for_each = local.isPF10_2 ? [1] : []
+    content {
+      enabled = true
+      name    = "frag"
+      root_node {
+        action {
+          type = "FRAGMENT"
+          fragment {
+            id = pingfederate_authentication_policy_fragment.demo[0].id
+          }
+          fragment_mapping {
+            attribute_contract_fulfillment {
+              key_name = "one"
+
+              source {
+                type = "NO_MAPPING"
+              }
+            }
+            attribute_contract_fulfillment {
+              key_name = "subject"
+
+              source {
+                type = "NO_MAPPING"
+              }
+            }
+            attribute_contract_fulfillment {
+              key_name = "two"
+
+              source {
+                type = "NO_MAPPING"
+              }
+            }
+          }
+        }
+
+        children {
+          action {
+            context = "Fail"
+            type    = "DONE"
+          }
+        }
+        children {
+          action {
+            context = "Success"
+            type    = "DONE"
+          }
+        }
+      }
+    }
+  }
 }
 
 resource "pingfederate_certificates_ca" "demo" {
@@ -934,4 +985,47 @@ resource "pingfederate_custom_data_store" "example" {
       name = "Test Connection URL"
     }
   }
+}
+
+resource "pingfederate_authentication_policy_fragment" "demo" {
+  count       = local.isPF10_2 ? 1 : 0
+  name        = "fragtest"
+  description = "functional test"
+  inputs {
+    id = pingfederate_authentication_policy_contract.input.id
+  }
+  outputs {
+    id = pingfederate_authentication_policy_contract.output.id
+  }
+
+  root_node {
+    action {
+      type = "AUTHN_SELECTOR"
+      authentication_selector_ref {
+        id = pingfederate_authentication_selector.demo.id
+      }
+    }
+    children {
+      action {
+        type    = "DONE"
+        context = "No"
+      }
+    }
+    children {
+      action {
+        type    = "DONE"
+        context = "Yes"
+      }
+    }
+  }
+}
+
+resource "pingfederate_authentication_policy_contract" "input" {
+  name                = "fragmenttest1"
+  extended_attributes = ["one", "two"]
+}
+
+resource "pingfederate_authentication_policy_contract" "output" {
+  name                = "fragmenttest2"
+  extended_attributes = ["three", "four"]
 }

@@ -294,10 +294,11 @@ func resourcePolicyActionSchema() *schema.Schema {
 							"AUTHN_SOURCE",
 							"DONE",
 							"CONTINUE",
-							"RESTART":
+							"RESTART",
+							"FRAGMENT":
 							return nil
 						}
-						return diag.Errorf("must be either 'APC_MAPPING' or 'LOCAL_IDENTITY_MAPPING' or 'AUTHN_SELECTOR' or 'AUTHN_SOURCE' or 'DONE' or 'CONTINUE' or 'RESTART' not %s", v)
+						return diag.Errorf("must be either 'APC_MAPPING' or 'LOCAL_IDENTITY_MAPPING' or 'AUTHN_SELECTOR' or 'AUTHN_SOURCE' or 'DONE' or 'CONTINUE' or 'RESTART' or 'FRAGMENT' not %s", v)
 					},
 				},
 				"context": {
@@ -400,6 +401,22 @@ func resourcePolicyActionSchema() *schema.Schema {
 						},
 					},
 				},
+				"fragment_mapping": {
+					Type:     schema.TypeList,
+					Optional: true,
+					MaxItems: 1,
+					Elem:     resourceAttributeMapping(),
+					//ConflictsWith: []string{
+					//	"local_identity_ref",
+					//	"inbound_mapping",
+					//	"outbound_attribute_mapping",
+					//	"authentication_selector_ref",
+					//	"attribute_rules",
+					//	"authentication_source",
+					//	"input_user_id_mapping",
+					//},
+				},
+				"fragment": resourceLinkSchema(),
 			},
 		},
 	}

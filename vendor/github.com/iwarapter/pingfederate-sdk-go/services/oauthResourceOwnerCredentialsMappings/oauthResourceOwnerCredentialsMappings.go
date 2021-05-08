@@ -43,14 +43,14 @@ func (c *OauthResourceOwnerCredentialsMappingsService) newRequest(op *request.Op
 	return req
 }
 
-//GetResourceOwnerCredentialsMappings - Get the list of Resource Owner Credentials mappings.
+//GetResourceOwnerCredentialsMappings - Get the list of Resource Owner Credentials Grant Mapping.
 //RequestType: GET
 //Input:
 func (s *OauthResourceOwnerCredentialsMappingsService) GetResourceOwnerCredentialsMappings() (output *models.ResourceOwnerCredentialsMappings, resp *http.Response, err error) {
 	return s.GetResourceOwnerCredentialsMappingsWithContext(context.Background())
 }
 
-//GetResourceOwnerCredentialsMappingsWithContext - Get the list of Resource Owner Credentials mappings.
+//GetResourceOwnerCredentialsMappingsWithContext - Get the list of Resource Owner Credentials Grant Mapping.
 //RequestType: GET
 //Input: ctx context.Context,
 func (s *OauthResourceOwnerCredentialsMappingsService) GetResourceOwnerCredentialsMappingsWithContext(ctx context.Context) (output *models.ResourceOwnerCredentialsMappings, resp *http.Response, err error) {

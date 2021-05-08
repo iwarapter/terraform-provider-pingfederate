@@ -57,8 +57,14 @@ resource "pingfederate_server_settings" "demo" {
 	saml2_entity_id = "%s"
   }
   roles_and_protocols {
+	enable_idp_discovery = true
     idp_role {
       enable = true
+	  enable_outbound_provisioning = true
+	  enable_saml10                = true
+	  enable_saml11                = true
+	  enable_ws_fed                = true
+	  enable_ws_trust              = true
       saml20_profile {
         enable = true
       }
@@ -69,8 +75,15 @@ resource "pingfederate_server_settings" "demo" {
     }
     sp_role {
       enable = true
+	  enable_inbound_provisioning = true
+	  enable_openid_connect       = true
+	  enable_saml10               = true
+	  enable_saml11               = true
+	  enable_ws_fed               = true
+	  enable_ws_trust             = true
 	  saml20_profile {
         enable = true
+		enable_xasp         = true
       }
     }
   }

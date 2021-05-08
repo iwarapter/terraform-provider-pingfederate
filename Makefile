@@ -18,7 +18,7 @@ pf-init:
 		-e IMAGE_VERSION=pingfederate-alpine-az11-10.0.6-210216-d9b5 \
 		--publish 9999:9999 \
 		--publish 9031:9031 \
-		pingidentity/pingfederate:10.0.6-edge
+		pingidentity/pingfederate:10.2.2-edge
 
 checks:
 	@go fmt ./...

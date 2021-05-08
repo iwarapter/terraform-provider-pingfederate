@@ -63,6 +63,7 @@ func (s *LocalIdentityIdentityProfilesService) GetIdentityProfilesWithContext(ct
 			"page":          input.Page,
 			"numberPerPage": input.NumberPerPage,
 			"filter":        input.Filter,
+			"apcId":         input.ApcId,
 		},
 	}
 	output = &models.LocalIdentityProfiles{}
@@ -211,6 +212,7 @@ type GetIdentityProfilesInput struct {
 	Page          string
 	NumberPerPage string
 	Filter        string
+	ApcId         string
 }
 
 type UpdateIdentityProfileInput struct {

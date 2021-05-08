@@ -105,6 +105,11 @@ resource "pingfederate_sp_adapter" "demo" {
   }
 
   configuration {
+	fields {
+	  inherited = false
+	  name      = "SameSite Cookie"
+	  value     = "3"
+	}
     sensitive_fields {
       name  = "Password"
       value = "Secret123"

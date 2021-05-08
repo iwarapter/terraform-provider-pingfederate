@@ -1,70 +1,37 @@
-# Resource: pingfederate_authentication_policies
+# Resource: pingfederate_authentication_policy_fragment
 
-Provides an Authentication Policies tree.
-
--> This resource manages a singleton within PingFederate and as such you should ONLY ever declare one of this resource type. Deleting this resource simply clears all policies.
+Provides an Authentication Policy Fragment.
 
 ## Example Usage
 
 ```hcl-terraform
-resource "pingfederate_authentication_policies" "demo" {
-  fail_if_no_selection    = false
-  tracked_http_parameters = ["foo"]
-  default_authentication_sources {
-    type = "IDP_ADAPTER"
-    source_ref {
-      id = pingfederate_idp_adapter.demo.id
-    }
+resource "pingfederate_authentication_policy_fragment" "demo" {
+  name        = "demo"
+  description = "functional test"
+  inputs {
+    id = pingfederate_authentication_policy_contract.input.id
   }
-  authn_selection_trees {
-    name = "bar"
-    root_node {
-      action {
-        type = "AUTHN_SOURCE"
-        authentication_source {
-          type = "IDP_ADAPTER"
-          source_ref {
-            id = pingfederate_idp_adapter.demo.id
-          }
-        }
-      }
-      children {
-        action {
-          type    = "RESTART"
-          context = "Fail"
-        }
-      }
-      children {
-        action {
-          type    = "DONE"
-          context = "Success"
-        }
+  outputs {
+    id = pingfederate_authentication_policy_contract.output.id
+  }
+
+  root_node {
+    action {
+      type = "AUTHN_SELECTOR"
+      authentication_selector_ref {
+        id = pingfederate_authentication_selector.demo.id
       }
     }
-  }
-  authn_selection_trees {
-    name = "foo"
-    root_node {
+    children {
       action {
-        type = "AUTHN_SOURCE"
-        authentication_source {
-          type = "IDP_ADAPTER"
-          source_ref {
-            id = pingfederate_idp_adapter.demo.id
-          }
-        }
+        type    = "DONE"
+        context = "No"
       }
-      children {
-        action {
-          type    = "RESTART"
-          context = "Fail"
-        }
-      }
-      children {
-        action {
-          type    = "DONE"
-          context = "Success"
-        }
+    }
+    children {
+      action {
+        type    = "DONE"
+        context = "Yes"
       }
     }
   }
@@ -75,20 +42,12 @@ resource "pingfederate_authentication_policies" "demo" {
 
 The following arguments are supported:
 
-- `authn_selection_trees` - (Optional) The list of authentication policy trees.
-- `default_authentication_sources` - (Optional) The default authentication sources.
-- `fail_if_no_selection` - (Optional) Fail if policy finds no authentication source.
-- `tracked_http_parameters` - (Optional) The HTTP request parameters to track and make available to authentication sources, selectors, and contract mappings throughout the authentication policy.
-
-### authn_selection_trees
-
-The `authn_selection_trees` block - An authentication policy tree.
-
-- `authentication_api_application_ref` - (Optional) Authentication API Application Id to be used in this policy branch. If the value is not specified, no Authentication API Application will be used.
-- `description` - (Optional) A description for the authentication policy.
-- `enabled` - (Optional) Whether or not this authentication policy tree is enabled. Default is true.
-- `name` - (Optional) The authentication policy name. Name is unique.
-- `root_node` - (Optional) A node inside the authentication policy tree.
+- `name` - (Required) The authentication policy fragment name. Name is unique.
+- `policy_fragment_id` - (Optional) The authentication policy fragment ID. ID is unique.
+- `inputs` - (Required) The reference to the authentication policy contract to use as the attribute inputs for this authentication policy fragment.
+- `description` - (Optional) A description for the authentication policy fragment.
+- `outputs` - (Required) The reference to the authentication policy contract to use as the attribute outputs for this authentication policy fragment.
+- `root_node` - (Required) The beginning action for the authentication fragment policy.
 
 ### root_node / children
 
@@ -96,7 +55,6 @@ The `root_node` and `children` block - An authentication policy tree node.
 
 - `action` - (Required) The result action.
 - `children` - (Optional) The nodes inside the authentication policy tree node.
-
 
 ### action
 
@@ -321,10 +279,8 @@ For each SourceType, the value should be:
 
 ## Import
 
--> The resource ID is fixed as `default_authentication_policies` because this is a singleton resource.
-
-Authentication Policies can be imported using the id, e.g.
+Authentication Policy Fragments can be imported using the id, e.g.
 
 ```
-terraform import pingfederate_authentication_policies.demo default_authentication_policies
+terraform import pingfederate_authentication_policy_fragment.demo 123
 ```
