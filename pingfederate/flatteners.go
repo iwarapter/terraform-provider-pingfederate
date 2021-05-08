@@ -862,8 +862,14 @@ func flattenPolicyAction(in *pf.PolicyAction) []map[string]interface{} {
 		m := make([]interface{}, 0, 1)
 		s["input_user_id_mapping"] = append(m, flattenAttributeFulfillmentValue(in.InputUserIdMapping))
 	}
-	if in.AttributeRules != nil {
-		s["attribute_rules"] = flattenAttributeRules(in.AttributeRules)
+	if in.AuthnSourcePolicyAction.AttributeRules != nil {
+		s["attribute_rules"] = flattenAttributeRules(in.AuthnSourcePolicyAction.AttributeRules)
+	}
+	if in.FragmentMapping != nil {
+		s["fragment_mapping"] = flattenAttributeMapping(in.FragmentMapping)
+	}
+	if in.Fragment != nil {
+		s["fragment"] = flattenResourceLink(in.Fragment)
 	}
 	return append(m, s)
 }

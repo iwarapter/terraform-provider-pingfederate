@@ -55,6 +55,7 @@ func Provider() *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{
 			"pingfederate_authentication_policies_settings":             resourcePingFederateAuthenticationPoliciesSettingsResource(),
 			"pingfederate_authentication_policies":                      resourcePingFederateAuthenticationPoliciesResource(),
+			"pingfederate_authentication_policy_fragment":               resourcePingFederateAuthenticationPolicyFragmentResource(),
 			"pingfederate_authentication_api_application":               resourcePingFederateAuthnApiApplicationResource(),
 			"pingfederate_authentication_api_settings":                  resourcePingFederateAuthnApiSettingsResource(),
 			"pingfederate_authentication_policy_contract":               resourcePingFederateAuthenticationPolicyContractResource(),

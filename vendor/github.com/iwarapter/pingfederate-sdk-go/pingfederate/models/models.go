@@ -333,6 +333,21 @@ type AuthenticationPolicyContracts struct {
 	Items *[]*AuthenticationPolicyContract `json:"items,omitempty"`
 }
 
+//AuthenticationPolicyFragment - An authentication policy fragment.
+type AuthenticationPolicyFragment struct {
+	Description *string                       `json:"description,omitempty"`
+	Id          *string                       `json:"id,omitempty"`
+	Inputs      *ResourceLink                 `json:"inputs,omitempty"`
+	Name        *string                       `json:"name,omitempty"`
+	Outputs     *ResourceLink                 `json:"outputs,omitempty"`
+	RootNode    *AuthenticationPolicyTreeNode `json:"rootNode,omitempty"`
+}
+
+//AuthenticationPolicyFragments - A collection of Authentication Policy Fragments
+type AuthenticationPolicyFragments struct {
+	Items *[]*AuthenticationPolicyFragment `json:"items,omitempty"`
+}
+
 //AuthenticationPolicyTree - An authentication policy tree.
 type AuthenticationPolicyTree struct {
 	AuthenticationApiApplicationRef *ResourceLink                 `json:"authenticationApiApplicationRef,omitempty"`
@@ -451,6 +466,7 @@ type AuthnSourcePolicyAction struct {
 	Context              *string                    `json:"context,omitempty"`
 	InputUserIdMapping   *AttributeFulfillmentValue `json:"inputUserIdMapping,omitempty"`
 	Type                 *string                    `json:"type,omitempty"`
+	UserIdAuthenticated  *bool                      `json:"userIdAuthenticated,omitempty"`
 }
 
 //AuthorizationServerSettings - Authorization Server Settings attributes.
@@ -469,6 +485,9 @@ type AuthorizationServerSettings struct {
 	DevicePollingInterval                  *int                     `json:"devicePollingInterval,omitempty"`
 	ExclusiveScopeGroups                   *[]*ScopeGroupEntry      `json:"exclusiveScopeGroups,omitempty"`
 	ExclusiveScopes                        *[]*ScopeEntry           `json:"exclusiveScopes,omitempty"`
+	ParReferenceLength                     *int                     `json:"parReferenceLength,omitempty"`
+	ParReferenceTimeout                    *int                     `json:"parReferenceTimeout,omitempty"`
+	ParStatus                              *string                  `json:"parStatus,omitempty"`
 	PendingAuthorizationTimeout            *int                     `json:"pendingAuthorizationTimeout,omitempty"`
 	PersistentGrantContract                *PersistentGrantContract `json:"persistentGrantContract,omitempty"`
 	PersistentGrantIdleTimeout             *int                     `json:"persistentGrantIdleTimeout,omitempty"`
@@ -699,6 +718,7 @@ type CibaServerPolicySettings struct {
 
 //Client - OAuth client.
 type Client struct {
+	AllowAuthenticationApiInit               *bool                       `json:"allowAuthenticationApiInit,omitempty"`
 	BypassActivationCodeConfirmationOverride *bool                       `json:"bypassActivationCodeConfirmationOverride,omitempty"`
 	BypassApprovalPage                       *bool                       `json:"bypassApprovalPage,omitempty"`
 	CibaDeliveryMode                         *string                     `json:"cibaDeliveryMode,omitempty"`
@@ -733,8 +753,10 @@ type Client struct {
 	RequestObjectSigningAlgorithm            *string                     `json:"requestObjectSigningAlgorithm,omitempty"`
 	RequestPolicyRef                         *ResourceLink               `json:"requestPolicyRef,omitempty"`
 	RequireProofKeyForCodeExchange           *bool                       `json:"requireProofKeyForCodeExchange,omitempty"`
+	RequirePushedAuthorizationRequests       *bool                       `json:"requirePushedAuthorizationRequests,omitempty"`
 	RequireSignedRequests                    *bool                       `json:"requireSignedRequests,omitempty"`
 	RestrictScopes                           *bool                       `json:"restrictScopes,omitempty"`
+	RestrictToDefaultAccessTokenManager      *bool                       `json:"restrictToDefaultAccessTokenManager,omitempty"`
 	RestrictedResponseTypes                  *[]*string                  `json:"restrictedResponseTypes,omitempty"`
 	RestrictedScopes                         *[]*string                  `json:"restrictedScopes,omitempty"`
 	TokenExchangeProcessorPolicyRef          *ResourceLink               `json:"tokenExchangeProcessorPolicyRef,omitempty"`
@@ -762,15 +784,16 @@ type ClientMetadata struct {
 
 //ClientOIDCPolicy - OAuth Client Open ID Connect Policy.
 type ClientOIDCPolicy struct {
-	GrantAccessSessionRevocationApi   *bool         `json:"grantAccessSessionRevocationApi,omitempty"`
-	IdTokenContentEncryptionAlgorithm *string       `json:"idTokenContentEncryptionAlgorithm,omitempty"`
-	IdTokenEncryptionAlgorithm        *string       `json:"idTokenEncryptionAlgorithm,omitempty"`
-	IdTokenSigningAlgorithm           *string       `json:"idTokenSigningAlgorithm,omitempty"`
-	LogoutUris                        *[]*string    `json:"logoutUris,omitempty"`
-	PairwiseIdentifierUserType        *bool         `json:"pairwiseIdentifierUserType,omitempty"`
-	PingAccessLogoutCapable           *bool         `json:"pingAccessLogoutCapable,omitempty"`
-	PolicyGroup                       *ResourceLink `json:"policyGroup,omitempty"`
-	SectorIdentifierUri               *string       `json:"sectorIdentifierUri,omitempty"`
+	GrantAccessSessionRevocationApi        *bool         `json:"grantAccessSessionRevocationApi,omitempty"`
+	GrantAccessSessionSessionManagementApi *bool         `json:"grantAccessSessionSessionManagementApi,omitempty"`
+	IdTokenContentEncryptionAlgorithm      *string       `json:"idTokenContentEncryptionAlgorithm,omitempty"`
+	IdTokenEncryptionAlgorithm             *string       `json:"idTokenEncryptionAlgorithm,omitempty"`
+	IdTokenSigningAlgorithm                *string       `json:"idTokenSigningAlgorithm,omitempty"`
+	LogoutUris                             *[]*string    `json:"logoutUris,omitempty"`
+	PairwiseIdentifierUserType             *bool         `json:"pairwiseIdentifierUserType,omitempty"`
+	PingAccessLogoutCapable                *bool         `json:"pingAccessLogoutCapable,omitempty"`
+	PolicyGroup                            *ResourceLink `json:"policyGroup,omitempty"`
+	SectorIdentifierUri                    *string       `json:"sectorIdentifierUri,omitempty"`
 }
 
 //ClientRegistrationOIDCPolicy - Client Registration Open ID Connect Policy settings.
@@ -1127,6 +1150,7 @@ type DropDownLocalIdentityField struct {
 
 //DynamicClientRegistration - Dynamic client registration settings.
 type DynamicClientRegistration struct {
+	AllowClientDelete                        *bool                         `json:"allowClientDelete,omitempty"`
 	AllowedExclusiveScopes                   *[]*string                    `json:"allowedExclusiveScopes,omitempty"`
 	BypassActivationCodeConfirmationOverride *bool                         `json:"bypassActivationCodeConfirmationOverride,omitempty"`
 	CibaPollingInterval                      *int                          `json:"cibaPollingInterval,omitempty"`
@@ -1136,6 +1160,7 @@ type DynamicClientRegistration struct {
 	DefaultAccessTokenManagerRef             *ResourceLink                 `json:"defaultAccessTokenManagerRef,omitempty"`
 	DeviceFlowSettingType                    *string                       `json:"deviceFlowSettingType,omitempty"`
 	DevicePollingIntervalOverride            *int                          `json:"devicePollingIntervalOverride,omitempty"`
+	DisableRegistrationAccessTokens          *bool                         `json:"disableRegistrationAccessTokens,omitempty"`
 	EnforceReplayPrevention                  *bool                         `json:"enforceReplayPrevention,omitempty"`
 	InitialAccessTokenScope                  *string                       `json:"initialAccessTokenScope,omitempty"`
 	OidcPolicy                               *ClientRegistrationOIDCPolicy `json:"oidcPolicy,omitempty"`
@@ -1152,7 +1177,10 @@ type DynamicClientRegistration struct {
 	RequireProofKeyForCodeExchange           *bool                         `json:"requireProofKeyForCodeExchange,omitempty"`
 	RequireSignedRequests                    *bool                         `json:"requireSignedRequests,omitempty"`
 	RestrictCommonScopes                     *bool                         `json:"restrictCommonScopes,omitempty"`
+	RestrictToDefaultAccessTokenManager      *bool                         `json:"restrictToDefaultAccessTokenManager,omitempty"`
 	RestrictedCommonScopes                   *[]*string                    `json:"restrictedCommonScopes,omitempty"`
+	RotateClientSecret                       *bool                         `json:"rotateClientSecret,omitempty"`
+	RotateRegistrationAccessToken            *bool                         `json:"rotateRegistrationAccessToken,omitempty"`
 	TokenExchangeProcessorPolicyRef          *ResourceLink                 `json:"tokenExchangeProcessorPolicyRef,omitempty"`
 	UserAuthorizationUrlOverride             *string                       `json:"userAuthorizationUrlOverride,omitempty"`
 }
@@ -1169,20 +1197,21 @@ type EmailLocalIdentityField struct {
 
 //EmailServerSettings - Email server configuration settings.
 type EmailServerSettings struct {
-	EmailServer       *string `json:"emailServer,omitempty"`
-	EncryptedPassword *string `json:"encryptedPassword,omitempty"`
-	Password          *string `json:"password,omitempty"`
-	Port              *int    `json:"port,omitempty"`
-	RetryAttempts     *int    `json:"retryAttempts,omitempty"`
-	RetryDelay        *int    `json:"retryDelay,omitempty"`
-	SourceAddr        *string `json:"sourceAddr,omitempty"`
-	SslPort           *int    `json:"sslPort,omitempty"`
-	Timeout           *int    `json:"timeout,omitempty"`
-	UseDebugging      *bool   `json:"useDebugging,omitempty"`
-	UseSSL            *bool   `json:"useSSL,omitempty"`
-	UseTLS            *bool   `json:"useTLS,omitempty"`
-	Username          *string `json:"username,omitempty"`
-	VerifyHostname    *bool   `json:"verifyHostname,omitempty"`
+	EmailServer              *string `json:"emailServer,omitempty"`
+	EnableUtf8MessageHeaders *bool   `json:"enableUtf8MessageHeaders,omitempty"`
+	EncryptedPassword        *string `json:"encryptedPassword,omitempty"`
+	Password                 *string `json:"password,omitempty"`
+	Port                     *int    `json:"port,omitempty"`
+	RetryAttempts            *int    `json:"retryAttempts,omitempty"`
+	RetryDelay               *int    `json:"retryDelay,omitempty"`
+	SourceAddr               *string `json:"sourceAddr,omitempty"`
+	SslPort                  *int    `json:"sslPort,omitempty"`
+	Timeout                  *int    `json:"timeout,omitempty"`
+	UseDebugging             *bool   `json:"useDebugging,omitempty"`
+	UseSSL                   *bool   `json:"useSSL,omitempty"`
+	UseTLS                   *bool   `json:"useTLS,omitempty"`
+	Username                 *string `json:"username,omitempty"`
+	VerifyHostname           *bool   `json:"verifyHostname,omitempty"`
 }
 
 //EmailVerificationConfig - A local identity email verification configuration.
@@ -1252,7 +1281,8 @@ type FederationInfo struct {
 
 //FieldConfig - A local identity profile field configuration.
 type FieldConfig struct {
-	Fields *[]*LocalIdentityField `json:"fields,omitempty"`
+	Fields                    *[]*LocalIdentityField `json:"fields,omitempty"`
+	StripSpaceFromUniqueField *bool                  `json:"stripSpaceFromUniqueField,omitempty"`
 }
 
 //FieldDescriptor - Describes a plugin configuration field.
@@ -1279,14 +1309,24 @@ type FieldEntry struct {
 	Value *string `json:"value,omitempty"`
 }
 
+//FragmentPolicyAction - A authentication policy fragment selection action.
+type FragmentPolicyAction struct {
+	AttributeRules  *AttributeRules   `json:"attributeRules,omitempty"`
+	Context         *string           `json:"context,omitempty"`
+	Fragment        *ResourceLink     `json:"fragment,omitempty"`
+	FragmentMapping *AttributeMapping `json:"fragmentMapping,omitempty"`
+	Type            *string           `json:"type,omitempty"`
+}
+
 //GlobalAuthenticationSessionPolicy - The global policy for authentication sessions.
 type GlobalAuthenticationSessionPolicy struct {
-	EnableSessions         *bool   `json:"enableSessions,omitempty"`
-	IdleTimeoutDisplayUnit *string `json:"idleTimeoutDisplayUnit,omitempty"`
-	IdleTimeoutMins        *int    `json:"idleTimeoutMins,omitempty"`
-	MaxTimeoutDisplayUnit  *string `json:"maxTimeoutDisplayUnit,omitempty"`
-	MaxTimeoutMins         *int    `json:"maxTimeoutMins,omitempty"`
-	PersistentSessions     *bool   `json:"persistentSessions,omitempty"`
+	EnableSessions             *bool   `json:"enableSessions,omitempty"`
+	HashUniqueUserKeyAttribute *bool   `json:"hashUniqueUserKeyAttribute,omitempty"`
+	IdleTimeoutDisplayUnit     *string `json:"idleTimeoutDisplayUnit,omitempty"`
+	IdleTimeoutMins            *int    `json:"idleTimeoutMins,omitempty"`
+	MaxTimeoutDisplayUnit      *string `json:"maxTimeoutDisplayUnit,omitempty"`
+	MaxTimeoutMins             *int    `json:"maxTimeoutMins,omitempty"`
+	PersistentSessions         *bool   `json:"persistentSessions,omitempty"`
 }
 
 //GroupMembershipDetection - Settings to detect group memberships.
@@ -1361,10 +1401,11 @@ type IdpAdapterAttribute struct {
 
 //IdpAdapterAttributeContract - A set of attributes exposed by an IdP adapter.
 type IdpAdapterAttributeContract struct {
-	CoreAttributes     *[]*IdpAdapterAttribute `json:"coreAttributes,omitempty"`
-	ExtendedAttributes *[]*IdpAdapterAttribute `json:"extendedAttributes,omitempty"`
-	Inherited          *bool                   `json:"inherited,omitempty"`
-	MaskOgnlValues     *bool                   `json:"maskOgnlValues,omitempty"`
+	CoreAttributes         *[]*IdpAdapterAttribute `json:"coreAttributes,omitempty"`
+	ExtendedAttributes     *[]*IdpAdapterAttribute `json:"extendedAttributes,omitempty"`
+	Inherited              *bool                   `json:"inherited,omitempty"`
+	MaskOgnlValues         *bool                   `json:"maskOgnlValues,omitempty"`
+	UniqueUserKeyAttribute *string                 `json:"uniqueUserKeyAttribute,omitempty"`
 }
 
 //IdpAdapterContractMapping
@@ -1429,6 +1470,7 @@ type IdpAttributeQueryPolicy struct {
 //IdpBrowserSso - The settings used to enable secure browser-based SSO to resources at your site.
 type IdpBrowserSso struct {
 	AdapterMappings                      *[]*SpAdapterMapping                    `json:"adapterMappings,omitempty"`
+	AlwaysSignArtifactResponse           *bool                                   `json:"alwaysSignArtifactResponse,omitempty"`
 	Artifact                             *ArtifactSettings                       `json:"artifact,omitempty"`
 	AssertionsSigned                     *bool                                   `json:"assertionsSigned,omitempty"`
 	AttributeContract                    *IdpBrowserSsoAttributeContract         `json:"attributeContract,omitempty"`
@@ -1511,7 +1553,7 @@ type IdpOAuthGrantAttributeMapping struct {
 	IdpOAuthAttributeContract  *IdpOAuthAttributeContract    `json:"idpOAuthAttributeContract,omitempty"`
 }
 
-//IdpRole - Identity Provider (IdP) role settings.
+//IdpRole - This property has been deprecated and is no longer used. All Roles and protocols are always enabled.
 type IdpRole struct {
 	Enable                     *bool          `json:"enable,omitempty"`
 	EnableOutboundProvisioning *bool          `json:"enableOutboundProvisioning,omitempty"`
@@ -1584,6 +1626,17 @@ type InboundBackChannelAuth struct {
 	Type                  *string                      `json:"type,omitempty"`
 	VerificationIssuerDN  *string                      `json:"verificationIssuerDN,omitempty"`
 	VerificationSubjectDN *string                      `json:"verificationSubjectDN,omitempty"`
+}
+
+//IncomingProxySettings - Incoming Proxy Settings.
+type IncomingProxySettings struct {
+	ClientCertChainSSLHeaderName  *string `json:"clientCertChainSSLHeaderName,omitempty"`
+	ClientCertSSLHeaderName       *string `json:"clientCertSSLHeaderName,omitempty"`
+	ForwardedHostHeaderIndex      *string `json:"forwardedHostHeaderIndex,omitempty"`
+	ForwardedHostHeaderName       *string `json:"forwardedHostHeaderName,omitempty"`
+	ForwardedIpAddressHeaderIndex *string `json:"forwardedIpAddressHeaderIndex,omitempty"`
+	ForwardedIpAddressHeaderName  *string `json:"forwardedIpAddressHeaderName,omitempty"`
+	ProxyTerminatesHttpsConns     *bool   `json:"proxyTerminatesHttpsConns,omitempty"`
 }
 
 //IssuanceCriteria - A list of criteria that determines whether a transaction (usually a SSO transaction) is continued. All criteria must pass in order for the transaction to continue.
@@ -1766,12 +1819,13 @@ type LdapDataStoreAttribute struct {
 
 //LdapDataStoreConfig - LDAP data store configuration.
 type LdapDataStoreConfig struct {
-	BaseDn           *string                        `json:"baseDn,omitempty"`
-	CreatePattern    *string                        `json:"createPattern,omitempty"`
-	DataStoreMapping map[string]*DataStoreAttribute `json:"dataStoreMapping,omitempty"`
-	DataStoreRef     *ResourceLink                  `json:"dataStoreRef,omitempty"`
-	ObjectClass      *string                        `json:"objectClass,omitempty"`
-	Type             *string                        `json:"type,omitempty"`
+	AuxiliaryObjectClasses *[]*string                     `json:"auxiliaryObjectClasses,omitempty"`
+	BaseDn                 *string                        `json:"baseDn,omitempty"`
+	CreatePattern          *string                        `json:"createPattern,omitempty"`
+	DataStoreMapping       map[string]*DataStoreAttribute `json:"dataStoreMapping,omitempty"`
+	DataStoreRef           *ResourceLink                  `json:"dataStoreRef,omitempty"`
+	ObjectClass            *string                        `json:"objectClass,omitempty"`
+	Type                   *string                        `json:"type,omitempty"`
 }
 
 //LdapTagConfig - An LDAP data store's hostnames and tags configuration. This is required if no default hostname is specified.
@@ -1793,6 +1847,12 @@ type LicenseEventNotificationSettings struct {
 	NotificationPublisherRef *ResourceLink `json:"notificationPublisherRef,omitempty"`
 }
 
+//LicenseFeatureView - PingFederate license feature details.
+type LicenseFeatureView struct {
+	Name  *string `json:"name,omitempty"`
+	Value *string `json:"value,omitempty"`
+}
+
 //LicenseFile - License to import.
 type LicenseFile struct {
 	FileData *string `json:"fileData,omitempty"`
@@ -1800,8 +1860,10 @@ type LicenseFile struct {
 
 //LicenseView - PingFederate License details.
 type LicenseView struct {
+	BridgeMode          *bool                          `json:"bridgeMode,omitempty"`
 	EnforcementType     *string                        `json:"enforcementType,omitempty"`
 	ExpirationDate      *string                        `json:"expirationDate,omitempty"`
+	Features            *[]*LicenseFeatureView         `json:"features,omitempty"`
 	GracePeriod         *int                           `json:"gracePeriod,omitempty"`
 	Id                  *string                        `json:"id,omitempty"`
 	IssueDate           *string                        `json:"issueDate,omitempty"`
@@ -1814,6 +1876,7 @@ type LicenseView struct {
 	Product             *string                        `json:"product,omitempty"`
 	ProvisioningEnabled *bool                          `json:"provisioningEnabled,omitempty"`
 	Tier                *string                        `json:"tier,omitempty"`
+	UsedConnections     *int                           `json:"usedConnections,omitempty"`
 	Version             *string                        `json:"version,omitempty"`
 	WsTrustEnabled      *bool                          `json:"wsTrustEnabled,omitempty"`
 }
@@ -1884,6 +1947,18 @@ type LocalIdentityProfiles struct {
 type MetadataEventNotificationSettings struct {
 	EmailAddress             *string       `json:"emailAddress,omitempty"`
 	NotificationPublisherRef *ResourceLink `json:"notificationPublisherRef,omitempty"`
+}
+
+//MetadataLifetimeSettings - Metadata lifetime settings.
+type MetadataLifetimeSettings struct {
+	CacheDuration *int `json:"cacheDuration,omitempty"`
+	ReloadDelay   *int `json:"reloadDelay,omitempty"`
+}
+
+//MetadataSigningSettings - Metadata signing settings. If metadata is not signed, this model will be empty.
+type MetadataSigningSettings struct {
+	SignatureAlgorithm *string       `json:"signatureAlgorithm,omitempty"`
+	SigningKeyRef      *ResourceLink `json:"signingKeyRef,omitempty"`
 }
 
 //MetadataUrl - Metadata URL and corresponding Signature Verification Certificate.
@@ -1990,7 +2065,7 @@ type OAuthOidcKeysSettings struct {
 	StaticJwksEnabled                 *bool         `json:"staticJwksEnabled,omitempty"`
 }
 
-//OAuthRole - OAuth role settings.
+//OAuthRole - This property has been deprecated and is no longer used. OAuth and OpenID Connect are always enabled.
 type OAuthRole struct {
 	EnableOauth         *bool `json:"enableOauth,omitempty"`
 	EnableOpenIdConnect *bool `json:"enableOpenIdConnect,omitempty"`
@@ -2154,6 +2229,19 @@ type OutboundProvisionDatabase struct {
 	SynchronizationFrequency *int          `json:"synchronizationFrequency,omitempty"`
 }
 
+//P14EKeyPairView - PingOne for Enterprise connection key pair details.
+type P14EKeyPairView struct {
+	CreationTime              *string   `json:"creationTime,omitempty"`
+	CurrentAuthenticationKey  *bool     `json:"currentAuthenticationKey,omitempty"`
+	KeyPairView               *CertView `json:"keyPairView,omitempty"`
+	PreviousAuthenticationKey *bool     `json:"previousAuthenticationKey,omitempty"`
+}
+
+//P14EKeysView - The collection of PingOne for Enterprise connection key pair details.
+type P14EKeysView struct {
+	KeyPairs *[]*P14EKeyPairView `json:"keyPairs,omitempty"`
+}
+
 //PKCS12ExportSettings - Settings for exporting a PKCS12 file from the system.
 type PKCS12ExportSettings struct {
 	Password *string `json:"password,omitempty"`
@@ -2242,6 +2330,58 @@ type PhoneLocalIdentityField struct {
 	Type                  *string          `json:"type,omitempty"`
 }
 
+//PingOneConnection - PingOne connection.
+type PingOneConnection struct {
+	Active                           *bool   `json:"active,omitempty"`
+	CreationDate                     *string `json:"creationDate,omitempty"`
+	Credential                       *string `json:"credential,omitempty"`
+	CredentialId                     *string `json:"credentialId,omitempty"`
+	Description                      *string `json:"description,omitempty"`
+	EncryptedCredential              *string `json:"encryptedCredential,omitempty"`
+	EnvironmentId                    *string `json:"environmentId,omitempty"`
+	Id                               *string `json:"id,omitempty"`
+	Name                             *string `json:"name,omitempty"`
+	OrganizationName                 *string `json:"organizationName,omitempty"`
+	PingOneAuthenticationApiEndpoint *string `json:"pingOneAuthenticationApiEndpoint,omitempty"`
+	PingOneConnectionId              *string `json:"pingOneConnectionId,omitempty"`
+	PingOneManagementApiEndpoint     *string `json:"pingOneManagementApiEndpoint,omitempty"`
+	Region                           *string `json:"region,omitempty"`
+}
+
+//PingOneConnections - A collection of PingOne connections.
+type PingOneConnections struct {
+	Items *[]*PingOneConnection `json:"items,omitempty"`
+}
+
+//PingOneCredentialStatus - PingOne credential Status
+type PingOneCredentialStatus struct {
+	PingOneCredentialStatus *string `json:"pingOneCredentialStatus,omitempty"`
+}
+
+//PingOneEnvironment
+type PingOneEnvironment struct {
+	Id   *string `json:"id,omitempty"`
+	Name *string `json:"name,omitempty"`
+	Type *string `json:"type,omitempty"`
+}
+
+//PingOneEnvironments - A collection of PingOne Environments.
+type PingOneEnvironments struct {
+	Items *[]*PingOneEnvironment `json:"items,omitempty"`
+}
+
+//PingOneForEnterpriseSettings - PingOne for Enterprise Settings
+type PingOneForEnterpriseSettings struct {
+	CompanyName                      *string       `json:"companyName,omitempty"`
+	ConnectedToPingOneForEnterprise  *bool         `json:"connectedToPingOneForEnterprise,omitempty"`
+	CurrentAuthnKeyCreationTime      *string       `json:"currentAuthnKeyCreationTime,omitempty"`
+	EnableAdminConsoleSso            *bool         `json:"enableAdminConsoleSso,omitempty"`
+	EnableMonitoring                 *bool         `json:"enableMonitoring,omitempty"`
+	IdentityRepositoryUpdateRequired *bool         `json:"identityRepositoryUpdateRequired,omitempty"`
+	PingOneSsoConnection             *ResourceLink `json:"pingOneSsoConnection,omitempty"`
+	PreviousAuthnKeyCreationTime     *string       `json:"previousAuthnKeyCreationTime,omitempty"`
+}
+
 //PluginConfigDescriptor - Defines the configuration fields available for a plugin.
 type PluginConfigDescriptor struct {
 	ActionDescriptors *[]*ActionDescriptor `json:"actionDescriptors,omitempty"`
@@ -2284,6 +2424,7 @@ type PolicyAction struct {
 	ContinuePolicyAction
 	RestartPolicyAction
 	DonePolicyAction
+	FragmentPolicyAction
 	Context *string `json:"context,omitempty"`
 	Type    *string `json:"type,omitempty"`
 }
@@ -2368,8 +2509,13 @@ type RedirectValidationSettingsWhitelistEntry struct {
 
 //RegistrationConfig - A local identity profile registration configuration.
 type RegistrationConfig struct {
-	CaptchaEnabled *bool   `json:"captchaEnabled,omitempty"`
-	TemplateName   *string `json:"templateName,omitempty"`
+	CaptchaEnabled                      *bool         `json:"captchaEnabled,omitempty"`
+	CreateAuthnSessionAfterRegistration *bool         `json:"createAuthnSessionAfterRegistration,omitempty"`
+	ExecuteWorkflow                     *string       `json:"executeWorkflow,omitempty"`
+	RegistrationWorkflow                *ResourceLink `json:"registrationWorkflow,omitempty"`
+	TemplateName                        *string       `json:"templateName,omitempty"`
+	ThisIsMyDeviceEnabled               *bool         `json:"thisIsMyDeviceEnabled,omitempty"`
+	UsernameField                       *string       `json:"usernameField,omitempty"`
 }
 
 //RequestPolicies - A collection of CIBA request policies.
@@ -2392,6 +2538,12 @@ type RequestPolicy struct {
 	UserCodePcvRef                   *ResourceLink                       `json:"userCodePcvRef,omitempty"`
 }
 
+//ResourceCategoryInfo - A model containing information on a category of resource in the administrative API.
+type ResourceCategoryInfo struct {
+	Id   *string `json:"id,omitempty"`
+	Name *string `json:"name,omitempty"`
+}
+
 //ResourceLink - A reference to a resource.
 type ResourceLink struct {
 	Id       *string `json:"id,omitempty"`
@@ -2412,13 +2564,28 @@ type ResourceOwnerCredentialsMappings struct {
 	Items *[]*ResourceOwnerCredentialsMapping `json:"items,omitempty"`
 }
 
+//ResourceUsage - An API model representing a reference to an API resource.
+type ResourceUsage struct {
+	CategoryId *string       `json:"categoryId,omitempty"`
+	Id         *string       `json:"id,omitempty"`
+	Name       *string       `json:"name,omitempty"`
+	Ref        *ResourceLink `json:"ref,omitempty"`
+	Type       *string       `json:"type,omitempty"`
+}
+
+//ResourceUsages - A collection of resource usages.
+type ResourceUsages struct {
+	Categories *[]*ResourceCategoryInfo `json:"categories,omitempty"`
+	Items      *[]*ResourceUsage        `json:"items,omitempty"`
+}
+
 //RestartPolicyAction - The restart selection action.
 type RestartPolicyAction struct {
 	Context *string `json:"context,omitempty"`
 	Type    *string `json:"type,omitempty"`
 }
 
-//RolesAndProtocols - Roles and protocols settings.
+//RolesAndProtocols - This property has been deprecated and is no longer used. All Roles and protocols are always enabled.
 type RolesAndProtocols struct {
 	EnableIdpDiscovery *bool      `json:"enableIdpDiscovery,omitempty"`
 	IdpRole            *IdpRole   `json:"idpRole,omitempty"`
@@ -2538,6 +2705,33 @@ type ServerSettings struct {
 	RolesAndProtocols *RolesAndProtocols    `json:"rolesAndProtocols,omitempty"`
 }
 
+//ServiceAssociation - A model representing an association between a PingFederate component (typically a plugin) and a list of PingOne services.
+type ServiceAssociation struct {
+	ComponentName *string    `json:"componentName,omitempty"`
+	Configured    *bool      `json:"configured,omitempty"`
+	ServiceNames  *[]*string `json:"serviceNames,omitempty"`
+}
+
+//ServiceAssociations - A list of installed components that consume PingOne services.
+type ServiceAssociations struct {
+	Items *[]*ServiceAssociation `json:"items,omitempty"`
+}
+
+//ServiceAuthentication - Service Authentication Settings.
+type ServiceAuthentication struct {
+	AttributeQuery       *ServiceModel `json:"attributeQuery,omitempty"`
+	ConnectionManagement *ServiceModel `json:"connectionManagement,omitempty"`
+	Jmx                  *ServiceModel `json:"jmx,omitempty"`
+	SsoDirectoryService  *ServiceModel `json:"ssoDirectoryService,omitempty"`
+}
+
+//ServiceModel - Service Model.
+type ServiceModel struct {
+	EncryptedSharedSecret *string `json:"encryptedSharedSecret,omitempty"`
+	Id                    *string `json:"id,omitempty"`
+	SharedSecret          *string `json:"sharedSecret,omitempty"`
+}
+
 //SessionSettings - General settings related to session management.
 type SessionSettings struct {
 	RevokeUserSessionOnLogout     *bool `json:"revokeUserSessionOnLogout,omitempty"`
@@ -2549,6 +2743,7 @@ type SessionSettings struct {
 type SessionValidationSettings struct {
 	CheckSessionRevocationStatus *bool `json:"checkSessionRevocationStatus,omitempty"`
 	CheckValidAuthnSession       *bool `json:"checkValidAuthnSession,omitempty"`
+	IncludeSessionId             *bool `json:"includeSessionId,omitempty"`
 	Inherited                    *bool `json:"inherited,omitempty"`
 	UpdateAuthnSessionActivity   *bool `json:"updateAuthnSessionActivity,omitempty"`
 }
@@ -2568,7 +2763,7 @@ type SloServiceEndpoint struct {
 	Url         *string `json:"url,omitempty"`
 }
 
-//SourceTypeIdKey - A key that is meant to reference a source from which an attribute can be retrieved. This model is usually paired with a value which, depending on the SourceType, can be a hardcoded value or a reference to an attribute name specific to that SourceType. Not all values are applicable - a validation error will be returned for incorrect values.<br>For each SourceType, the value should be:<br>ACCOUNT_LINK - If account linking was enabled for the browser SSO, the value must be 'Local User ID', unless it has been overridden in PingFederate's server configuration.<br>ADAPTER - The value is one of the attributes of the IdP Adapter.<br>ASSERTION - The value is one of the attributes coming from the SAML assertion.<br>AUTHENTICATION_POLICY_CONTRACT - The value is one of the attributes coming from an authentication policy contract.<br>LOCAL_IDENTITY_PROFILE - The value is one of the fields coming from a local identity profile.<br>CONTEXT - The value must be one of the following ['TargetResource' or 'OAuthScopes' or 'ClientId' or 'AuthenticationCtx' or 'ClientIp' or 'Locale' or 'StsBasicAuthUsername' or 'StsSSLClientCertSubjectDN' or 'StsSSLClientCertChain' or 'VirtualServerId' or 'AuthenticatingAuthority' or 'DefaultPersistentGrantLifetime']<br>CLAIMS - Attributes provided by the OIDC Provider.<br>CUSTOM_DATA_STORE - The value is one of the attributes returned by this custom data store.<br>EXPRESSION - The value is an OGNL expression.<br>EXTENDED_CLIENT_METADATA - The value is from an OAuth extended client metadata parameter. This source type is deprecated and has been replaced by EXTENDED_PROPERTIES.<br>EXTENDED_PROPERTIES - The value is from an OAuth Client's extended property.<br>IDP_CONNECTION - The value is one of the attributes passed in by the IdP connection.<br>JDBC_DATA_STORE - The value is one of the column names returned from the JDBC attribute source.<br>LDAP_DATA_STORE - The value is one of the LDAP attributes supported by your LDAP data store.<br>MAPPED_ATTRIBUTES - The value is the name of one of the mapped attributes that is defined in the associated attribute mapping.<br>OAUTH_PERSISTENT_GRANT - The value is one of the attributes from the persistent grant.<br>PASSWORD_CREDENTIAL_VALIDATOR - The value is one of the attributes of the PCV.<br>NO_MAPPING - A placeholder value to indicate that an attribute currently has no mapped source.TEXT - A hardcoded value that is used to populate the corresponding attribute.<br>TOKEN - The value is one of the token attributes.<br>REQUEST - The value is from the request context such as the CIBA identity hint contract or the request contract for Ws-Trust.<br>TRACKED_HTTP_PARAMS - The value is from the original request parameters.<br>SUBJECT_TOKEN - The value is one of the OAuth 2.0 Token exchange subject_token attributes.<br>ACTOR_TOKEN - The value is one of the OAuth 2.0 Token exchange actor_token attributes.<br>TOKEN_EXCHANGE_PROCESSOR_POLICY - The value is one of the attributes coming from a Token Exchange Processor policy.
+//SourceTypeIdKey - A key that is meant to reference a source from which an attribute can be retrieved. This model is usually paired with a value which, depending on the SourceType, can be a hardcoded value or a reference to an attribute name specific to that SourceType. Not all values are applicable - a validation error will be returned for incorrect values.<br>For each SourceType, the value should be:<br>ACCOUNT_LINK - If account linking was enabled for the browser SSO, the value must be 'Local User ID', unless it has been overridden in PingFederate's server configuration.<br>ADAPTER - The value is one of the attributes of the IdP Adapter.<br>ASSERTION - The value is one of the attributes coming from the SAML assertion.<br>AUTHENTICATION_POLICY_CONTRACT - The value is one of the attributes coming from an authentication policy contract.<br>LOCAL_IDENTITY_PROFILE - The value is one of the fields coming from a local identity profile.<br>CONTEXT - The value must be one of the following ['TargetResource' or 'OAuthScopes' or 'ClientId' or 'AuthenticationCtx' or 'ClientIp' or 'Locale' or 'StsBasicAuthUsername' or 'StsSSLClientCertSubjectDN' or 'StsSSLClientCertChain' or 'VirtualServerId' or 'AuthenticatingAuthority' or 'DefaultPersistentGrantLifetime']<br>CLAIMS - Attributes provided by the OIDC Provider.<br>CUSTOM_DATA_STORE - The value is one of the attributes returned by this custom data store.<br>EXPRESSION - The value is an OGNL expression.<br>EXTENDED_CLIENT_METADATA - The value is from an OAuth extended client metadata parameter. This source type is deprecated and has been replaced by EXTENDED_PROPERTIES.<br>EXTENDED_PROPERTIES - The value is from an OAuth Client's extended property.<br>IDP_CONNECTION - The value is one of the attributes passed in by the IdP connection.<br>JDBC_DATA_STORE - The value is one of the column names returned from the JDBC attribute source.<br>LDAP_DATA_STORE - The value is one of the LDAP attributes supported by your LDAP data store.<br>MAPPED_ATTRIBUTES - The value is the name of one of the mapped attributes that is defined in the associated attribute mapping.<br>OAUTH_PERSISTENT_GRANT - The value is one of the attributes from the persistent grant.<br>PASSWORD_CREDENTIAL_VALIDATOR - The value is one of the attributes of the PCV.<br>NO_MAPPING - A placeholder value to indicate that an attribute currently has no mapped source.TEXT - A hardcoded value that is used to populate the corresponding attribute.<br>TOKEN - The value is one of the token attributes.<br>REQUEST - The value is from the request context such as the CIBA identity hint contract or the request contract for Ws-Trust.<br>TRACKED_HTTP_PARAMS - The value is from the original request parameters.<br>SUBJECT_TOKEN - The value is one of the OAuth 2.0 Token exchange subject_token attributes.<br>ACTOR_TOKEN - The value is one of the OAuth 2.0 Token exchange actor_token attributes.<br>TOKEN_EXCHANGE_PROCESSOR_POLICY - The value is one of the attributes coming from a Token Exchange Processor policy.<br>FRAGMENT - The value is one of the attributes coming from an authentication policy fragment.<br>INPUTS - The value is one of the attributes coming from an attribute defined in the input authentication policy contract for an authentication policy fragment.
 type SourceTypeIdKey struct {
 	Id   *string `json:"id,omitempty"`
 	Type *string `json:"type,omitempty"`
@@ -2667,6 +2862,7 @@ type SpAttributeQueryPolicy struct {
 //SpBrowserSso - The SAML settings used to enable secure browser-based SSO to resources at your partner's site.
 type SpBrowserSso struct {
 	AdapterMappings                               *[]*IdpAdapterAssertionMapping                   `json:"adapterMappings,omitempty"`
+	AlwaysSignArtifactResponse                    *bool                                            `json:"alwaysSignArtifactResponse,omitempty"`
 	Artifact                                      *ArtifactSettings                                `json:"artifact,omitempty"`
 	AssertionLifetime                             *AssertionLifetime                               `json:"assertionLifetime,omitempty"`
 	AttributeContract                             *SpBrowserSsoAttributeContract                   `json:"attributeContract,omitempty"`
@@ -2709,6 +2905,7 @@ type SpConnection struct {
 	ApplicationName                        *string                                 `json:"applicationName,omitempty"`
 	AttributeQuery                         *SpAttributeQuery                       `json:"attributeQuery,omitempty"`
 	BaseUrl                                *string                                 `json:"baseUrl,omitempty"`
+	ConnectionTargetType                   *string                                 `json:"connectionTargetType,omitempty"`
 	ContactInfo                            *ContactInfo                            `json:"contactInfo,omitempty"`
 	Credentials                            *ConnectionCredentials                  `json:"credentials,omitempty"`
 	DefaultVirtualEntityId                 *string                                 `json:"defaultVirtualEntityId,omitempty"`
@@ -2738,7 +2935,7 @@ type SpDefaultUrls struct {
 	SsoSuccessUrl *string `json:"ssoSuccessUrl,omitempty"`
 }
 
-//SpRole - Service Provider (SP) role settings.
+//SpRole - This property has been deprecated and is no longer used. All Roles and protocols are always enabled.
 type SpRole struct {
 	Enable                    *bool            `json:"enable,omitempty"`
 	EnableInboundProvisioning *bool            `json:"enableInboundProvisioning,omitempty"`

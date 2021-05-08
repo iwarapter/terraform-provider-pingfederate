@@ -252,6 +252,12 @@ func (c pfClient) IsPF10() bool {
 	return re.MatchString(c.apiVersion)
 }
 
+// Checks whether we are running against PingFederate 10.2+
+func (c pfClient) IsPF10_2orGreater() bool {
+	re := regexp.MustCompile(`^(10\.[2-9])`)
+	return re.MatchString(c.apiVersion)
+}
+
 func checkErr(err error) string {
 	if netError, ok := err.(net.Error); ok && netError.Timeout() {
 		return "Timeout"
