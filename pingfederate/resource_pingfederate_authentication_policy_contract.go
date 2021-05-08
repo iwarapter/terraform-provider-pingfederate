@@ -2,6 +2,9 @@ package pingfederate
 
 import (
 	"context"
+	"regexp"
+
+	"github.com/hashicorp/go-cty/cty"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/authenticationPolicyContracts"
 
@@ -26,6 +29,21 @@ func resourcePingFederateAuthenticationPolicyContractResource() *schema.Resource
 
 func resourcePingFederateAuthenticationPolicyContractResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
+		"policy_contract_id": {
+			Type:     schema.TypeString,
+			Optional: true,
+			Computed: true,
+			ForceNew: true,
+			ValidateDiagFunc: func(value interface{}, path cty.Path) diag.Diagnostics {
+				//.
+				v := value.(string)
+				r, _ := regexp.Compile(`^[a-zA-Z0-9._-]+$`)
+				if !r.MatchString(v) {
+					return diag.Errorf("the policy_contract_id can only contain alphanumeric characters, dash, dot and underscore.")
+				}
+				return nil
+			},
+		},
 		"name": {
 			Type:     schema.TypeString,
 			Required: true,
@@ -102,6 +120,8 @@ func resourcePingFederateAuthenticationPolicyContractResourceDelete(ctx context.
 func resourcePingFederateAuthenticationPolicyContractResourceReadResult(d *schema.ResourceData, rv *pf.AuthenticationPolicyContract) diag.Diagnostics {
 	var diags diag.Diagnostics
 	setResourceDataStringWithDiagnostic(d, "name", rv.Name, &diags)
+	setResourceDataStringWithDiagnostic(d, "policy_contract_id", rv.Id, &diags)
+
 	if rv.ExtendedAttributes != nil && len(*rv.ExtendedAttributes) > 0 {
 		if err := d.Set("extended_attributes", flattenAuthenticationPolicyContractAttribute(*rv.ExtendedAttributes)); err != nil {
 			diags = append(diags, diag.FromErr(err)...)
@@ -127,7 +147,9 @@ func resourcePingFederateAuthenticationPolicyContractResourceReadData(d *schema.
 			},
 		},
 	}
-
+	if v, ok := d.GetOk("policy_contract_id"); ok {
+		contract.Id = String(v.(string))
+	}
 	if _, ok := d.GetOk("extended_attributes"); ok {
 		contract.ExtendedAttributes = expandAuthenticationPolicyContractAttribute(d.Get("extended_attributes").(*schema.Set).List())
 	}

@@ -14,8 +14,8 @@ resource "pingfederate_authentication_policy_contract" "demo" {
 
 The following arguments are supported:
 
+- [`policy_contract_id`](#policy_contract_id) - (Optional)  The Authentication Policy Contract ID. This property is system-assigned if not specified.
 - [`name`](#name) - (Required) The Authentication Policy Contract Name. Name is unique.
-
 - [`extended_attributes`](#extended_attributes) - A list of additional attributes as needed.
 
 ## Attributes Reference

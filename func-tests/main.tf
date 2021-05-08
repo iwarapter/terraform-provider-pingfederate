@@ -218,6 +218,7 @@ resource "pingfederate_oauth_access_token_manager" "my_atm" {
 }
 
 resource "pingfederate_authentication_policy_contract" "apc_foo" {
+  policy_contract_id  = "example"
   name                = "wee"
   extended_attributes = ["foo", "bar"]
 }

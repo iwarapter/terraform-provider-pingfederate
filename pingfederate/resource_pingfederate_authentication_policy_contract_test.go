@@ -75,6 +75,7 @@ func testAccCheckPingFederateAuthenticationPolicyContractResourceDestroy(s *terr
 func testAccPingFederateAuthenticationPolicyContractResourceConfig(configUpdate string) string {
 	return fmt.Sprintf(`
 	resource "pingfederate_authentication_policy_contract" "demo" {
+		policy_contract_id = "example"
 		name = "acc_test_one"
 		extended_attributes = ["foo", "%s"]
 	}`, configUpdate)
