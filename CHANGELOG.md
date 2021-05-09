@@ -1,3 +1,40 @@
+## 0.0.16 (Unreleased)
+
+NOTES:
+
+* This is an early release experimental build for PingFederate 10.x
+- Add ability to specify `default_row` for configuration table rows, the default value is `false`, be sure to review any configuration blocks with rows before upgrading.
+- This main test version for the provider is now 10.2, the functional tests cover all versions of 10.x still.
+
+FEATURES:
+
+- Add custom data store resource/data sources. (#82)
+- Add authentication policy fragment (PF10.2+). (#80)
+- Add support for dynamic scopes (oauth_auth_server_settings). (#82) (Thanks to @mosersil for this contribution)
+- Add support setting authentication policy contract id. (#81)
+- Add support setting data stores id. (#89)
+
+BUG FIXES:
+
+- Add workaround for PingFederate bug with race conditions deleting authentication policy contracts and sp connections. (#91)
+
+## 0.0.15 (Apr 25th, 2021)
+
+NOTES:
+
+* This is an early release experimental build for PingFederate 10.x
+- Some additional documentation cleanup. (#62)
+- Added ability to handle certificate formatting differences for `idp_sp_connection`  `credentials -> certs -> x509_file` block.
+
+FEATURES:
+
+- Add jdbc/ldap data store data sources. (#71)
+
+BUG FIXES:
+
+- Add workaround for PingFederate bug with race conditions deleting data stores and sp connections. (#77)
+- Fix crash with empty `contact_info` block on `idp_sp_connection`. (#70 )
+
 ## 0.0.14 (Apr 13th, 2021)
 
 NOTES:
