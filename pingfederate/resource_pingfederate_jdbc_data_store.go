@@ -27,6 +27,21 @@ func resourcePingFederateJdbcDataStoreResource() *schema.Resource {
 
 func resourcePingFederateJdbcDataStoreResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
+		"data_store_id": {
+			Type:     schema.TypeString,
+			Optional: true,
+			Computed: true,
+			ForceNew: true,
+			//https://discuss.hashicorp.com/t/validated-func-with-computed-optional/24179
+			//ValidateDiagFunc: func(value interface{}, path cty.Path) diag.Diagnostics {
+			//	v := value.(string)
+			//	r, _ := regexp.Compile(`^[a-zA-Z0-9._-]+$`)
+			//	if !r.MatchString(v) {
+			//		return diag.Errorf("the policy_contract_id can only contain alphanumeric characters, dash, dot and underscore.")
+			//	}
+			//	return nil
+			//},
+		},
 		"mask_attribute_values": {
 			Type:     schema.TypeBool,
 			Optional: true,
@@ -172,7 +187,7 @@ func resourcePingFederateJdbcDataStoreResourceDelete(ctx context.Context, d *sch
 func resourcePingFederateJdbcDataStoreResourceReadResult(d *schema.ResourceData, rv *pf.JdbcDataStore) diag.Diagnostics {
 	var diags diag.Diagnostics
 	setResourceDataBoolWithDiagnostic(d, "mask_attribute_values", rv.MaskAttributeValues, &diags)
-
+	setResourceDataStringWithDiagnostic(d, "data_store_id", rv.Id, &diags)
 	if rv.ConnectionUrlTags != nil && len(*rv.ConnectionUrlTags) != 0 {
 		if err := d.Set("connection_url_tags", flattenJdbcTagConfigs(rv.ConnectionUrlTags)); err != nil {
 			diags = append(diags, diag.FromErr(err)...)
@@ -197,6 +212,9 @@ func resourcePingFederateJdbcDataStoreResourceReadResult(d *schema.ResourceData,
 
 func resourcePingFederateJdbcDataStoreResourceReadData(d *schema.ResourceData) *pf.JdbcDataStore {
 	ds := &pf.JdbcDataStore{}
+	if v, ok := d.GetOk("data_store_id"); ok {
+		ds.Id = String(v.(string))
+	}
 	if v, ok := d.GetOkExists("mask_attribute_values"); ok {
 		ds.MaskAttributeValues = Bool(v.(bool))
 	}

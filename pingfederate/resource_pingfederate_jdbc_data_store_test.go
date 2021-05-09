@@ -83,6 +83,7 @@ provider "pingfederate" {
 }
 
 resource "pingfederate_jdbc_data_store" "demo" {
+  data_store_id = "jdbcexample"
   name = "terraform"
   driver_class = "org.hsqldb.jdbcDriver"
   user_name = "sa"
@@ -128,6 +129,7 @@ func Test_resourcePingFederateJdbcDataStoreResourceReadData(t *testing.T) {
 	}{
 		{
 			Resource: pf.JdbcDataStore{
+				Id:            String("example"),
 				ConnectionUrl: String("jdbc:hsqldb:mem:mymemdb"),
 				//ConnectionUrlTags: &[]*pf.JdbcTagConfig{},
 				DriverClass:               String("org.hsqldb.jdbcDriver"),

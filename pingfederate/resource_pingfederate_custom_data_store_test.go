@@ -87,6 +87,7 @@ provider "pingfederate" {
 }
 
 resource "pingfederate_custom_data_store" "demo" {
+  data_store_id = "customexample"
   name = "customterra"
   plugin_descriptor_ref {
 	id = "com.pingidentity.pf.datastore.other.RestDataSourceDriver"
@@ -252,6 +253,7 @@ func Test_resourcePingFederateCustomDataStoreResourceReadData(t *testing.T) {
 	}{
 		{
 			Resource: pf.CustomDataStore{
+				Id:                  String("example"),
 				MaskAttributeValues: Bool(false),
 				Name:                String("terraform"),
 				Type:                String("CUSTOM"),
