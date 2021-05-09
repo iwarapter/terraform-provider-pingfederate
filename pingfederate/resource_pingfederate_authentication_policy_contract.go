@@ -106,6 +106,9 @@ func resourcePingFederateAuthenticationPolicyContractResourceUpdate(ctx context.
 }
 
 func resourcePingFederateAuthenticationPolicyContractResourceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	awsMutexKV.Lock("connection_delete")
+	defer awsMutexKV.Unlock("connection_delete")
+
 	svc := m.(pfClient).AuthenticationPolicyContracts
 	input := authenticationPolicyContracts.DeleteAuthenticationPolicyContractInput{
 		Id: d.Id(),
