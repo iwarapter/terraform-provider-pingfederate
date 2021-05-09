@@ -107,6 +107,7 @@ resource "pingfederate_custom_data_store" "example" {
 
 The following arguments are supported:
 
+- [`data_store_id`](#data_store_id) - (Optional)  The Data Store ID. This property is system-assigned if not specified.
 - [`name`](#name) - (Required) The plugin instance name. The name cannot be modified once the instance is created.
 - `allow_multi_value_attributes` - (Optional) Indicates that this data store can select more than one record from a column and return the results as a multi-value attribute.
 

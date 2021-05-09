@@ -2,9 +2,6 @@ package pingfederate
 
 import (
 	"context"
-	"regexp"
-
-	"github.com/hashicorp/go-cty/cty"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/authenticationPolicyContracts"
 
@@ -34,15 +31,15 @@ func resourcePingFederateAuthenticationPolicyContractResourceSchema() map[string
 			Optional: true,
 			Computed: true,
 			ForceNew: true,
-			ValidateDiagFunc: func(value interface{}, path cty.Path) diag.Diagnostics {
-				//.
-				v := value.(string)
-				r, _ := regexp.Compile(`^[a-zA-Z0-9._-]+$`)
-				if !r.MatchString(v) {
-					return diag.Errorf("the policy_contract_id can only contain alphanumeric characters, dash, dot and underscore.")
-				}
-				return nil
-			},
+			//https://discuss.hashicorp.com/t/validated-func-with-computed-optional/24179
+			//ValidateDiagFunc: func(value interface{}, path cty.Path) diag.Diagnostics {
+			//	v := value.(string)
+			//	r, _ := regexp.Compile(`^[a-zA-Z0-9._-]+$`)
+			//	if !r.MatchString(v) {
+			//		return diag.Errorf("the policy_contract_id can only contain alphanumeric characters, dash, dot and underscore.")
+			//	}
+			//	return nil
+			//},
 		},
 		"name": {
 			Type:     schema.TypeString,

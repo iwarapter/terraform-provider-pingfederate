@@ -78,6 +78,11 @@ func testAccPingFederateAuthenticationPolicyContractResourceConfig(configUpdate 
 		policy_contract_id = "example"
 		name = "acc_test_one"
 		extended_attributes = ["foo", "%s"]
+	}
+
+	resource "pingfederate_authentication_policy_contract" "demo2" {
+		name = "acc_test_two"
+		extended_attributes = ["one", "two"]
 	}`, configUpdate)
 }
 

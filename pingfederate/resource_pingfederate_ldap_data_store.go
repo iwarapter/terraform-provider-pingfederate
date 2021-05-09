@@ -28,6 +28,21 @@ func resourcePingFederateLdapDataStoreResource() *schema.Resource {
 
 func resourcePingFederateLdapDataStoreResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
+		"data_store_id": {
+			Type:     schema.TypeString,
+			Optional: true,
+			Computed: true,
+			ForceNew: true,
+			//https://discuss.hashicorp.com/t/validated-func-with-computed-optional/24179
+			//ValidateDiagFunc: func(value interface{}, path cty.Path) diag.Diagnostics {
+			//	v := value.(string)
+			//	r, _ := regexp.Compile(`^[a-zA-Z0-9._-]+$`)
+			//	if !r.MatchString(v) {
+			//		return diag.Errorf("the policy_contract_id can only contain alphanumeric characters, dash, dot and underscore.")
+			//	}
+			//	return nil
+			//},
+		},
 		"mask_attribute_values": {
 			Type:     schema.TypeBool,
 			Optional: true,
@@ -217,6 +232,7 @@ func resourcePingFederateLdapDataStoreResourceDelete(ctx context.Context, d *sch
 
 func resourcePingFederateLdapDataStoreResourceReadResult(d *schema.ResourceData, rv *pf.LdapDataStore) diag.Diagnostics {
 	var diags diag.Diagnostics
+	setResourceDataStringWithDiagnostic(d, "data_store_id", rv.Id, &diags)
 	setResourceDataBoolWithDiagnostic(d, "mask_attribute_values", rv.MaskAttributeValues, &diags)
 	setResourceDataStringWithDiagnostic(d, "name", rv.Name, &diags)
 	setResourceDataStringWithDiagnostic(d, "ldap_type", rv.LdapType, &diags)
@@ -265,6 +281,9 @@ func resourcePingFederateLdapDataStoreResourceReadData(d *schema.ResourceData) *
 	ds := &pf.LdapDataStore{
 		CreateIfNecessary: Bool(d.Get("create_if_necessary").(bool)),
 		VerifyHost:        Bool(d.Get("verify_host").(bool)),
+	}
+	if v, ok := d.GetOk("data_store_id"); ok {
+		ds.Id = String(v.(string))
 	}
 	if val, ok := d.GetOkExists("mask_attribute_values"); ok {
 		ds.MaskAttributeValues = Bool(val.(bool))

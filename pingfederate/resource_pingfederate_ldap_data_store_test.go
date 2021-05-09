@@ -98,6 +98,7 @@ provider "pingfederate" {
 }
 
 resource "pingfederate_ldap_data_store" "demo" {
+    data_store_id = "ldapexample"
 	name             = "terraform_ldap"
 	ldap_type        = "PING_DIRECTORY"
 	hostnames        = ["host.docker.internal:1389"]
@@ -141,6 +142,7 @@ func Test_resourcePingFederateLdapDataStoreResourceReadData(t *testing.T) {
 	}{
 		{
 			Resource: pf.LdapDataStore{
+				Id:                String("example"),
 				BindAnonymously:   Bool(false),
 				ConnectionTimeout: Int(3000),
 				CreateIfNecessary: Bool(false),

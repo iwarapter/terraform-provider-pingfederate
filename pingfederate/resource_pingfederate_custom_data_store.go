@@ -27,6 +27,21 @@ func resourcePingFederateCustomDataStoreResource() *schema.Resource {
 
 func resourcePingFederateCustomDataStoreResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
+		"data_store_id": {
+			Type:     schema.TypeString,
+			Optional: true,
+			Computed: true,
+			ForceNew: true,
+			//https://discuss.hashicorp.com/t/validated-func-with-computed-optional/24179
+			//ValidateDiagFunc: func(value interface{}, path cty.Path) diag.Diagnostics {
+			//	v := value.(string)
+			//	r, _ := regexp.Compile(`^[a-zA-Z0-9._-]+$`)
+			//	if !r.MatchString(v) {
+			//		return diag.Errorf("the policy_contract_id can only contain alphanumeric characters, dash, dot and underscore.")
+			//	}
+			//	return nil
+			//},
+		},
 		"mask_attribute_values": {
 			Type:     schema.TypeBool,
 			Optional: true,
@@ -107,6 +122,7 @@ func resourcePingFederateCustomDataStoreResourceReadResult(d *schema.ResourceDat
 	var diags diag.Diagnostics
 	setResourceDataBoolWithDiagnostic(d, "mask_attribute_values", rv.MaskAttributeValues, &diags)
 	setResourceDataStringWithDiagnostic(d, "name", rv.Name, &diags)
+	setResourceDataStringWithDiagnostic(d, "data_store_id", rv.Id, &diags)
 	if rv.PluginDescriptorRef != nil {
 		if err := d.Set("plugin_descriptor_ref", flattenResourceLink(rv.PluginDescriptorRef)); err != nil {
 			diags = append(diags, diag.FromErr(err)...)
@@ -135,6 +151,9 @@ func resourcePingFederateCustomDataStoreResourceReadData(d *schema.ResourceData)
 		Name:                String(d.Get("name").(string)),
 		PluginDescriptorRef: expandResourceLink(d.Get("plugin_descriptor_ref").([]interface{})[0].(map[string]interface{})),
 		Configuration:       expandPluginConfiguration(d.Get("configuration").([]interface{})),
+	}
+	if v, ok := d.GetOk("data_store_id"); ok {
+		ds.Id = String(v.(string))
 	}
 	if v, ok := d.GetOk("parent_ref"); ok && len(v.([]interface{})) > 0 {
 		ds.ParentRef = expandResourceLink(v.([]interface{})[0].(map[string]interface{}))
