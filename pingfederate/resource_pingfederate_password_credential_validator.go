@@ -57,7 +57,8 @@ func resourcePingFederatePasswordCredentialValidatorResourceSchema() map[string]
 		"configuration":         resourcePluginConfiguration(),
 		"attribute_contract": {
 			Type:     schema.TypeList,
-			Required: true,
+			Optional: true,
+			Computed: true,
 			MaxItems: 1,
 			Elem:     resourcePasswordCredentialValidatorAttributeContract(),
 		},

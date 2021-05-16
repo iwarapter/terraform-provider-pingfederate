@@ -311,9 +311,6 @@ resource "pingfederate_password_credential_validator" "demo" {
       }
     }
   }
-  attribute_contract {
-    core_attributes = ["username"]
-  }
 }
 
 resource "pingfederate_jdbc_data_store" "demo" {
@@ -362,7 +359,6 @@ resource "pingfederate_idp_adapter" "demo" {
       name  = "Challenge Retries"
       value = "3"
     }
-
   }
 
   attribute_contract {
@@ -515,11 +511,6 @@ resource "pingfederate_sp_adapter" "demo" {
       name  = "Use Verbose Error Messages"
       value = "false"
     }
-  }
-
-  attribute_contract {
-    core_attributes = [
-    "subject"]
   }
 
   target_application_info {

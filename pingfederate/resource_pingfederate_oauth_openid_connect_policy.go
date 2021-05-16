@@ -69,6 +69,7 @@ func resourcePingFederateOpenIdConnectPolicyResourceSchema() map[string]*schema.
 		"attribute_contract": {
 			Type:     schema.TypeList,
 			Optional: true,
+			Computed: true,
 			MaxItems: 1,
 			Elem:     resourceOpenIdConnectAttributeContract(),
 		},
@@ -164,7 +165,7 @@ func resourcePingFederateOpenIdConnectPolicyResourceReadResult(d *schema.Resourc
 	setResourceDataBoolWithDiagnostic(d, "include_user_in_id_token", rv.IncludeUserInfoInIdToken, &diags)
 	setResourceDataBoolWithDiagnostic(d, "include_shash_in_id_token", rv.IncludeSHashInIdToken, &diags)
 	setResourceDataBoolWithDiagnostic(d, "return_id_token_on_refresh_grant", rv.ReturnIdTokenOnRefreshGrant, &diags)
-	if rv.AttributeContract != nil {
+	if rv.AttributeContract != nil && openIdAttributeContractShouldFlatten(rv.AttributeContract) {
 		if err := d.Set("attribute_contract", flattenOpenIdConnectAttributeContract(rv.AttributeContract)); err != nil {
 			diags = append(diags, diag.FromErr(err)...)
 		}
@@ -187,10 +188,12 @@ func resourcePingFederateOpenIdConnectPolicyResourceReadData(d *schema.ResourceD
 		Id:                    String(d.Get("policy_id").(string)),
 		Name:                  String(d.Get("name").(string)),
 		AccessTokenManagerRef: expandResourceLink(d.Get("access_token_manager_ref").([]interface{})[0].(map[string]interface{})),
-		AttributeContract:     expandOpenIdConnectAttributeContract(d.Get("attribute_contract").([]interface{})),
 		AttributeMapping:      expandAttributeMapping(d.Get("attribute_mapping").([]interface{})),
 	}
 
+	if v, ok := d.GetOk("attribute_contract"); ok {
+		policy.AttributeContract = expandOpenIdConnectAttributeContract(v.([]interface{}))
+	}
 	if v, ok := d.GetOk("id_token_lifetime"); ok {
 		policy.IdTokenLifetime = Int(v.(int))
 	}

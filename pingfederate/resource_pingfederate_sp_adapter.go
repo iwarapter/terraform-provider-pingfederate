@@ -69,7 +69,8 @@ func resourcePingFederateSpAdapterResourceSchema() map[string]*schema.Schema {
 		"configuration":         resourcePluginConfiguration(),
 		"attribute_contract": {
 			Type:     schema.TypeList,
-			Required: true,
+			Optional: true,
+			Computed: true,
 			MaxItems: 1,
 			Elem:     resourceSpAdapterAttributeContract(),
 		},
@@ -161,7 +162,7 @@ func resourcePingFederateSpAdapterResourceReadResult(d *schema.ResourceData, rv 
 		}
 	}
 
-	if rv.AttributeContract != nil {
+	if rv.AttributeContract != nil && spAdapterAttributeContractShouldFlatten(rv.AttributeContract) {
 		if err = d.Set("attribute_contract", flattenSpAdapterAttributeContract(rv.AttributeContract)); err != nil {
 			diags = append(diags, diag.FromErr(err)...)
 		}
