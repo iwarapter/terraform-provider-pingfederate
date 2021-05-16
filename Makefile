@@ -15,7 +15,7 @@ pf-init:
 		-e TAIL_LOG_FILES="/opt/out/instance/log/server.log /opt/out/instance/log/admin-api.log" \
 		-e SERVER_PROFILE_URL=https://github.com/pingidentity/pingidentity-server-profiles.git \
 		-e SERVER_PROFILE_PATH=getting-started/pingfederate \
-		-e IMAGE_VERSION=pingfederate-alpine-az11-10.0.6-210216-d9b5 \
+		-e IMAGE_VERSION=pingfederate-alpine-az11-10.0.6-210515-d9b5 \
 		--publish 9999:9999 \
 		--publish 9031:9031 \
 		pingidentity/pingfederate:10.2.2-edge

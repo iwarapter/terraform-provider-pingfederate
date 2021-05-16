@@ -1,4 +1,22 @@
-## 0.0.16 (Unreleased)
+## 0.0.17 (Unlreleased)
+
+NOTES:
+
+* This is an early release experimental build for PingFederate 10.x
+
+BREAKING CHANGES:
+
+Attribute contracts for the following resources no longer require read-only `core_attributes` and they can no longer be defined, this affects the following resources.
+
+- `pingfederate_sp_adapter`
+- `pingfederate_oauth_openid_connect_policy`
+- `pingfederate_password_credential_validator`
+
+BUG FIXES:
+
+- Fixed issue with openid connect policy core attributes not being computed. (#94)
+
+## 0.0.16 (May 9th, 2021)
 
 NOTES:
 

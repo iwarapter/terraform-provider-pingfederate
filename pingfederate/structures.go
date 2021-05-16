@@ -735,8 +735,7 @@ func resourceSpAdapterAttributeContract() *schema.Resource {
 			},
 			"core_attributes": {
 				Type:     schema.TypeSet,
-				Required: true,
-				MinItems: 1,
+				Computed: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -744,7 +743,6 @@ func resourceSpAdapterAttributeContract() *schema.Resource {
 			"extended_attributes": {
 				Type:     schema.TypeSet,
 				Optional: true,
-				//MinItems: 1,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},

@@ -29,6 +29,16 @@ func openIdAttributeContractShouldFlatten(in *pf.OpenIdConnectAttributeContract)
 	return false
 }
 
+func spAdapterAttributeContractShouldFlatten(in *pf.SpAdapterAttributeContract) bool {
+	if in.CoreAttributes != nil && len(*in.CoreAttributes) > 0 {
+		return true
+	}
+	if in.ExtendedAttributes != nil && len(*in.ExtendedAttributes) > 0 {
+		return true
+	}
+	return false
+}
+
 func maskPluginConfigurationFromDescriptor(desc *pf.PluginConfigDescriptor, origConf, conf *pf.PluginConfiguration) []interface{} {
 
 	if origConf.Fields != nil {
