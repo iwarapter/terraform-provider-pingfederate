@@ -702,19 +702,18 @@ func resourceConfigField() *schema.Resource {
 func resourcePasswordCredentialValidatorAttributeContract() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"inherited": &schema.Schema{
+			"inherited": {
 				Type:     schema.TypeBool,
 				Optional: true,
 			},
-			"core_attributes": &schema.Schema{
+			"core_attributes": {
 				Type:     schema.TypeSet,
-				Required: true,
-				MinItems: 1,
+				Computed: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
 			},
-			"extended_attributes": &schema.Schema{
+			"extended_attributes": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				MinItems: 1,
@@ -1150,7 +1149,6 @@ func resourceOpenIdConnectAttributeContract() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"core_attributes": {
 				Type:     schema.TypeSet,
-				Optional: true,
 				Computed: true,
 				Elem:     resourceOpenIdConnectAttribute(),
 			},

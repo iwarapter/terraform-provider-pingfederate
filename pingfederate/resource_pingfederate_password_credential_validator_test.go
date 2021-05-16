@@ -115,9 +115,6 @@ func testAccPingFederatePasswordCredentialValidatorResourceConfig(configUpdate s
 		  }
 		}
 	  }
-	  attribute_contract {
-		core_attributes = ["username"]
-	  }
 	}`, configUpdate)
 }
 
@@ -154,9 +151,6 @@ resource "pingfederate_password_credential_validator" "demo" {
 		}
 	  }
 	}
-  }
-  attribute_contract {
-	core_attributes = ["username"]
   }
 }`
 }

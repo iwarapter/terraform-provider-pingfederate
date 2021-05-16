@@ -112,6 +112,22 @@ resource "pingfederate_oauth_openid_connect_policy" "demo" {
     key_name = "address"
 	values = ["%s"]
   }
+}
+
+resource "pingfederate_oauth_openid_connect_policy" "demo_two" {
+  policy_id = "acc_test_bar"
+  name      = "acc_test_bar"
+  access_token_manager_ref {
+    id = "testme"
+  }
+  attribute_mapping {
+    attribute_contract_fulfillment {
+      key_name = "sub"
+      source {
+        type = "NO_MAPPING"
+      }
+    }
+  }
 }`, configUpdate)
 }
 
@@ -394,6 +410,34 @@ func Test_resourcePingFederateOauthOpenIdConnectPolicyResourceReadData(t *testin
 							IncludeInIdToken:  Bool(false),
 							IncludeInUserInfo: Bool(true),
 							Name:              String("foo"),
+						},
+					},
+				},
+			},
+		},
+		{
+			Resource: pf.OpenIdConnectPolicy{
+				Id:              String("test two"),
+				Name:            String("test two"),
+				IdTokenLifetime: Int(5),
+				AccessTokenManagerRef: &pf.ResourceLink{
+					Id: String("foo"),
+				},
+				AttributeMapping: &pf.AttributeMapping{
+					AttributeContractFulfillment: map[string]*pf.AttributeFulfillmentValue{},
+					AttributeSources:             &[]*pf.AttributeSource{},
+					IssuanceCriteria: &pf.IssuanceCriteria{
+						ConditionalCriteria: &[]*pf.ConditionalIssuanceCriteriaEntry{
+							{
+								AttributeName: String("foo"),
+								Condition:     String("foo"),
+								ErrorResult:   String("foo"),
+								Source: &pf.SourceTypeIdKey{
+									Id:   String("foo"),
+									Type: String("foo"),
+								},
+								Value: String("foo"),
+							},
 						},
 					},
 				},
