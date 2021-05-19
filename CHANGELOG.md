@@ -12,6 +12,10 @@ Attribute contracts for the following resources no longer require read-only `cor
 - `pingfederate_oauth_openid_connect_policy`
 - `pingfederate_password_credential_validator`
 
+FEATURES:
+
+- Add support for extended properties `pingfederate_extended_properties`.
+
 BUG FIXES:
 
 - Fixed issue with openid connect policy core attributes not being computed. (#94)
