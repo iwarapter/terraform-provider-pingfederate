@@ -34,6 +34,20 @@ func resourcePingFederateKeypairResourceReadData(d *schema.ResourceData) *pf.New
 	return &settings
 }
 
+func expandExtendedProperties(in []interface{}) *[]*pf.ExtendedProperty {
+	var propertyList []*pf.ExtendedProperty
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		s := &pf.ExtendedProperty{
+			Name:        String(l["name"].(string)),
+			Description: String(l["description"].(string)),
+			MultiValued: Bool(l["multi_valued"].(bool)),
+		}
+		propertyList = append(propertyList, s)
+	}
+	return &propertyList
+}
+
 func expandScopes(in []interface{}) *[]*pf.ScopeEntry {
 	var scopeList []*pf.ScopeEntry
 	for _, raw := range in {

@@ -30,6 +30,22 @@ func resourceKeypairResourceReadResult(d *schema.ResourceData, rv *pf.KeyPairVie
 	return diags
 }
 
+func flattenExtendedProperties(in []*pf.ExtendedProperty) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, len(in))
+	for _, v := range in {
+		s := make(map[string]interface{})
+		s["name"] = *v.Name
+		if v.Description != nil {
+			s["description"] = *v.Description
+		}
+		if v.MultiValued != nil {
+			s["multi_valued"] = *v.MultiValued
+		}
+		m = append(m, s)
+	}
+	return m
+}
+
 func flattenSpAdapterAttributes(in *[]*pf.SpAdapterAttribute) *schema.Set {
 	m := make([]interface{}, 0, len(*in))
 	for _, v := range *in {
