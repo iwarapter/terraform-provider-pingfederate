@@ -16,6 +16,7 @@ func dataSourcePingFederateCustomDataStore() *schema.Resource {
 		dsSchema[s].Optional = false
 		dsSchema[s].MaxItems = 0
 		dsSchema[s].Default = nil
+		dsSchema[s].ValidateDiagFunc = nil
 	}
 	dsSchema["name"].Required = true
 	dsSchema["name"].Computed = false

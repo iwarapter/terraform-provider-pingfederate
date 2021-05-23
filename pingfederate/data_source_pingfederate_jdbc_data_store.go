@@ -15,6 +15,7 @@ func dataSourcePingFederateJdbcDataStore() *schema.Resource {
 		dsSchema[s].Required = false
 		dsSchema[s].Optional = false
 		dsSchema[s].Default = nil
+		dsSchema[s].ValidateDiagFunc = nil
 	}
 	dsSchema["name"].Required = true
 	dsSchema["name"].Computed = false
