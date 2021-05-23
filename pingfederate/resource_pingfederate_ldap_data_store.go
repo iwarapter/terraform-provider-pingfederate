@@ -4,6 +4,9 @@ package pingfederate
 
 import (
 	"context"
+	"regexp"
+
+	"github.com/hashicorp/go-cty/cty"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/dataStores"
 
@@ -33,15 +36,14 @@ func resourcePingFederateLdapDataStoreResourceSchema() map[string]*schema.Schema
 			Optional: true,
 			Computed: true,
 			ForceNew: true,
-			//https://discuss.hashicorp.com/t/validated-func-with-computed-optional/24179
-			//ValidateDiagFunc: func(value interface{}, path cty.Path) diag.Diagnostics {
-			//	v := value.(string)
-			//	r, _ := regexp.Compile(`^[a-zA-Z0-9._-]+$`)
-			//	if !r.MatchString(v) {
-			//		return diag.Errorf("the policy_contract_id can only contain alphanumeric characters, dash, dot and underscore.")
-			//	}
-			//	return nil
-			//},
+			ValidateDiagFunc: func(value interface{}, path cty.Path) diag.Diagnostics {
+				v := value.(string)
+				r, _ := regexp.Compile(`^[a-zA-Z0-9._-]+$`)
+				if !r.MatchString(v) {
+					return diag.Errorf("the data_store_id can only contain alphanumeric characters, dash, dot and underscore.")
+				}
+				return nil
+			},
 		},
 		"mask_attribute_values": {
 			Type:     schema.TypeBool,
