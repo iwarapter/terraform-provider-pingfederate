@@ -9,3 +9,5 @@ require (
 	github.com/iwarapter/pingfederate-sdk-go v0.0.0-20210504214348-4c81f3d978e0
 	github.com/stretchr/testify v1.7.0
 )
+
+replace github.com/go-git/go-git-fixtures/v4 v4.0.2-0.20200613231340-f56387b50c12 => github.com/go-git/go-git-fixtures/v4 v4.0.1

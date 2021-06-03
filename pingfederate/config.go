@@ -10,6 +10,8 @@ import (
 	"regexp"
 	"syscall"
 
+	"github.com/iwarapter/pingfederate-sdk-go/services/incomingProxySettings"
+
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -107,6 +109,7 @@ type pfClient struct {
 	IdpStsRequestParametersContracts          idpStsRequestParametersContracts.IdpStsRequestParametersContractsAPI
 	IdpToSpAdapterMapping                     idpToSpAdapterMapping.IdpToSpAdapterMappingAPI
 	IdpTokenProcessors                        idpTokenProcessors.IdpTokenProcessorsAPI
+	IncomingProxySettings                     incomingProxySettings.IncomingProxySettingsAPI
 	KerberosRealms                            kerberosRealms.KerberosRealmsAPI
 	KeyPairs                                  keyPairs.KeyPairsAPI
 	KeyPairsOauthOpenIdConnect                keyPairsOauthOpenIdConnect.KeyPairsOauthOpenIdConnectAPI
@@ -191,6 +194,7 @@ func (c *pfConfig) Client() (interface{}, diag.Diagnostics) {
 		IdpStsRequestParametersContracts: idpStsRequestParametersContracts.New(cfg),
 		IdpToSpAdapterMapping:            idpToSpAdapterMapping.New(cfg),
 		IdpTokenProcessors:               idpTokenProcessors.New(cfg),
+		IncomingProxySettings:            incomingProxySettings.New(cfg),
 		KerberosRealms:                   kerberosRealms.New(cfg),
 		KeyPairs:                         keyPairs.New(cfg),
 		KeyPairsOauthOpenIdConnect:       keyPairsOauthOpenIdConnect.New(cfg),
@@ -249,6 +253,12 @@ func (c *pfConfig) Client() (interface{}, diag.Diagnostics) {
 // Checks whether we are running against PingFederate 10.x
 func (c pfClient) IsPF10() bool {
 	re := regexp.MustCompile(`^(10\.[0-9])`)
+	return re.MatchString(c.apiVersion)
+}
+
+// Checks whether we are running against PingFederate 10.1+
+func (c pfClient) IsPF10_1orGreater() bool {
+	re := regexp.MustCompile(`^(10\.[1-9])`)
 	return re.MatchString(c.apiVersion)
 }
 
