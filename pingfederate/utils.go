@@ -39,6 +39,48 @@ func spAdapterAttributeContractShouldFlatten(in *pf.SpAdapterAttributeContract) 
 	return false
 }
 
+func accessControlSettingsShouldFlatten(in *pf.AtmAccessControlSettings) bool {
+	if in != nil {
+		if len(*in.AllowedClients) > 0 || (in.Inherited != nil && *in.Inherited) || (in.RestrictClients != nil && *in.RestrictClients) {
+			return true
+		}
+	}
+	return false
+}
+
+func selectionSettingsShouldFlatten(in *pf.AtmSelectionSettings) bool {
+	if in != nil {
+		if in.Inherited != nil && *in.Inherited {
+			return true
+		}
+		if in.ResourceUris != nil && len(*in.ResourceUris) > 0 {
+			return true
+		}
+	}
+	return false
+}
+
+func sessionValidationSettingsShouldFlatten(in *pf.SessionValidationSettings) bool {
+	if in != nil {
+		if in.Inherited != nil && *in.Inherited {
+			return true
+		}
+		if in.IncludeSessionId != nil && *in.IncludeSessionId {
+			return true
+		}
+		if in.UpdateAuthnSessionActivity != nil && *in.UpdateAuthnSessionActivity {
+			return true
+		}
+		if in.CheckSessionRevocationStatus != nil && *in.CheckSessionRevocationStatus {
+			return true
+		}
+		if in.CheckValidAuthnSession != nil && *in.CheckValidAuthnSession {
+			return true
+		}
+	}
+	return false
+}
+
 func maskPluginConfigurationFromDescriptor(desc *pf.PluginConfigDescriptor, origConf, conf *pf.PluginConfiguration) []interface{} {
 
 	if origConf.Fields != nil {
