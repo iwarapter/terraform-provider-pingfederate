@@ -1,4 +1,4 @@
-## 0.0.17 (Unlreleased)
+## 0.0.17 (June 3rd, 2021)
 
 NOTES:
 
@@ -15,6 +15,9 @@ Attribute contracts for the following resources no longer require read-only `cor
 FEATURES:
 
 - Add support for extended properties `pingfederate_extended_properties`.
+- Add support for incoming proxy settings `pingfederate_incoming_proxy_settings` (#85).
+- Add support for openid connect keypairs `pingfederate_keypairs_oauth_openid_connect` (#86).
+- Enhance oauth access token managers with support for `parent_ref`, `access_control_settings`, `selection_settings` and `session_validation_settings` (#99).
 
 BUG FIXES:
 
