@@ -92,7 +92,7 @@ func resourcePingFederateOauthAccessTokenManagersResourceSchema() map[string]*sc
 			},
 		},
 		"selection_settings": {
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			MaxItems: 1,
 			Elem: &schema.Resource{
@@ -112,6 +112,32 @@ func resourcePingFederateOauthAccessTokenManagersResourceSchema() map[string]*sc
 				},
 			},
 		},
+		"access_control_settings": {
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"inherited": {
+						Type:     schema.TypeBool,
+						Optional: true,
+						Default:  false,
+					},
+					"restrict_clients": {
+						Type:     schema.TypeBool,
+						Optional: true,
+						Default:  false,
+					},
+					"allowed_clients": {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
+						},
+					},
+				},
+			},
+		},
 		"session_validation_settings": {
 			Type:     schema.TypeList,
 			Optional: true,
@@ -122,6 +148,10 @@ func resourcePingFederateOauthAccessTokenManagersResourceSchema() map[string]*sc
 						Type:     schema.TypeBool,
 						Optional: true,
 						Default:  false,
+					},
+					"include_session_id": {
+						Type:     schema.TypeBool,
+						Optional: true,
 					},
 					"check_valid_authn_session": {
 						Type:     schema.TypeBool,
@@ -218,6 +248,26 @@ func resourcePingFederateOauthAccessTokenManagersResourceReadResult(d *schema.Re
 			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
+	if rv.ParentRef != nil {
+		if err := d.Set("parent_ref", flattenResourceLink(rv.ParentRef)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
+		}
+	}
+	if selectionSettingsShouldFlatten(rv.SelectionSettings) {
+		if err := d.Set("selection_settings", flattenSelectionSettings(rv.SelectionSettings)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
+		}
+	}
+	if sessionValidationSettingsShouldFlatten(rv.SessionValidationSettings) {
+		if err := d.Set("session_validation_settings", flattenSessionValidationSettings(rv.SessionValidationSettings)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
+		}
+	}
+	if accessControlSettingsShouldFlatten(rv.AccessControlSettings) {
+		if err := d.Set("access_control_settings", flattenAccessControlSettings(rv.AccessControlSettings)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
+		}
+	}
 	return diags
 }
 
@@ -230,9 +280,20 @@ func resourcePingFederateOauthAccessTokenManagersResourceReadData(d *schema.Reso
 		Name:                String(d.Get("name").(string)),
 		Id:                  String(d.Get("instance_id").(string)),
 		PluginDescriptorRef: expandResourceLink(d.Get("plugin_descriptor_ref").([]interface{})[0].(map[string]interface{})),
-		//Configuration:       expandPluginConfigurationWithDescriptor(d.Get("configuration").([]interface{}), desc.ConfigDescriptor),
-		Configuration:     expandPluginConfiguration(d.Get("configuration").([]interface{})),
-		AttributeContract: expandAccessTokenAttributeContract(d.Get("attribute_contract").([]interface{})),
+		Configuration:       expandPluginConfiguration(d.Get("configuration").([]interface{})),
+		AttributeContract:   expandAccessTokenAttributeContract(d.Get("attribute_contract").([]interface{})),
+	}
+	if v, ok := d.GetOk("parent_ref"); ok {
+		atm.ParentRef = expandResourceLink(v.([]interface{})[0].(map[string]interface{}))
+	}
+	if v, ok := d.GetOk("selection_settings"); ok {
+		atm.SelectionSettings = expandSelectionSettings(v.([]interface{}))
+	}
+	if v, ok := d.GetOk("session_validation_settings"); ok {
+		atm.SessionValidationSettings = expandSessionValidationSettings(v.([]interface{}))
+	}
+	if v, ok := d.GetOk("access_control_settings"); ok {
+		atm.AccessControlSettings = expandAccessControlSettings(v.([]interface{}))
 	}
 	return atm
 }

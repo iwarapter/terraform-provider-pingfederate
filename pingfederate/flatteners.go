@@ -2867,3 +2867,58 @@ func flattenLdapTagConfig(in *pf.LdapTagConfig) map[string]interface{} {
 	}
 	return s
 }
+
+func flattenSelectionSettings(in *pf.AtmSelectionSettings) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, 1)
+	s := make(map[string]interface{})
+	if in.Inherited != nil {
+		s["inherited"] = *in.Inherited
+	}
+	if in.ResourceUris != nil {
+		s["resource_uris"] = flattenStringList(*in.ResourceUris)
+	}
+	m = append(m, s)
+	return m
+}
+
+func flattenSessionValidationSettings(in *pf.SessionValidationSettings) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, 1)
+	s := make(map[string]interface{})
+	if in.Inherited != nil {
+		s["inherited"] = *in.Inherited
+	}
+	if in.CheckValidAuthnSession != nil {
+		s["check_valid_authn_session"] = *in.CheckValidAuthnSession
+	}
+	if in.IncludeSessionId != nil {
+		s["include_session_id"] = *in.IncludeSessionId
+	}
+	if in.CheckSessionRevocationStatus != nil {
+		s["check_session_revocation_status"] = *in.CheckSessionRevocationStatus
+	}
+	if in.UpdateAuthnSessionActivity != nil {
+		s["update_authn_session_activity"] = *in.UpdateAuthnSessionActivity
+	}
+	m = append(m, s)
+	return m
+}
+
+func flattenAccessControlSettings(in *pf.AtmAccessControlSettings) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, 1)
+	s := make(map[string]interface{})
+	if in.Inherited != nil {
+		s["inherited"] = *in.Inherited
+	}
+	if in.RestrictClients != nil {
+		s["restrict_clients"] = *in.RestrictClients
+	}
+	if in.AllowedClients != nil {
+		var clients []string
+		for _, link := range *in.AllowedClients {
+			clients = append(clients, *link.Id)
+		}
+		s["allowed_clients"] = clients
+	}
+	m = append(m, s)
+	return m
+}

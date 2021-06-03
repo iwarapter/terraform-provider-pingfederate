@@ -2786,3 +2786,62 @@ func expandLdapTagConfig(in map[string]interface{}) *pf.LdapTagConfig {
 	}
 	return &result
 }
+
+func expandSelectionSettings(in []interface{}) *pf.AtmSelectionSettings {
+	settings := &pf.AtmSelectionSettings{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		if val, ok := l["inherited"]; ok {
+			settings.Inherited = Bool(val.(bool))
+		}
+		if v, ok := l["resource_uris"]; ok && len(v.([]interface{})) > 0 {
+			sans := expandStringList(v.([]interface{}))
+			settings.ResourceUris = &sans
+		}
+	}
+	return settings
+}
+
+func expandSessionValidationSettings(in []interface{}) *pf.SessionValidationSettings {
+	settings := &pf.SessionValidationSettings{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		if val, ok := l["inherited"]; ok {
+			settings.Inherited = Bool(val.(bool))
+		}
+		if val, ok := l["check_valid_authn_session"]; ok {
+			settings.CheckValidAuthnSession = Bool(val.(bool))
+		}
+		if val, ok := l["include_session_id"]; ok {
+			settings.IncludeSessionId = Bool(val.(bool))
+		}
+		if val, ok := l["check_session_revocation_status"]; ok {
+			settings.CheckSessionRevocationStatus = Bool(val.(bool))
+		}
+		if val, ok := l["update_authn_session_activity"]; ok {
+			settings.UpdateAuthnSessionActivity = Bool(val.(bool))
+		}
+	}
+	return settings
+}
+
+func expandAccessControlSettings(in []interface{}) *pf.AtmAccessControlSettings {
+	settings := &pf.AtmAccessControlSettings{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		if val, ok := l["inherited"]; ok {
+			settings.Inherited = Bool(val.(bool))
+		}
+		if val, ok := l["restrict_clients"]; ok {
+			settings.RestrictClients = Bool(val.(bool))
+		}
+		if val, ok := l["allowed_clients"]; ok {
+			var clients []*pf.ResourceLink
+			for _, s := range val.([]interface{}) {
+				clients = append(clients, &pf.ResourceLink{Id: String(s.(string))})
+			}
+			settings.AllowedClients = &clients
+		}
+	}
+	return settings
+}

@@ -230,9 +230,11 @@ func Test_resourcePingFederateOauthAccessTokenManagerResourceReadData(t *testing
 	}{
 		{
 			Resource: pf.AccessTokenManager{
-				Id:                  String(""),
-				Name:                String(""),
-				PluginDescriptorRef: &pf.ResourceLink{Id: String("org.sourceid.oauth20.token.plugin.impl.ReferenceBearerAccessTokenManagementPlugin")},
+				AttributeContract: &pf.AccessTokenAttributeContract{ExtendedAttributes: &[]*pf.AccessTokenAttribute{
+					{
+						Name: String("foo"),
+					},
+				}},
 				Configuration: &pf.PluginConfiguration{
 					Fields: &[]*pf.ConfigField{
 						{
@@ -243,11 +245,33 @@ func Test_resourcePingFederateOauthAccessTokenManagerResourceReadData(t *testing
 					},
 					Tables: nil,
 				},
-				AttributeContract: &pf.AccessTokenAttributeContract{ExtendedAttributes: &[]*pf.AccessTokenAttribute{
-					{
-						Name: String("foo"),
+				Id:                  String(""),
+				Name:                String(""),
+				PluginDescriptorRef: &pf.ResourceLink{Id: String("org.sourceid.oauth20.token.plugin.impl.ReferenceBearerAccessTokenManagementPlugin")},
+				ParentRef:           &pf.ResourceLink{Id: String("example")},
+				AccessControlSettings: &pf.AtmAccessControlSettings{
+					AllowedClients: &[]*pf.ResourceLink{
+						{
+							Id: String("one"),
+						},
+						{
+							Id: String("two"),
+						},
 					},
-				}},
+					Inherited:       Bool(true),
+					RestrictClients: Bool(true),
+				},
+				SelectionSettings: &pf.AtmSelectionSettings{
+					Inherited:    Bool(true),
+					ResourceUris: &[]*string{String("one"), String("two")},
+				},
+				SessionValidationSettings: &pf.SessionValidationSettings{
+					CheckSessionRevocationStatus: Bool(true),
+					CheckValidAuthnSession:       Bool(true),
+					IncludeSessionId:             Bool(true),
+					Inherited:                    Bool(true),
+					UpdateAuthnSessionActivity:   Bool(true),
+				},
 			},
 		},
 	}
