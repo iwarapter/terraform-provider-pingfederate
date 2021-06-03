@@ -68,6 +68,7 @@ func Provider() *schema.Provider {
 			"pingfederate_idp_sp_connection":                            resourcePingFederateIdpSpConnectionResource(),
 			"pingfederate_idp_adapter":                                  resourcePingFederateIdpAdapterResource(),
 			"pingfederate_kerberos_realm":                               resourcePingFederateKerberosRealmResource(),
+			"pingfederate_keypairs_oauth_openid_connect":                resourcePingFederateKeypairsOauthOpenIdConnectResource(),
 			"pingfederate_keypair_signing":                              resourcePingFederateKeypairSigningResource(),
 			"pingfederate_keypair_signing_csr":                          resourcePingFederateKeypairSigningCsrResource(),
 			"pingfederate_keypair_ssl_server":                           resourcePingFederateKeypairSslServerResource(),
