@@ -137,6 +137,8 @@ The following arguments are supported:
 
 - `validate_using_all_eligible_atms` - (Optional) Validates token using all eligible access token managers for the client.
 
+- `restrict_to_default_access_token_manager` - (Optional) Determines whether the client is restricted to using only its default access token manager. The default is false.
+
 ### client_auth
 
 The `client_auth` block - Client Authentication.
