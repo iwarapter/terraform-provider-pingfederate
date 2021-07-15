@@ -1,3 +1,19 @@
+## 0.0.18 (July 15th, 2021)
+
+NOTES:
+
+* This is an early release experimental build for PingFederate 10.x
+
+FEATURES:
+
+- Add support for PAR oauth server settings. (#108)
+- Add support configuring IDP Adapter `instance_id`. (#106)
+
+BUG FIXES:
+
+- Add missing field to oauth client `restrict_to_default_access_token_manager`. (#109)
+- Fix broken field to oauth server settings `admin_web_service_pcv_ref`. (#105)
+
 ## 0.0.17 (June 3rd, 2021)
 
 NOTES:
