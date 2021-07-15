@@ -82,6 +82,7 @@ func testAccPingFederateOauthClientConfig(configUpdate string) string {
 		default_access_token_manager_ref {
 			id = "testme"
 		}
+		restrict_to_default_access_token_manager = true
 
 		oidc_policy {
 			grant_access_session_revocation_api = false
@@ -215,6 +216,7 @@ func Test_resourcePingFederateOauthClientResourceReadData(t *testing.T) {
 				RequestPolicyRef:                    &pf.ResourceLink{Id: String("RequestPolicyRef")},
 				RequireProofKeyForCodeExchange:      Bool(false),
 				RequireSignedRequests:               Bool(false),
+				RestrictToDefaultAccessTokenManager: Bool(false),
 				RestrictScopes:                      Bool(false),
 				RestrictedResponseTypes:             &[]*string{String("RestrictedResponseTypes")},
 				RestrictedScopes:                    &[]*string{String("RestrictedScopes")},
