@@ -9,6 +9,16 @@ import (
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
+func persistentGrantContractShouldFlatten(in *pf.PersistentGrantContract) bool {
+	if in.CoreAttributes != nil && len(*in.CoreAttributes) > 0 {
+		return true
+	}
+	if in.ExtendedAttributes != nil && len(*in.ExtendedAttributes) > 0 {
+		return true
+	}
+	return false
+}
+
 func issuanceCriteriaShouldFlatten(in *pf.IssuanceCriteria) bool {
 	if in.ExpressionCriteria != nil && len(*in.ExpressionCriteria) > 0 {
 		return true
