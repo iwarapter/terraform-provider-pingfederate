@@ -5,6 +5,7 @@ package pingfederate
 import (
 	"context"
 	"fmt"
+	"regexp"
 
 	"github.com/hashicorp/go-cty/cty"
 
@@ -274,11 +275,11 @@ func resourcePingFederateOauthAuthServerSettingsResourceRead(ctx context.Context
 	if err != nil {
 		return diag.Errorf("unable to read OauthAuthServerSettings: %s", err)
 	}
-	return resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result, m.(pfClient).IsPF10())
+	return resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result, m.(pfClient).PfVersion())
 }
 
 func resourcePingFederateOauthAuthServerSettingsResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	authSettings := resourcePingFederateOauthAuthServerSettingsResourceReadData(d, m.(pfClient).IsPF10())
+	authSettings := resourcePingFederateOauthAuthServerSettingsResourceReadData(d, m.(pfClient).PfVersion())
 
 	svc := m.(pfClient).OauthAuthServerSettings
 	input := &oauthAuthServerSettings.UpdateAuthorizationServerSettingsInput{
@@ -289,10 +290,15 @@ func resourcePingFederateOauthAuthServerSettingsResourceUpdate(ctx context.Conte
 	if err != nil {
 		return diag.Errorf("unable to update OauthAuthServerSettings: %s", err)
 	}
-	return resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result, m.(pfClient).IsPF10())
+	return resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result, m.(pfClient).PfVersion())
 }
 
-func resourcePingFederateOauthAuthServerSettingsResourceReadData(d *schema.ResourceData, isPF10 bool) *pf.AuthorizationServerSettings {
+func resourcePingFederateOauthAuthServerSettingsResourceReadData(d *schema.ResourceData, pfVersion string) *pf.AuthorizationServerSettings {
+	re := regexp.MustCompile(`^(10\.[0-9])`)
+	isPF10 := re.MatchString(pfVersion)
+	re = regexp.MustCompile(`^(10\.[2-9])`)
+	isPF10_2 := re.MatchString(pfVersion)
+
 	defaultScopeDescription := d.Get("default_scope_description").(string)
 	authorizationCodeTimeout := d.Get("authorization_code_timeout").(int)
 	authorizationCodeEntropy := d.Get("authorization_code_entropy").(int)
@@ -387,14 +393,16 @@ func resourcePingFederateOauthAuthServerSettingsResourceReadData(d *schema.Resou
 	if v, ok := d.GetOk("device_polling_interval"); ok {
 		authSettings.DevicePollingInterval = Int(v.(int))
 	}
-	if v, ok := d.GetOk("par_reference_length"); ok {
-		authSettings.ParReferenceLength = Int(v.(int))
-	}
-	if v, ok := d.GetOk("par_reference_timeout"); ok {
-		authSettings.ParReferenceTimeout = Int(v.(int))
-	}
-	if v, ok := d.GetOk("par_status"); ok {
-		authSettings.ParStatus = String(v.(string))
+	if isPF10_2 {
+		if v, ok := d.GetOk("par_reference_length"); ok {
+			authSettings.ParReferenceLength = Int(v.(int))
+		}
+		if v, ok := d.GetOk("par_reference_timeout"); ok {
+			authSettings.ParReferenceTimeout = Int(v.(int))
+		}
+		if v, ok := d.GetOk("par_status"); ok {
+			authSettings.ParStatus = String(v.(string))
+		}
 	}
 	if v, ok := d.GetOk("pending_authorization_timeout"); ok {
 		authSettings.PendingAuthorizationTimeout = Int(v.(int))
@@ -434,12 +442,17 @@ func resourcePingFederateOauthAuthServerSettingsResourceImport(ctx context.Conte
 	if err != nil {
 		return nil, fmt.Errorf(err.Error())
 	}
-	resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result, m.(pfClient).IsPF10())
+	resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result, m.(pfClient).PfVersion())
 	return []*schema.ResourceData{d}, nil
 }
 
-func resourcePingFederateOauthAuthServerSettingsResourceReadResult(d *schema.ResourceData, rv *pf.AuthorizationServerSettings, isPF10 bool) diag.Diagnostics {
+func resourcePingFederateOauthAuthServerSettingsResourceReadResult(d *schema.ResourceData, rv *pf.AuthorizationServerSettings, pfVersion string) diag.Diagnostics {
 	var diags diag.Diagnostics
+	re := regexp.MustCompile(`^(10\.[0-9])`)
+	isPF10 := re.MatchString(pfVersion)
+	re = regexp.MustCompile(`^(10\.[2-9])`)
+	isPF10_2 := re.MatchString(pfVersion)
+
 	setResourceDataStringWithDiagnostic(d, "default_scope_description", rv.DefaultScopeDescription, &diags)
 	setResourceDataIntWithDiagnostic(d, "authorization_code_timeout", rv.AuthorizationCodeTimeout, &diags)
 	setResourceDataIntWithDiagnostic(d, "authorization_code_entropy", rv.AuthorizationCodeEntropy, &diags)
@@ -463,9 +476,6 @@ func resourcePingFederateOauthAuthServerSettingsResourceReadResult(d *schema.Res
 	setResourceDataStringWithDiagnostic(d, "approved_scope_attribute", rv.ApprovedScopesAttribute, &diags)
 	setResourceDataBoolWithDiagnostic(d, "bypass_activation_code_confirmation", rv.BypassActivationCodeConfirmation, &diags)
 	setResourceDataIntWithDiagnostic(d, "device_polling_interval", rv.DevicePollingInterval, &diags)
-	setResourceDataIntWithDiagnostic(d, "par_reference_length", rv.ParReferenceLength, &diags)
-	setResourceDataIntWithDiagnostic(d, "par_reference_timeout", rv.ParReferenceTimeout, &diags)
-	setResourceDataStringWithDiagnostic(d, "par_status", rv.ParStatus, &diags)
 	setResourceDataIntWithDiagnostic(d, "pending_authorization_timeout", rv.PendingAuthorizationTimeout, &diags)
 	setResourceDataIntWithDiagnostic(d, "persistent_grant_idle_timeout", rv.PersistentGrantIdleTimeout, &diags)
 	setResourceDataStringWithDiagnostic(d, "persistent_grant_idle_timeout_time_unit", rv.PersistentGrantIdleTimeoutTimeUnit, &diags)
@@ -474,6 +484,12 @@ func resourcePingFederateOauthAuthServerSettingsResourceReadResult(d *schema.Res
 	setResourceDataStringWithDiagnostic(d, "user_authorization_consent_adapter", rv.UserAuthorizationConsentAdapter, &diags)
 	setResourceDataStringWithDiagnostic(d, "user_authorization_consent_page_setting", rv.UserAuthorizationConsentPageSetting, &diags)
 	setResourceDataStringWithDiagnostic(d, "user_authorization_url", rv.UserAuthorizationUrl, &diags)
+
+	if isPF10_2 {
+		setResourceDataIntWithDiagnostic(d, "par_reference_length", rv.ParReferenceLength, &diags)
+		setResourceDataIntWithDiagnostic(d, "par_reference_timeout", rv.ParReferenceTimeout, &diags)
+		setResourceDataStringWithDiagnostic(d, "par_status", rv.ParStatus, &diags)
+	}
 
 	if rv.AdminWebServicePcvRef != nil {
 		if err := d.Set("admin_web_service_pcv_ref", flattenResourceLink(rv.AdminWebServicePcvRef)); err != nil {

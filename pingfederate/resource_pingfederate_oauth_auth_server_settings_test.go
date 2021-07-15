@@ -203,9 +203,9 @@ func Test_resourcePingFederateOauthAuthServerSettingsResourceReadResult(t *testi
 
 			resourceSchema := resourcePingFederateOauthAuthServerSettingsResource().Schema
 			resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})
-			resourcePingFederateOauthAuthServerSettingsResourceReadResult(resourceLocalData, &tc.Resource, false)
+			resourcePingFederateOauthAuthServerSettingsResourceReadResult(resourceLocalData, &tc.Resource, "10.2")
 
-			assert.Equal(t, tc.Resource, *resourcePingFederateOauthAuthServerSettingsResourceReadData(resourceLocalData, false))
+			assert.Equal(t, tc.Resource, *resourcePingFederateOauthAuthServerSettingsResourceReadData(resourceLocalData, "10.2"))
 		})
 	}
 }
