@@ -313,6 +313,10 @@ func resourcePingFederateOauthClientResourceSchema() map[string]*schema.Schema {
 			Type:     schema.TypeString,
 			Optional: true,
 		},
+		"restrict_to_default_access_token_manager": {
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
 	}
 }
 
@@ -411,6 +415,7 @@ func resourcePingFederateOauthClientResourceReadResult(d *schema.ResourceData, r
 	setResourceDataStringWithDiagnostic(d, "request_object_signing_algorithm", rv.RequestObjectSigningAlgorithm, &diags)
 	setResourceDataBoolWithDiagnostic(d, "require_proof_key_for_code_exchange", rv.RequireProofKeyForCodeExchange, &diags)
 	setResourceDataStringWithDiagnostic(d, "user_authorization_url_override", rv.UserAuthorizationUrlOverride, &diags)
+	setResourceDataBoolWithDiagnostic(d, "restrict_to_default_access_token_manager", rv.RestrictToDefaultAccessTokenManager, &diags)
 
 	if rv.RequestPolicyRef != nil {
 		if err := d.Set("request_policy_ref", flattenResourceLink(rv.RequestPolicyRef)); err != nil {
@@ -616,6 +621,9 @@ func resourcePingFederateOauthClientResourceReadData(d *schema.ResourceData) *pf
 	}
 	if v, ok := d.GetOk("user_authorization_url_override"); ok {
 		client.UserAuthorizationUrlOverride = String(v.(string))
+	}
+	if v, ok := d.GetOkExists("restrict_to_default_access_token_manager"); ok {
+		client.RestrictToDefaultAccessTokenManager = Bool(v.(bool))
 	}
 	return client
 }
