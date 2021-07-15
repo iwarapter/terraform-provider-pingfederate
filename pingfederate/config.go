@@ -250,6 +250,11 @@ func (c *pfConfig) Client() (interface{}, diag.Diagnostics) {
 	return client, nil
 }
 
+// Returns PingFederate version
+func (c pfClient) PfVersion() string {
+	return c.apiVersion
+}
+
 // Checks whether we are running against PingFederate 10.x
 func (c pfClient) IsPF10() bool {
 	re := regexp.MustCompile(`^(10\.[0-9])`)
