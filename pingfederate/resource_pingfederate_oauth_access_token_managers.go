@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"regexp"
 	"strings"
+
+	"github.com/hashicorp/go-cty/cty"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthAccessTokenManagers"
 
@@ -57,8 +60,17 @@ func resourcePingFederateOauthAccessTokenManagersResourceSchema() map[string]*sc
 	return map[string]*schema.Schema{
 		"instance_id": {
 			Type:     schema.TypeString,
-			Required: true,
-			//ValidateFunc:       "message": "The plugin ID must be less than 33 characters, contain no spaces, and be alphanumeric.",
+			Optional: true,
+			Computed: true,
+			ForceNew: true,
+			ValidateDiagFunc: func(value interface{}, path cty.Path) diag.Diagnostics {
+				v := value.(string)
+				r, _ := regexp.Compile(`^[a-zA-Z0-9._-]+$`)
+				if !r.MatchString(v) || len(v) >= 33 {
+					return diag.Errorf("The plugin ID must be less than 33 characters, contain no spaces, and be alphanumeric.")
+				}
+				return nil
+			},
 		},
 		"name": {
 			Type:     schema.TypeString,
