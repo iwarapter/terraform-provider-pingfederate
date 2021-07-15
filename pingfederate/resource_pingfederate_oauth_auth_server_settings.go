@@ -6,6 +6,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/go-cty/cty"
+
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthAuthServerSettings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -172,6 +174,91 @@ func resourcePingFederateOauthAuthServerSettingsResource() *schema.Resource {
 				Default:  false,
 			},
 			"admin_web_service_pcv_ref": resourceLinkSchema(),
+			"approved_scope_attribute": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"atm_id_for_oauth_grant_management": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"bypass_activation_code_confirmation": {
+				Type:     schema.TypeBool,
+				Optional: true,
+			},
+			"device_polling_interval": {
+				Type:     schema.TypeInt,
+				Optional: true,
+				Default:  5,
+			},
+			"par_reference_length": {
+				Type:     schema.TypeInt,
+				Optional: true,
+				Default:  24,
+			},
+			"par_reference_timeout": {
+				Type:     schema.TypeInt,
+				Optional: true,
+				Default:  60,
+			},
+			"par_status": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "ENABLED",
+				ValidateDiagFunc: func(value interface{}, _ cty.Path) diag.Diagnostics {
+					v := value.(string)
+					switch v {
+					case "ENABLED", "DISABLED", "REQUIRED":
+						return nil
+					}
+					return diag.Errorf("must be either 'ENABLED', 'DISABLED', 'REQUIRED' not %s", v)
+				},
+			},
+			"pending_authorization_timeout": {
+				Type:     schema.TypeInt,
+				Optional: true,
+				Default:  600,
+			},
+			"persistent_grant_idle_timeout": {
+				Type:     schema.TypeInt,
+				Optional: true,
+				Default:  30,
+			},
+			"persistent_grant_idle_timeout_time_unit": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Default:          "DAYS",
+				ValidateDiagFunc: validatePersistentGrantLifetimeUnit,
+			},
+			"registered_authorization_path": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"scope_for_oauth_grant_management": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"user_authorization_consent_adapter": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"user_authorization_consent_page_setting": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "INTERNAL",
+				ValidateDiagFunc: func(value interface{}, _ cty.Path) diag.Diagnostics {
+					v := value.(string)
+					switch v {
+					case "INTERNAL", "ADAPTER":
+						return nil
+					}
+					return diag.Errorf("must be either 'INTERNAL' or 'ADAPTER' not %s", v)
+				},
+			},
+			"user_authorization_url": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 		},
 	}
 }
@@ -191,6 +278,21 @@ func resourcePingFederateOauthAuthServerSettingsResourceRead(ctx context.Context
 }
 
 func resourcePingFederateOauthAuthServerSettingsResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	authSettings := resourcePingFederateOauthAuthServerSettingsResourceReadData(d, m.(pfClient).IsPF10())
+
+	svc := m.(pfClient).OauthAuthServerSettings
+	input := &oauthAuthServerSettings.UpdateAuthorizationServerSettingsInput{
+		Body: *authSettings,
+	}
+
+	result, _, err := svc.UpdateAuthorizationServerSettingsWithContext(ctx, input)
+	if err != nil {
+		return diag.Errorf("unable to update OauthAuthServerSettings: %s", err)
+	}
+	return resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result, m.(pfClient).IsPF10())
+}
+
+func resourcePingFederateOauthAuthServerSettingsResourceReadData(d *schema.ResourceData, isPF10 bool) *pf.AuthorizationServerSettings {
 	defaultScopeDescription := d.Get("default_scope_description").(string)
 	authorizationCodeTimeout := d.Get("authorization_code_timeout").(int)
 	authorizationCodeEntropy := d.Get("authorization_code_entropy").(int)
@@ -198,7 +300,6 @@ func resourcePingFederateOauthAuthServerSettingsResourceUpdate(ctx context.Conte
 	refreshRollingInterval := d.Get("refresh_rolling_interval").(int)
 
 	authSettings := &pf.AuthorizationServerSettings{
-		// AdminWebServicePcvRef:             *ResourceLink
 		AuthorizationCodeEntropy: Int(authorizationCodeEntropy),
 		AuthorizationCodeTimeout: Int(authorizationCodeTimeout),
 		DefaultScopeDescription:  String(defaultScopeDescription),
@@ -206,11 +307,9 @@ func resourcePingFederateOauthAuthServerSettingsResourceUpdate(ctx context.Conte
 		RefreshTokenLength:       Int(refreshTokenLength),
 	}
 
-	//TODO
-	//if _, ok := d.GetOk("admin_web_service_pcv_ref"); ok {
-	//	// authSettings.AdminWebServicePcvRef = //expand
-	//}
-	isPF10 := m.(pfClient).IsPF10()
+	if v, ok := d.GetOk("admin_web_service_pcv_ref"); ok {
+		authSettings.AdminWebServicePcvRef = expandResourceLink(v.([]interface{})[0].(map[string]interface{}))
+	}
 
 	if v, ok := d.GetOk("allowed_origins"); ok {
 		strs := expandStringList(v.(*schema.Set).List())
@@ -276,17 +375,52 @@ func resourcePingFederateOauthAuthServerSettingsResourceUpdate(ctx context.Conte
 	if v, ok := d.GetOkExists("track_user_sessions_for_logout"); ok {
 		authSettings.TrackUserSessionsForLogout = Bool(v.(bool))
 	}
-
-	svc := m.(pfClient).OauthAuthServerSettings
-	input := &oauthAuthServerSettings.UpdateAuthorizationServerSettingsInput{
-		Body: *authSettings,
+	if v, ok := d.GetOk("atm_id_for_oauth_grant_management"); ok {
+		authSettings.AtmIdForOAuthGrantManagement = String(v.(string))
 	}
-
-	result, _, err := svc.UpdateAuthorizationServerSettingsWithContext(ctx, input)
-	if err != nil {
-		return diag.Errorf("unable to update OauthAuthServerSettings: %s", err)
+	if v, ok := d.GetOk("approved_scope_attribute"); ok {
+		authSettings.ApprovedScopesAttribute = String(v.(string))
 	}
-	return resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result, m.(pfClient).IsPF10())
+	if v, ok := d.GetOkExists("bypass_activation_code_confirmation"); ok {
+		authSettings.BypassActivationCodeConfirmation = Bool(v.(bool))
+	}
+	if v, ok := d.GetOk("device_polling_interval"); ok {
+		authSettings.DevicePollingInterval = Int(v.(int))
+	}
+	if v, ok := d.GetOk("par_reference_length"); ok {
+		authSettings.ParReferenceLength = Int(v.(int))
+	}
+	if v, ok := d.GetOk("par_reference_timeout"); ok {
+		authSettings.ParReferenceTimeout = Int(v.(int))
+	}
+	if v, ok := d.GetOk("par_status"); ok {
+		authSettings.ParStatus = String(v.(string))
+	}
+	if v, ok := d.GetOk("pending_authorization_timeout"); ok {
+		authSettings.PendingAuthorizationTimeout = Int(v.(int))
+	}
+	if v, ok := d.GetOk("persistent_grant_idle_timeout"); ok {
+		authSettings.PersistentGrantIdleTimeout = Int(v.(int))
+	}
+	if v, ok := d.GetOk("persistent_grant_idle_timeout_time_unit"); ok {
+		authSettings.PersistentGrantIdleTimeoutTimeUnit = String(v.(string))
+	}
+	if v, ok := d.GetOk("registered_authorization_path"); ok {
+		authSettings.RegisteredAuthorizationPath = String(v.(string))
+	}
+	if v, ok := d.GetOk("scope_for_oauth_grant_management"); ok {
+		authSettings.ScopeForOAuthGrantManagement = String(v.(string))
+	}
+	if v, ok := d.GetOk("user_authorization_consent_adapter"); ok {
+		authSettings.UserAuthorizationConsentAdapter = String(v.(string))
+	}
+	if v, ok := d.GetOk("user_authorization_consent_page_setting"); ok {
+		authSettings.UserAuthorizationConsentPageSetting = String(v.(string))
+	}
+	if v, ok := d.GetOk("user_authorization_url"); ok {
+		authSettings.UserAuthorizationUrl = String(v.(string))
+	}
+	return authSettings
 }
 
 func resourcePingFederateOauthAuthServerSettingsResourceDelete(_ context.Context, _ *schema.ResourceData, _ interface{}) diag.Diagnostics {
@@ -325,8 +459,27 @@ func resourcePingFederateOauthAuthServerSettingsResourceReadResult(d *schema.Res
 	setResourceDataBoolWithDiagnostic(d, "roll_refresh_token_values", rv.RollRefreshTokenValues, &diags)
 	setResourceDataBoolWithDiagnostic(d, "bypass_authorization_for_approved_grants", rv.BypassAuthorizationForApprovedGrants, &diags)
 	setResourceDataBoolWithDiagnostic(d, "allow_unidentified_client_ro_creds", rv.AllowUnidentifiedClientROCreds, &diags)
+	setResourceDataStringWithDiagnostic(d, "atm_id_for_oauth_grant_management", rv.AtmIdForOAuthGrantManagement, &diags)
+	setResourceDataStringWithDiagnostic(d, "approved_scope_attribute", rv.ApprovedScopesAttribute, &diags)
+	setResourceDataBoolWithDiagnostic(d, "bypass_activation_code_confirmation", rv.BypassActivationCodeConfirmation, &diags)
+	setResourceDataIntWithDiagnostic(d, "device_polling_interval", rv.DevicePollingInterval, &diags)
+	setResourceDataIntWithDiagnostic(d, "par_reference_length", rv.ParReferenceLength, &diags)
+	setResourceDataIntWithDiagnostic(d, "par_reference_timeout", rv.ParReferenceTimeout, &diags)
+	setResourceDataStringWithDiagnostic(d, "par_status", rv.ParStatus, &diags)
+	setResourceDataIntWithDiagnostic(d, "pending_authorization_timeout", rv.PendingAuthorizationTimeout, &diags)
+	setResourceDataIntWithDiagnostic(d, "persistent_grant_idle_timeout", rv.PersistentGrantIdleTimeout, &diags)
+	setResourceDataStringWithDiagnostic(d, "persistent_grant_idle_timeout_time_unit", rv.PersistentGrantIdleTimeoutTimeUnit, &diags)
+	setResourceDataStringWithDiagnostic(d, "registered_authorization_path", rv.RegisteredAuthorizationPath, &diags)
+	setResourceDataStringWithDiagnostic(d, "scope_for_oauth_grant_management", rv.ScopeForOAuthGrantManagement, &diags)
+	setResourceDataStringWithDiagnostic(d, "user_authorization_consent_adapter", rv.UserAuthorizationConsentAdapter, &diags)
+	setResourceDataStringWithDiagnostic(d, "user_authorization_consent_page_setting", rv.UserAuthorizationConsentPageSetting, &diags)
+	setResourceDataStringWithDiagnostic(d, "user_authorization_url", rv.UserAuthorizationUrl, &diags)
 
-	// "admin_web_service_pcv_ref"
+	if rv.AdminWebServicePcvRef != nil {
+		if err := d.Set("admin_web_service_pcv_ref", flattenResourceLink(rv.AdminWebServicePcvRef)); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
+		}
+	}
 
 	if rv.PersistentGrantReuseGrantTypes != nil && len(rv.PersistentGrantReuseGrantTypes) > 0 {
 		if err := d.Set("persistent_grant_reuse_grant_types", rv.PersistentGrantReuseGrantTypes); err != nil {
@@ -340,7 +493,7 @@ func resourcePingFederateOauthAuthServerSettingsResourceReadResult(d *schema.Res
 		}
 	}
 
-	if rv.PersistentGrantContract != nil {
+	if rv.PersistentGrantContract != nil && persistentGrantContractShouldFlatten(rv.PersistentGrantContract) {
 		if err := d.Set("persistent_grant_contract", flattenPersistentGrantContract(rv.PersistentGrantContract)); err != nil {
 			diags = append(diags, diag.FromErr(err)...)
 		}

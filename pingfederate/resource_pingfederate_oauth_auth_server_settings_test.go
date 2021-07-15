@@ -4,6 +4,10 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -124,5 +128,84 @@ func testAccCheckPingFederateOauthAuthServerSettingsExists(n string) resource.Te
 		}
 
 		return nil
+	}
+}
+
+func Test_resourcePingFederateOauthAuthServerSettingsResourceReadResult(t *testing.T) {
+	cases := []struct {
+		Resource pf.AuthorizationServerSettings
+	}{
+		{
+			Resource: pf.AuthorizationServerSettings{
+				AdminWebServicePcvRef:                  &pf.ResourceLink{Id: String("1")},
+				AllowUnidentifiedClientExtensionGrants: Bool(true),
+				AllowUnidentifiedClientROCreds:         Bool(true),
+				AllowedOrigins:                         &[]*string{String("foo")},
+				ApprovedScopesAttribute:                String("foo1"),
+				AtmIdForOAuthGrantManagement:           String("foo2"),
+				AuthorizationCodeEntropy:               Int(1),
+				AuthorizationCodeTimeout:               Int(2),
+				BypassActivationCodeConfirmation:       Bool(true),
+				BypassAuthorizationForApprovedGrants:   Bool(true),
+				DefaultScopeDescription:                String("foo3"),
+				DevicePollingInterval:                  Int(3),
+				ExclusiveScopeGroups: &[]*pf.ScopeGroupEntry{
+					{
+						Description: String("foo"),
+						Scopes:      &[]*string{String("foo")},
+						Name:        String("foo"),
+					}},
+				ExclusiveScopes: &[]*pf.ScopeEntry{
+					{
+						Description: String("foo"),
+						Dynamic:     Bool(true),
+						Name:        String("foo"),
+					},
+				},
+				ParReferenceLength:                 Int(4),
+				ParReferenceTimeout:                Int(5),
+				ParStatus:                          String("foo4"),
+				PendingAuthorizationTimeout:        Int(6),
+				PersistentGrantContract:            nil,
+				PersistentGrantIdleTimeout:         Int(7),
+				PersistentGrantIdleTimeoutTimeUnit: String("foo5"),
+				PersistentGrantLifetime:            Int(8),
+				PersistentGrantLifetimeUnit:        String("foo6"),
+				PersistentGrantReuseGrantTypes:     []*string{String("foo7")},
+				RefreshRollingInterval:             Int(9),
+				RefreshTokenLength:                 Int(10),
+				RegisteredAuthorizationPath:        String("foo8"),
+				RollRefreshTokenValues:             Bool(true),
+				ScopeForOAuthGrantManagement:       String("foo9"),
+				ScopeGroups: &[]*pf.ScopeGroupEntry{
+					{
+						Description: String("bar1"),
+						Scopes:      &[]*string{String("bar2")},
+						Name:        String("bar3"),
+					}},
+				Scopes: &[]*pf.ScopeEntry{
+					{
+						Description: String("foo1"),
+						Dynamic:     Bool(true),
+						Name:        String("foo2"),
+					},
+				},
+				TokenEndpointBaseUrl:                String("foo10"),
+				TrackUserSessionsForLogout:          Bool(true),
+				UserAuthorizationConsentAdapter:     String("foo11"),
+				UserAuthorizationConsentPageSetting: String("foo12"),
+				UserAuthorizationUrl:                String("foo13"),
+			},
+		},
+	}
+	for i, tc := range cases {
+		t.Run(fmt.Sprintf("tc:%v", i), func(t *testing.T) {
+
+			resourceSchema := resourcePingFederateOauthAuthServerSettingsResource().Schema
+			resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})
+			resourcePingFederateOauthAuthServerSettingsResourceReadResult(resourceLocalData, &tc.Resource, false)
+
+			assert.Equal(t, tc.Resource, *resourcePingFederateOauthAuthServerSettingsResourceReadData(resourceLocalData, false))
+		})
 	}
 }
