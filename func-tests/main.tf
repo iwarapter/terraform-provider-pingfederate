@@ -14,10 +14,12 @@ provider "pingfederate" {
 }
 
 locals {
-  isPF10_0 = length(regexall("10.[0]", var.pf_version)) > 0
-  isPF10_1 = length(regexall("10.[1]", var.pf_version)) > 0
-  isPF10_2 = length(regexall("10.[2]", var.pf_version)) > 0
+  isPF10_0 = length(regexall("10.[0]", data.pingfederate_version.instance.version)) > 0
+  isPF10_1 = length(regexall("10.[1]", data.pingfederate_version.instance.version)) > 0
+  isPF10_2 = length(regexall("10.[2]", data.pingfederate_version.instance.version)) > 0
 }
+
+data "pingfederate_version" "instance" {}
 
 resource "pingfederate_server_settings" "settings" {
   federation_info {
@@ -99,8 +101,7 @@ resource "pingfederate_oauth_auth_server_settings" "settings" {
   }
 
   persistent_grant_contract {
-    extended_attributes = [
-    "woot"]
+    extended_attributes = ["woot"]
   }
 
   allowed_origins = [
