@@ -1,3 +1,13 @@
+## 0.0.19 (Unreleased)
+
+NOTES:
+
+* This is an early release experimental build for PingFederate 10.x
+
+FEATURES:
+
+- Add data source to return PingFederate version. (#116)
+
 ## 0.0.18 (July 15th, 2021)
 
 NOTES:

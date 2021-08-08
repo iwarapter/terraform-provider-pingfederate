@@ -51,6 +51,7 @@ func Provider() *schema.Provider {
 			"pingfederate_ldap_data_store":        dataSourcePingFederateLdapDataStore(),
 			"pingfederate_keypair_signing_csr":    dataSourcePingFederateKeyPairSigningCsr(),
 			"pingfederate_keypair_ssl_server_csr": dataSourcePingFederateKeyPairSslServerCsr(),
+			"pingfederate_version":                dataSourcePingFederateVersion(),
 		},
 		ResourcesMap: map[string]*schema.Resource{
 			"pingfederate_authentication_policies_settings":             resourcePingFederateAuthenticationPoliciesSettingsResource(),
