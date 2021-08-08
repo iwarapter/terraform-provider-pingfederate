@@ -978,7 +978,7 @@ func expandSpBrowserSsoAttributeContract(in map[string]interface{}) *pf.SpBrowse
 		result.CoreAttributes = expandSpBrowserSsoAttributeList(val.([]interface{}))
 	}
 	if val, ok := in["extended_attributes"]; ok {
-		result.ExtendedAttributes = expandSpBrowserSsoAttributeList(val.([]interface{}))
+		result.ExtendedAttributes = expandSpBrowserSsoAttributeList(val.(*schema.Set).List())
 	}
 	return &result
 }

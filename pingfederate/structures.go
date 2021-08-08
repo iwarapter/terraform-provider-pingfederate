@@ -3120,7 +3120,7 @@ func resourceSpBrowserSsoAttributeContract() *schema.Resource {
 				Optional: true,
 			},
 			"extended_attributes": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Elem:     resourceSpBrowserSsoAttribute(),
 				Optional: true,
 			},
