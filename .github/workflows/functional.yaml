@@ -19,8 +19,18 @@ on:
       - 'func-tests/**'
 name: e2e
 jobs:
+  getdate:
+    name: get date
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get current date
+        id: getdate
+        run: echo "::set-output name=date::$(date +'%y%m%d')"
+    outputs:
+      date: ${{ steps.getdate.outputs.date }}
   e2e:
     name: e2e
+    needs: getdate
     strategy:
       fail-fast: false
       matrix:
@@ -35,7 +45,7 @@ jobs:
           PING_IDENTITY_DEVOPS_KEY: ${{ secrets.PING_IDENTITY_DEVOPS_KEY }}
           SERVER_PROFILE_URL: https://github.com/pingidentity/pingidentity-server-profiles.git
           SERVER_PROFILE_PATH: getting-started/pingfederate
-          IMAGE_VERSION: pingfederate-alpine-az11-${{ matrix.pingfederate-version }}-210715-d9b5
+          IMAGE_VERSION: pingfederate-alpine-az11-${{ matrix.pingfederate-version }}-${{ needs.getdate.outputs.date }}-d9b5
           PF_LOG_LEVEL: DEBUG
           TAIL_LOG_PARALLEL: "y"
           TAIL_LOG_FILES: "/opt/out/instance/log/server.log /opt/out/instance/log/admin-api.log"

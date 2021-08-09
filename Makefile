@@ -2,7 +2,7 @@
 VERSION ?= 0.0.1-BETA
 NAME=terraform-provider-pingfederate_v${VERSION}
 OS_NAME := $(shell uname -s | tr A-Z a-z)
-
+CURDATE := ${shell date +'%y%m%d'}
 
 pf-init:
 	@docker run -d --rm --hostname pingfederate \
@@ -20,7 +20,7 @@ pf-init:
 		-e TAIL_LOG_FILES="/opt/out/instance/log/server.log /opt/out/instance/log/admin-api.log" \
 		-e SERVER_PROFILE_URL=https://github.com/pingidentity/pingidentity-server-profiles.git \
 		-e SERVER_PROFILE_PATH=getting-started/pingfederate \
-		-e IMAGE_VERSION=pingfederate-alpine-az11-10.2.2-210715-d9b5 \
+		-e IMAGE_VERSION=pingfederate-alpine-az11-10.2.2-${CURDATE}-d9b5 \
 		--publish 9999:9999 \
 		--publish 9031:9031 \
 		pingidentity/pingfederate:10.2.2-edge
