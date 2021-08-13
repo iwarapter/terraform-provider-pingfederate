@@ -16,7 +16,7 @@ import (
 func init() {
 	resource.AddTestSweepers("ldap_data_store", &resource.Sweeper{
 		Name:         "ldap_data_store",
-		Dependencies: []string{},
+		Dependencies: []string{"idp_sp_connection"},
 		F: func(r string) error {
 			svc := dataStores.New(cfg)
 			results, _, err := svc.GetDataStores()
@@ -25,7 +25,7 @@ func init() {
 			}
 			for _, item := range *results.Items {
 				switch v := item.(type) {
-				case pf.LdapDataStore:
+				case *pf.LdapDataStore:
 					_, _, err := svc.DeleteDataStore(&dataStores.DeleteDataStoreInput{Id: *v.Id})
 					if err != nil {
 						return fmt.Errorf("unable to sweep data store %s because %s", *v.Id, err)

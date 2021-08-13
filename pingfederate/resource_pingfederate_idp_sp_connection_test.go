@@ -86,6 +86,10 @@ func TestAccPingFederateIdpSpConnection(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"outbound_provision.0.sensitive_target_settings.0.value",
+					"outbound_provision.0.sensitive_target_settings.1.value",
+				},
 			},
 		},
 	})
@@ -97,6 +101,10 @@ func testAccCheckPingFederateIdpSpConnectionDestroy(s *terraform.State) error {
 
 func testAccPingFederateIdpSpConnectionConfig(configUpdate string) string {
 	return fmt.Sprintf(`
+provider "pingfederate" {
+  bypass_external_validation = true
+}
+
 resource "pingfederate_idp_sp_connection" "demo" {
   name = "acc_test_foo"
   entity_id = "foo"
@@ -147,6 +155,154 @@ resource "pingfederate_idp_sp_connection" "demo" {
       require_encrypted_name_id = false
     }
   }
+  outbound_provision {
+    type = "PingIDForWorkforce"
+
+    channels {
+      active      = false
+      max_threads = 1
+      name        = "bar"
+      timeout     = 60
+
+      attribute_mapping {
+        field_name = "userName"
+
+        saas_field_info {
+          attribute_names = []
+          character_case  = "NONE"
+          create_only     = false
+          default_value   = "asdasd"
+          masked          = false
+          parser          = "NONE"
+          trim            = false
+        }
+      }
+      attribute_mapping {
+        field_name = "email"
+
+        saas_field_info {
+          attribute_names = []
+          character_case  = "NONE"
+          create_only     = false
+          masked          = false
+          parser          = "NONE"
+          trim            = false
+        }
+      }
+      attribute_mapping {
+        field_name = "fName"
+
+        saas_field_info {
+          attribute_names = []
+          character_case  = "NONE"
+          create_only     = false
+          masked          = false
+          parser          = "NONE"
+          trim            = false
+        }
+      }
+      attribute_mapping {
+        field_name = "lName"
+
+        saas_field_info {
+          attribute_names = []
+          character_case  = "NONE"
+          create_only     = false
+          masked          = false
+          parser          = "NONE"
+          trim            = false
+        }
+      }
+
+      channel_source {
+        base_dn             = "cn=bar"
+        guid_attribute_name = "entryUUID"
+        guid_binary         = false
+
+        account_management_settings {
+          account_status_algorithm      = "ACCOUNT_STATUS_ALGORITHM_FLAG"
+          account_status_attribute_name = "nsaccountlock"
+          default_status                = true
+          flag_comparison_status        = false
+          flag_comparison_value         = "true"
+        }
+
+        change_detection_settings {
+          changed_users_algorithm   = "TIMESTAMP_NO_NEGATION"
+          group_object_class        = "groupOfUniqueNames"
+          time_stamp_attribute_name = "modifyTimestamp"
+          user_object_class         = "person"
+        }
+
+        data_source {
+          id       = pingfederate_ldap_data_store.test.id
+        }
+
+        group_membership_detection {
+          group_member_attribute_name = "uniqueMember"
+        }
+
+        group_source_location {
+          nested_search = false
+        }
+
+        user_source_location {
+          group_dn      = "cn=bar"
+          nested_search = false
+        }
+      }
+    }
+
+    sensitive_target_settings {
+      inherited = false
+      name      = "base64Key"
+      value = "secret1"
+    }
+    sensitive_target_settings {
+      inherited = false
+      name      = "token"
+      value = "secret2"
+    }
+
+    target_settings {
+      inherited = false
+      name      = "Provisioning Options"
+    }
+    target_settings {
+      inherited = false
+      name      = "disableNewUsers"
+      value     = "true"
+    }
+    target_settings {
+      inherited = false
+      name      = "domain"
+      value     = "idpxnyl3m.pingidentity.eu"
+    }
+    target_settings {
+      inherited = false
+      name      = "orgAlias"
+      value     = "foo"
+    }
+    target_settings {
+      inherited = false
+      name      = "removeAction"
+      value     = "Disable"
+    }
+    target_settings {
+      inherited = false
+      name      = "updateNewUsers"
+      value     = "true"
+    }
+  }
+}
+
+resource "pingfederate_ldap_data_store" "test" {
+  name             = "idpspconnectiontest"
+  ldap_type        = "PING_DIRECTORY"
+  hostnames        = ["host.docker.internal:1389"]
+  bind_anonymously = true
+  min_connections  = 1
+  max_connections  = 1
 }
 `, configUpdate)
 }

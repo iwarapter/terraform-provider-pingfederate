@@ -2497,7 +2497,7 @@ func resourceOutboundProvision() *schema.Resource {
 			"sensitive_target_settings": {
 				Type:     schema.TypeSet,
 				Elem:     resourceConfigField(),
-				Required: true,
+				Optional: true,
 			},
 			"type": {
 				Type:     schema.TypeString,

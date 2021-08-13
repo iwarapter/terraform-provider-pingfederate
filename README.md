@@ -27,8 +27,9 @@ The provider is current tested against the following versions of PingFederate
 | PingFederate | Status |
 |------------|--------|
 | 10.0.6 | ![e2e](https://github.com/iwarapter/terraform-provider-pingfederate/workflows/e2e/badge.svg)|
-| 10.1.3 | ![e2e](https://github.com/iwarapter/terraform-provider-pingfederate/workflows/e2e/badge.svg)|
-| 10.2.1 | ![e2e](https://github.com/iwarapter/terraform-provider-pingfederate/workflows/e2e/badge.svg)|
+| 10.1.5 | ![e2e](https://github.com/iwarapter/terraform-provider-pingfederate/workflows/e2e/badge.svg)|
+| 10.2.4 | ![e2e](https://github.com/iwarapter/terraform-provider-pingfederate/workflows/e2e/badge.svg)|
+| 10.3.1 | ![e2e](https://github.com/iwarapter/terraform-provider-pingfederate/workflows/e2e/badge.svg)|
 
 Developing the Provider
 ---------------------
