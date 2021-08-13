@@ -1,0 +1,1 @@
+terraform import pingfederate_oauth_access_token_manager.example 123

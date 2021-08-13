@@ -12,6 +12,7 @@ import (
 
 func resourcePingFederateSpAuthenticationPolicyContractMappingResource() *schema.Resource {
 	return &schema.Resource{
+		Description:   "Provides configuration for SP Authentication Policy Contract Mappings within PingFederate.",
 		CreateContext: resourcePingFederateSpAuthenticationPolicyContractMappingResourceCreate,
 		ReadContext:   resourcePingFederateSpAuthenticationPolicyContractMappingResourceRead,
 		UpdateContext: resourcePingFederateSpAuthenticationPolicyContractMappingResourceUpdate,
@@ -26,46 +27,55 @@ func resourcePingFederateSpAuthenticationPolicyContractMappingResource() *schema
 func resourcePingFederateSpAuthenticationPolicyContractMappingResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"ldap_attribute_source": {
-			Type:     schema.TypeList,
-			Optional: true,
-			Elem:     resourceLdapAttributeSource(),
+			Type:        schema.TypeList,
+			Optional:    true,
+			Description: "A list of configured ldap data stores to look up attributes from.",
+			Elem:        resourceLdapAttributeSource(),
 		},
 		"jdbc_attribute_source": {
-			Type:     schema.TypeList,
-			Optional: true,
-			Elem:     resourceJdbcAttributeSource(),
+			Type:        schema.TypeList,
+			Optional:    true,
+			Description: "A list of configured jdbc data stores to look up attributes from.",
+			Elem:        resourceJdbcAttributeSource(),
 		},
 		"custom_attribute_source": {
-			Type:     schema.TypeList,
-			Optional: true,
-			Elem:     resourceCustomAttributeSource(),
+			Type:        schema.TypeList,
+			Optional:    true,
+			Description: "A list of configured custom data stores to look up attributes from.",
+			Elem:        resourceCustomAttributeSource(),
 		},
 		"attribute_contract_fulfillment": {
-			Type:     schema.TypeSet,
-			Required: true,
-			Elem:     resourceAttributeFulfillmentValue(),
+			Type:        schema.TypeSet,
+			Required:    true,
+			Description: "A list of mappings from attribute names to their fulfillment values.",
+			Elem:        resourceAttributeFulfillmentValue(),
 		},
 		"source_id": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The id of the Authentication Policy Contract.",
 		},
 		"issuance_criteria": {
-			Type:     schema.TypeList,
-			Optional: true,
-			MaxItems: 1,
-			Elem:     resourceIssuanceCriteria(),
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			Description: "The issuance criteria that this transaction must meet before the corresponding attribute contract is fulfilled.",
+			Elem:        resourceIssuanceCriteria(),
 		},
 		"target_id": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The id of the SP Adapter.",
 		},
 		"default_target_resource": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Default target URL for this APC-to-adapter mapping configuration.",
 		},
 		"license_connection_group_assignment": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "The license connection group.",
 		},
 	}
 }

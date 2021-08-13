@@ -11,15 +11,18 @@ import (
 
 func dataSourcePingFederateKeyPairSslServerCsr() *schema.Resource {
 	return &schema.Resource{
+		Description: "Use this data source to get the CSR of a ssl server keypair in Ping Federate.",
 		ReadContext: dataSourcePingFederateKeyPairSslServerCsrRead,
 		Schema: map[string]*schema.Schema{
 			"id": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Resource ID of the ssl server keypair to retrieve the CSR for.",
 			},
 			"cert_request_pem": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "PEM-encoded CSR of the ssl server keypair.",
 			},
 		},
 	}

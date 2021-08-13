@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
@@ -14,6 +16,7 @@ import (
 
 func resourcePingFederateCertificatesCaResource() *schema.Resource {
 	return &schema.Resource{
+		Description:   "Provides configuration for Certificate CAs within PingFederate.",
 		CreateContext: resourcePingFederateCertificatesCaResourceCreate,
 		ReadContext:   resourcePingFederateCertificatesCaResourceRead,
 		DeleteContext: resourcePingFederateCertificatesCaResourceDelete,
@@ -27,61 +30,70 @@ func resourcePingFederateCertificatesCaResource() *schema.Resource {
 func resourcePingFederateCertificatesCaResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"certificate_id": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Computed: true,
-			ForceNew: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Computed:    true,
+			ForceNew:    true,
+			Description: "The persistent, unique ID for the certificate.",
 		},
 		"file_data": {
-			Type:     schema.TypeString,
-			Required: true,
-			ForceNew: true,
+			Type:         schema.TypeString,
+			Required:     true,
+			ForceNew:     true,
+			ValidateFunc: validation.StringIsBase64,
+			Description:  "Base64 Encoded certificate data.",
 		},
 		"crypto_provider": {
 			Type:             schema.TypeString,
 			Optional:         true,
 			ForceNew:         true,
+			Description:      "Cryptographic Provider. This is only applicable if Hybrid HSM mode is true.",
 			ValidateDiagFunc: validateCryptoProvider,
 		},
 		"expires": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Description: "The end date up until which the item is valid, in ISO 8601 format (UTC).",
+			Computed:    true,
 		},
 		"issuer_dn": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Description: "The issuer's distinguished name.",
+			Computed:    true,
 		},
 		"key_algorithm": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Description: "The public key algorithm.",
+			Computed:    true,
 		},
 		"key_size": {
-			Type:     schema.TypeInt,
-			Computed: true,
+			Type:        schema.TypeInt,
+			Description: "The public key size.",
+			Computed:    true,
 		},
 		"serial_number": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Description: "The serial number assigned by the CA.",
+			Computed:    true,
 		},
 		"sha1_fingerprint": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Description: "SHA-1 fingerprint in Hex encoding.",
+			Computed:    true,
 		},
 		"sha256_fingerprint": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Description: "SHA-256 fingerprint in Hex encoding.",
+			Computed:    true,
 		},
 		"signature_algorithm": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Description: "The signature algorithm.",
+			Computed:    true,
 		},
 		"status": {
-			Type:     schema.TypeString,
-			Computed: true,
-		},
-		"subject_dn": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Description: "Status of the item.",
+			Computed:    true,
 		},
 		"subject_alternative_names": {
 			Type:     schema.TypeSet,
@@ -89,14 +101,22 @@ func resourcePingFederateCertificatesCaResourceSchema() map[string]*schema.Schem
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
+			Description: "The subject alternative names (SAN).",
+		},
+		"subject_dn": {
+			Type:        schema.TypeString,
+			Description: "The subject's distinguished name.",
+			Computed:    true,
 		},
 		"valid_from": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Description: "The start date from which the item is valid, in ISO 8601 format (UTC).",
+			Computed:    true,
 		},
 		"version": {
-			Type:     schema.TypeInt,
-			Computed: true,
+			Type:        schema.TypeInt,
+			Description: "The X.509 version to which the item conforms.",
+			Computed:    true,
 		},
 	}
 }

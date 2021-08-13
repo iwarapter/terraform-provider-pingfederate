@@ -1,0 +1,1 @@
+terraform import pingfederate_sp_idp_connection.example 123

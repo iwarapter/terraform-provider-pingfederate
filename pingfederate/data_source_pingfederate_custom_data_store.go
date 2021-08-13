@@ -21,6 +21,7 @@ func dataSourcePingFederateCustomDataStore() *schema.Resource {
 	dsSchema["name"].Required = true
 	dsSchema["name"].Computed = false
 	return &schema.Resource{
+		Description: "Use this data source to get a custom data store in Ping Federate by its name.",
 		ReadContext: dataSourcePingFederateCustomDataStoreRead,
 		Schema:      dsSchema,
 	}

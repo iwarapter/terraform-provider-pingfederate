@@ -19,6 +19,7 @@ import (
 
 func resourcePingFederateIdpAdapterResource() *schema.Resource {
 	return &schema.Resource{
+		Description:   "Provides configuration for IDP Adapters within PingFederate.",
 		CreateContext: resourcePingFederateIdpAdapterResourceCreate,
 		ReadContext:   resourcePingFederateIdpAdapterResourceRead,
 		UpdateContext: resourcePingFederateIdpAdapterResourceUpdate,
@@ -59,10 +60,11 @@ func resourcePingFederateIdpAdapterResource() *schema.Resource {
 func resourcePingFederateIdpAdapterResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"instance_id": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Computed: true,
-			ForceNew: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Computed:    true,
+			ForceNew:    true,
+			Description: "The ID of the plugin instance. The ID cannot be modified once the instance is created. Note: Ignored when specifying a connection's adapter override.",
 			ValidateDiagFunc: func(value interface{}, path cty.Path) diag.Diagnostics {
 				v := value.(string)
 				r, _ := regexp.Compile(`^[a-zA-Z0-9._-]+$`)
@@ -73,27 +75,37 @@ func resourcePingFederateIdpAdapterResourceSchema() map[string]*schema.Schema {
 			},
 		},
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The plugin instance name. The name cannot be modified once the instance is created. Note: Ignored when specifying a connection's adapter override.",
 		},
 		"plugin_descriptor_ref": resourcePluginDescriptorRefSchema(),
-		"parent_ref":            resourceLinkSchema(),
-		"configuration":         resourcePluginConfiguration(),
+		"parent_ref": {
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			Description: "The reference to this plugin's parent instance. The parent reference is only accepted if the plugin type supports parent instances. Note: This parent reference is required if this plugin instance is used as an overriding plugin (e.g. connection adapter overrides)",
+			Elem:        resourceLinkResource(),
+		},
+		"configuration": resourcePluginConfiguration(),
 		"authn_ctx_class_ref": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "The fixed value that indicates how the user was authenticated.",
 		},
 		"attribute_mapping": {
-			Type:     schema.TypeList,
-			Optional: true,
-			MaxItems: 1,
-			Elem:     resourceIdpAdapterAttributeMapping(),
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			Description: "The attributes mapping from attribute sources to attribute targets.",
+			Elem:        resourceIdpAdapterAttributeMapping(),
 		},
 		"attribute_contract": {
-			Type:     schema.TypeList,
-			Required: true,
-			MaxItems: 1,
-			Elem:     resourceIdpAdapterAttributeContract(),
+			Type:        schema.TypeList,
+			Required:    true,
+			MaxItems:    1,
+			Description: "The list of attributes that the IdP adapter provides.",
+			Elem:        resourceIdpAdapterAttributeContract(),
 		},
 	}
 }

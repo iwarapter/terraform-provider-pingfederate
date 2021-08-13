@@ -2,6 +2,9 @@ package pingfederate
 
 import (
 	"context"
+	"regexp"
+
+	"github.com/hashicorp/go-cty/cty"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -11,6 +14,7 @@ import (
 
 func resourcePingFederateAuthnApiApplicationResource() *schema.Resource {
 	return &schema.Resource{
+		Description:   "Provides an authentication API application.",
 		CreateContext: resourcePingFederateAuthnApiApplicationResourceCreate,
 		ReadContext:   resourcePingFederateAuthnApiApplicationResourceRead,
 		UpdateContext: resourcePingFederateAuthnApiApplicationResourceUpdate,
@@ -25,23 +29,42 @@ func resourcePingFederateAuthnApiApplicationResource() *schema.Resource {
 func resourcePingFederateAuthnApiApplicationResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"app_id": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Computed: true,
-			ForceNew: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Computed:    true,
+			ForceNew:    true,
+			Description: "The persistent, unique ID for the Authentication API application. It can be any combination of [a-zA-Z0-9._-]. This property is system-assigned if not specified.",
+			ValidateDiagFunc: func(value interface{}, path cty.Path) diag.Diagnostics {
+				v := value.(string)
+				r, _ := regexp.Compile(`^[a-zA-Z0-9._-]+$`)
+				if !r.MatchString(v) {
+					return diag.Errorf("the app_id can only contain alphanumeric characters, dash, dot and underscore.")
+				}
+				return nil
+			},
 		},
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The Authentication API Application Name. Name must be unique.",
 		},
 		"url": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The Authentication API Application redirect URL.",
 		},
-		"additional_allowed_origins": setOfString(),
-		"description": {
-			Type:     schema.TypeString,
+		"additional_allowed_origins": {
+			Type:     schema.TypeSet,
 			Optional: true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+			Description: "The domain in the redirect URL is always whitelisted. This field contains a list of additional allowed origin URL's for cross-origin resource sharing.",
+		},
+		"description": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "The Authentication API Application description.",
 		},
 	}
 }

@@ -12,6 +12,7 @@ import (
 
 func resourcePingFederateKeypairSslServerResource() *schema.Resource {
 	return &schema.Resource{
+		Description:   "Provides configuration for Ssl Server KeyPairs within PingFederate.",
 		CreateContext: resourcePingFederateKeypairSslServerResourceCreate,
 		ReadContext:   resourcePingFederateKeypairSslServerResourceRead,
 		DeleteContext: resourcePingFederateKeypairSslServerResourceDelete,

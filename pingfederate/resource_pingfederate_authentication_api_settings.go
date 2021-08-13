@@ -13,6 +13,9 @@ import (
 
 func resourcePingFederateAuthnApiSettingsResource() *schema.Resource {
 	return &schema.Resource{
+		Description: `Manages Authentication API Settings.
+
+-> This resource manages a singleton within PingFederate and as such you should ONLY ever declare one of this resource type. Deleting this resource simply stops tracking changes.`,
 		CreateContext: resourcePingFederateAuthnApiSettingsResourceCreate,
 		ReadContext:   resourcePingFederateAuthnApiSettingsResourceRead,
 		UpdateContext: resourcePingFederateAuthnApiSettingsResourceUpdate,
@@ -27,16 +30,24 @@ func resourcePingFederateAuthnApiSettingsResource() *schema.Resource {
 func resourcePingFederateAuthnApiSettingsResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"api_enabled": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  false,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Specifies whether the authentication API is enabled. The default value is false.",
 		},
 		"enable_api_descriptions": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  false,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Enable the API Descriptions endpoint.",
 		},
-		"default_application_ref": resourceLinkSchema(),
+		"default_application_ref": {
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			Elem:        resourceLinkResource(),
+			Description: "Application for non authentication policy use cases.",
+		},
 	}
 }
 

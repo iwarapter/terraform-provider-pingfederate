@@ -11,6 +11,7 @@ import (
 
 func resourcePingFederateKeypairSigningCsrResource() *schema.Resource {
 	return &schema.Resource{
+		Description:   "Provides configuration for importing Signing KeyPair CSR Responses within PingFederate.",
 		CreateContext: resourcePingFederateKeypairSigningCsrResourceCreate,
 		ReadContext:   resourcePingFederateKeypairSigningCsrResourceRead,
 		DeleteContext: resourcePingFederateKeypairSigningCsrResourceDelete,

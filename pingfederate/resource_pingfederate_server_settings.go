@@ -11,6 +11,9 @@ import (
 
 func resourcePingFederateServerSettingsResource() *schema.Resource {
 	return &schema.Resource{
+		Description: `Manages the PingFederate instance server settings.
+
+-> This resource manages a singleton within PingFederate and as such you should ONLY ever declare one of this resource type. Deleting this resource simply stops tracking changes.`,
 		CreateContext: resourcePingFederateServerSettingsResourceCreate,
 		ReadContext:   resourcePingFederateServerSettingsResourceRead,
 		UpdateContext: resourcePingFederateServerSettingsResourceUpdate,
@@ -31,32 +34,38 @@ func resourcePingFederateServerSettingsResourceSchema() map[string]*schema.Schem
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"base_url": {
-						Type:     schema.TypeString,
-						Required: true,
-					},
-					"saml2_entity_id": {
-						Type:     schema.TypeString,
-						Optional: true,
+						Type:        schema.TypeString,
+						Description: "The fully qualified host name, port, and path (if applicable) on which the PingFederate server runs.",
+						Optional:    true,
 					},
 					"saml1x_issuer_id": {
-						Type:     schema.TypeString,
-						Optional: true,
+						Type:        schema.TypeString,
+						Description: "This ID identifies your federation server for SAML 1.x transactions. As with SAML 2.0, it is usually defined as an organization's URL or a DNS address. The SourceID used for artifact resolution is derived from this ID using SHA1.",
+						Optional:    true,
 					},
 					"saml1x_source_id": {
-						Type:     schema.TypeString,
-						Optional: true,
+						Type:        schema.TypeString,
+						Description: "If supplied, the Source ID value entered here is used for SAML 1.x, instead of being derived from the SAML 1.x Issuer/Audience.",
+						Optional:    true,
+					},
+					"saml2_entity_id": {
+						Type:        schema.TypeString,
+						Description: "This ID defines your organization as the entity operating the server for SAML 2.0 transactions. It is usually defined as an organization's URL or a DNS address; for example: pingidentity.com. The SAML SourceID used for artifact resolution is derived from this ID using SHA1.",
+						Optional:    true,
 					},
 					"wsfed_realm": {
-						Type:     schema.TypeString,
-						Optional: true,
+						Type:        schema.TypeString,
+						Description: "The URI of the realm associated with the PingFederate server. A realm represents a single unit of security administration or trust.",
+						Optional:    true,
 					},
 				},
 			},
 		},
 		"roles_and_protocols": {
-			Type:     schema.TypeList,
-			Required: true,
-			MaxItems: 1,
+			Type:       schema.TypeList,
+			Optional:   true,
+			Deprecated: "Starting with PingFederate 10.1, roles and protocols are always enabled and no longer configurable through the administrative console and API.",
+			MaxItems:   1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"enable_idp_discovery": {

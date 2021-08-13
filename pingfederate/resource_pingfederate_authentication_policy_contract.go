@@ -15,6 +15,7 @@ import (
 
 func resourcePingFederateAuthenticationPolicyContractResource() *schema.Resource {
 	return &schema.Resource{
+		Description:   "Provides configuration for Authentication Policy Contracts within PingFederate.",
 		CreateContext: resourcePingFederateAuthenticationPolicyContractResourceCreate,
 		ReadContext:   resourcePingFederateAuthenticationPolicyContractResourceRead,
 		UpdateContext: resourcePingFederateAuthenticationPolicyContractResourceUpdate,
@@ -30,10 +31,11 @@ func resourcePingFederateAuthenticationPolicyContractResource() *schema.Resource
 func resourcePingFederateAuthenticationPolicyContractResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"policy_contract_id": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Computed: true,
-			ForceNew: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Computed:    true,
+			ForceNew:    true,
+			Description: "The persistent, unique ID for the authentication policy contract. It can be any combination of [a-zA-Z0-9._-]. This property is system-assigned if not specified.",
 			ValidateDiagFunc: func(value interface{}, path cty.Path) diag.Diagnostics {
 				v := value.(string)
 				r, _ := regexp.Compile(`^[a-zA-Z0-9._-]+$`)
@@ -44,20 +46,23 @@ func resourcePingFederateAuthenticationPolicyContractResourceSchema() map[string
 			},
 		},
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The Authentication Policy Contract Name. Name is unique.",
 		},
 		"core_attributes": {
-			Type:     schema.TypeSet,
-			Computed: true,
+			Type:        schema.TypeSet,
+			Computed:    true,
+			Description: "A list of read-only assertion attributes (for example, subject) that are automatically populated by PingFederate.",
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
 		},
 		"extended_attributes": {
-			Type:     schema.TypeSet,
-			Optional: true,
-			MinItems: 1,
+			Type:        schema.TypeSet,
+			Optional:    true,
+			MinItems:    1,
+			Description: "A list of additional attributes as needed.",
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},

@@ -1,0 +1,1 @@
+terraform import pingfederate_idp_adapter.example 123

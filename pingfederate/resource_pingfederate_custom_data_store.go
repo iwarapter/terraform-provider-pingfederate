@@ -17,6 +17,7 @@ import (
 
 func resourcePingFederateCustomDataStoreResource() *schema.Resource {
 	return &schema.Resource{
+		Description:   "Provides configuration for Custom Data Stores within PingFederate.",
 		CreateContext: resourcePingFederateCustomDataStoreResourceCreate,
 		ReadContext:   resourcePingFederateCustomDataStoreResourceRead,
 		UpdateContext: resourcePingFederateCustomDataStoreResourceUpdate,
@@ -31,10 +32,11 @@ func resourcePingFederateCustomDataStoreResource() *schema.Resource {
 func resourcePingFederateCustomDataStoreResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"data_store_id": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Computed: true,
-			ForceNew: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Computed:    true,
+			ForceNew:    true,
+			Description: "The persistent, unique ID for the data store. It can be any combination of [a-zA-Z0-9._-]. This property is system-assigned if not specified.",
 			ValidateDiagFunc: func(value interface{}, path cty.Path) diag.Diagnostics {
 				v := value.(string)
 				r, _ := regexp.Compile(`^[a-zA-Z0-9._-]+$`)
@@ -45,17 +47,25 @@ func resourcePingFederateCustomDataStoreResourceSchema() map[string]*schema.Sche
 			},
 		},
 		"mask_attribute_values": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  false,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Whether attribute values should be masked in the log.",
 		},
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The plugin instance name.",
 		},
 		"plugin_descriptor_ref": resourcePluginDescriptorRefSchema(),
-		"parent_ref":            resourceLinkSchema(),
-		"configuration":         resourcePluginConfiguration(),
+		"parent_ref": {
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			Description: "The reference to this plugin's parent instance. The parent reference is only accepted if the plugin type supports parent instances.\nNote: This parent reference is required if this plugin instance is used as an overriding plugin (e.g. connection adapter overrides)",
+			Elem:        resourceLinkResource(),
+		},
+		"configuration": resourcePluginConfiguration(),
 	}
 }
 

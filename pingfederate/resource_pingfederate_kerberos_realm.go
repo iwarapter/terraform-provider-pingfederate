@@ -11,6 +11,7 @@ import (
 
 func resourcePingFederateKerberosRealmResource() *schema.Resource {
 	return &schema.Resource{
+		Description:   "Provides configuration for Kerberos Realms within PingFederate.",
 		CreateContext: resourcePingFederateKerberosRealmResourceCreate,
 		ReadContext:   resourcePingFederateKerberosRealmResourceRead,
 		UpdateContext: resourcePingFederateKerberosRealmResourceUpdate,
@@ -25,34 +26,47 @@ func resourcePingFederateKerberosRealmResource() *schema.Resource {
 func resourcePingFederateKerberosRealmResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"realm_id": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Computed: true,
-			ForceNew: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Computed:    true,
+			ForceNew:    true,
+			Description: "The persistent, unique ID for the Kerberos Realm. It can be any combination of [a-z0-9._-]. This property is system-assigned if not specified.",
 		},
 		"kerberos_realm_name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The Domain/Realm name used for display in UI screens.",
 		},
-		"key_distribution_centers": setOfString(),
+		"key_distribution_centers": {
+			Type:        schema.TypeSet,
+			Optional:    true,
+			Description: "The Domain Controller/Key Distribution Center Host Action Names.",
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+		},
 		"kerberos_username": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The Domain/Realm username.",
 		},
 		"kerberos_password": {
-			Type:      schema.TypeString,
-			Optional:  true,
-			Sensitive: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Sensitive:   true,
+			Description: "The Domain/Realm password. GETs will not return this attribute. To update this field, specify the new value in this attribute.",
 		},
 		"kerberos_encrypted_password": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Computed: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Computed:    true,
+			Description: "For GET requests, this field contains the encrypted Domain/Realm password, if one exists. For POST and PUT requests, if you wish to reuse the existing password, this field should be passed back unchanged.",
 		},
 		"suppress_domain_name_concatenation": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  false,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Controls whether the KDC hostnames and the realm name are concatenated in the auto-generated krb5.conf file. Default is false.",
 		},
 	}
 }

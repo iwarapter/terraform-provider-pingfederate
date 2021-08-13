@@ -6,7 +6,8 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"time"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 
@@ -19,15 +20,13 @@ import (
 
 func resourcePingFederateOauthClientResource() *schema.Resource {
 	return &schema.Resource{
+		Description:   "Provides configuration for OAuth Clients within PingFederate.",
 		CreateContext: resourcePingFederateOauthClientResourceCreate,
 		ReadContext:   resourcePingFederateOauthClientResourceRead,
 		UpdateContext: resourcePingFederateOauthClientResourceUpdate,
 		DeleteContext: resourcePingFederateOauthClientResourceDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
-		},
-		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(1 * time.Minute),
 		},
 		Schema: resourcePingFederateOauthClientResourceSchema(),
 	}
@@ -36,286 +35,376 @@ func resourcePingFederateOauthClientResource() *schema.Resource {
 func resourcePingFederateOauthClientResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "A descriptive name for the client instance. This name appears when the user is prompted for authorization.",
 		},
 		"client_id": {
-			Type:     schema.TypeString,
-			Required: true,
-			ForceNew: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			ForceNew:    true,
+			Description: "A unique identifier the client provides to the Resource Server to identify itself. This identifier is included with every request the client makes.",
 		},
 		"enabled": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  true,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     true,
+			Description: "Specifies whether the client is enabled. The default value is true.",
 		},
 		"grant_types": {
-			Type:     schema.TypeSet,
-			Required: true,
-			MinItems: 1,
+			Type:        schema.TypeSet,
+			Required:    true,
+			MinItems:    1,
+			Description: "The grant types allowed for this client. The EXTENSION grant type applies to SAML/JWT assertion grants.",
 			Elem: &schema.Schema{
 				Type:             schema.TypeString,
 				ValidateDiagFunc: validateGrantTypes,
 			},
 		},
 		"bypass_approval_page": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Use this setting, for example, when you want to deploy a trusted application and authenticate end users via an IdP adapter or IdP connection.",
 		},
 		"description": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "A description of what the client application does. This description appears when the user is prompted for authorization.",
 		},
 		"exclusive_scopes": {
-			Type:     schema.TypeSet,
-			Optional: true,
+			Type:        schema.TypeSet,
+			Optional:    true,
+			Description: "The exclusive scopes available for this client.",
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
 		},
 		"logo_url": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "The location of the logo used on user-facing OAuth grant authorization and revocation pages.",
 		},
 		"persistent_grant_expiration_time": {
-			Type:     schema.TypeInt,
-			Optional: true,
+			Type:        schema.TypeInt,
+			Description: "The persistent grant expiration time. -1 indicates an indefinite amount of time.",
+			Optional:    true,
 		},
 		"persistent_grant_expiration_time_unit": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Default:  "DAYS",
+			Type:        schema.TypeString,
+			Description: "The persistent grant expiration time unit.",
+			Optional:    true,
+			Default:     "DAYS",
 		},
 		"persistent_grant_expiration_type": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Default:  "SERVER_DEFAULT",
+			Type:        schema.TypeString,
+			Description: "Allows an administrator to override the Persistent Grant Lifetime set globally for the OAuth AS. Defaults to SERVER_DEFAULT.",
+			Optional:    true,
+			Default:     "SERVER_DEFAULT",
 		},
 		"redirect_uris": {
-			Type:     schema.TypeSet,
-			Optional: true,
+			Type:        schema.TypeSet,
+			Optional:    true,
+			Description: "URIs to which the OAuth AS may redirect the resource owner's user agent after authorization is obtained. A redirection URI is used with the Authorization Code and Implicit grant types. Wildcards are allowed. However, for security reasons, make the URL as restrictive as possible.For example: https://*.company.com/* Important: If more than one URI is added or if a single URI uses wildcards, then Authorization Code grant and token requests must contain a specific matching redirect uri parameter.",
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
 		},
 		"refresh_rolling": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Default:  "SERVER_DEFAULT",
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Use ROLL or DONT_ROLL to override the Roll Refresh Token Values setting on the Authorization Server Settings. SERVER_DEFAULT will default to the Roll Refresh Token Values setting on the Authorization Server Setting screen. Defaults to SERVER_DEFAULT.",
+			Default:     "SERVER_DEFAULT",
 		},
 		"require_signed_requests": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Type:        schema.TypeBool,
+			Description: "Determines whether signed requests are required for this client",
+			Optional:    true,
 		},
 		"restrict_scopes": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Type:        schema.TypeBool,
+			Description: "Restricts this client's access to specific scopes.",
+			Optional:    true,
 		},
 		"restricted_response_types": {
-			Type:     schema.TypeSet,
-			Optional: true,
+			Type:        schema.TypeSet,
+			Optional:    true,
+			Description: "The response types allowed for this client. If omitted all response types are available to the client.",
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
 		},
 		"restricted_scopes": {
-			Type:     schema.TypeSet,
-			Optional: true,
+			Type:        schema.TypeSet,
+			Optional:    true,
+			Description: "The scopes available for this client.",
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
 		},
 		"validate_using_all_eligible_atms": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Validates token using all eligible access token managers for the client. This setting is ignored if 'restrict_to_default_access_token_manager' is set to true.",
 		},
 		"client_auth": {
-			Type:     schema.TypeList,
-			Optional: true,
-			MaxItems: 1,
-			MinItems: 1,
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			MinItems:    1,
+			Description: "Client authentication settings.  If this model is null, it indicates that no client authentication will be used.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"client_cert_issuer_dn": {
 						Type:          schema.TypeString,
 						Optional:      true,
+						Description:   "Client TLS Certificate Issuer DN.",
 						ConflictsWith: []string{"client_auth.0.secret"},
 					},
 					"client_cert_subject_dn": {
 						Type:          schema.TypeString,
 						Optional:      true,
+						Description:   "Client TLS Certificate Subject DN.",
 						ConflictsWith: []string{"client_auth.0.secret"},
 					},
 					"enforce_replay_prevention": {
-						Type:     schema.TypeBool,
-						Optional: true,
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Description: "Enforce replay prevention on JSON Web Tokens. This field is applicable only for Private Key JWT Client Authentication.",
 					},
 					//TODO do we enable Secret/EncryptedSecret??
 					"secret": {
 						Type:          schema.TypeString,
 						Optional:      true,
 						Sensitive:     true,
+						Description:   "Client secret for Basic Authentication. To update the client secret, specify the plaintext value in this field. This field will not be populated for GET requests.",
 						ConflictsWith: []string{"client_auth.0.client_cert_issuer_dn", "client_auth.0.client_cert_subject_dn"},
 					},
 					"type": {
 						Type:             schema.TypeString,
 						Required:         true,
+						Description:      "Client authentication type.",
 						ValidateDiagFunc: validateClientAuthType,
 					},
 					"token_endpoint_auth_signing_algorithm": {
-						Type:     schema.TypeString,
-						Optional: true,
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The JSON Web Signature [JWS] algorithm that must be used to sign the JSON Web Tokens. This field is applicable only for Private Key JWT Client Authentication. All signing algorithms are allowed if value is not present.",
+						ValidateFunc: validation.StringInSlice([]string{
+							"RS256", "RS384", "RS512", "ES256", "ES384", "ES512", "PS256", "PS384", "PS512",
+						}, false),
 					},
 				},
 			},
 		},
-		"default_access_token_manager_ref": resourceLinkSchema(),
+		"default_access_token_manager_ref": {
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			Description: "The default access token manager for this client.",
+			Elem:        resourceLinkResource(),
+		},
 		"oidc_policy": {
-			Type:     schema.TypeList,
-			Optional: true,
-			MaxItems: 1,
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			Description: "Open ID Connect Policy settings.  This is included in the message only when OIDC is enabled.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"grant_access_session_revocation_api": {
-						Type:     schema.TypeBool,
-						Optional: true,
-						Default:  false,
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Default:     false,
+						Description: "Determines whether this client is allowed to access the Session Revocation API.",
 					},
 					"pairwise_identifier_user_type": {
-						Type:     schema.TypeBool,
-						Optional: true,
-						Default:  false,
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Default:     false,
+						Description: "Determines whether the subject identifier type is pairwise.",
 					},
 					"id_token_signing_algorithm": {
 						Type:             schema.TypeString,
 						Optional:         true,
 						Default:          "RS256",
+						Description:      "The JSON Web Signature [JWS] algorithm required for the ID Token.",
 						ValidateDiagFunc: validateTokenSigningAlgorithm,
 					},
 					"id_token_encryption_algorithm": {
-						Type:     schema.TypeString,
-						Optional: true,
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The JSON Web Encryption [JWE] encryption algorithm used to encrypt the content encryption key for the ID Token.",
 					},
 					"id_token_content_encryption_algorithm": {
-						Type:     schema.TypeString,
-						Optional: true,
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The JSON Web Encryption [JWE] content encryption algorithm for the ID Token.",
 					},
 					"sector_identifier_uri": {
-						Type:     schema.TypeString,
-						Optional: true,
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The URI references a file with a single JSON array of Redirect URI and JWKS URL values.",
 					},
 					"logout_uris": {
-						Type:     schema.TypeList,
-						Optional: true,
+						Type:        schema.TypeList,
+						Optional:    true,
+						Description: "A list of client logout URI's which will be invoked when a user logs out through one of PingFederate's SLO endpoints.",
 						Elem: &schema.Schema{
 							Type: schema.TypeString,
 						},
 					},
 					"ping_access_logout_capable": {
-						Type:     schema.TypeBool,
-						Optional: true,
-						Default:  false,
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Default:     false,
+						Description: "Set this value to true if you wish to enable client application logout, and the client is PingAccess, or its logout endpoints follow the PingAccess path convention.",
 					},
-					"policy_group": resourceLinkSchema(),
+					"policy_group": {
+						Type:        schema.TypeList,
+						Optional:    true,
+						MaxItems:    1,
+						Description: "The Open ID Connect policy. A null value will represent the default policy group.",
+						Elem:        resourceLinkResource(),
+					},
 				},
 			},
 		},
 		"jwks_settings": {
-			Type:     schema.TypeList,
-			Optional: true,
-			MaxItems: 1,
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			Description: "JSON Web Key Set Settings of the OAuth client. Required if private key JWT client authentication or signed requests is enabled.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"jwks": {
 						Type:          schema.TypeString,
 						Optional:      true,
+						Description:   "JSON Web Key Set (JWKS) document of the OAuth client. Either 'jwks' or 'jwks_url' must be provided if private key JWT client authentication or signed requests is enabled. If the client signs its JWTs using an RSASSA-PSS signing algorithm, PingFederate must either use Java 11 or be integrated with a hardware security module (HSM) to process the digital signatures.",
 						ConflictsWith: []string{"jwks_settings.0.jwks_url"},
 					},
 					"jwks_url": {
 						Type:          schema.TypeString,
 						Optional:      true,
+						Description:   "JSON Web Key Set (JWKS) URL of the OAuth client. Either 'jwks' or 'jwks_url' must be provided if private key JWT client authentication or signed requests is enabled. If the client signs its JWTs using an RSASSA-PSS signing algorithm, PingFederate must either use Java 11 or be integrated with a hardware security module (HSM) to process the digital signatures.",
 						ConflictsWith: []string{"jwks_settings.0.jwks"},
 					},
 				},
 			},
 		},
 		"ciba_delivery_mode": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Description: "The token delivery mode for the client.  The default value is 'POLL'.",
+			Optional:    true,
 		},
 		"ciba_notification_endpoint": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Description: "The endpoint the OP will call after a successful or failed end-user authentication.",
+			Optional:    true,
 		},
 		"ciba_polling_interval": {
-			Type:     schema.TypeInt,
-			Optional: true,
+			Type:        schema.TypeInt,
+			Description: "The minimum amount of time in seconds that the Client must wait between polling requests to the token endpoint. The default is 3 seconds.",
+			Optional:    true,
 		},
 		"ciba_request_object_signing_algorithm": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Description: "The JSON Web Signature [JWS] algorithm that must be used to sign the CIBA Request Object. All signing algorithms are allowed if value is not present.",
+			Optional:    true,
+			ValidateFunc: validation.StringInSlice([]string{
+				"RS256", "RS384", "RS512", "ES256", "ES384", "ES512", "PS256", "PS384", "PS512",
+			}, false),
 		},
 		"ciba_require_signed_requests": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Type:        schema.TypeBool,
+			Description: "Determines whether CIBA signed requests are required for this client.",
+			Optional:    true,
 		},
 		"ciba_user_code_supported": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Type:        schema.TypeBool,
+			Description: "Determines whether CIBA user code is supported for this client.",
+			Optional:    true,
 		},
 		"bypass_activation_code_confirmation_override": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Type:        schema.TypeBool,
+			Description: "Indicates if the Activation Code Confirmation page should be bypassed if 'verification_url_complete' is used by the end user to authorize a device. This overrides the 'bypassUseCodeConfirmation' value present in Authorization Server Settings.",
+			Optional:    true,
 		},
 		"device_flow_setting_type": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Default:  "SERVER_DEFAULT",
+			Type:        schema.TypeString,
+			Description: "Allows an administrator to override the Device Authorization Settings set globally for the OAuth AS. Defaults to SERVER_DEFAULT.",
+			Optional:    true,
+			Default:     "SERVER_DEFAULT",
 		},
 		"device_polling_interval_override": {
-			Type:     schema.TypeInt,
-			Optional: true,
+			Type:        schema.TypeInt,
+			Description: "The amount of time client should wait between polling requests, in seconds. This overrides the 'devicePollingInterval' value present in Authorization Server Settings.",
+			Optional:    true,
 		},
 		"extended_properties": {
-			Type:     schema.TypeSet,
-			Elem:     resourceParameterValues(),
-			Optional: true,
+			Type:        schema.TypeSet,
+			Description: "OAuth Client Metadata can be extended to use custom Client Metadata Parameters. The names of these custom parameters should be defined in /extendedProperties.",
+			Elem:        resourceParameterValues(),
+			Optional:    true,
 		},
 		"pending_authorization_timeout_override": {
-			Type:     schema.TypeInt,
-			Optional: true,
+			Type:        schema.TypeInt,
+			Description: "The 'device_code' and 'user_code' timeout, in seconds. This overrides the 'pendingAuthorizationTimeout' value present in Authorization Server Settings.",
+			Optional:    true,
 		},
 		"persistent_grant_idle_timeout": {
-			Type:     schema.TypeInt,
-			Optional: true,
+			Type:        schema.TypeInt,
+			Description: "The persistent grant idle timeout.",
+			Optional:    true,
 		},
 		"persistent_grant_idle_timeout_time_unit": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Default:  "DAYS",
+			Type:        schema.TypeString,
+			Description: "The persistent grant idle timeout time unit.",
+			Optional:    true,
+			Default:     "DAYS",
 		},
 		"persistent_grant_idle_timeout_type": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Default:  "SERVER_DEFAULT",
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Allows an administrator to override the Persistent Grant Idle Timeout set globally for the OAuth AS. Defaults to SERVER_DEFAULT.",
+			Default:     "SERVER_DEFAULT",
 		},
 		"request_object_signing_algorithm": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "The JSON Web Signature [JWS] algorithm that must be used to sign the Request Object. All signing algorithms are allowed if value is not present.",
 		},
-		"request_policy_ref": resourceLinkSchema(),
+		"request_policy_ref": {
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			Description: "The CIBA request policy.",
+			Elem:        resourceLinkResource(),
+		},
 		"require_proof_key_for_code_exchange": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Determines whether Proof Key for Code Exchange (PKCE) is required for this client.",
 		},
-		"token_exchange_processor_policy_ref": resourceLinkSchema(),
+		"require_pushed_authorization_requests": {
+			Type:        schema.TypeBool,
+			Description: "Determines whether pushed authorization requests are required when initiating an authorization request. The default is false.",
+			Optional:    true,
+		},
+		"token_exchange_processor_policy_ref": {
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			Description: "The Token Exchange Processor policy.",
+			Elem:        resourceLinkResource(),
+		},
 		"user_authorization_url_override": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "The URL used as 'verification_url' and 'verification_url_complete' values in a Device Authorization request. This property overrides the 'userAuthorizationUrl' value present in Authorization Server Settings.",
 		},
 		"restrict_to_default_access_token_manager": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Determines whether the client is restricted to using only its default access token manager. The default is false.",
 		},
 	}
 }
@@ -413,6 +502,7 @@ func resourcePingFederateOauthClientResourceReadResult(d *schema.ResourceData, r
 	setResourceDataStringWithDiagnostic(d, "persistent_grant_idle_timeout_time_unit", rv.PersistentGrantIdleTimeoutTimeUnit, &diags)
 	setResourceDataStringWithDiagnostic(d, "persistent_grant_idle_timeout_type", rv.PersistentGrantIdleTimeoutType, &diags)
 	setResourceDataStringWithDiagnostic(d, "request_object_signing_algorithm", rv.RequestObjectSigningAlgorithm, &diags)
+	setResourceDataBoolWithDiagnostic(d, "require_pushed_authorization_requests", rv.RequirePushedAuthorizationRequests, &diags)
 	setResourceDataBoolWithDiagnostic(d, "require_proof_key_for_code_exchange", rv.RequireProofKeyForCodeExchange, &diags)
 	setResourceDataStringWithDiagnostic(d, "user_authorization_url_override", rv.UserAuthorizationUrlOverride, &diags)
 	setResourceDataBoolWithDiagnostic(d, "restrict_to_default_access_token_manager", rv.RestrictToDefaultAccessTokenManager, &diags)
@@ -615,6 +705,9 @@ func resourcePingFederateOauthClientResourceReadData(d *schema.ResourceData) *pf
 	}
 	if v, ok := d.GetOkExists("require_proof_key_for_code_exchange"); ok {
 		client.RequireProofKeyForCodeExchange = Bool(v.(bool))
+	}
+	if v, ok := d.GetOkExists("require_pushed_authorization_requests"); ok {
+		client.RequirePushedAuthorizationRequests = Bool(v.(bool))
 	}
 	if v, ok := d.GetOk("token_exchange_processor_policy_ref"); ok && len(v.([]interface{})) > 0 {
 		client.TokenExchangeProcessorPolicyRef = expandResourceLink(v.([]interface{})[0].(map[string]interface{}))

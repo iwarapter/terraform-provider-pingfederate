@@ -1,0 +1,1 @@
+terraform import pingfederate_oauth_resource_owner_credentials_mappings.example 123

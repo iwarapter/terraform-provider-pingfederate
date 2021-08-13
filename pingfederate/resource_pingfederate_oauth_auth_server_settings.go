@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/hashicorp/go-cty/cty"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthAuthServerSettings"
 
@@ -18,53 +18,48 @@ import (
 
 func resourcePingFederateOauthAuthServerSettingsResource() *schema.Resource {
 
-	scopes := &schema.Schema{
-		Type:     schema.TypeSet,
-		Optional: true,
-		Elem: &schema.Resource{
-			Schema: map[string]*schema.Schema{
-				"name": {
-					Type:     schema.TypeString,
-					Required: true,
-				},
-				"description": {
-					Type:     schema.TypeString,
-					Required: true,
-				},
-				"dynamic": {
-					Type:     schema.TypeBool,
-					Optional: true,
-					Default:  false,
-				},
+	scopes := &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"name": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"description": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"dynamic": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
 			},
 		},
 	}
 
-	scopeGroups := &schema.Schema{
-		Type:     schema.TypeSet,
-		Optional: true,
-		Elem: &schema.Resource{
-			Schema: map[string]*schema.Schema{
-				"name": {
-					Type:     schema.TypeString,
-					Required: true,
-				},
-				"description": {
-					Type:     schema.TypeString,
-					Required: true,
-				},
-				"scopes": {
-					Type:     schema.TypeList,
-					Required: true,
-					Elem: &schema.Schema{
-						Type: schema.TypeString,
-					},
+	scopeGroups := &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"name": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"description": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"scopes": {
+				Type:     schema.TypeList,
+				Required: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
 				},
 			},
 		},
 	}
 
 	return &schema.Resource{
+		Description: `Provides a OAuth Authorization Server Settings.
+
+-> This resource manages a singleton within PingFederate and as such you should ONLY ever declare one of this resource type. Deleting this resource simply stops tracking changes.`,
 		CreateContext: resourcePingFederateOauthAuthServerSettingsResourceCreate,
 		ReadContext:   resourcePingFederateOauthAuthServerSettingsResourceRead,
 		UpdateContext: resourcePingFederateOauthAuthServerSettingsResourceUpdate,
@@ -74,65 +69,127 @@ func resourcePingFederateOauthAuthServerSettingsResource() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"default_scope_description": {
-				Type:     schema.TypeString,
-				Required: true,
+			"admin_web_service_pcv_ref": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				MaxItems:    1,
+				Description: "The password credential validator reference that is used for authenticating access to the OAuth Administrative Web Service.",
+				Elem:        resourceLinkResource(),
 			},
-			"scopes":                 scopes,
-			"scope_groups":           scopeGroups,
-			"exclusive_scopes":       scopes,
-			"exclusive_scope_groups": scopeGroups,
-			"authorization_code_timeout": {
-				Type:     schema.TypeInt,
-				Required: true,
+			"allow_unidentified_client_extension_grants": {
+				Type:        schema.TypeBool,
+				Description: "Allow unidentified clients to request extension grants. The default value is false.",
+				Optional:    true,
+				Default:     false,
 			},
-			"authorization_code_entropy": {
-				Type:     schema.TypeInt,
-				Required: true,
+			"allow_unidentified_client_ro_creds": {
+				Type:        schema.TypeBool,
+				Description: "Allow unidentified clients to request resource owner password credentials grants. The default value is false.",
+				Optional:    true,
+				Default:     false,
 			},
-			"track_user_sessions_for_logout": {
-				Type:     schema.TypeBool,
-				Optional: true,
-			},
-			"token_endpoint_base_url": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"persistent_grant_lifetime": {
-				Type:     schema.TypeInt,
-				Optional: true,
-			},
-			"persistent_grant_lifetime_unit": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: validatePersistentGrantLifetimeUnit,
-			},
-			"refresh_token_length": {
-				Type:     schema.TypeInt,
-				Required: true,
-			},
-			"roll_refresh_token_values": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Default:  true,
-			},
-			"refresh_rolling_interval": {
-				Type:     schema.TypeInt,
-				Required: true,
-			},
-			"persistent_grant_reuse_grant_types": {
+			"allowed_origins": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Schema{
-					Type:             schema.TypeString,
-					ValidateDiagFunc: validateGrantTypes,
+					Type: schema.TypeString,
 				},
+				Description: "The list of allowed origins.",
+			},
+			"approved_scope_attribute": { //TODO deprecated
+				Type:          schema.TypeString,
+				Deprecated:    "This attribute is incorrectly named and will be removed in future releases, please use approved_scopes_attribute",
+				Optional:      true,
+				ConflictsWith: []string{"approved_scopes_attribute"},
+			},
+			"approved_scopes_attribute": {
+				Type:          schema.TypeString,
+				Description:   "Attribute from the external consent adapter's contract, intended for storing approved scopes returned by the external consent page.",
+				Optional:      true,
+				ConflictsWith: []string{"approved_scope_attribute"},
+			},
+			"atm_id_for_oauth_grant_management": {
+				Type:        schema.TypeString,
+				Description: "The ID of the Access Token Manager used for OAuth enabled grant management.",
+				Optional:    true,
+			},
+			"authorization_code_entropy": {
+				Type:        schema.TypeInt,
+				Description: "The authorization code entropy, in bytes.",
+				Required:    true,
+			},
+			"authorization_code_timeout": {
+				Type:        schema.TypeInt,
+				Description: "The authorization code timeout, in seconds.",
+				Required:    true,
+			},
+			"bypass_activation_code_confirmation": {
+				Type:        schema.TypeBool,
+				Description: "Indicates if the Activation Code Confirmation page should be bypassed if 'verification_url_complete' is used by the end user to authorize a device.",
+				Optional:    true,
+			},
+			"bypass_authorization_for_approved_grants": {
+				Type:        schema.TypeBool,
+				Description: "Bypass authorization for previously approved persistent grants. The default value is false.",
+				Optional:    true,
+				Default:     false,
+			},
+			"default_scope_description": {
+				Type:        schema.TypeString,
+				Description: "The default scope description.",
+				Required:    true,
+			},
+			"device_polling_interval": {
+				Type:        schema.TypeInt,
+				Description: "The amount of time client should wait between polling requests, in seconds.",
+				Optional:    true,
+				Default:     5,
+			},
+			"exclusive_scope_groups": {
+				Type:        schema.TypeSet,
+				Elem:        scopeGroups,
+				Description: "The list of exclusive scope groups.",
+				Optional:    true,
+			},
+			"exclusive_scopes": {
+				Type:        schema.TypeSet,
+				Elem:        scopes,
+				Description: "The list of exclusive scopes.",
+				Optional:    true,
+			},
+			"par_reference_length": {
+				Type:        schema.TypeInt,
+				Description: "The entropy of pushed authorization request references, in bytes. The default value is 24.",
+				Optional:    true,
+				Default:     24,
+			},
+			"par_reference_timeout": {
+				Type:        schema.TypeInt,
+				Description: "The timeout, in seconds, of the pushed authorization request reference. The default value is 60.",
+				Optional:    true,
+				Default:     60,
+			},
+			"par_status": {
+				Type:        schema.TypeString,
+				Description: "The status of pushed authorization request support. The default value is ENABLED.",
+				Optional:    true,
+				Default:     "ENABLED",
+				ValidateFunc: validation.StringInSlice([]string{
+					"ENABLED", "DISABLED", "REQUIRED",
+				}, false),
+			},
+			"pending_authorization_timeout": {
+				Type:        schema.TypeInt,
+				Description: "The 'device_code' and 'user_code' timeout, in seconds.",
+				Optional:    true,
+				Default:     600,
 			},
 			"persistent_grant_contract": {
-				Type:     schema.TypeSet,
-				Optional: true,
-				Computed: true,
-				MaxItems: 1,
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Computed:    true,
+				Description: "The persistent grant contract defines attributes that are associated with OAuth persistent grants.",
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"extended_attributes": {
@@ -152,113 +209,103 @@ func resourcePingFederateOauthAuthServerSettingsResource() *schema.Resource {
 					},
 				},
 			},
-			"bypass_authorization_for_approved_grants": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Default:  false,
-			},
-			"allow_unidentified_client_ro_creds": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Default:  false,
-			},
-			"allowed_origins": {
-				Type:     schema.TypeSet,
-				Optional: true,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-			},
-			"allow_unidentified_client_extension_grants": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Default:  false,
-			},
-			"admin_web_service_pcv_ref": resourceLinkSchema(),
-			"approved_scope_attribute": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"atm_id_for_oauth_grant_management": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"bypass_activation_code_confirmation": {
-				Type:     schema.TypeBool,
-				Optional: true,
-			},
-			"device_polling_interval": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				Default:  5,
-			},
-			"par_reference_length": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				Default:  24,
-			},
-			"par_reference_timeout": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				Default:  60,
-			},
-			"par_status": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "ENABLED",
-				ValidateDiagFunc: func(value interface{}, _ cty.Path) diag.Diagnostics {
-					v := value.(string)
-					switch v {
-					case "ENABLED", "DISABLED", "REQUIRED":
-						return nil
-					}
-					return diag.Errorf("must be either 'ENABLED', 'DISABLED', 'REQUIRED' not %s", v)
-				},
-			},
-			"pending_authorization_timeout": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				Default:  600,
-			},
 			"persistent_grant_idle_timeout": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				Default:  30,
+				Type:        schema.TypeInt,
+				Description: "The persistent grant idle timeout. The default value is 30 (days). -1 indicates an indefinite amount of time.",
+				Optional:    true,
+				Default:     30,
 			},
 			"persistent_grant_idle_timeout_time_unit": {
 				Type:             schema.TypeString,
+				Description:      "The persistent grant idle timeout time unit.",
 				Optional:         true,
 				Default:          "DAYS",
 				ValidateDiagFunc: validatePersistentGrantLifetimeUnit,
 			},
-			"registered_authorization_path": {
-				Type:     schema.TypeString,
+			"persistent_grant_lifetime": {
+				Type:        schema.TypeInt,
+				Description: "The persistent grant lifetime. The default value is indefinite. -1 indicates an indefinite amount of time.",
+				Optional:    true,
+			},
+			"persistent_grant_lifetime_unit": {
+				Type:             schema.TypeString,
+				Description:      "The persistent grant lifetime unit.",
+				Optional:         true,
+				ValidateDiagFunc: validatePersistentGrantLifetimeUnit,
+			},
+			"persistent_grant_reuse_grant_types": {
+				Type:     schema.TypeSet,
 				Optional: true,
+				Elem: &schema.Schema{
+					Type:             schema.TypeString,
+					ValidateDiagFunc: validateGrantTypes,
+				},
+				Description: "The grant types that the OAuth AS can reuse rather than creating a new grant for each request.",
+			},
+			"refresh_rolling_interval": {
+				Type:        schema.TypeInt,
+				Description: "The minimum interval to roll refresh tokens, in hours.",
+				Required:    true,
+			},
+			"refresh_token_length": {
+				Type:        schema.TypeInt,
+				Description: "The refresh token length in number of characters.",
+				Required:    true,
+			},
+			"registered_authorization_path": {
+				Type:        schema.TypeString,
+				Description: "The Registered Authorization Path is concatenated to PingFederate base URL to generate 'verification_url' and 'verification_url_complete' values in a Device Authorization request. PingFederate listens to this path if specified",
+				Optional:    true,
+			},
+			"roll_refresh_token_values": {
+				Type:        schema.TypeBool,
+				Description: "The roll refresh token values default policy. The default value is true.",
+				Optional:    true,
+				Default:     true,
 			},
 			"scope_for_oauth_grant_management": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Description: "The OAuth scope to validate when accessing grant management service.",
+				Optional:    true,
+			},
+			"scope_groups": {
+				Type:        schema.TypeSet,
+				Elem:        scopeGroups,
+				Description: "The list of common scope groups.",
+				Optional:    true,
+			},
+			"scopes": {
+				Type:        schema.TypeSet,
+				Elem:        scopes,
+				Description: "The list of common scopes.",
+				Optional:    true,
+			},
+			"token_endpoint_base_url": {
+				Type:        schema.TypeString,
+				Description: "The token endpoint base URL used to validate the 'aud' claim during Private Key JWT Client Authentication.",
+				Optional:    true,
+			},
+			"track_user_sessions_for_logout": {
+				Type:        schema.TypeBool,
+				Description: "Determines whether user sessions are tracked for logout. If this property is not provided on a PUT, the setting is left unchanged.",
+				Optional:    true,
 			},
 			"user_authorization_consent_adapter": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Description: "Adapter ID of the external consent adapter to be used for the consent page user interface.",
+				Optional:    true,
 			},
 			"user_authorization_consent_page_setting": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "INTERNAL",
-				ValidateDiagFunc: func(value interface{}, _ cty.Path) diag.Diagnostics {
-					v := value.(string)
-					switch v {
-					case "INTERNAL", "ADAPTER":
-						return nil
-					}
-					return diag.Errorf("must be either 'INTERNAL' or 'ADAPTER' not %s", v)
-				},
+				Type:         schema.TypeString,
+				Description:  "User Authorization Consent Page setting to use PingFederate's internal consent page or an external system",
+				Optional:     true,
+				Default:      "INTERNAL",
+				ValidateFunc: validation.StringInSlice([]string{"INTERNAL", "ADAPTER"}, false),
 			},
 			"user_authorization_url": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Description: "The URL used to generate 'verification_url' and 'verification_url_complete' values in a Device Authorization request",
+				Optional:    true,
 			},
 		},
 	}
@@ -384,7 +431,10 @@ func resourcePingFederateOauthAuthServerSettingsResourceReadData(d *schema.Resou
 	if v, ok := d.GetOk("atm_id_for_oauth_grant_management"); ok {
 		authSettings.AtmIdForOAuthGrantManagement = String(v.(string))
 	}
-	if v, ok := d.GetOk("approved_scope_attribute"); ok {
+	if v, ok := d.GetOk("approved_scope_attribute"); ok { //TODO deprecated
+		authSettings.ApprovedScopesAttribute = String(v.(string))
+	}
+	if v, ok := d.GetOk("approved_scopes_attribute"); ok {
 		authSettings.ApprovedScopesAttribute = String(v.(string))
 	}
 	if v, ok := d.GetOkExists("bypass_activation_code_confirmation"); ok {
@@ -473,7 +523,8 @@ func resourcePingFederateOauthAuthServerSettingsResourceReadResult(d *schema.Res
 	setResourceDataBoolWithDiagnostic(d, "bypass_authorization_for_approved_grants", rv.BypassAuthorizationForApprovedGrants, &diags)
 	setResourceDataBoolWithDiagnostic(d, "allow_unidentified_client_ro_creds", rv.AllowUnidentifiedClientROCreds, &diags)
 	setResourceDataStringWithDiagnostic(d, "atm_id_for_oauth_grant_management", rv.AtmIdForOAuthGrantManagement, &diags)
-	setResourceDataStringWithDiagnostic(d, "approved_scope_attribute", rv.ApprovedScopesAttribute, &diags)
+	setResourceDataStringWithDiagnostic(d, "approved_scope_attribute", rv.ApprovedScopesAttribute, &diags) //TODO deprecated
+	setResourceDataStringWithDiagnostic(d, "approved_scopes_attribute", rv.ApprovedScopesAttribute, &diags)
 	setResourceDataBoolWithDiagnostic(d, "bypass_activation_code_confirmation", rv.BypassActivationCodeConfirmation, &diags)
 	setResourceDataIntWithDiagnostic(d, "device_polling_interval", rv.DevicePollingInterval, &diags)
 	setResourceDataIntWithDiagnostic(d, "pending_authorization_timeout", rv.PendingAuthorizationTimeout, &diags)

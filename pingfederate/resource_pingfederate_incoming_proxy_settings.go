@@ -6,7 +6,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/go-cty/cty"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+
 	"github.com/iwarapter/pingfederate-sdk-go/services/incomingProxySettings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -16,6 +17,9 @@ import (
 
 func resourcePingFederateIncomingProxySettingsResource() *schema.Resource {
 	return &schema.Resource{
+		Description: `Manages the PingFederate instance Incoming Proxy Settings.
+
+-> This resource manages a singleton within PingFederate and as such you should ONLY ever declare one of this resource type. Deleting this resource simply stops tracking changes.`,
 		CreateContext: resourcePingFederateIncomingProxySettingsResourceCreate,
 		ReadContext:   resourcePingFederateIncomingProxySettingsResourceRead,
 		UpdateContext: resourcePingFederateIncomingProxySettingsResourceUpdate,
@@ -26,51 +30,49 @@ func resourcePingFederateIncomingProxySettingsResource() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"client_cert_chain_sslheader_name": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "While the proxy server is configured to pass client certificates as HTTP request headers, specify the chain header name here.",
 			},
 			"client_cert_sslheader_name": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "While the proxy server is configured to pass client certificates as HTTP request headers, specify the header name here.",
 			},
 			"forwarded_host_header_index": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: validateHeaderIndex(),
-				//Default:          "LAST",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "PingFederate combines multiple comma-separated header values into the same order that they are received. Define which hostname you want to use. Default is to use the last hostname.",
+				ValidateFunc: validation.StringInSlice([]string{
+					"LAST",
+					"FIRST",
+				}, false),
 			},
 			"forwarded_host_header_name": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Globally specify the header name (for example, X-Forwarded-Host) where PingFederate should attempt to retrieve the hostname and port in all HTTP requests.",
 			},
 			"forwarded_ip_address_header_index": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: validateHeaderIndex(),
-				//Default:          "LAST",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "PingFederate combines multiple comma-separated header values into the same order that they are received. Define which IP address you want to use. Default is to use the last address.",
+				ValidateFunc: validation.StringInSlice([]string{
+					"LAST",
+					"FIRST",
+				}, false),
 			},
 			"forwarded_ip_address_header_name": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Globally specify the header name (for example, X-Forwarded-For) where PingFederate should attempt to retrieve the client IP address in all HTTP requests.",
 			},
 			"proxy_terminates_https_conns": {
-				Type:     schema.TypeBool,
-				Optional: true,
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "Allows you to globally specify that connections to the reverse proxy are made over HTTPS even when HTTP is used between the reverse proxy and PingFederate.",
 			},
 		},
-	}
-}
-
-func validateHeaderIndex() func(value interface{}, path cty.Path) diag.Diagnostics {
-	return func(value interface{}, path cty.Path) diag.Diagnostics {
-		v := value.(string)
-		switch v {
-		case
-			"LAST",
-			"FIRST":
-			return nil
-		}
-		return diag.Errorf("must be either 'LAST' or 'FIRST' not %s", v)
 	}
 }
 

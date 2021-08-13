@@ -19,6 +19,7 @@ import (
 
 func resourcePingFederateOauthAccessTokenManagersResource() *schema.Resource {
 	return &schema.Resource{
+		Description:   "Provides configuration for OAuth Access Token Managers within PingFederate.",
 		CreateContext: resourcePingFederateOauthAccessTokenManagersResourceCreate,
 		ReadContext:   resourcePingFederateOauthAccessTokenManagersResourceRead,
 		UpdateContext: resourcePingFederateOauthAccessTokenManagersResourceUpdate,
@@ -59,10 +60,11 @@ func resourcePingFederateOauthAccessTokenManagersResource() *schema.Resource {
 func resourcePingFederateOauthAccessTokenManagersResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"instance_id": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Computed: true,
-			ForceNew: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Computed:    true,
+			ForceNew:    true,
+			Description: "The ID of the plugin instance. The ID cannot be modified once the instance is created.\nNote: Ignored when specifying a connection's adapter override.",
 			ValidateDiagFunc: func(value interface{}, path cty.Path) diag.Diagnostics {
 				v := value.(string)
 				r, _ := regexp.Compile(`^[a-zA-Z0-9._-]+$`)
@@ -73,29 +75,39 @@ func resourcePingFederateOauthAccessTokenManagersResourceSchema() map[string]*sc
 			},
 		},
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The plugin instance name. The name cannot be modified once the instance is created.\nNote: Ignored when specifying a connection's adapter override.",
 		},
 		"plugin_descriptor_ref": resourcePluginDescriptorRefSchema(),
 		"configuration":         resourcePluginConfiguration(),
-		"parent_ref":            resourceLinkSchema(),
+		"parent_ref": {
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			Description: "The reference to this plugin's parent instance. The parent reference is only accepted if the plugin type supports parent instances.\nNote: This parent reference is required if this plugin instance is used as an overriding plugin (e.g. connection adapter overrides)",
+			Elem:        resourceLinkResource(),
+		},
 		"attribute_contract": {
-			Type:     schema.TypeList,
-			Required: true,
-			MaxItems: 1,
+			Type:        schema.TypeList,
+			Required:    true,
+			MaxItems:    1,
+			Description: "The list of attributes that will be added to an access token.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"core_attributes": {
-						Type:     schema.TypeList,
-						Computed: true,
+						Type:        schema.TypeList,
+						Computed:    true,
+						Description: "A list of core token attributes that are associated with the access token management plugin type. This field is read-only and is ignored on POST/PUT.",
 						Elem: &schema.Schema{
 							Type: schema.TypeString,
 						},
 					},
 					"extended_attributes": {
-						Type:     schema.TypeSet,
-						Optional: true,
-						MinItems: 1,
+						Type:        schema.TypeSet,
+						Optional:    true,
+						MinItems:    1,
+						Description: "A list of additional token attributes that are associated with this access token management plugin instance.",
 						Elem: &schema.Schema{
 							Type: schema.TypeString,
 						},
@@ -104,19 +116,22 @@ func resourcePingFederateOauthAccessTokenManagersResourceSchema() map[string]*sc
 			},
 		},
 		"selection_settings": {
-			Type:     schema.TypeList,
-			Optional: true,
-			MaxItems: 1,
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			Description: "Settings which determine how this token manager can be selected for use by an OAuth request.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"inherited": {
-						Type:     schema.TypeBool,
-						Optional: true,
-						Default:  false,
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Default:     false,
+						Description: "If this token manager has a parent, this flag determines whether selection settings, such as resource URI's, are inherited from the parent. When set to true, the other fields in this model become read-only. The default value is false.",
 					},
 					"resource_uris": {
-						Type:     schema.TypeList,
-						Optional: true,
+						Type:        schema.TypeList,
+						Optional:    true,
+						Description: "The list of base resource URI's which map to this token manager. A resource URI, specified via the 'aud' parameter, can be used to select a specific token manager for an OAuth request.",
 						Elem: &schema.Schema{
 							Type: schema.TypeString,
 						},
@@ -125,24 +140,28 @@ func resourcePingFederateOauthAccessTokenManagersResourceSchema() map[string]*sc
 			},
 		},
 		"access_control_settings": {
-			Type:     schema.TypeList,
-			Optional: true,
-			MaxItems: 1,
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			Description: "Settings which determine which clients may access this token manager.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"inherited": {
-						Type:     schema.TypeBool,
-						Optional: true,
-						Default:  false,
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Default:     false,
+						Description: "If this token manager has a parent, this flag determines whether access control settings are inherited from the parent. When set to true, the other fields in this model become read-only. The default value is false.",
 					},
 					"restrict_clients": {
-						Type:     schema.TypeBool,
-						Optional: true,
-						Default:  false,
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Default:     false,
+						Description: "Determines whether access to this token manager is restricted to specific OAuth clients. If false, the 'allowedClients' field is ignored. The default value is false.",
 					},
 					"allowed_clients": {
-						Type:     schema.TypeList,
-						Optional: true,
+						Type:        schema.TypeList,
+						Optional:    true,
+						Description: "If 'restrictClients' is true, this field defines the list of OAuth clients that are allowed to access the token manager.",
 						Elem: &schema.Schema{
 							Type: schema.TypeString,
 						},
@@ -151,31 +170,37 @@ func resourcePingFederateOauthAccessTokenManagersResourceSchema() map[string]*sc
 			},
 		},
 		"session_validation_settings": {
-			Type:     schema.TypeList,
-			Optional: true,
-			MaxItems: 1,
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			Description: "Settings which determine how the user session is associated with the access token.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"inherited": {
-						Type:     schema.TypeBool,
-						Optional: true,
-						Default:  false,
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Default:     false,
+						Description: "If this token manager has a parent, this flag determines whether session validation settings, such as checkValidAuthnSession, are inherited from the parent. When set to true, the other fields in this model become read-only. The default value is false.",
 					},
 					"include_session_id": {
-						Type:     schema.TypeBool,
-						Optional: true,
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Description: "Include the session identifier in the access token. Note that if any of the session validation features is enabled, the session identifier will already be included in the access tokens.",
 					},
 					"check_valid_authn_session": {
-						Type:     schema.TypeBool,
-						Optional: true,
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Description: "Check for a valid authentication session when validating the access token.",
 					},
 					"check_session_revocation_status": {
-						Type:     schema.TypeBool,
-						Optional: true,
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Description: "Check the session revocation status when validating the access token.",
 					},
 					"update_authn_session_activity": {
-						Type:     schema.TypeBool,
-						Optional: true,
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Description: "Update authentication session activity when validating the access token.",
 					},
 				},
 			},

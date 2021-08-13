@@ -1,0 +1,1 @@
+terraform import pingfederate_oauth_client.example 123

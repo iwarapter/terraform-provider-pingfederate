@@ -27,6 +27,9 @@ func validateGrantTypes(value interface{}, _ cty.Path) diag.Diagnostics {
 		"CLIENT_CREDENTIALS",
 		"REFRESH_TOKEN",
 		"EXTENSION",
+		"DEVICE_CODE",
+		"CIBA",
+		"TOKEN_EXCHANGE",
 		"ACCESS_TOKEN_VALIDATION":
 		return nil
 	}

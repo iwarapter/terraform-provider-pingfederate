@@ -17,6 +17,7 @@ import (
 
 func resourcePingFederateJdbcDataStoreResource() *schema.Resource {
 	return &schema.Resource{
+		Description:   "Provides configuration for Jdbc Data Stores within PingFederate.",
 		CreateContext: resourcePingFederateJdbcDataStoreResourceCreate,
 		ReadContext:   resourcePingFederateJdbcDataStoreResourceRead,
 		UpdateContext: resourcePingFederateJdbcDataStoreResourceUpdate,
@@ -31,10 +32,11 @@ func resourcePingFederateJdbcDataStoreResource() *schema.Resource {
 func resourcePingFederateJdbcDataStoreResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"data_store_id": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Computed: true,
-			ForceNew: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Computed:    true,
+			ForceNew:    true,
+			Description: "The persistent, unique ID for the data store. It can be any combination of [a-zA-Z0-9._-]. This property is system-assigned if not specified.",
 			ValidateDiagFunc: func(value interface{}, path cty.Path) diag.Diagnostics {
 				v := value.(string)
 				r, _ := regexp.Compile(`^[a-zA-Z0-9._-]+$`)
@@ -45,13 +47,15 @@ func resourcePingFederateJdbcDataStoreResourceSchema() map[string]*schema.Schema
 			},
 		},
 		"mask_attribute_values": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  false,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Whether attribute values should be masked in the log.",
 		},
 		"connection_url_tags": {
-			Type:     schema.TypeSet,
-			Optional: true,
+			Type:        schema.TypeSet,
+			Optional:    true,
+			Description: "The set of connection URLs and associated tags for this JDBC data store.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"connection_url": {
@@ -71,60 +75,72 @@ func resourcePingFederateJdbcDataStoreResourceSchema() map[string]*schema.Schema
 			},
 		},
 		"connection_url": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The default location of the JDBC database. This field is required if no mapping for JDBC database location and tags are specified.",
 		},
 		"name": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Computed: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Computed:    true,
+			Description: "The data store name with a unique value across all data sources. Omitting this attribute will set the value to a combination of the connection url and the username.",
 		},
 		"driver_class": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The name of the driver class used to communicate with the source database.",
 		},
 		"user_name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The name that identifies the user when connecting to the database.",
 		},
 		"password": {
-			Type:      schema.TypeString,
-			Optional:  true,
-			Sensitive: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Sensitive:   true,
+			Description: "The password needed to access the database. GETs will not return this attribute. To update this field, specify the new value in this attribute.",
 		},
 		"encrypted_password": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Computed: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Computed:    true,
+			Description: "The encrypted password needed to access the database. If you do not want to update the stored value, this attribute should be passed back unchanged.",
 		},
 		"validate_connection_sql": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "A simple SQL statement used by PingFederate at runtime to verify that the database connection is still active and to reconnect if needed.",
 		},
 		"allow_multi_value_attributes": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  true,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     true,
+			Description: "Indicates that this data store can select more than one record from a column and return the results as a multi-value attribute.",
 		},
 		"min_pool_size": {
-			Type:     schema.TypeInt,
-			Optional: true,
-			Default:  10,
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Default:     10,
+			Description: "The smallest number of database connections in the connection pool for the given data store. Omitting this attribute will set the value to the connection pool default.",
 		},
 		"max_pool_size": {
-			Type:     schema.TypeInt,
-			Optional: true,
-			Default:  100,
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Default:     100,
+			Description: "The largest number of database connections in the connection pool for the given data store. Omitting this attribute will set the value to the connection pool default.",
 		},
 		"blocking_timeout": {
-			Type:     schema.TypeInt,
-			Optional: true,
-			Default:  5000,
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Default:     5000,
+			Description: "The amount of time in milliseconds a request waits to get a connection from the connection pool before it fails. Omitting this attribute will set the value to the connection pool default.",
 		},
 		"idle_timeout": {
-			Type:     schema.TypeInt,
-			Optional: true,
-			Default:  5,
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Default:     5,
+			Description: "The length of time in minutes the connection can be idle in the pool before it is closed. Omitting this attribute will set the value to the connection pool default.",
 		},
 	}
 }

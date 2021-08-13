@@ -14,6 +14,9 @@ import (
 
 func resourcePingFederateExtendedPropertiesResource() *schema.Resource {
 	return &schema.Resource{
+		Description: `Manages the PingFederate instance server settings.
+
+  -> This resource manages a singleton within PingFederate and as such you should ONLY ever declare one of this resource type. Deleting this resource simply stops tracking changes.`,
 		CreateContext: resourcePingFederateExtendedPropertiesResourceCreate,
 		ReadContext:   resourcePingFederateExtendedPropertiesResourceRead,
 		UpdateContext: resourcePingFederateExtendedPropertiesResourceUpdate,
@@ -23,22 +26,26 @@ func resourcePingFederateExtendedPropertiesResource() *schema.Resource {
 		},
 		Schema: map[string]*schema.Schema{
 			"property": {
-				Type:     schema.TypeSet,
-				Optional: true,
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Description: "The actual list of Extended Property definitions.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
-							Type:     schema.TypeString,
-							Required: true,
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: "The property name.",
 						},
 						"description": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "The property description.",
 						},
 						"multi_valued": {
-							Type:     schema.TypeBool,
-							Optional: true,
-							Default:  false,
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Default:     false,
+							Description: "Indicates whether the property should allow multiple values.",
 						},
 					},
 				},

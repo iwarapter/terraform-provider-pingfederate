@@ -3,7 +3,8 @@ package pingfederate
 import (
 	"context"
 
-	"github.com/hashicorp/go-cty/cty"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
@@ -12,6 +13,9 @@ import (
 
 func resourcePingFederateAuthenticationPoliciesResource() *schema.Resource {
 	return &schema.Resource{
+		Description: `Manages the PingFederate instance authentication policy tree.
+
+-> This resource manages a singleton within PingFederate and as such you should ONLY ever declare one of this resource type. Deleting this resource simply clears all policies.`,
 		CreateContext: resourcePingFederateAuthenticationPoliciesResourceCreate,
 		ReadContext:   resourcePingFederateAuthenticationPoliciesResourceRead,
 		UpdateContext: resourcePingFederateAuthenticationPoliciesResourceUpdate,
@@ -26,9 +30,10 @@ func resourcePingFederateAuthenticationPoliciesResource() *schema.Resource {
 func resourcePingFederateAuthenticationPoliciesResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"fail_if_no_selection": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  false,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Fail if policy finds no authentication source.",
 		},
 		"tracked_http_parameters": {
 			Type:     schema.TypeSet,
@@ -36,26 +41,27 @@ func resourcePingFederateAuthenticationPoliciesResourceSchema() map[string]*sche
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
+			Description: "The HTTP request parameters to track and make available to authentication sources, selectors, and contract mappings throughout the authentication policy.",
 		},
-		"authn_selection_trees": resourceAuthenticationPolicyTreeSchema(),
+		"authn_selection_trees": {
+			Type:        schema.TypeList,
+			Optional:    true,
+			Description: "The list of authentication policy trees.",
+			Elem:        resourceAuthenticationPolicyTreeResource(),
+		},
 		"default_authentication_sources": {
-			Type:     schema.TypeSet,
-			Optional: true,
+			Type:        schema.TypeSet,
+			Description: "The default authentication sources.",
+			Optional:    true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"type": {
 						Type:     schema.TypeString,
 						Required: true,
-						ValidateDiagFunc: func(value interface{}, path cty.Path) diag.Diagnostics {
-							v := value.(string)
-							switch v {
-							case
-								"IDP_ADAPTER",
-								"IDP_CONNECTION":
-								return nil
-							}
-							return diag.Errorf("must be either 'IDP_ADAPTER' or 'IDP_CONNECTION' not %s", v)
-						},
+						ValidateFunc: validation.StringInSlice([]string{
+							"IDP_ADAPTER",
+							"IDP_CONNECTION",
+						}, false),
 					},
 					"source_ref": resourceLinkSchema(),
 				},

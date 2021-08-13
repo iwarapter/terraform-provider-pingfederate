@@ -1,0 +1,1 @@
+terraform import pingfederate_sp_authentication_policy_contract_mapping.example 123

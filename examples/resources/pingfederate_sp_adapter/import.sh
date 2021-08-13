@@ -1,0 +1,1 @@
+terraform import pingfederate_sp_adapter.example 123

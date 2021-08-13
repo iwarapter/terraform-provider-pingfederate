@@ -16,6 +16,7 @@ import (
 
 func resourcePingFederateSpAdapterResource() *schema.Resource {
 	return &schema.Resource{
+		Description:   "Provides configuration for SP Adapters within PingFederate.",
 		CreateContext: resourcePingFederateSpAdapterResourceCreate,
 		ReadContext:   resourcePingFederateSpAdapterResourceRead,
 		UpdateContext: resourcePingFederateSpAdapterResourceUpdate,
@@ -56,29 +57,40 @@ func resourcePingFederateSpAdapterResource() *schema.Resource {
 func resourcePingFederateSpAdapterResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"sp_adapter_id": {
-			Type:     schema.TypeString,
-			Required: true,
-			ForceNew: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			ForceNew:    true,
+			Description: "The ID of the plugin instance. The ID cannot be modified once the instance is created. Note: Ignored when specifying a connection's adapter override.",
 		},
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			ForceNew:    true,
+			Description: "The plugin instance name. The name cannot be modified once the instance is created.\nNote: Ignored when specifying a connection's adapter override.",
 		},
 		"plugin_descriptor_ref": resourcePluginDescriptorRefSchema(),
-		"parent_ref":            resourceLinkSchema(),
-		"configuration":         resourcePluginConfiguration(),
+		"parent_ref": {
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			Description: "The reference to this plugin's parent instance. The parent reference is only accepted if the plugin type supports parent instances.\nNote: This parent reference is required if this plugin instance is used as an overriding plugin (e.g. connection adapter overrides)",
+			Elem:        resourceLinkResource(),
+		},
+		"configuration": resourcePluginConfiguration(),
 		"attribute_contract": {
-			Type:     schema.TypeList,
-			Optional: true,
-			Computed: true,
-			MaxItems: 1,
-			Elem:     resourceSpAdapterAttributeContract(),
+			Type:        schema.TypeList,
+			Optional:    true,
+			Computed:    true,
+			MaxItems:    1,
+			Description: "The list of attributes that the SP adapter provides.",
+			Elem:        resourceSpAdapterAttributeContract(),
 		},
 		"target_application_info": {
-			Type:     schema.TypeList,
-			Optional: true,
-			MaxItems: 1,
-			Elem:     resourceSpAdapterTargetApplicationInfo(),
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			Description: "The target application's name and icon URL",
+			Elem:        resourceSpAdapterTargetApplicationInfo(),
 		},
 	}
 }

@@ -13,6 +13,7 @@ import (
 
 func resourcePingFederatePasswordCredentialValidatorResource() *schema.Resource {
 	return &schema.Resource{
+		Description:   "Provides configuration for Password Credential Validators within PingFederate.",
 		CreateContext: resourcePingFederatePasswordCredentialValidatorResourceCreate,
 		ReadContext:   resourcePingFederatePasswordCredentialValidatorResourceRead,
 		UpdateContext: resourcePingFederatePasswordCredentialValidatorResourceUpdate,
@@ -49,18 +50,26 @@ func resourcePingFederatePasswordCredentialValidatorResource() *schema.Resource 
 func resourcePingFederatePasswordCredentialValidatorResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The plugin instance name. The name cannot be modified once the instance is created.\nNote: Ignored when specifying a connection's adapter override.",
 		},
 		"plugin_descriptor_ref": resourcePluginDescriptorRefSchema(),
-		"parent_ref":            resourceLinkSchema(),
-		"configuration":         resourcePluginConfiguration(),
+		"parent_ref": {
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			Description: "The reference to this plugin's parent instance. The parent reference is only accepted if the plugin type supports parent instances.",
+			Elem:        resourceLinkResource(),
+		},
+		"configuration": resourcePluginConfiguration(),
 		"attribute_contract": {
-			Type:     schema.TypeList,
-			Optional: true,
-			Computed: true,
-			MaxItems: 1,
-			Elem:     resourcePasswordCredentialValidatorAttributeContract(),
+			Type:        schema.TypeList,
+			Optional:    true,
+			Computed:    true,
+			MaxItems:    1,
+			Description: "The list of attributes that the password credential validator provides.",
+			Elem:        resourcePasswordCredentialValidatorAttributeContract(),
 		},
 	}
 }
