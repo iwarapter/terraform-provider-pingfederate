@@ -20,6 +20,7 @@ func dataSourcePingFederateJdbcDataStore() *schema.Resource {
 	dsSchema["name"].Required = true
 	dsSchema["name"].Computed = false
 	return &schema.Resource{
+		Description: "Use this data source to get a jdbc data store in Ping Federate by its name.",
 		ReadContext: dataSourcePingFederateJdbcDataStoreRead,
 		Schema:      dsSchema,
 	}

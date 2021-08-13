@@ -1,0 +1,1 @@
+terraform import pingfederate_oauth_openid_connect_policy.example 123

@@ -14,6 +14,7 @@ import (
 
 func resourcePingFederateKeypairSigningResource() *schema.Resource {
 	return &schema.Resource{
+		Description:   "Provides configuration for Signing KeyPairs within PingFederate.",
 		CreateContext: resourcePingFederateKeypairSigningResourceCreate,
 		ReadContext:   resourcePingFederateKeypairSigningResourceRead,
 		DeleteContext: resourcePingFederateKeypairSigningResourceDelete,

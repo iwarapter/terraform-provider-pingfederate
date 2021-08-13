@@ -16,10 +16,12 @@ func dataSourcePingFederateLdapDataStore() *schema.Resource {
 		dsSchema[s].Optional = false
 		dsSchema[s].Default = nil
 		dsSchema[s].ValidateDiagFunc = nil
+		dsSchema[s].ValidateFunc = nil
 	}
 	dsSchema["name"].Required = true
 	dsSchema["name"].Computed = false
 	return &schema.Resource{
+		Description: "Use this data source to get a ldap data store in Ping Federate by its name.",
 		ReadContext: dataSourcePingFederateLdapDataStoreRead,
 		Schema:      dsSchema,
 	}

@@ -19,6 +19,7 @@ import (
 
 func resourcePingFederateOpenIdConnectPolicyResource() *schema.Resource {
 	return &schema.Resource{
+		Description:   "Provides configuration for OAuth OpenID Connect Policies within PingFederate.",
 		CreateContext: resourcePingFederateOpenIdConnectPolicyResourceCreate,
 		ReadContext:   resourcePingFederateOpenIdConnectPolicyResourceRead,
 		UpdateContext: resourcePingFederateOpenIdConnectPolicyResourceUpdate,
@@ -36,53 +37,76 @@ func resourcePingFederateOpenIdConnectPolicyResource() *schema.Resource {
 func resourcePingFederateOpenIdConnectPolicyResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"policy_id": {
-			Type:     schema.TypeString,
-			Required: true,
-			ForceNew: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			ForceNew:    true,
+			Description: "The policy ID used internally.",
 		},
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The name used for display in UI screens.",
 		},
-		"access_token_manager_ref": resourceRequiredLinkSchema(),
+		"access_token_manager_ref": {
+			Type:        schema.TypeList,
+			Required:    true,
+			MaxItems:    1,
+			Description: "The access token manager associated with this Open ID Connect policy.",
+			Elem:        resourceLinkResource(),
+		},
 		"id_token_lifetime": {
-			Type:     schema.TypeInt,
-			Optional: true,
-			Default:  5,
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Default:     5,
+			Description: "The ID Token Lifetime, in minutes. The default value is 5.",
 		},
 		"include_sri_in_id_token": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Determines whether a Session Reference Identifier is included in the ID token.",
 		},
 		"include_user_in_id_token": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Type:          schema.TypeBool,
+			Optional:      true,
+			Deprecated:    "This attribute is incorrectly named and will be removed in future releases, please use include_user_info_in_id_token",
+			ConflictsWith: []string{"include_user_info_in_id_token"},
+		},
+		"include_user_info_in_id_token": {
+			Type:          schema.TypeBool,
+			Optional:      true,
+			Description:   "Determines whether the User Info is always included in the ID token.",
+			ConflictsWith: []string{"include_user_in_id_token"},
 		},
 		"include_shash_in_id_token": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Determines whether the State Hash should be included in the ID token.",
 		},
 		"return_id_token_on_refresh_grant": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Determines whether an ID Token should be returned when refresh grant is requested or not.",
 		},
 		"attribute_contract": {
-			Type:     schema.TypeList,
-			Optional: true,
-			Computed: true,
-			MaxItems: 1,
-			Elem:     resourceOpenIdConnectAttributeContract(),
+			Type:        schema.TypeList,
+			Optional:    true,
+			Computed:    true,
+			MaxItems:    1,
+			Description: "The list of attributes that will be returned to OAuth clients in response to requests received at the PingFederate UserInfo endpoint.",
+			Elem:        resourceOpenIdConnectAttributeContract(),
 		},
 		"attribute_mapping": {
-			Type:     schema.TypeList,
-			Optional: true,
-			MaxItems: 1,
-			Elem:     resourceAttributeMapping(),
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			Description: "The attributes mapping from attribute sources to attribute targets.",
+			Elem:        resourceAttributeMapping(),
 		},
 		"scope_attribute_mappings": {
-			Type:     schema.TypeSet,
-			Optional: true,
-			Elem:     resourceParameterValues(),
+			Type:        schema.TypeSet,
+			Optional:    true,
+			Description: "The attribute scope mappings from scopes to attribute names.",
+			Elem:        resourceParameterValues(),
 		},
 	}
 }
@@ -162,7 +186,10 @@ func resourcePingFederateOpenIdConnectPolicyResourceReadResult(d *schema.Resourc
 	}
 	setResourceDataIntWithDiagnostic(d, "id_token_lifetime", rv.IdTokenLifetime, &diags)
 	setResourceDataBoolWithDiagnostic(d, "include_sri_in_id_token", rv.IncludeSriInIdToken, &diags)
+
 	setResourceDataBoolWithDiagnostic(d, "include_user_in_id_token", rv.IncludeUserInfoInIdToken, &diags)
+	setResourceDataBoolWithDiagnostic(d, "include_user_info_in_id_token", rv.IncludeUserInfoInIdToken, &diags)
+
 	setResourceDataBoolWithDiagnostic(d, "include_shash_in_id_token", rv.IncludeSHashInIdToken, &diags)
 	setResourceDataBoolWithDiagnostic(d, "return_id_token_on_refresh_grant", rv.ReturnIdTokenOnRefreshGrant, &diags)
 	if rv.AttributeContract != nil && openIdAttributeContractShouldFlatten(rv.AttributeContract) {
@@ -200,9 +227,14 @@ func resourcePingFederateOpenIdConnectPolicyResourceReadData(d *schema.ResourceD
 	if v, ok := d.GetOkExists("include_sri_in_id_token"); ok {
 		policy.IncludeSriInIdToken = Bool(v.(bool))
 	}
+
 	if v, ok := d.GetOkExists("include_user_in_id_token"); ok {
 		policy.IncludeUserInfoInIdToken = Bool(v.(bool))
 	}
+	if v, ok := d.GetOkExists("include_user_info_in_id_token"); ok {
+		policy.IncludeUserInfoInIdToken = Bool(v.(bool))
+	}
+
 	if v, ok := d.GetOkExists("include_shash_in_id_token"); ok {
 		policy.IncludeSHashInIdToken = Bool(v.(bool))
 	}

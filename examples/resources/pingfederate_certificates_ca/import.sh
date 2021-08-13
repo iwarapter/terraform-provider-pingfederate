@@ -1,0 +1,1 @@
+terraform import pingfederate_certificates_ca.example 123

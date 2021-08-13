@@ -17,3 +17,4 @@ tmp/
 adapters/
 structor/
 func-tests/.terraform.lock.hcl
+bin/

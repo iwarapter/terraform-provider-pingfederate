@@ -12,6 +12,7 @@ import (
 
 func resourcePingFederateOauthResourceOwnerCredentialsMappingsResource() *schema.Resource {
 	return &schema.Resource{
+		Description:   "Provides configuration for OAuth Resource Owner Credentials within PingFederate.",
 		CreateContext: resourcePingFederateOauthResourceOwnerCredentialsMappingsResourceCreate,
 		ReadContext:   resourcePingFederateOauthResourceOwnerCredentialsMappingsResourceRead,
 		UpdateContext: resourcePingFederateOauthResourceOwnerCredentialsMappingsResourceUpdate,
@@ -25,32 +26,43 @@ func resourcePingFederateOauthResourceOwnerCredentialsMappingsResource() *schema
 
 func resourcePingFederateOauthResourceOwnerCredentialsMappingsResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
-		"password_validator_ref": resourcePluginDescriptorRefSchema(),
+		"password_validator_ref": {
+			Type:        schema.TypeList,
+			Required:    true,
+			MaxItems:    1,
+			Description: "Reference to the associated Source Password Validator Instance.",
+			Elem:        resourceLinkResource(),
+		},
 		"ldap_attribute_source": {
-			Type:     schema.TypeList,
-			Optional: true,
-			Elem:     resourceLdapAttributeSource(),
+			Type:        schema.TypeList,
+			Optional:    true,
+			Description: "A list of ldap configured data stores to look up attributes from.",
+			Elem:        resourceLdapAttributeSource(),
 		},
 		"jdbc_attribute_source": {
-			Type:     schema.TypeList,
-			Optional: true,
-			Elem:     resourceJdbcAttributeSource(),
+			Type:        schema.TypeList,
+			Optional:    true,
+			Description: "A list of jdbc configured data stores to look up attributes from.",
+			Elem:        resourceJdbcAttributeSource(),
 		},
 		"custom_attribute_source": {
-			Type:     schema.TypeList,
-			Optional: true,
-			Elem:     resourceCustomAttributeSource(),
+			Type:        schema.TypeList,
+			Optional:    true,
+			Description: "A list of custom configured data stores to look up attributes from.",
+			Elem:        resourceCustomAttributeSource(),
 		},
 		"attribute_contract_fulfillment": {
-			Type:     schema.TypeSet,
-			Required: true,
-			Elem:     resourceAttributeFulfillmentValue(),
+			Type:        schema.TypeSet,
+			Required:    true,
+			Description: "A list of mappings from attribute names to their fulfillment values.",
+			Elem:        resourceAttributeFulfillmentValue(),
 		},
 		"issuance_criteria": {
-			Type:     schema.TypeList,
-			Optional: true,
-			MaxItems: 1,
-			Elem:     resourceIssuanceCriteria(),
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			Description: "The issuance criteria that this transaction must meet before the corresponding attribute contract is fulfilled.",
+			Elem:        resourceIssuanceCriteria(),
 		},
 	}
 }

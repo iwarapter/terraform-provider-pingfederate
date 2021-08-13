@@ -9,11 +9,13 @@ import (
 
 func dataSourcePingFederateVersion() *schema.Resource {
 	return &schema.Resource{
+		Description: "Use this data source to get the version of the PingFederate instance.",
 		ReadContext: dataSourcePingFederateVersionRead,
 		Schema: map[string]*schema.Schema{
 			"version": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Server version.",
 			},
 		},
 	}

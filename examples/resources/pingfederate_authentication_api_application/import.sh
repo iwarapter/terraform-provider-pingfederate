@@ -1,0 +1,1 @@
+terraform import pingfederate_authentication_api_application.example 123

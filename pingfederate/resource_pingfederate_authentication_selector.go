@@ -16,6 +16,7 @@ import (
 
 func resourcePingFederateAuthenticationSelectorResource() *schema.Resource {
 	return &schema.Resource{
+		Description:   "Provides configuration for Authentication Selectors within PingFederate.",
 		CreateContext: resourcePingFederateAuthenticationSelectorResourceCreate,
 		ReadContext:   resourcePingFederateAuthenticationSelectorResourceRead,
 		UpdateContext: resourcePingFederateAuthenticationSelectorResourceUpdate,
@@ -56,17 +57,19 @@ func resourcePingFederateAuthenticationSelectorResource() *schema.Resource {
 func resourcePingFederateAuthenticationSelectorResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
-			ForceNew: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			ForceNew:    true,
+			Description: "The plugin instance name. The name cannot be modified once the instance is created.\nNote: Ignored when specifying a connection's adapter override.",
 		},
 		"plugin_descriptor_ref": resourcePluginDescriptorRefSchema(),
 		"configuration":         resourcePluginConfiguration(),
 		"attribute_contract": {
-			Type:     schema.TypeList,
-			Optional: true,
-			MaxItems: 1,
-			Elem:     resourceAuthenticationSelectorAttributeContract(),
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			Description: "The list of attributes that the Authentication Selector provides.",
+			Elem:        resourceAuthenticationSelectorAttributeContract(),
 		},
 	}
 }

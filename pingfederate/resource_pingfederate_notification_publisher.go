@@ -14,6 +14,7 @@ import (
 
 func resourcePingFederateNotificationPublisherResource() *schema.Resource {
 	return &schema.Resource{
+		Description:   "Provides configuration for Notification Publishers within PingFederate.",
 		CreateContext: resourcePingFederateNotificationPublisherResourceCreate,
 		ReadContext:   resourcePingFederateNotificationPublisherResourceRead,
 		UpdateContext: resourcePingFederateNotificationPublisherResourceUpdate,
@@ -50,18 +51,26 @@ func resourcePingFederateNotificationPublisherResource() *schema.Resource {
 func resourcePingFederateNotificationPublisherResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"publisher_id": {
-			Type:     schema.TypeString,
-			Required: true,
-			ForceNew: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			ForceNew:    true,
+			Description: "The ID of the plugin instance. The ID cannot be modified once the instance is created.\nNote: Ignored when specifying a connection's adapter override.",
 		},
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
-			ForceNew: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			ForceNew:    true,
+			Description: "The plugin instance name. The name cannot be modified once the instance is created.\nNote: Ignored when specifying a connection's adapter override.",
 		},
 		"plugin_descriptor_ref": resourcePluginDescriptorRefSchema(),
-		"parent_ref":            resourceLinkSchema(),
-		"configuration":         resourcePluginConfiguration(),
+		"parent_ref": {
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			Description: "The reference to this plugin's parent instance. The parent reference is only accepted if the plugin type supports parent instances.\nNote: This parent reference is required if this plugin instance is used as an overriding plugin (e.g. connection adapter overrides)",
+			Elem:        resourceLinkResource(),
+		},
+		"configuration": resourcePluginConfiguration(),
 	}
 }
 

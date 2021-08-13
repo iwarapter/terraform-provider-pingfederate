@@ -3,6 +3,8 @@ package pingfederate
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthAccessTokenMappings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -12,6 +14,7 @@ import (
 
 func resourcePingFederateOauthAccessTokenMappingsResource() *schema.Resource {
 	return &schema.Resource{
+		Description:   "Provides configuration for OAuth Access Token Mappings within PingFederate.",
 		CreateContext: resourcePingFederateOauthAccessTokenMappingsResourceCreate,
 		ReadContext:   resourcePingFederateOauthAccessTokenMappingsResourceRead,
 		UpdateContext: resourcePingFederateOauthAccessTokenMappingsResourceUpdate,
@@ -26,46 +29,70 @@ func resourcePingFederateOauthAccessTokenMappingsResource() *schema.Resource {
 func resourcePingFederateOauthAccessTokenMappingsResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"context": {
-			Type:     schema.TypeList,
-			Required: true,
-			MaxItems: 1,
+			Type:        schema.TypeList,
+			Required:    true,
+			ForceNew:    true,
+			MaxItems:    1,
+			Description: "The context of the Access Token Mapping. This property cannot be changed after the mapping is created.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"type": {
 						Type:     schema.TypeString,
 						Required: true,
-						//TODO ValidateFunc: 'DEFAULT' or 'PCV' or 'IDP_CONNECTION' or 'IDP_ADAPTER' or 'AUTHENTICATION_POLICY_CONTRACT' or 'CLIENT_CREDENTIALS' or 'TOKEN_EXCHANGE_PROCESSOR_POLICY']: The Access Token Mapping Context type.
+						ForceNew: true,
+						ValidateFunc: validation.StringInSlice([]string{
+							"DEFAULT", "PCV", "IDP_CONNECTION", "IDP_ADAPTER", "AUTHENTICATION_POLICY_CONTRACT", "CLIENT_CREDENTIALS", "TOKEN_EXCHANGE_PROCESSOR_POLICY",
+						}, false),
 					},
-					"context_ref": resourceForceNewLinkSchemaRef(),
+					"context_ref": {
+						Type:        schema.TypeList,
+						Optional:    true,
+						MaxItems:    1,
+						ForceNew:    true,
+						Description: "Reference to the associated Access Token Mapping Context instance.",
+						Elem:        resourceLinkResource(),
+					},
 				},
 			},
 		},
-		"access_token_manager_ref": resourcePluginDescriptorRefSchema(),
+		"access_token_manager_ref": {
+			Type:        schema.TypeList,
+			Required:    true,
+			ForceNew:    true,
+			MaxItems:    1,
+			Description: "Reference to the access token manager this mapping is associated with. This property cannot be changed after the mapping is created.",
+			Elem:        resourceLinkResource(),
+		},
 		"ldap_attribute_source": {
-			Type:     schema.TypeList,
-			Optional: true,
-			Elem:     resourceLdapAttributeSource(),
+			Type:        schema.TypeList,
+			Optional:    true,
+			Description: "A list of configured ldap data stores to look up attributes from.",
+			Elem:        resourceLdapAttributeSource(),
 		},
 		"jdbc_attribute_source": {
-			Type:     schema.TypeList,
-			Optional: true,
-			Elem:     resourceJdbcAttributeSource(),
+			Type:        schema.TypeList,
+			Optional:    true,
+			Description: "A list of configured jdbc data stores to look up attributes from.",
+			Elem:        resourceJdbcAttributeSource(),
 		},
 		"custom_attribute_source": {
-			Type:     schema.TypeList,
-			Optional: true,
-			Elem:     resourceCustomAttributeSource(),
+			Type:        schema.TypeList,
+			Optional:    true,
+			Description: "A list of configured custom data stores to look up attributes from.",
+			Elem:        resourceCustomAttributeSource(),
 		},
 		"attribute_contract_fulfillment": {
-			Type:     schema.TypeSet,
-			Required: true,
-			Elem:     resourceAttributeFulfillmentValue(),
+			Type:        schema.TypeSet,
+			Required:    true,
+			Description: "A list of mappings from attribute names to their fulfillment values.",
+			Elem:        resourceAttributeFulfillmentValue(),
 		},
 		"issuance_criteria": {
-			Type:     schema.TypeList,
-			Optional: true,
-			MaxItems: 1,
-			Elem:     resourceIssuanceCriteria(),
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			Description: "The issuance criteria that this transaction must meet before the corresponding attribute contract is fulfilled.",
+			Elem:        resourceIssuanceCriteria(),
 		},
 	}
 }

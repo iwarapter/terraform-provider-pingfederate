@@ -11,6 +11,9 @@ import (
 
 func resourcePingFederateAuthenticationPoliciesSettingsResource() *schema.Resource {
 	return &schema.Resource{
+		Description: `Manages Authentication Policies Settings.
+
+-> This resource manages a singleton within PingFederate and as such you should ONLY ever declare one of this resource type. Deleting this resource simply stops tracking changes.`,
 		CreateContext: resourcePingFederateAuthenticationPoliciesSettingsResourceCreate,
 		ReadContext:   resourcePingFederateAuthenticationPoliciesSettingsResourceRead,
 		UpdateContext: resourcePingFederateAuthenticationPoliciesSettingsResourceUpdate,
@@ -25,14 +28,16 @@ func resourcePingFederateAuthenticationPoliciesSettingsResource() *schema.Resour
 func resourcePingFederateAuthenticationPoliciesSettingsResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"enable_idp_authn_selection": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  false,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Enable IdP authentication policies.",
 		},
 		"enable_sp_authn_selection": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  false,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Enable SP authentication policies.",
 		},
 	}
 }

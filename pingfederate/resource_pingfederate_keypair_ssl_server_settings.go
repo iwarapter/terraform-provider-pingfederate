@@ -11,6 +11,9 @@ import (
 
 func resourcePingFederateKeypairSslServerSettingsResource() *schema.Resource {
 	return &schema.Resource{
+		Description: `Manages the PingFederate instance Ssl Server Settings.
+
+-> This resource manages a singleton within PingFederate and as such you should ONLY ever declare one of this resource type. Deleting this resource simply stops tracking changes.`,
 		CreateContext: resourcePingFederateKeypairSslServerSettingsResourceCreate,
 		ReadContext:   resourcePingFederateKeypairSslServerSettingsResourceRead,
 		UpdateContext: resourcePingFederateKeypairSslServerSettingsResourceUpdate,
@@ -25,25 +28,29 @@ func resourcePingFederateKeypairSslServerSettingsResource() *schema.Resource {
 func resourcePingFederateKeypairSslServerSettingsResourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"runtime_server_cert": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "Reference to the default SSL Server Certificate Key pair active for Runtime Server.",
 		},
 		"admin_server_cert": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "Reference to the default SSL Server Certificate Key pair active for PF Administrator Console.",
 		},
 		"active_runtime_server_certs": {
-			Type:     schema.TypeSet,
-			Required: true,
-			MinItems: 1,
+			Type:        schema.TypeSet,
+			Required:    true,
+			MinItems:    1,
+			Description: "The active SSL Server Certificate Key pairs for Runtime Server.",
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
 		},
 		"active_admin_server_certs": {
-			Type:     schema.TypeSet,
-			Required: true,
-			MinItems: 1,
+			Type:        schema.TypeSet,
+			Required:    true,
+			MinItems:    1,
+			Description: "The active SSL Server Certificate Key pairs for PF Administrator Console.",
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},

@@ -1,0 +1,1 @@
+terraform import pingfederate_authentication_selector.example 123

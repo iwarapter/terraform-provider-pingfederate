@@ -10,4 +10,4 @@ require (
 	github.com/stretchr/testify v1.7.0
 )
 
-replace github.com/go-git/go-git-fixtures/v4 v4.0.2-0.20200613231340-f56387b50c12 => github.com/go-git/go-git-fixtures/v4 v4.0.1
+replace github.com/go-git/go-git-fixtures/v4 v4.2.1 => github.com/go-git/go-git-fixtures/v4 v4.0.1
