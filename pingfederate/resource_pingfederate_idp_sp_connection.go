@@ -250,7 +250,14 @@ func resourcePingFederateIdpSpConnectionResourceReadResult(d *schema.ResourceDat
 	}
 	setResourceDataStringWithDiagnostic(d, "name", rv.Name, &diags)
 	if rv.OutboundProvision != nil {
-		if err := d.Set("outbound_provision", flattenOutboundProvision(rv.OutboundProvision)); err != nil {
+		var state []map[string]interface{}
+		if val := d.Get("outbound_provision"); len(val.([]interface{})) == 1 {
+			orig := expandOutboundProvision(d.Get("outbound_provision").([]interface{})[0].(map[string]interface{}))
+			state = maskOutboundProvision(orig, rv.OutboundProvision)
+		} else {
+			state = flattenOutboundProvision(rv.OutboundProvision)
+		}
+		if err := d.Set("outbound_provision", state); err != nil {
 			diags = append(diags, diag.FromErr(err)...)
 		}
 	}

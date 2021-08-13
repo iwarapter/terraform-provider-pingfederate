@@ -137,23 +137,6 @@ func getConfigFieldValueByName(name string, fields *[]*pf.ConfigField) (string, 
 	return "", nil
 }
 
-//func expandPluginConfigurationWithDescriptor(in []interface{}, desc *pf.PluginConfigDescriptor) *pf.PluginConfiguration {
-//	log.Printf("[INFO] Expanding config with descriptor")
-//	config := expandPluginConfiguration(in)
-//	log.Printf("[INFO] We have %d fields before", len(*config.Fields))
-//	for _, descriptor := range *desc.Fields {
-//		log.Printf("[INFO] Checking field %s", *descriptor.Name)
-//		if descriptor.DefaultValue != nil {
-//			if !hasField(*descriptor.Name, config) {
-//				log.Printf("[INFO] Field %s is required, default is %s", *descriptor.Name, *descriptor.DefaultValue)
-//				*config.Fields = append(*config.Fields, &pf.ConfigField{Name: descriptor.Name, Value: descriptor.DefaultValue})
-//			}
-//		}
-//	}
-//	log.Printf("[INFO] We have %d fields after", len(*config.Fields))
-//	return config
-//}
-
 func validateConfiguration(d *schema.ResourceDiff, desc *pf.PluginConfigDescriptor) error {
 	var diags diag.Diagnostics
 	config := expandPluginConfiguration(d.Get("configuration").([]interface{}))
@@ -187,4 +170,15 @@ func hasField(name string, c *pf.PluginConfiguration) bool {
 		}
 	}
 	return false
+}
+
+func maskOutboundProvision(origConf, conf *pf.OutboundProvision) []map[string]interface{} {
+	for _, f := range *conf.TargetSettings {
+		if f.EncryptedValue != nil {
+			//we have a sensitive value find the original and set the value
+			v, _ := getConfigFieldValueByName(*f.Name, origConf.TargetSettings)
+			f.Value = &v
+		}
+	}
+	return flattenOutboundProvision(conf)
 }

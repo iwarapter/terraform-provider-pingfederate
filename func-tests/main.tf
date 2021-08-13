@@ -1244,3 +1244,250 @@ resource "pingfederate_idp_sp_connection" "foo_connection" {
     }
   }
 }
+
+resource "pingfederate_idp_sp_connection" "outbound_provisioning" {
+  name         = "outbound_provision"
+  entity_id    = "outbound_provision"
+  active       = true
+  base_url     = "https://some.url"
+  logging_mode = "STANDARD"
+  contact_info {}
+  credentials {
+    signing_settings {
+      signing_key_pair_ref {
+        id = pingfederate_keypair_signing.demo.id
+      }
+      include_cert_in_signature    = false
+      include_raw_key_in_signature = false
+      algorithm                    = "SHA256withRSA"
+    }
+    certs {
+      active_verification_cert    = true
+      encryption_cert             = false
+      primary_verification_cert   = true
+      secondary_verification_cert = false
+      x509_file {
+        file_data = file("amazon_root_ca1.pem")
+      }
+    }
+  }
+  sp_browser_sso {
+    protocol          = "SAML20"
+    incoming_bindings = ["REDIRECT"]
+    enabled_profiles  = ["SP_INITIATED_SSO"]
+    sso_service_endpoints {
+      binding    = "POST"
+      url        = "/saml/acs"
+      is_default = true
+      index      = 0
+    }
+    sign_assertions               = true
+    sign_response_as_required     = true
+    sp_saml_identity_mapping      = "STANDARD"
+    require_signed_authn_requests = true
+    assertion_lifetime {
+      minutes_before = 5
+      minutes_after  = 5
+    }
+    encryption_policy {
+      encrypt_assertion             = false
+      encrypt_slo_subject_name_id   = false
+      slo_subject_name_id_encrypted = false
+      encrypted_attributes          = []
+    }
+    attribute_contract {
+      core_attributes {
+        name        = "SAML_SUBJECT"
+        name_format = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
+      }
+      extended_attributes {
+        name        = "role"
+        name_format = "urn:oasis:names:tc:SAML:2.0:attrname-format:basic"
+      }
+      extended_attributes {
+        name        = "realName"
+        name_format = "urn:oasis:names:tc:SAML:2.0:attrname-format:basic"
+      }
+      extended_attributes {
+        name        = "mail"
+        name_format = "urn:oasis:names:tc:SAML:2.0:attrname-format:basic"
+      }
+    }
+    authentication_policy_contract_assertion_mappings {
+      attribute_contract_fulfillment {
+        key_name = "SAML_SUBJECT"
+        source {
+          type = "AUTHENTICATION_POLICY_CONTRACT"
+        }
+        value = "subject"
+      }
+      attribute_contract_fulfillment {
+        key_name = "mail"
+        source {
+          type = "AUTHENTICATION_POLICY_CONTRACT"
+        }
+        value = "mail"
+      }
+      attribute_contract_fulfillment {
+        key_name = "realName"
+        source {
+          type = "AUTHENTICATION_POLICY_CONTRACT"
+        }
+        value = "realName"
+      }
+      attribute_contract_fulfillment {
+        key_name = "role"
+        source {
+          type = "AUTHENTICATION_POLICY_CONTRACT"
+        }
+        value = "role"
+      }
+      authentication_policy_contract_ref {
+        id = pingfederate_authentication_policy_contract.foo.id
+      }
+      restrict_virtual_entity_ids        = false
+      restricted_virtual_entity_ids      = []
+      abort_sso_transaction_as_fail_safe = false
+    }
+  }
+  outbound_provision {
+    type = "PingIDForWorkforce"
+
+    channels {
+      active      = false
+      max_threads = 1
+      name        = "bar"
+      timeout     = 60
+
+      attribute_mapping {
+        field_name = "userName"
+
+        saas_field_info {
+          attribute_names = []
+          character_case  = "NONE"
+          create_only     = false
+          default_value   = "asdasd"
+          masked          = false
+          parser          = "NONE"
+          trim            = false
+        }
+      }
+      attribute_mapping {
+        field_name = "email"
+
+        saas_field_info {
+          attribute_names = []
+          character_case  = "NONE"
+          create_only     = false
+          masked          = false
+          parser          = "NONE"
+          trim            = false
+        }
+      }
+      attribute_mapping {
+        field_name = "fName"
+
+        saas_field_info {
+          attribute_names = []
+          character_case  = "NONE"
+          create_only     = false
+          masked          = false
+          parser          = "NONE"
+          trim            = false
+        }
+      }
+      attribute_mapping {
+        field_name = "lName"
+
+        saas_field_info {
+          attribute_names = []
+          character_case  = "NONE"
+          create_only     = false
+          masked          = false
+          parser          = "NONE"
+          trim            = false
+        }
+      }
+
+      channel_source {
+        base_dn             = "cn=bar"
+        guid_attribute_name = "entryUUID"
+        guid_binary         = false
+
+        account_management_settings {
+          account_status_algorithm      = "ACCOUNT_STATUS_ALGORITHM_FLAG"
+          account_status_attribute_name = "nsaccountlock"
+          default_status                = true
+          flag_comparison_status        = false
+          flag_comparison_value         = "true"
+        }
+
+        change_detection_settings {
+          changed_users_algorithm   = "TIMESTAMP_NO_NEGATION"
+          group_object_class        = "groupOfUniqueNames"
+          time_stamp_attribute_name = "modifyTimestamp"
+          user_object_class         = "person"
+        }
+
+        data_source {
+          id = pingfederate_ldap_data_store.demo_ldap.id
+        }
+
+        group_membership_detection {
+          group_member_attribute_name = "uniqueMember"
+        }
+
+        group_source_location {
+          nested_search = false
+        }
+
+        user_source_location {
+          group_dn      = "cn=bar"
+          nested_search = false
+        }
+      }
+    }
+
+    sensitive_target_settings {
+      inherited = false
+      name      = "base64Key"
+      value     = "secret"
+    }
+    sensitive_target_settings {
+      inherited = false
+      name      = "token"
+      value     = "secret"
+    }
+
+    target_settings {
+      inherited = false
+      name      = "Provisioning Options"
+    }
+    target_settings {
+      inherited = false
+      name      = "disableNewUsers"
+      value     = "true"
+    }
+    target_settings {
+      inherited = false
+      name      = "domain"
+      value     = "idpxnyl3m.pingidentity.eu"
+    }
+    target_settings {
+      inherited = false
+      name      = "orgAlias"
+      value     = "foo"
+    }
+    target_settings {
+      inherited = false
+      name      = "removeAction"
+      value     = "Disable"
+    }
+    target_settings {
+      inherited = false
+      name      = "updateNewUsers"
+      value     = "true"
+    }
+  }
+
+}
