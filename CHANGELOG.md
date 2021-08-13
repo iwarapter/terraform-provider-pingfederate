@@ -1,4 +1,4 @@
-## 0.0.19 (Unreleased)
+## 0.0.19 (August 13th, 2021)
 
 NOTES:
 
@@ -7,6 +7,19 @@ NOTES:
 FEATURES:
 
 - Add data source to return PingFederate version. (#116)
+- Generated provider docs for all resources and data-sources. (#114)
+- Added functional testing against PingFederate 10.3.x
+
+BUG FIXES:
+
+- Fixed issue with `pingfederate_idp_sp_connection` block `outbound_provision` not correctly handling `sensitive_target_settings`.
+- Fixed issue with `pingfederate_idp_sp_connection` block `sp_browser_sso.attribute_contract.extended_attributes` ordering. (#117)
+
+DEPRECATIONS:
+
+- The `pingfederate_oauth_auth_server_settings` attribute `approved_scope_attribute` has been deprecated please use `approved_scopes_attribute` to correctly align with the Admin API.
+- The `pingfederate_oauth_openid_connect_policy` attribute `include_user_in_id_token` has been deprecated please use `include_user_info_in_id_token` to correctly align with the Admin API.
+- The `pingfederate_server_settings` block `roles_and_protocols` has been deprecated in PingFederate 10.1.
 
 ## 0.0.18 (July 15th, 2021)
 
