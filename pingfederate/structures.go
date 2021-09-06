@@ -1070,7 +1070,7 @@ func resourceSourceTypeIdKey() *schema.Schema {
 						"EXTENDED_PROPERTIES",
 						"TRACKED_HTTP_PARAMS",
 						"FRAGMENT",
-						"INPUTS"
+						"INPUTS",
 					}, false),
 				},
 				"id": {
