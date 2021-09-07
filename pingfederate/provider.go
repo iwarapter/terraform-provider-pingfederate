@@ -62,6 +62,7 @@ func Provider() *schema.Provider {
 			"pingfederate_authentication_policy_contract":               resourcePingFederateAuthenticationPolicyContractResource(),
 			"pingfederate_authentication_selector":                      resourcePingFederateAuthenticationSelectorResource(),
 			"pingfederate_certificates_ca":                              resourcePingFederateCertificatesCaResource(),
+			"pingfederate_certificates_revocation_settings":             resourcePingFederateCertificatesRevocationSettingsResource(),
 			"pingfederate_custom_data_store":                            resourcePingFederateCustomDataStoreResource(),
 			"pingfederate_extended_properties":                          resourcePingFederateExtendedPropertiesResource(),
 			"pingfederate_jdbc_data_store":                              resourcePingFederateJdbcDataStoreResource(),

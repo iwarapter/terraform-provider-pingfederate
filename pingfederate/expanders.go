@@ -2845,3 +2845,66 @@ func expandAccessControlSettings(in []interface{}) *pf.AtmAccessControlSettings 
 	}
 	return settings
 }
+
+func expandOcspSettings(in map[string]interface{}) *pf.OcspSettings {
+	var result pf.OcspSettings
+	if val, ok := in["requester_add_nonce"]; ok {
+		result.RequesterAddNonce = Bool(val.(bool))
+	}
+	if val, ok := in["responder_url"]; ok {
+		result.ResponderUrl = String(val.(string))
+	}
+	if val, ok := in["current_update_grace_period"]; ok {
+		result.CurrentUpdateGracePeriod = Int(val.(int))
+	}
+	if val, ok := in["next_update_grace_period"]; ok {
+		result.NextUpdateGracePeriod = Int(val.(int))
+	}
+	if val, ok := in["responder_timeout"]; ok {
+		result.ResponderTimeout = Int(val.(int))
+	}
+	if val, ok := in["action_on_status_unknown"]; ok {
+		result.ActionOnStatusUnknown = String(val.(string))
+	}
+	if val, ok := in["action_on_unsuccessful_response"]; ok {
+		result.ActionOnUnsuccessfulResponse = String(val.(string))
+	}
+	if val, ok := in["responder_cert_reference"]; ok && len(val.([]interface{})) > 0 {
+		result.ResponderCertReference = expandResourceLink(val.([]interface{})[0].(map[string]interface{}))
+	}
+	if val, ok := in["response_cache_period"]; ok {
+		result.ResponseCachePeriod = Int(val.(int))
+	}
+	if val, ok := in["action_on_responder_unavailable"]; ok {
+		result.ActionOnResponderUnavailable = String(val.(string))
+	}
+	return &result
+}
+
+func expandCrlSettings(in map[string]interface{}) *pf.CrlSettings {
+	var result pf.CrlSettings
+	if val, ok := in["treat_non_retrievable_crl_as_revoked"]; ok {
+		result.TreatNonRetrievableCrlAsRevoked = Bool(val.(bool))
+	}
+	if val, ok := in["verify_crl_signature"]; ok {
+		result.VerifyCrlSignature = Bool(val.(bool))
+	}
+	if val, ok := in["next_retry_mins_when_resolve_failed"]; ok {
+		result.NextRetryMinsWhenResolveFailed = Int(val.(int))
+	}
+	if val, ok := in["next_retry_mins_when_next_update_in_past"]; ok {
+		result.NextRetryMinsWhenNextUpdateInPast = Int(val.(int))
+	}
+	return &result
+}
+
+func expandProxySettings(in map[string]interface{}) *pf.ProxySettings {
+	var result pf.ProxySettings
+	if val, ok := in["host"]; ok {
+		result.Host = String(val.(string))
+	}
+	if val, ok := in["port"]; ok {
+		result.Port = Int(val.(int))
+	}
+	return &result
+}
