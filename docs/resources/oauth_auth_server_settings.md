@@ -86,6 +86,7 @@ resource "pingfederate_oauth_auth_server_settings" "settings" {
 - **allow_unidentified_client_extension_grants** (Boolean) Allow unidentified clients to request extension grants. The default value is false.
 - **allow_unidentified_client_ro_creds** (Boolean) Allow unidentified clients to request resource owner password credentials grants. The default value is false.
 - **allowed_origins** (Set of String) The list of allowed origins.
+- **approved_scope_attribute** (String, Deprecated)
 - **approved_scopes_attribute** (String) Attribute from the external consent adapter's contract, intended for storing approved scopes returned by the external consent page.
 - **atm_id_for_oauth_grant_management** (String) The ID of the Access Token Manager used for OAuth enabled grant management.
 - **bypass_activation_code_confirmation** (Boolean) Indicates if the Activation Code Confirmation page should be bypassed if 'verification_url_complete' is used by the end user to authorize a device.

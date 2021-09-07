@@ -624,13 +624,13 @@ Read-Only:
 Required:
 
 - **channels** (Block List, Min: 1) (see [below for nested schema](#nestedblock--outbound_provision--channels))
-- **sensitive_target_settings** (Block Set, Min: 1) (see [below for nested schema](#nestedblock--outbound_provision--sensitive_target_settings))
 - **target_settings** (Block Set, Min: 1) (see [below for nested schema](#nestedblock--outbound_provision--target_settings))
 - **type** (String)
 
 Optional:
 
 - **custom_schema** (Block List) (see [below for nested schema](#nestedblock--outbound_provision--custom_schema))
+- **sensitive_target_settings** (Block Set) (see [below for nested schema](#nestedblock--outbound_provision--sensitive_target_settings))
 
 <a id="nestedblock--outbound_provision--channels"></a>
 ### Nested Schema for `outbound_provision.channels`
@@ -762,19 +762,6 @@ Optional:
 
 
 
-<a id="nestedblock--outbound_provision--sensitive_target_settings"></a>
-### Nested Schema for `outbound_provision.sensitive_target_settings`
-
-Required:
-
-- **name** (String) The name of the configuration field.
-
-Optional:
-
-- **inherited** (Boolean) Whether this field is inherited from its parent instance. If true, the value/encrypted value properties become read-only. The default value is false.
-- **value** (String) The value for the configuration field.
-
-
 <a id="nestedblock--outbound_provision--target_settings"></a>
 ### Nested Schema for `outbound_provision.target_settings`
 
@@ -808,6 +795,19 @@ Optional:
 
 
 
+<a id="nestedblock--outbound_provision--sensitive_target_settings"></a>
+### Nested Schema for `outbound_provision.sensitive_target_settings`
+
+Required:
+
+- **name** (String) The name of the configuration field.
+
+Optional:
+
+- **inherited** (Boolean) Whether this field is inherited from its parent instance. If true, the value/encrypted value properties become read-only. The default value is false.
+- **value** (String) The value for the configuration field.
+
+
 
 <a id="nestedblock--sp_browser_sso"></a>
 ### Nested Schema for `sp_browser_sso`
@@ -825,9 +825,9 @@ Optional:
 - **attribute_contract** (Block List) A set of user attributes that the IdP sends in the SAML assertion. (see [below for nested schema](#nestedblock--sp_browser_sso--attribute_contract))
 - **authentication_policy_contract_assertion_mappings** (Block List) A list of authentication policy contracts that map to outgoing assertions. (see [below for nested schema](#nestedblock--sp_browser_sso--authentication_policy_contract_assertion_mappings))
 - **default_target_url** (String) Default Target URL for SAML1.x connections. For SP connections, this default URL represents the destination on the SP where the user will be directed. For IdP connections, entering a URL in the Default Target URL field overrides the SP Default URL SSO setting.
-- **enabled_profiles** (List of String) The profiles that are enabled for browser-based SSO. SAML 2.0 supports all profiles whereas SAML 1.x IdP connections support both IdP and SP (non-standard) initiated SSO. This is required for SAMLx.x Connections.
+- **enabled_profiles** (Set of String) The profiles that are enabled for browser-based SSO. SAML 2.0 supports all profiles whereas SAML 1.x IdP connections support both IdP and SP (non-standard) initiated SSO. This is required for SAMLx.x Connections.
 - **encryption_policy** (Block List) The SAML 2.0 encryption policy for browser-based SSO. Required for SAML 2.0 connections. (see [below for nested schema](#nestedblock--sp_browser_sso--encryption_policy))
-- **incoming_bindings** (List of String) The SAML bindings that are enabled for browser-based SSO. This is required for SAML 2.0 connections when the enabled profiles contain the SP-initiated SSO profile or either SLO profile. For SAML 1.x based connections, it is not used for SP Connections and it is optional for IdP Connections.
+- **incoming_bindings** (Set of String) The SAML bindings that are enabled for browser-based SSO. This is required for SAML 2.0 connections when the enabled profiles contain the SP-initiated SSO profile or either SLO profile. For SAML 1.x based connections, it is not used for SP Connections and it is optional for IdP Connections.
 - **message_customizations** (Block List) The message customizations for browser-based SSO. Depending on server settings, connection type, and protocol this may or may not be supported. (see [below for nested schema](#nestedblock--sp_browser_sso--message_customizations))
 - **require_signed_authn_requests** (Boolean) Require AuthN requests to be signed when received via the POST or Redirect bindings.
 - **sign_assertions** (Boolean) Always sign the SAML Assertion.
@@ -915,7 +915,7 @@ Read-Only:
 
 Required:
 
-- **configuration** (List of List of Object) Plugin instance configuration.
+- **configuration** (Block List, Min: 1, Max: 1) Plugin instance configuration. (see [below for nested schema](#nestedblock--sp_browser_sso--adapter_mappings--adapter_override_settings--configuration))
 - **id** (String) The ID of the plugin instance. The ID cannot be modified once the instance is created.<br>Note: Ignored when specifying a connection's adapter override.
 - **name** (String) The plugin instance name. The name cannot be modified once the instance is created.<br>Note: Ignored when specifying a connection's adapter override.
 - **plugin_descriptor_ref** (Block List, Min: 1, Max: 1) Reference to the plugin descriptor for this instance. The plugin descriptor cannot be modified once the instance is created.
@@ -926,6 +926,91 @@ Optional:
 - **attribute_contract** (Block List) The list of attributes that the IdP adapter provides. (see [below for nested schema](#nestedblock--sp_browser_sso--adapter_mappings--adapter_override_settings--attribute_contract))
 - **attribute_mapping** (Block List) The attributes mapping from attribute sources to attribute targets. (see [below for nested schema](#nestedblock--sp_browser_sso--adapter_mappings--adapter_override_settings--attribute_mapping))
 - **authn_ctx_class_ref** (String) The fixed value that indicates how the user was authenticated.
+
+<a id="nestedblock--sp_browser_sso--adapter_mappings--adapter_override_settings--configuration"></a>
+### Nested Schema for `sp_browser_sso.adapter_mappings.adapter_override_settings.configuration`
+
+Optional:
+
+- **fields** (Block Set) List of configuration fields. (see [below for nested schema](#nestedblock--sp_browser_sso--adapter_mappings--adapter_override_settings--configuration--fields))
+- **sensitive_fields** (Block Set) List of sensitive configuration fields. (see [below for nested schema](#nestedblock--sp_browser_sso--adapter_mappings--adapter_override_settings--configuration--sensitive_fields))
+- **tables** (Block List) List of configuration tables. (see [below for nested schema](#nestedblock--sp_browser_sso--adapter_mappings--adapter_override_settings--configuration--tables))
+
+<a id="nestedblock--sp_browser_sso--adapter_mappings--adapter_override_settings--configuration--fields"></a>
+### Nested Schema for `sp_browser_sso.adapter_mappings.adapter_override_settings.configuration.fields`
+
+Required:
+
+- **name** (String) The name of the configuration field.
+
+Optional:
+
+- **inherited** (Boolean) Whether this field is inherited from its parent instance. If true, the value/encrypted value properties become read-only. The default value is false.
+- **value** (String) The value for the configuration field.
+
+
+<a id="nestedblock--sp_browser_sso--adapter_mappings--adapter_override_settings--configuration--sensitive_fields"></a>
+### Nested Schema for `sp_browser_sso.adapter_mappings.adapter_override_settings.configuration.sensitive_fields`
+
+Required:
+
+- **name** (String) The name of the configuration field.
+
+Optional:
+
+- **inherited** (Boolean) Whether this field is inherited from its parent instance. If true, the value/encrypted value properties become read-only. The default value is false.
+- **value** (String, Sensitive) The value for the configuration field. For encrypted or hashed fields, GETs will not return this attribute. To update an encrypted or hashed field, specify the new value in this attribute.
+
+
+<a id="nestedblock--sp_browser_sso--adapter_mappings--adapter_override_settings--configuration--tables"></a>
+### Nested Schema for `sp_browser_sso.adapter_mappings.adapter_override_settings.configuration.tables`
+
+Required:
+
+- **name** (String) The name of the table.
+
+Optional:
+
+- **inherited** (Boolean) Whether this table is inherited from its parent instance. If true, the rows become read-only. The default value is false.
+- **rows** (Block List) List of table rows. (see [below for nested schema](#nestedblock--sp_browser_sso--adapter_mappings--adapter_override_settings--configuration--tables--rows))
+
+<a id="nestedblock--sp_browser_sso--adapter_mappings--adapter_override_settings--configuration--tables--rows"></a>
+### Nested Schema for `sp_browser_sso.adapter_mappings.adapter_override_settings.configuration.tables.rows`
+
+Optional:
+
+- **default_row** (Boolean) Whether this row is the default.
+- **fields** (Block Set) List of configuration fields. (see [below for nested schema](#nestedblock--sp_browser_sso--adapter_mappings--adapter_override_settings--configuration--tables--rows--fields))
+- **sensitive_fields** (Block Set) List of sensitive configuration fields. (see [below for nested schema](#nestedblock--sp_browser_sso--adapter_mappings--adapter_override_settings--configuration--tables--rows--sensitive_fields))
+
+<a id="nestedblock--sp_browser_sso--adapter_mappings--adapter_override_settings--configuration--tables--rows--fields"></a>
+### Nested Schema for `sp_browser_sso.adapter_mappings.adapter_override_settings.configuration.tables.rows.fields`
+
+Required:
+
+- **name** (String) The name of the configuration field.
+
+Optional:
+
+- **inherited** (Boolean) Whether this field is inherited from its parent instance. If true, the value/encrypted value properties become read-only. The default value is false.
+- **value** (String) The value for the configuration field.
+
+
+<a id="nestedblock--sp_browser_sso--adapter_mappings--adapter_override_settings--configuration--tables--rows--sensitive_fields"></a>
+### Nested Schema for `sp_browser_sso.adapter_mappings.adapter_override_settings.configuration.tables.rows.sensitive_fields`
+
+Required:
+
+- **name** (String) The name of the configuration field.
+
+Optional:
+
+- **inherited** (Boolean) Whether this field is inherited from its parent instance. If true, the value/encrypted value properties become read-only. The default value is false.
+- **value** (String, Sensitive) The value for the configuration field. For encrypted or hashed fields, GETs will not return this attribute. To update an encrypted or hashed field, specify the new value in this attribute.
+
+
+
+
 
 <a id="nestedblock--sp_browser_sso--adapter_mappings--adapter_override_settings--plugin_descriptor_ref"></a>
 ### Nested Schema for `sp_browser_sso.adapter_mappings.adapter_override_settings.plugin_descriptor_ref`

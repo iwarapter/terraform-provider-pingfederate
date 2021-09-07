@@ -3536,3 +3536,121 @@ func resourceSpSsoServiceEndpoint() *schema.Resource {
 		},
 	}
 }
+
+//CrlSettings - CRL settings.
+func resourceCrlSettings() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"next_retry_mins_when_next_update_in_past": {
+				Type:        schema.TypeInt,
+				Description: "Next retry on next update expiration in minutes. This value defaults to `60`.",
+				Optional:    true,
+				Default:     60,
+			},
+			"next_retry_mins_when_resolve_failed": {
+				Type:        schema.TypeInt,
+				Description: "Next retry on resolution failure in minutes. This value defaults to `1440`.",
+				Optional:    true,
+				Default:     1440,
+			},
+			"treat_non_retrievable_crl_as_revoked": {
+				Type:        schema.TypeBool,
+				Description: "Treat non retrievable CRL as revoked. This setting defaults to disabled.",
+				Optional:    true,
+				Default:     false,
+			},
+			"verify_crl_signature": {
+				Type:        schema.TypeBool,
+				Description: "Verify CRL signature. This setting defaults to enabled.",
+				Optional:    true,
+				Default:     true,
+			},
+		},
+	}
+}
+
+//OcspSettings - OCSP settings.
+func resourceOcspSettings() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"action_on_responder_unavailable": {
+				Type:        schema.TypeString,
+				Description: "Action on responder unavailable. This value defaults to `CONTINUE`.",
+				Optional:    true,
+				Default:     "CONTINUE",
+			},
+			"action_on_status_unknown": {
+				Type:        schema.TypeString,
+				Description: "Action on status unknown. This value defaults to `FAIL`.",
+				Optional:    true,
+				Default:     "FAIL",
+			},
+			"action_on_unsuccessful_response": {
+				Type:        schema.TypeString,
+				Description: "Action on unsuccessful response. This value defaults to `FAIL`.",
+				Optional:    true,
+				Default:     "FAIL",
+			},
+			"current_update_grace_period": {
+				Type:        schema.TypeInt,
+				Description: "Current update grace period in minutes. This value defaults to `5`.",
+				Optional:    true,
+				Default:     5,
+			},
+			"next_update_grace_period": {
+				Type:        schema.TypeInt,
+				Description: "Next update grace period in minutes. This value defaults to `5`.",
+				Optional:    true,
+				Default:     5,
+			},
+			"requester_add_nonce": {
+				Type:        schema.TypeBool,
+				Description: "Do not allow responder to use cached responses. This setting defaults to disabled.",
+				Optional:    true,
+				Default:     false,
+			},
+			"responder_cert_reference": {
+				Type:        schema.TypeList,
+				Description: "Resource link to OCSP responder signature verification certificate. A previously selected certificate will be deselected if this attribute is not defined.",
+				Optional:    true,
+				MaxItems:    1,
+				Elem:        resourceLinkResource(),
+			},
+			"responder_timeout": {
+				Type:        schema.TypeInt,
+				Description: "Responder connection timeout in seconds. This value defaults to `5`.",
+				Optional:    true,
+				Default:     5,
+			},
+			"responder_url": {
+				Type:        schema.TypeString,
+				Description: "Responder URL address. This field is required if OCSP revocation is enabled.",
+				Required:    true,
+			},
+			"response_cache_period": {
+				Type:        schema.TypeInt,
+				Description: "Response cache period in hours. This value defaults to `48`.",
+				Optional:    true,
+				Default:     48,
+			},
+		},
+	}
+}
+
+//ProxySettings - Proxy settings.
+func resourceProxySettings() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"host": {
+				Type:        schema.TypeString,
+				Description: "Host name.",
+				Optional:    true,
+			},
+			"port": {
+				Type:        schema.TypeInt,
+				Description: "Port number.",
+				Optional:    true,
+			},
+		},
+	}
+}

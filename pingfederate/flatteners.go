@@ -2922,3 +2922,69 @@ func flattenAccessControlSettings(in *pf.AtmAccessControlSettings) []map[string]
 	m = append(m, s)
 	return m
 }
+
+func flattenOcspSettings(in *pf.OcspSettings) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, 1)
+	s := make(map[string]interface{})
+	if in.CurrentUpdateGracePeriod != nil {
+		s["current_update_grace_period"] = *in.CurrentUpdateGracePeriod
+	}
+	if in.NextUpdateGracePeriod != nil {
+		s["next_update_grace_period"] = *in.NextUpdateGracePeriod
+	}
+	if in.ResponderTimeout != nil {
+		s["responder_timeout"] = *in.ResponderTimeout
+	}
+	if in.ActionOnStatusUnknown != nil {
+		s["action_on_status_unknown"] = *in.ActionOnStatusUnknown
+	}
+	if in.ActionOnUnsuccessfulResponse != nil {
+		s["action_on_unsuccessful_response"] = *in.ActionOnUnsuccessfulResponse
+	}
+	if in.RequesterAddNonce != nil {
+		s["requester_add_nonce"] = *in.RequesterAddNonce
+	}
+	if in.ResponderUrl != nil {
+		s["responder_url"] = *in.ResponderUrl
+	}
+	if in.ActionOnResponderUnavailable != nil {
+		s["action_on_responder_unavailable"] = *in.ActionOnResponderUnavailable
+	}
+	if in.ResponderCertReference != nil {
+		s["responder_cert_reference"] = flattenResourceLink(in.ResponderCertReference)
+	}
+	if in.ResponseCachePeriod != nil {
+		s["response_cache_period"] = *in.ResponseCachePeriod
+	}
+	return append(m, s)
+}
+
+func flattenCrlSettings(in *pf.CrlSettings) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, 1)
+	s := make(map[string]interface{})
+	if in.VerifyCrlSignature != nil {
+		s["verify_crl_signature"] = *in.VerifyCrlSignature
+	}
+	if in.NextRetryMinsWhenResolveFailed != nil {
+		s["next_retry_mins_when_resolve_failed"] = *in.NextRetryMinsWhenResolveFailed
+	}
+	if in.NextRetryMinsWhenNextUpdateInPast != nil {
+		s["next_retry_mins_when_next_update_in_past"] = *in.NextRetryMinsWhenNextUpdateInPast
+	}
+	if in.TreatNonRetrievableCrlAsRevoked != nil {
+		s["treat_non_retrievable_crl_as_revoked"] = *in.TreatNonRetrievableCrlAsRevoked
+	}
+	return append(m, s)
+}
+
+func flattenProxySettings(in *pf.ProxySettings) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, 1)
+	s := make(map[string]interface{})
+	if in.Host != nil {
+		s["host"] = *in.Host
+	}
+	if in.Port != nil {
+		s["port"] = *in.Port
+	}
+	return append(m, s)
+}
