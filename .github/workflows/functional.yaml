@@ -8,15 +8,6 @@ on:
       - 'main.go'
       - '.github/workflows/functional.yaml'
       - 'func-tests/**'
-  pull_request:
-    paths:
-      - 'pingfederate/**'
-      - 'vendor/**'
-      - 'go.mod'
-      - 'go.sum'
-      - 'main.go'
-      - '.github/workflows/functional.yaml'
-      - 'func-tests/**'
 name: e2e
 jobs:
   getdate:

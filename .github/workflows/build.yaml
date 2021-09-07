@@ -7,14 +7,6 @@ on:
       - "go.sum"
       - "main.go"
       - ".github/workflows/build.yaml"
-  pull_request:
-    paths:
-      - "pingfederate/**"
-      - "vendor/**"
-      - "go.mod"
-      - "go.sum"
-      - "main.go"
-      - ".github/workflows/build.yaml"
 
 name: ci
 jobs:
