@@ -20,16 +20,6 @@ func TestAccPingFederateCertificatesRevocationSettingsResource(t *testing.T) {
 		CheckDestroy: testAccCheckPingFederateCertificatesRevocationSettingsResourceDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccPingFederateCertificatesRevocationSettingsResourceConfig(false),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateCertificatesRevocationSettingsResourceExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "crl_settings.0.next_retry_mins_when_next_update_in_past", "60"),
-					resource.TestCheckResourceAttr(resourceName, "crl_settings.0.next_retry_mins_when_resolve_failed", "1440"),
-					resource.TestCheckResourceAttr(resourceName, "crl_settings.0.treat_non_retrievable_crl_as_revoked", "false"),
-					resource.TestCheckResourceAttr(resourceName, "crl_settings.0.verify_crl_signature", "true"),
-				),
-			},
-			{
 				Config: testAccPingFederateCertificatesRevocationSettingsResourceConfig(true),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateCertificatesRevocationSettingsResourceExists(resourceName),
@@ -45,6 +35,16 @@ func TestAccPingFederateCertificatesRevocationSettingsResource(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ocsp_settings.0.requester_add_nonce", "false"),
 					resource.TestCheckResourceAttr(resourceName, "ocsp_settings.0.responder_timeout", "5"),
 					resource.TestCheckResourceAttr(resourceName, "ocsp_settings.0.response_cache_period", "48"),
+				),
+			},
+			{
+				Config: testAccPingFederateCertificatesRevocationSettingsResourceConfig(false),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckPingFederateCertificatesRevocationSettingsResourceExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "crl_settings.0.next_retry_mins_when_next_update_in_past", "60"),
+					resource.TestCheckResourceAttr(resourceName, "crl_settings.0.next_retry_mins_when_resolve_failed", "1440"),
+					resource.TestCheckResourceAttr(resourceName, "crl_settings.0.treat_non_retrievable_crl_as_revoked", "false"),
+					resource.TestCheckResourceAttr(resourceName, "crl_settings.0.verify_crl_signature", "true"),
 				),
 			},
 			{
