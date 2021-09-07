@@ -105,7 +105,7 @@ func resourcePingFederateCertificatesRevocationSettingsResourceReadResult(d *sch
 			diags = append(diags, diag.FromErr(err)...)
 		}
 	}
-	return nil
+	return diags
 }
 
 func resourcePingFederateCertificatesRevocationSettingsResourceReadData(d *schema.ResourceData) *pf.CertificateRevocationSettings {
