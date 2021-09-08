@@ -211,6 +211,7 @@ github.com/iwarapter/pingfederate-sdk-go/services/oauthTokenExchangeGenerator
 github.com/iwarapter/pingfederate-sdk-go/services/oauthTokenExchangeProcessor
 github.com/iwarapter/pingfederate-sdk-go/services/oauthTokenExchangeTokenGeneratorMappings
 github.com/iwarapter/pingfederate-sdk-go/services/passwordCredentialValidators
+github.com/iwarapter/pingfederate-sdk-go/services/pingOneConnections
 github.com/iwarapter/pingfederate-sdk-go/services/redirectValidation
 github.com/iwarapter/pingfederate-sdk-go/services/serverSettings
 github.com/iwarapter/pingfederate-sdk-go/services/session

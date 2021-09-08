@@ -1,0 +1,1 @@
+terraform import pingfederate_pingone_connection.example 123

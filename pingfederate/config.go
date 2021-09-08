@@ -10,6 +10,8 @@ import (
 	"regexp"
 	"syscall"
 
+	"github.com/iwarapter/pingfederate-sdk-go/services/pingOneConnections"
+
 	"github.com/iwarapter/pingfederate-sdk-go/services/incomingProxySettings"
 
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
@@ -136,6 +138,7 @@ type pfClient struct {
 	OauthTokenExchangeProcessor               oauthTokenExchangeProcessor.OauthTokenExchangeProcessorAPI
 	OauthTokenExchangeTokenGeneratorMappings  oauthTokenExchangeTokenGeneratorMappings.OauthTokenExchangeTokenGeneratorMappingsAPI
 	PasswordCredentialValidators              passwordCredentialValidators.PasswordCredentialValidatorsAPI
+	PingOneConnections                        pingOneConnections.PingOneConnectionsAPI
 	RedirectValidation                        redirectValidation.RedirectValidationAPI
 	ServerSettings                            serverSettings.ServerSettingsAPI
 	Session                                   session.SessionAPI
@@ -221,6 +224,7 @@ func (c *pfConfig) Client() (interface{}, diag.Diagnostics) {
 		OauthTokenExchangeProcessor:               oauthTokenExchangeProcessor.New(cfg),
 		OauthTokenExchangeTokenGeneratorMappings:  oauthTokenExchangeTokenGeneratorMappings.New(cfg),
 		PasswordCredentialValidators:              passwordCredentialValidators.New(cfg),
+		PingOneConnections:                        pingOneConnections.New(cfg),
 		RedirectValidation:                        redirectValidation.New(cfg),
 		ServerSettings:                            serverSettings.New(cfg),
 		Session:                                   session.New(cfg),

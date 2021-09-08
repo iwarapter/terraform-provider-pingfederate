@@ -90,6 +90,7 @@ func Provider() *schema.Provider {
 			"pingfederate_sp_authentication_policy_contract_mapping":    resourcePingFederateSpAuthenticationPolicyContractMappingResource(),
 			"pingfederate_sp_idp_connection":                            resourcePingFederateSpIdpConnectionResource(),
 			"pingfederate_password_credential_validator":                resourcePingFederatePasswordCredentialValidatorResource(),
+			"pingfederate_pingone_connection":                           resourcePingFederatePingOneConnectionResource(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
