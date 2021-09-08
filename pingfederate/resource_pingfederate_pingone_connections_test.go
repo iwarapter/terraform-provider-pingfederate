@@ -1,5 +1,7 @@
 package pingfederate
 
+//lint:file-ignore U1000 Ignore report - no current alternative
+
 import (
 	"fmt"
 	"strings"
