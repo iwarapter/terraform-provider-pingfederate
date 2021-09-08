@@ -8,6 +8,7 @@ require (
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.7.0
 	github.com/iwarapter/pingfederate-sdk-go v0.0.0-20210504214348-4c81f3d978e0
 	github.com/stretchr/testify v1.7.0
+	golang.org/x/tools v0.1.0 // indirect
 )
 
 replace github.com/go-git/go-git-fixtures/v4 v4.2.1 => github.com/go-git/go-git-fixtures/v4 v4.0.1
