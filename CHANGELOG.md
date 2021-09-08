@@ -1,3 +1,18 @@
+## 0.0.20 (September 8th, 2021)
+
+NOTES:
+
+* This is an early release experimental build for PingFederate 10.x
+
+FEATURES:
+
+- Add support for `pingfederate_certificates_revocation_settings`. (#130)
+- Add support for `pingfederate_pingone_connection`. (#115)
+
+BUG FIXES:
+
+- Fixed incorrect validation on AttributeContractFulfillment. (#129)
+
 ## 0.0.19 (August 13th, 2021)
 
 NOTES:
