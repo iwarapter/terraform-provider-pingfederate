@@ -91,6 +91,12 @@ func testAccCheckPingFederateSpAdapterDestroy(s *terraform.State) error {
 
 func testAccPingFederateSpAdapterConfig(configUpdate string) string {
 	return fmt.Sprintf(`
+data "pingfederate_version" "instance" {}
+
+locals {
+  isSupported = length(regexall("10.[1-9]", data.pingfederate_version.instance.version)) > 0
+}
+
 resource "pingfederate_sp_adapter" "demo" {
   name = "bar"
   sp_adapter_id = "spadaptertest1"
@@ -99,11 +105,13 @@ resource "pingfederate_sp_adapter" "demo" {
   }
 
   configuration {
-	fields {
-	  inherited = false
-	  name      = "SameSite Cookie"
-	  value     = "3"
-	}
+	dynamic "fields" {
+      for_each = local.isSupported ? [1] : []
+      content {
+        name      = "SameSite Cookie"
+	  	value     = "3"
+      }
+    }
     sensitive_fields {
       name  = "Password"
       value = "Secret123"
@@ -320,7 +328,7 @@ func Test_resourcePingFederateSpAdapterResourceReadData(t *testing.T) {
 							Inherited: Bool(false),
 							Rows: &[]*pf.ConfigRow{
 								{
-									DefaultRow: Bool(false),
+									DefaultRow: Bool(true),
 									Fields: &[]*pf.ConfigField{
 										{
 											Name:      String("Network Range (CIDR notation)"),

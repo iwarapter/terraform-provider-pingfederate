@@ -78,6 +78,12 @@ func testAccCheckPingFederateNotificationPublisherDestroy(s *terraform.State) er
 
 func testAccPingFederateNotificationPublisherConfig(configUpdate string) string {
 	return fmt.Sprintf(`
+data "pingfederate_version" "instance" {}
+
+locals {
+  isSupported = length(regexall("10.[1-9]", data.pingfederate_version.instance.version)) > 0
+}
+
 resource "pingfederate_notification_publisher" "demo" {
   name = "acc_test_bar"
   publisher_id = "foo1"
@@ -86,16 +92,13 @@ resource "pingfederate_notification_publisher" "demo" {
   }
 
   configuration {
-	fields {
-	  inherited = false
-	  name      = "UTF-8 Message Header Support"
-	  value     = "false"
-	}
-    fields {
-	  inherited = false
-	  name      = "UTF-8 Message Header Support"
-	  value     = "false"
-	}
+	dynamic "fields" {
+      for_each = local.isSupported ? [1] : []
+      content {
+        name  = "UTF-8 Message Header Support"
+        value = "false"
+      }
+    }
     fields {
       name  = "From Address"
       value = "help@foo.org"

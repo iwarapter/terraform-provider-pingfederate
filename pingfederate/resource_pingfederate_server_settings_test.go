@@ -55,6 +55,8 @@ resource "pingfederate_server_settings" "demo" {
   federation_info {
 	base_url = "https://localhost:9031"
 	saml2_entity_id = "%s"
+	saml1x_issuer_id = "foo"
+	wsfed_realm = "foo"
   }
   roles_and_protocols {
 	enable_idp_discovery = true

@@ -11,6 +11,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/iwarapter/pingfederate-sdk-go/services/serverSettings"
+
 	"github.com/iwarapter/pingfederate-sdk-go/services/authenticationSelectors"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -34,7 +36,8 @@ func TestMain(m *testing.M) {
 	os.Setenv("PINGFEDERATE_PASSWORD", "2FederateM0re")
 	flag.Parse()
 	sweep := flag.Lookup("sweep")
-	if sweep != nil && sweep.Value.String() != "" {
+	_, acceptanceTesting := os.LookupEnv("TF_ACC")
+	if (sweep != nil && sweep.Value.String() != "") || acceptanceTesting {
 		client := version.New(cfg)
 		v, r, err := client.GetVersion()
 		if err != nil {
@@ -47,7 +50,6 @@ func TestMain(m *testing.M) {
 		pfVersion = *v.Version
 		log.Printf("Connected to PingFederate %s", *v.Version)
 	}
-	_, acceptanceTesting := os.LookupEnv("TF_ACC")
 	if acceptanceTesting {
 		if err := dataSetup(); err != nil {
 			log.Fatalf("unable to setup test data\n%s", err)
@@ -80,6 +82,39 @@ func testAccPreCheck(t *testing.T) {
 }
 
 func dataSetup() error {
+	ssets := serverSettings.New(cfg)
+	if _, _, err := ssets.UpdateServerSettings(&serverSettings.UpdateServerSettingsInput{
+		Body: pf.ServerSettings{
+			FederationInfo: &pf.FederationInfo{
+				BaseUrl:        String("https://localhost:9031"),
+				Saml2EntityId:  String("testing"),
+				Saml1xIssuerId: String("foo"),
+				WsfedRealm:     String("foo"),
+			},
+			RolesAndProtocols: &pf.RolesAndProtocols{
+				IdpRole: &pf.IdpRole{
+					Enable:                     Bool(true),
+					EnableOutboundProvisioning: Bool(true),
+					Saml20Profile: &pf.SAML20Profile{
+						Enable: Bool(true),
+					},
+				},
+				OauthRole: &pf.OAuthRole{
+					EnableOauth:         Bool(true),
+					EnableOpenIdConnect: Bool(true),
+				},
+				SpRole: &pf.SpRole{
+					Enable: Bool(true),
+					Saml20Profile: &pf.SpSAML20Profile{
+						Enable: Bool(true),
+					},
+				},
+			},
+		},
+	}); err != nil {
+		return fmt.Errorf("unable to set server settings\n%s", err)
+	}
+
 	pcv := passwordCredentialValidators.New(cfg)
 	if _, _, err := pcv.GetPasswordCredentialValidator(&passwordCredentialValidators.GetPasswordCredentialValidatorInput{Id: "pcvtestme"}); err != nil {
 		if _, _, err := pcv.CreatePasswordCredentialValidator(&passwordCredentialValidators.CreatePasswordCredentialValidatorInput{

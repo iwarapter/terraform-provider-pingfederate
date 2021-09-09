@@ -94,7 +94,7 @@ func testAccPingFederateAuthenticationSelectorResourceConfig(configUpdate string
  	  rows {
 		fields {
 		  name  = "Network Range (CIDR notation)"
-		  value = "127.0.1.1"
+		  value = "127.0.1.1/32"
 		}
 	  }
 	  rows {
@@ -152,7 +152,7 @@ resource "pingfederate_authentication_selector" "demo" {
 	  rows {
 		fields {
 		  name  = "Network Range (CIDR notation)"
-		  value = "127.0.0.1"
+		  value = "127.0.0.1/32"
 		}
 	  }
 	}
@@ -244,7 +244,7 @@ func Test_resourcePingFederateAuthenticationSelectorResourceReadData(t *testing.
 							Inherited: Bool(false),
 							Rows: &[]*pf.ConfigRow{
 								{
-									DefaultRow: Bool(false),
+									DefaultRow: Bool(true),
 									Fields: &[]*pf.ConfigField{
 										{
 											Name:      String("Network Range (CIDR notation)"),

@@ -2,6 +2,7 @@ package pingfederate
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 	"testing"
 
@@ -15,6 +16,10 @@ import (
 )
 
 func TestAccPingFederateKeypairsOauthOpenIdConnectResource(t *testing.T) {
+	re := regexp.MustCompile(`^((10)\.[0-9])`)
+	if !re.MatchString(pfVersion) {
+		t.Skipf("This test only runs against PingFederate 10.0 and above, not: %s", pfVersion)
+	}
 	resourceName := "pingfederate_keypairs_oauth_openid_connect.settings"
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,

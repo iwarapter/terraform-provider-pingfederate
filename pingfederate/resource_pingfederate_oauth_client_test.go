@@ -82,7 +82,6 @@ func testAccPingFederateOauthClientConfig(configUpdate string) string {
 		default_access_token_manager_ref {
 			id = "testme"
 		}
-		restrict_to_default_access_token_manager = true
 
 		oidc_policy {
 			grant_access_session_revocation_api = false

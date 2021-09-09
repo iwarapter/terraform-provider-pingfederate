@@ -2,6 +2,7 @@ package pingfederate
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -40,8 +41,11 @@ func init() {
 }
 
 func TestAccPingFederateOauthResourceOwnerCredentialsMappings(t *testing.T) {
+	re := regexp.MustCompile(`^((10)\.[0-9])`)
+	if !re.MatchString(pfVersion) {
+		t.Skipf("This test only runs against PingFederate 10.0 and above, not: %s", pfVersion)
+	}
 	resourceName := "pingfederate_oauth_resource_owner_credentials_mappings.demo"
-
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederateOauthResourceOwnerCredentialsMappingsDestroy,
