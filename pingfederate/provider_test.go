@@ -26,6 +26,7 @@ import (
 )
 
 var cfg *config.Config
+var pfVersion string
 
 func TestMain(m *testing.M) {
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
@@ -43,6 +44,7 @@ func TestMain(m *testing.M) {
 			}
 			log.Fatalf("unable to get pingfederate '%s'", err)
 		}
+		pfVersion = *v.Version
 		log.Printf("Connected to PingFederate %s", *v.Version)
 	}
 	_, acceptanceTesting := os.LookupEnv("TF_ACC")
