@@ -18,7 +18,7 @@ func TestAccPingFederateVersionDataSource(t *testing.T) {
 			{
 				Config: testAccPingFederateVersionDataSourceConfig(),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "version", "10.2.2.0"),
+					resource.TestCheckResourceAttrSet(resourceName, "version"),
 				),
 			},
 		},

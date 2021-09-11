@@ -12,6 +12,27 @@ name: ci
 jobs:
   build:
     name: build
+    strategy:
+      fail-fast: false
+      matrix:
+        pingfederate-version: [ 9.3.3, 10.0.6, 10.1.5, 10.2.4, 10.3.1 ]
+    services:
+      pingfederate:
+        image: pingidentity/pingfederate:${{ matrix.pingfederate-version }}-edge
+        env:
+          PING_IDENTITY_ACCEPT_EULA: YES
+          PING_IDENTITY_DEVOPS_USER: ${{ secrets.PING_IDENTITY_DEVOPS_USER }}
+          PING_IDENTITY_DEVOPS_KEY: ${{ secrets.PING_IDENTITY_DEVOPS_KEY }}
+          SERVER_PROFILE_URL: https://github.com/pingidentity/pingidentity-server-profiles.git
+          SERVER_PROFILE_PATH: getting-started/pingfederate
+          IMAGE_VERSION: pingfederate-alpine-az11-${{ matrix.pingfederate-version }}-${{ needs.getdate.outputs.date }}-d9b5
+          PF_LOG_LEVEL: DEBUG
+          TAIL_LOG_PARALLEL: "y"
+          TAIL_LOG_FILES: "/opt/out/instance/log/server.log /opt/out/instance/log/admin-api.log"
+        ports:
+          - 9999:9999
+          - 9031:9031
+
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go 1.16
@@ -24,11 +45,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Test
-        env:
-          PING_IDENTITY_DEVOPS_USER: ${{ secrets.PING_IDENTITY_DEVOPS_USER }}
-          PING_IDENTITY_DEVOPS_KEY: ${{ secrets.PING_IDENTITY_DEVOPS_KEY }}
         run: |
-          make pf-init
           TF_ACC=1 go test -mod=vendor ./... -v -trimpath -coverprofile=coverage.out
           go tool cover -func=coverage.out
 

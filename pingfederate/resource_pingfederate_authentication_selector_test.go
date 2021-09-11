@@ -38,6 +38,10 @@ func init() {
 }
 
 func TestAccPingFederateAuthenticationSelectorResource(t *testing.T) {
+	re := regexp.MustCompile(`^((9|10)\.[0-9])`)
+	if !re.MatchString(pfVersion) {
+		t.Skipf("This test only runs against PingFederate 9.x or 10.x and above, not: %s", pfVersion)
+	}
 	resourceName := "pingfederate_authentication_selector.demo"
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
@@ -87,6 +91,12 @@ func testAccPingFederateAuthenticationSelectorResourceConfig(configUpdate string
 	}
 	tables {
 	  name = "Networks"
+ 	  rows {
+		fields {
+		  name  = "Network Range (CIDR notation)"
+		  value = "127.0.1.1/32"
+		}
+	  }
 	  rows {
 		fields {
 		  name  = "Network Range (CIDR notation)"
@@ -142,7 +152,7 @@ resource "pingfederate_authentication_selector" "demo" {
 	  rows {
 		fields {
 		  name  = "Network Range (CIDR notation)"
-		  value = "127.0.0.1"
+		  value = "127.0.0.1/32"
 		}
 	  }
 	}
@@ -234,7 +244,7 @@ func Test_resourcePingFederateAuthenticationSelectorResourceReadData(t *testing.
 							Inherited: Bool(false),
 							Rows: &[]*pf.ConfigRow{
 								{
-									DefaultRow: Bool(false),
+									DefaultRow: Bool(true),
 									Fields: &[]*pf.ConfigField{
 										{
 											Name:      String("Network Range (CIDR notation)"),

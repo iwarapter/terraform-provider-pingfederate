@@ -2308,7 +2308,8 @@ func expandConfigRow(in map[string]interface{}) *pf.ConfigRow {
 		*result.Fields = append(*result.Fields, *fields...)
 	}
 	//Requires https://github.com/hashicorp/terraform-plugin-sdk/issues/261
-	if val, ok := in["default_row"]; ok {
+	if val, ok := in["default_row"]; ok && val.(bool) {
+		//set only if true
 		result.DefaultRow = Bool(val.(bool))
 	}
 	return &result

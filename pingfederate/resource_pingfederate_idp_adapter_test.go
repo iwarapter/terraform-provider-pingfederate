@@ -278,7 +278,7 @@ func Test_resourcePingFederateIdpAdapterResourceReadData(t *testing.T) {
 							Inherited: Bool(false),
 							Rows: &[]*pf.ConfigRow{
 								{
-									DefaultRow: Bool(false),
+									DefaultRow: Bool(true),
 									Fields: &[]*pf.ConfigField{
 										{
 											Name:      String("Network Range (CIDR notation)"),

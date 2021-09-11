@@ -79,7 +79,14 @@ func testAccCheckPingFederateSpAuthenticationPolicyContractMappingDestroy(s *ter
 }
 
 func testAccPingFederateSpAuthenticationPolicyContractMappingConfig(configUpdate string) string {
-	return fmt.Sprintf(`resource "pingfederate_sp_authentication_policy_contract_mapping" "demo" {
+	return fmt.Sprintf(`
+data "pingfederate_version" "instance" {}
+
+locals {
+  isSupported = length(regexall("10.[1-9]", data.pingfederate_version.instance.version)) > 0
+}
+
+resource "pingfederate_sp_authentication_policy_contract_mapping" "demo" {
 	source_id = pingfederate_authentication_policy_contract.demo.id
 	target_id = pingfederate_sp_adapter.demo.id
     attribute_contract_fulfillment {
@@ -105,11 +112,13 @@ resource "pingfederate_sp_adapter" "demo" {
   }
 
   configuration {
-	fields {
-	  inherited = false
-	  name      = "SameSite Cookie"
-	  value     = "3"
-	}
+	dynamic "fields" {
+      for_each = local.isSupported ? [1] : []
+      content {
+        name      = "SameSite Cookie"
+	  	value     = "3"
+      }
+    }
     sensitive_fields {
       name  = "Password"
       value = "Secret123"

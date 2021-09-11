@@ -226,6 +226,7 @@ func resourcePingFederateOauthAuthServerSettingsResource() *schema.Resource {
 				Type:        schema.TypeInt,
 				Description: "The persistent grant lifetime. The default value is indefinite. -1 indicates an indefinite amount of time.",
 				Optional:    true,
+				Default:     -1,
 			},
 			"persistent_grant_lifetime_unit": {
 				Type:             schema.TypeString,
@@ -322,7 +323,7 @@ func resourcePingFederateOauthAuthServerSettingsResourceRead(ctx context.Context
 	if err != nil {
 		return diag.Errorf("unable to read OauthAuthServerSettings: %s", err)
 	}
-	return resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result, m.(pfClient).PfVersion())
+	return resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result)
 }
 
 func resourcePingFederateOauthAuthServerSettingsResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -337,7 +338,7 @@ func resourcePingFederateOauthAuthServerSettingsResourceUpdate(ctx context.Conte
 	if err != nil {
 		return diag.Errorf("unable to update OauthAuthServerSettings: %s", err)
 	}
-	return resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result, m.(pfClient).PfVersion())
+	return resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result)
 }
 
 func resourcePingFederateOauthAuthServerSettingsResourceReadData(d *schema.ResourceData, pfVersion string) *pf.AuthorizationServerSettings {
@@ -393,18 +394,6 @@ func resourcePingFederateOauthAuthServerSettingsResourceReadData(d *schema.Resou
 		authSettings.PersistentGrantContract = expandPersistentGrantContract(v.(*schema.Set).List())
 	}
 
-	if v, ok := d.GetOk("persistent_grant_lifetime"); ok {
-		authSettings.PersistentGrantLifetime = Int(v.(int))
-	} else if isPF10 {
-		authSettings.PersistentGrantLifetime = Int(-1)
-	}
-
-	if v, ok := d.GetOk("persistent_grant_lifetime_unit"); ok {
-		authSettings.PersistentGrantLifetimeUnit = String(v.(string))
-	} else if isPF10 {
-		authSettings.PersistentGrantLifetimeUnit = String("DAYS")
-	}
-
 	if v, ok := d.GetOk("persistent_grant_reuse_grant_types"); ok {
 		authSettings.PersistentGrantReuseGrantTypes = expandStringList(v.(*schema.Set).List())
 	}
@@ -443,6 +432,19 @@ func resourcePingFederateOauthAuthServerSettingsResourceReadData(d *schema.Resou
 	if v, ok := d.GetOk("device_polling_interval"); ok {
 		authSettings.DevicePollingInterval = Int(v.(int))
 	}
+
+	if isPF10 {
+		if v, ok := d.GetOk("persistent_grant_lifetime"); ok {
+			authSettings.PersistentGrantLifetime = Int(v.(int))
+		}
+		if v, ok := d.GetOk("persistent_grant_lifetime_unit"); ok {
+			authSettings.PersistentGrantLifetimeUnit = String(v.(string))
+		}
+	} else {
+		_ = d.Set("persistent_grant_lifetime", -1)
+		_ = d.Set("persistent_grant_lifetime_unit", "DAYS")
+	}
+
 	if isPF10_2 {
 		if v, ok := d.GetOk("par_reference_length"); ok {
 			authSettings.ParReferenceLength = Int(v.(int))
@@ -453,7 +455,12 @@ func resourcePingFederateOauthAuthServerSettingsResourceReadData(d *schema.Resou
 		if v, ok := d.GetOk("par_status"); ok {
 			authSettings.ParStatus = String(v.(string))
 		}
+	} else {
+		_ = d.Set("par_reference_length", 24)
+		_ = d.Set("par_reference_timeout", 60)
+		_ = d.Set("par_status", "ENABLED")
 	}
+
 	if v, ok := d.GetOk("pending_authorization_timeout"); ok {
 		authSettings.PendingAuthorizationTimeout = Int(v.(int))
 	}
@@ -492,16 +499,12 @@ func resourcePingFederateOauthAuthServerSettingsResourceImport(ctx context.Conte
 	if err != nil {
 		return nil, fmt.Errorf(err.Error())
 	}
-	resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result, m.(pfClient).PfVersion())
+	resourcePingFederateOauthAuthServerSettingsResourceReadResult(d, result)
 	return []*schema.ResourceData{d}, nil
 }
 
-func resourcePingFederateOauthAuthServerSettingsResourceReadResult(d *schema.ResourceData, rv *pf.AuthorizationServerSettings, pfVersion string) diag.Diagnostics {
+func resourcePingFederateOauthAuthServerSettingsResourceReadResult(d *schema.ResourceData, rv *pf.AuthorizationServerSettings) diag.Diagnostics {
 	var diags diag.Diagnostics
-	re := regexp.MustCompile(`^(10\.[0-9])`)
-	isPF10 := re.MatchString(pfVersion)
-	re = regexp.MustCompile(`^(10\.[2-9])`)
-	isPF10_2 := re.MatchString(pfVersion)
 
 	setResourceDataStringWithDiagnostic(d, "default_scope_description", rv.DefaultScopeDescription, &diags)
 	setResourceDataIntWithDiagnostic(d, "authorization_code_timeout", rv.AuthorizationCodeTimeout, &diags)
@@ -511,12 +514,12 @@ func resourcePingFederateOauthAuthServerSettingsResourceReadResult(d *schema.Res
 	setResourceDataBoolWithDiagnostic(d, "allow_unidentified_client_extension_grants", rv.AllowUnidentifiedClientExtensionGrants, &diags)
 	setResourceDataBoolWithDiagnostic(d, "track_user_sessions_for_logout", rv.TrackUserSessionsForLogout, &diags)
 	setResourceDataStringWithDiagnostic(d, "token_endpoint_base_url", rv.TokenEndpointBaseUrl, &diags)
-	if rv.PersistentGrantLifetime != nil && *rv.PersistentGrantLifetime == -1 && isPF10 {
-		rv.PersistentGrantLifetime = nil
+	if rv.PersistentGrantLifetime == nil {
+		rv.PersistentGrantLifetime = Int(-1)
 	}
 	setResourceDataIntWithDiagnostic(d, "persistent_grant_lifetime", rv.PersistentGrantLifetime, &diags)
-	if rv.PersistentGrantLifetimeUnit != nil && *rv.PersistentGrantLifetimeUnit == "DAYS" && isPF10 {
-		rv.PersistentGrantLifetimeUnit = nil
+	if rv.PersistentGrantLifetimeUnit == nil {
+		rv.PersistentGrantLifetimeUnit = String("DAYS")
 	}
 	setResourceDataStringWithDiagnostic(d, "persistent_grant_lifetime_unit", rv.PersistentGrantLifetimeUnit, &diags)
 	setResourceDataBoolWithDiagnostic(d, "roll_refresh_token_values", rv.RollRefreshTokenValues, &diags)
@@ -536,11 +539,18 @@ func resourcePingFederateOauthAuthServerSettingsResourceReadResult(d *schema.Res
 	setResourceDataStringWithDiagnostic(d, "user_authorization_consent_page_setting", rv.UserAuthorizationConsentPageSetting, &diags)
 	setResourceDataStringWithDiagnostic(d, "user_authorization_url", rv.UserAuthorizationUrl, &diags)
 
-	if isPF10_2 {
-		setResourceDataIntWithDiagnostic(d, "par_reference_length", rv.ParReferenceLength, &diags)
-		setResourceDataIntWithDiagnostic(d, "par_reference_timeout", rv.ParReferenceTimeout, &diags)
-		setResourceDataStringWithDiagnostic(d, "par_status", rv.ParStatus, &diags)
+	if rv.ParReferenceLength == nil {
+		rv.ParReferenceLength = Int(24)
 	}
+	setResourceDataIntWithDiagnostic(d, "par_reference_length", rv.ParReferenceLength, &diags)
+	if rv.ParReferenceTimeout == nil {
+		rv.ParReferenceTimeout = Int(60)
+	}
+	setResourceDataIntWithDiagnostic(d, "par_reference_timeout", rv.ParReferenceTimeout, &diags)
+	if rv.ParStatus == nil {
+		rv.ParStatus = String("ENABLED")
+	}
+	setResourceDataStringWithDiagnostic(d, "par_status", rv.ParStatus, &diags)
 
 	if rv.AdminWebServicePcvRef != nil {
 		if err := d.Set("admin_web_service_pcv_ref", flattenResourceLink(rv.AdminWebServicePcvRef)); err != nil {

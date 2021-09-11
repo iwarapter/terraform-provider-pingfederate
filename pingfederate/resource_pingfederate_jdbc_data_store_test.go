@@ -2,6 +2,7 @@ package pingfederate
 
 import (
 	"fmt"
+	"regexp"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -40,8 +41,11 @@ func init() {
 }
 
 func TestAccPingFederateJdbcDataStoreResource(t *testing.T) {
+	re := regexp.MustCompile(`^((10)\.[0-9])`)
+	if !re.MatchString(pfVersion) {
+		t.Skipf("This test only runs against PingFederate 10.0 and above, not: %s", pfVersion)
+	}
 	resourceName := "pingfederate_jdbc_data_store.demo"
-
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederateJdbcDataStoreResourceDestroy,

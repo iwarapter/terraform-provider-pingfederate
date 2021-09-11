@@ -32,10 +32,10 @@ func TestAccPingFederateOauthAuthServerSettings(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:            resourceName,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"persistent_grant_lifetime", "persistent_grant_lifetime_unit"},
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				//ImportStateVerifyIgnore: []string{"persistent_grant_lifetime", "persistent_grant_lifetime_unit"},
 			},
 		},
 	})
@@ -134,8 +134,10 @@ func testAccCheckPingFederateOauthAuthServerSettingsExists(n string) resource.Te
 func Test_resourcePingFederateOauthAuthServerSettingsResourceReadResult(t *testing.T) {
 	cases := []struct {
 		Resource pf.AuthorizationServerSettings
+		Version  string
 	}{
 		{
+			Version: "10.2",
 			Resource: pf.AuthorizationServerSettings{
 				AdminWebServicePcvRef:                  &pf.ResourceLink{Id: String("1")},
 				AllowUnidentifiedClientExtensionGrants: Bool(true),
@@ -203,9 +205,9 @@ func Test_resourcePingFederateOauthAuthServerSettingsResourceReadResult(t *testi
 
 			resourceSchema := resourcePingFederateOauthAuthServerSettingsResource().Schema
 			resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})
-			resourcePingFederateOauthAuthServerSettingsResourceReadResult(resourceLocalData, &tc.Resource, "10.2")
+			resourcePingFederateOauthAuthServerSettingsResourceReadResult(resourceLocalData, &tc.Resource)
 
-			assert.Equal(t, tc.Resource, *resourcePingFederateOauthAuthServerSettingsResourceReadData(resourceLocalData, "10.2"))
+			assert.Equal(t, tc.Resource, *resourcePingFederateOauthAuthServerSettingsResourceReadData(resourceLocalData, tc.Version))
 		})
 	}
 }
