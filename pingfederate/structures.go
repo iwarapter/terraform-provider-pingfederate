@@ -1816,6 +1816,7 @@ func resourceSpAdapterMapping() *schema.Resource {
 			},
 			"issuance_criteria": {
 				Type:        schema.TypeList,
+				MaxItems:    1,
 				Elem:        resourceIssuanceCriteria(),
 				Description: "The issuance criteria that this transaction must meet before the corresponding attribute contract is fulfilled.",
 				Optional:    true,
@@ -2382,6 +2383,7 @@ func resourceIdpAdapterContractMapping() *schema.Resource {
 			},
 			"issuance_criteria": {
 				Type:     schema.TypeList,
+				MaxItems: 1,
 				Elem:     resourceIssuanceCriteria(),
 				Optional: true,
 			},
@@ -2454,6 +2456,7 @@ func resourceAuthenticationPolicyContractMapping() *schema.Resource {
 			"authentication_policy_contract_ref": resourceRequiredLinkSchema(),
 			"issuance_criteria": {
 				Type:     schema.TypeList,
+				MaxItems: 1,
 				Elem:     resourceIssuanceCriteria(),
 				Optional: true,
 			},
@@ -2563,6 +2566,7 @@ func resourceSpTokenGeneratorMapping() *schema.Resource {
 			},
 			"issuance_criteria": {
 				Type:     schema.TypeList,
+				MaxItems: 1,
 				Elem:     resourceIssuanceCriteria(),
 				Optional: true,
 			},
@@ -2609,6 +2613,7 @@ func resourceAuthenticationPolicyContractAssertionMapping() *schema.Resource {
 			"authentication_policy_contract_ref": resourceRequiredLinkSchema(),
 			"issuance_criteria": {
 				Type:     schema.TypeList,
+				MaxItems: 1,
 				Elem:     resourceIssuanceCriteria(),
 				Optional: true,
 			},
@@ -2818,6 +2823,7 @@ func resourceSpAttributeQuery() *schema.Resource {
 			},
 			"issuance_criteria": {
 				Type:        schema.TypeList,
+				MaxItems:    1,
 				Elem:        resourceIssuanceCriteria(),
 				Optional:    true,
 				Description: "The issuance criteria that this transaction must meet before the corresponding attribute contract is fulfilled.",
@@ -2945,6 +2951,7 @@ func resourceAccessTokenManagerMapping() *schema.Resource {
 			},
 			"issuance_criteria": {
 				Type:     schema.TypeList,
+				MaxItems: 1,
 				Elem:     resourceIssuanceCriteria(),
 				Optional: true,
 			},
@@ -3000,6 +3007,7 @@ func resourceIdpAdapterAssertionMapping() *schema.Resource {
 			},
 			"issuance_criteria": {
 				Type:        schema.TypeList,
+				MaxItems:    1,
 				Elem:        resourceIssuanceCriteria(),
 				Description: "The issuance criteria that this transaction must meet before the corresponding attribute contract is fulfilled.",
 				Optional:    true,
@@ -3111,6 +3119,7 @@ func resourceSsoOAuthMapping() *schema.Resource {
 			},
 			"issuance_criteria": {
 				Type:     schema.TypeList,
+				MaxItems: 1,
 				Elem:     resourceIssuanceCriteria(),
 				Optional: true,
 			},
@@ -3145,6 +3154,7 @@ func resourceIdpTokenProcessorMapping() *schema.Resource {
 			"idp_token_processor_ref": resourceRequiredLinkSchema(),
 			"issuance_criteria": {
 				Type:     schema.TypeList,
+				MaxItems: 1,
 				Elem:     resourceIssuanceCriteria(),
 				Optional: true,
 			},
