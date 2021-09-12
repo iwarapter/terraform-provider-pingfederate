@@ -431,7 +431,7 @@ Optional:
 
 - **adapter_override_settings** (Block List) Connection specific overridden adapter instance for mapping. (see [below for nested schema](#nestedblock--idp_browser_sso--adapter_mappings--adapter_override_settings))
 - **custom_attribute_source** (Block List) A list of custom configured data stores to look up attributes from. (see [below for nested schema](#nestedblock--idp_browser_sso--adapter_mappings--custom_attribute_source))
-- **issuance_criteria** (Block List) The issuance criteria that this transaction must meet before the corresponding attribute contract is fulfilled. (see [below for nested schema](#nestedblock--idp_browser_sso--adapter_mappings--issuance_criteria))
+- **issuance_criteria** (Block List, Max: 1) The issuance criteria that this transaction must meet before the corresponding attribute contract is fulfilled. (see [below for nested schema](#nestedblock--idp_browser_sso--adapter_mappings--issuance_criteria))
 - **jdbc_attribute_source** (Block List) A list of jdbc configured data stores to look up attributes from. (see [below for nested schema](#nestedblock--idp_browser_sso--adapter_mappings--jdbc_attribute_source))
 - **ldap_attribute_source** (Block List) A list of ldap configured data stores to look up attributes from. (see [below for nested schema](#nestedblock--idp_browser_sso--adapter_mappings--ldap_attribute_source))
 - **restrict_virtual_entity_ids** (Boolean) Restricts this mapping to specific virtual entity IDs.
@@ -916,7 +916,7 @@ Required:
 Optional:
 
 - **custom_attribute_source** (Block List) (see [below for nested schema](#nestedblock--idp_browser_sso--authentication_policy_contract_mappings--custom_attribute_source))
-- **issuance_criteria** (Block List) (see [below for nested schema](#nestedblock--idp_browser_sso--authentication_policy_contract_mappings--issuance_criteria))
+- **issuance_criteria** (Block List, Max: 1) (see [below for nested schema](#nestedblock--idp_browser_sso--authentication_policy_contract_mappings--issuance_criteria))
 - **jdbc_attribute_source** (Block List) (see [below for nested schema](#nestedblock--idp_browser_sso--authentication_policy_contract_mappings--jdbc_attribute_source))
 - **ldap_attribute_source** (Block List) (see [below for nested schema](#nestedblock--idp_browser_sso--authentication_policy_contract_mappings--ldap_attribute_source))
 - **restrict_virtual_server_ids** (Boolean)
@@ -1267,7 +1267,7 @@ Required:
 Optional:
 
 - **custom_attribute_source** (Block List) (see [below for nested schema](#nestedblock--idp_browser_sso--sso_o_auth_mapping--custom_attribute_source))
-- **issuance_criteria** (Block List) (see [below for nested schema](#nestedblock--idp_browser_sso--sso_o_auth_mapping--issuance_criteria))
+- **issuance_criteria** (Block List, Max: 1) (see [below for nested schema](#nestedblock--idp_browser_sso--sso_o_auth_mapping--issuance_criteria))
 - **jdbc_attribute_source** (Block List) (see [below for nested schema](#nestedblock--idp_browser_sso--sso_o_auth_mapping--jdbc_attribute_source))
 - **ldap_attribute_source** (Block List) (see [below for nested schema](#nestedblock--idp_browser_sso--sso_o_auth_mapping--ldap_attribute_source))
 
@@ -1561,7 +1561,7 @@ Required:
 Optional:
 
 - **custom_attribute_source** (Block List) (see [below for nested schema](#nestedblock--idp_oauth_grant_attribute_mapping--access_token_manager_mappings--custom_attribute_source))
-- **issuance_criteria** (Block List) (see [below for nested schema](#nestedblock--idp_oauth_grant_attribute_mapping--access_token_manager_mappings--issuance_criteria))
+- **issuance_criteria** (Block List, Max: 1) (see [below for nested schema](#nestedblock--idp_oauth_grant_attribute_mapping--access_token_manager_mappings--issuance_criteria))
 - **jdbc_attribute_source** (Block List) (see [below for nested schema](#nestedblock--idp_oauth_grant_attribute_mapping--access_token_manager_mappings--jdbc_attribute_source))
 - **ldap_attribute_source** (Block List) (see [below for nested schema](#nestedblock--idp_oauth_grant_attribute_mapping--access_token_manager_mappings--ldap_attribute_source))
 
@@ -1955,7 +1955,7 @@ Optional:
 
 - **custom_attribute_source** (Block List) (see [below for nested schema](#nestedblock--ws_trust--token_generator_mappings--custom_attribute_source))
 - **default_mapping** (Boolean)
-- **issuance_criteria** (Block List) (see [below for nested schema](#nestedblock--ws_trust--token_generator_mappings--issuance_criteria))
+- **issuance_criteria** (Block List, Max: 1) (see [below for nested schema](#nestedblock--ws_trust--token_generator_mappings--issuance_criteria))
 - **jdbc_attribute_source** (Block List) (see [below for nested schema](#nestedblock--ws_trust--token_generator_mappings--jdbc_attribute_source))
 - **ldap_attribute_source** (Block List) (see [below for nested schema](#nestedblock--ws_trust--token_generator_mappings--ldap_attribute_source))
 - **restricted_virtual_entity_ids** (List of String)

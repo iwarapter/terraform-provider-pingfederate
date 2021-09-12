@@ -76,7 +76,7 @@ Required:
 Optional:
 
 - **custom_attribute_source** (Block List) A list of custom configured data stores to look up attributes from. (see [below for nested schema](#nestedblock--attribute_query--custom_attribute_source))
-- **issuance_criteria** (Block List) The issuance criteria that this transaction must meet before the corresponding attribute contract is fulfilled. (see [below for nested schema](#nestedblock--attribute_query--issuance_criteria))
+- **issuance_criteria** (Block List, Max: 1) The issuance criteria that this transaction must meet before the corresponding attribute contract is fulfilled. (see [below for nested schema](#nestedblock--attribute_query--issuance_criteria))
 - **jdbc_attribute_source** (Block List) A list of jdbc configured data stores to look up attributes from. (see [below for nested schema](#nestedblock--attribute_query--jdbc_attribute_source))
 - **ldap_attribute_source** (Block List) A list of ldap configured data stores to look up attributes from. (see [below for nested schema](#nestedblock--attribute_query--ldap_attribute_source))
 - **policy** (Block List) The attribute query profile's security policy. (see [below for nested schema](#nestedblock--attribute_query--policy))
@@ -867,7 +867,7 @@ Optional:
 - **abort_sso_transaction_as_fail_safe** (Boolean) If set to true, SSO transaction will be aborted as a fail-safe when the data-store's attribute mappings fail to complete the attribute contract. Otherwise, the attribute contract with default values is used. By default, this value is false.
 - **adapter_override_settings** (Block List) Connection specific configuration overrides for the mapped adapter instance. (see [below for nested schema](#nestedblock--sp_browser_sso--adapter_mappings--adapter_override_settings))
 - **custom_attribute_source** (Block List) A list of configured custom data stores to look up attributes from. (see [below for nested schema](#nestedblock--sp_browser_sso--adapter_mappings--custom_attribute_source))
-- **issuance_criteria** (Block List) The issuance criteria that this transaction must meet before the corresponding attribute contract is fulfilled. (see [below for nested schema](#nestedblock--sp_browser_sso--adapter_mappings--issuance_criteria))
+- **issuance_criteria** (Block List, Max: 1) The issuance criteria that this transaction must meet before the corresponding attribute contract is fulfilled. (see [below for nested schema](#nestedblock--sp_browser_sso--adapter_mappings--issuance_criteria))
 - **jdbc_attribute_source** (Block List) A list of configured jdbc data stores to look up attributes from. (see [below for nested schema](#nestedblock--sp_browser_sso--adapter_mappings--jdbc_attribute_source))
 - **ldap_attribute_source** (Block List) A list of configured ldap data stores to look up attributes from. (see [below for nested schema](#nestedblock--sp_browser_sso--adapter_mappings--ldap_attribute_source))
 - **restrict_virtual_entity_ids** (Boolean) Restricts this mapping to specific virtual entity IDs.
@@ -1075,7 +1075,7 @@ Optional:
 
 - **custom_attribute_source** (Block List) (see [below for nested schema](#nestedblock--sp_browser_sso--adapter_mappings--adapter_override_settings--attribute_mapping--custom_attribute_source))
 - **inherited** (Boolean)
-- **issuance_criteria** (Block List) (see [below for nested schema](#nestedblock--sp_browser_sso--adapter_mappings--adapter_override_settings--attribute_mapping--issuance_criteria))
+- **issuance_criteria** (Block List, Max: 1) (see [below for nested schema](#nestedblock--sp_browser_sso--adapter_mappings--adapter_override_settings--attribute_mapping--issuance_criteria))
 - **jdbc_attribute_source** (Block List) (see [below for nested schema](#nestedblock--sp_browser_sso--adapter_mappings--adapter_override_settings--attribute_mapping--jdbc_attribute_source))
 - **ldap_attribute_source** (Block List) (see [below for nested schema](#nestedblock--sp_browser_sso--adapter_mappings--adapter_override_settings--attribute_mapping--ldap_attribute_source))
 
@@ -1625,7 +1625,7 @@ Optional:
 
 - **abort_sso_transaction_as_fail_safe** (Boolean)
 - **custom_attribute_source** (Block List) (see [below for nested schema](#nestedblock--sp_browser_sso--authentication_policy_contract_assertion_mappings--custom_attribute_source))
-- **issuance_criteria** (Block List) (see [below for nested schema](#nestedblock--sp_browser_sso--authentication_policy_contract_assertion_mappings--issuance_criteria))
+- **issuance_criteria** (Block List, Max: 1) (see [below for nested schema](#nestedblock--sp_browser_sso--authentication_policy_contract_assertion_mappings--issuance_criteria))
 - **jdbc_attribute_source** (Block List) (see [below for nested schema](#nestedblock--sp_browser_sso--authentication_policy_contract_assertion_mappings--jdbc_attribute_source))
 - **ldap_attribute_source** (Block List) (see [below for nested schema](#nestedblock--sp_browser_sso--authentication_policy_contract_assertion_mappings--ldap_attribute_source))
 - **restrict_virtual_entity_ids** (Boolean)
@@ -2009,7 +2009,7 @@ Required:
 Optional:
 
 - **custom_attribute_source** (Block List) (see [below for nested schema](#nestedblock--ws_trust--token_processor_mappings--custom_attribute_source))
-- **issuance_criteria** (Block List) (see [below for nested schema](#nestedblock--ws_trust--token_processor_mappings--issuance_criteria))
+- **issuance_criteria** (Block List, Max: 1) (see [below for nested schema](#nestedblock--ws_trust--token_processor_mappings--issuance_criteria))
 - **jdbc_attribute_source** (Block List) (see [below for nested schema](#nestedblock--ws_trust--token_processor_mappings--jdbc_attribute_source))
 - **ldap_attribute_source** (Block List) (see [below for nested schema](#nestedblock--ws_trust--token_processor_mappings--ldap_attribute_source))
 - **restricted_virtual_entity_ids** (List of String)
