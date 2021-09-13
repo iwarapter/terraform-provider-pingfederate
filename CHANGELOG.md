@@ -1,3 +1,17 @@
+## 0.0.21 (September 13th, 2021)
+
+NOTES:
+
+* This is an early release experimental build for PingFederate 10.x
+
+FEATURES:
+
+- Added more cross functional PingFederate version testing, 9.3 -> 10.3.
+
+BUG FIXES:
+
+- Don't set configuration default rows unless true (allows PF9.3 to work). (#135)
+
 ## 0.0.20 (September 8th, 2021)
 
 NOTES:

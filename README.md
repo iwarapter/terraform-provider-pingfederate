@@ -26,10 +26,11 @@ The provider is current tested against the following versions of PingFederate
 
 | PingFederate | Status |
 |------------|--------|
-| 10.0.6 | ![e2e](https://github.com/iwarapter/terraform-provider-pingfederate/workflows/e2e/badge.svg)|
-| 10.1.5 | ![e2e](https://github.com/iwarapter/terraform-provider-pingfederate/workflows/e2e/badge.svg)|
-| 10.2.4 | ![e2e](https://github.com/iwarapter/terraform-provider-pingfederate/workflows/e2e/badge.svg)|
-| 10.3.1 | ![e2e](https://github.com/iwarapter/terraform-provider-pingfederate/workflows/e2e/badge.svg)|
+| 9.3.3 | [![ci](https://github.com/iwarapter/terraform-provider-pingfederate/actions/workflows/build.yaml/badge.svg)](https://github.com/iwarapter/terraform-provider-pingfederate/actions/workflows/build.yaml)|
+| 10.0.6 | [![ci](https://github.com/iwarapter/terraform-provider-pingfederate/actions/workflows/build.yaml/badge.svg)](https://github.com/iwarapter/terraform-provider-pingfederate/actions/workflows/build.yaml)|
+| 10.1.5 | [![ci](https://github.com/iwarapter/terraform-provider-pingfederate/actions/workflows/build.yaml/badge.svg)](https://github.com/iwarapter/terraform-provider-pingfederate/actions/workflows/build.yaml)|
+| 10.2.4 | [![ci](https://github.com/iwarapter/terraform-provider-pingfederate/actions/workflows/build.yaml/badge.svg)](https://github.com/iwarapter/terraform-provider-pingfederate/actions/workflows/build.yaml)|
+| 10.3.1 | [![ci](https://github.com/iwarapter/terraform-provider-pingfederate/actions/workflows/build.yaml/badge.svg)](https://github.com/iwarapter/terraform-provider-pingfederate/actions/workflows/build.yaml)|
 
 Developing the Provider
 ---------------------
