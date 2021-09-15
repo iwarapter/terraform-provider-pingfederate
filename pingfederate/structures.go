@@ -224,6 +224,7 @@ func resourceAuthenticationPolicyTreeResource() *schema.Resource {
 				Type:        schema.TypeBool,
 				Description: "Whether or not this authentication policy tree is enabled. Default is true.",
 				Optional:    true,
+				Default:     true,
 			},
 			"name": {
 				Type:        schema.TypeString,
