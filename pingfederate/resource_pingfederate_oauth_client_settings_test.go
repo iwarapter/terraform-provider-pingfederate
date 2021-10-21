@@ -152,9 +152,11 @@ func testAccCheckPingFederateOauthClientSettingsExists(t *testing.T, n string) r
 
 func Test_resourcePingFederateOauthClientSettingsResourceReadResult(t *testing.T) {
 	cases := []struct {
+		Version  string
 		Resource pf.ClientSettings
 	}{
 		{
+			Version: "10.3.1",
 			Resource: pf.ClientSettings{
 				DynamicClientRegistration: &pf.DynamicClientRegistration{
 					AllowClientDelete:                        Bool(true),
@@ -211,7 +213,7 @@ func Test_resourcePingFederateOauthClientSettingsResourceReadResult(t *testing.T
 			resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})
 			resourcePingFederateOauthClientSettingsResourceReadResult(resourceLocalData, &tc.Resource)
 
-			assert.Equal(t, tc.Resource, *resourcePingFederateOauthClientSettingsResourceReadData(resourceLocalData))
+			assert.Equal(t, tc.Resource, *resourcePingFederateOauthClientSettingsResourceReadData(resourceLocalData, tc.Version))
 		})
 	}
 }

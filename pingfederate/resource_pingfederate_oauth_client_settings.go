@@ -5,6 +5,7 @@ package pingfederate
 import (
 	"context"
 	"fmt"
+	"regexp"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthClientSettings"
 
@@ -53,7 +54,7 @@ func resourcePingFederateOauthClientSettingsResourceRead(ctx context.Context, d 
 }
 
 func resourcePingFederateOauthClientSettingsResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	authSettings := resourcePingFederateOauthClientSettingsResourceReadData(d)
+	authSettings := resourcePingFederateOauthClientSettingsResourceReadData(d, m.(pfClient).PfVersion())
 
 	svc := m.(pfClient).OauthClientSettings
 	input := &oauthClientSettings.UpdateClientSettingsInput{
@@ -67,7 +68,12 @@ func resourcePingFederateOauthClientSettingsResourceUpdate(ctx context.Context, 
 	return resourcePingFederateOauthClientSettingsResourceReadResult(d, result)
 }
 
-func resourcePingFederateOauthClientSettingsResourceReadData(d *schema.ResourceData) *pf.ClientSettings {
+func resourcePingFederateOauthClientSettingsResourceReadData(d *schema.ResourceData, pfVersion string) *pf.ClientSettings {
+	re := regexp.MustCompile(`^(10\.[1-9])`)
+	isPF10_1 := re.MatchString(pfVersion)
+	re = regexp.MustCompile(`^(10\.[3-9])`)
+	isPF10_3 := re.MatchString(pfVersion)
+
 	result := &pf.ClientSettings{DynamicClientRegistration: &pf.DynamicClientRegistration{}}
 	if val, ok := d.GetOk("dynamic_client_registration.0.require_proof_key_for_code_exchange"); ok {
 		result.DynamicClientRegistration.RequireProofKeyForCodeExchange = Bool(val.(bool))
@@ -143,8 +149,10 @@ func resourcePingFederateOauthClientSettingsResourceReadData(d *schema.ResourceD
 	if val, ok := d.GetOk("dynamic_client_registration.0.client_cert_issuer_type"); ok {
 		result.DynamicClientRegistration.ClientCertIssuerType = String(val.(string))
 	}
-	if val, ok := d.GetOk("dynamic_client_registration.0.refresh_token_rolling_interval_type"); ok {
-		result.DynamicClientRegistration.RefreshTokenRollingIntervalType = String(val.(string))
+	if isPF10_3 {
+		if val, ok := d.GetOk("dynamic_client_registration.0.refresh_token_rolling_interval_type"); ok {
+			result.DynamicClientRegistration.RefreshTokenRollingIntervalType = String(val.(string))
+		}
 	}
 	if val, ok := d.GetOk("dynamic_client_registration.0.restrict_common_scopes"); ok {
 		result.DynamicClientRegistration.RestrictCommonScopes = Bool(val.(bool))
@@ -161,8 +169,10 @@ func resourcePingFederateOauthClientSettingsResourceReadData(d *schema.ResourceD
 	if val, ok := d.GetOk("dynamic_client_registration.0.ciba_require_signed_requests"); ok {
 		result.DynamicClientRegistration.CibaRequireSignedRequests = Bool(val.(bool))
 	}
-	if val, ok := d.GetOk("dynamic_client_registration.0.allow_client_delete"); ok {
-		result.DynamicClientRegistration.AllowClientDelete = Bool(val.(bool))
+	if isPF10_1 {
+		if val, ok := d.GetOk("dynamic_client_registration.0.allow_client_delete"); ok {
+			result.DynamicClientRegistration.AllowClientDelete = Bool(val.(bool))
+		}
 	}
 	if val, ok := d.GetOk("dynamic_client_registration.0.persistent_grant_expiration_time"); ok {
 		result.DynamicClientRegistration.PersistentGrantExpirationTime = Int(val.(int))
