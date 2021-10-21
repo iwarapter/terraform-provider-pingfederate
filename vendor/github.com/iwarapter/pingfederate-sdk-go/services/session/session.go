@@ -96,60 +96,6 @@ func (s *SessionService) UpdateSessionSettingsWithContext(ctx context.Context, i
 	return nil, req.HTTPResponse, req.Error
 }
 
-//GetGlobalPolicy - Get the global authentication session policy.
-//RequestType: GET
-//Input:
-func (s *SessionService) GetGlobalPolicy() (output *models.GlobalAuthenticationSessionPolicy, resp *http.Response, err error) {
-	return s.GetGlobalPolicyWithContext(context.Background())
-}
-
-//GetGlobalPolicyWithContext - Get the global authentication session policy.
-//RequestType: GET
-//Input: ctx context.Context,
-func (s *SessionService) GetGlobalPolicyWithContext(ctx context.Context) (output *models.GlobalAuthenticationSessionPolicy, resp *http.Response, err error) {
-	path := "/session/authenticationSessionPolicies/global"
-	op := &request.Operation{
-		Name:       "GetGlobalPolicy",
-		HTTPMethod: "GET",
-		HTTPPath:   path,
-	}
-	output = &models.GlobalAuthenticationSessionPolicy{}
-	req := s.newRequest(op, nil, output)
-	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
-
-	if req.Send() == nil {
-		return output, req.HTTPResponse, nil
-	}
-	return nil, req.HTTPResponse, req.Error
-}
-
-//UpdateGlobalPolicy - Update the global authentication session policy.
-//RequestType: PUT
-//Input: input *UpdateGlobalPolicyInput
-func (s *SessionService) UpdateGlobalPolicy(input *UpdateGlobalPolicyInput) (output *models.GlobalAuthenticationSessionPolicy, resp *http.Response, err error) {
-	return s.UpdateGlobalPolicyWithContext(context.Background(), input)
-}
-
-//UpdateGlobalPolicyWithContext - Update the global authentication session policy.
-//RequestType: PUT
-//Input: ctx context.Context, input *UpdateGlobalPolicyInput
-func (s *SessionService) UpdateGlobalPolicyWithContext(ctx context.Context, input *UpdateGlobalPolicyInput) (output *models.GlobalAuthenticationSessionPolicy, resp *http.Response, err error) {
-	path := "/session/authenticationSessionPolicies/global"
-	op := &request.Operation{
-		Name:       "UpdateGlobalPolicy",
-		HTTPMethod: "PUT",
-		HTTPPath:   path,
-	}
-	output = &models.GlobalAuthenticationSessionPolicy{}
-	req := s.newRequest(op, input.Body, output)
-	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
-
-	if req.Send() == nil {
-		return output, req.HTTPResponse, nil
-	}
-	return nil, req.HTTPResponse, req.Error
-}
-
 //GetApplicationPolicy - Get the application session policy.
 //RequestType: GET
 //Input:
@@ -195,6 +141,60 @@ func (s *SessionService) UpdateApplicationPolicyWithContext(ctx context.Context,
 		HTTPPath:   path,
 	}
 	output = &models.ApplicationSessionPolicy{}
+	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
+
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
+	}
+	return nil, req.HTTPResponse, req.Error
+}
+
+//GetGlobalPolicy - Get the global authentication session policy.
+//RequestType: GET
+//Input:
+func (s *SessionService) GetGlobalPolicy() (output *models.GlobalAuthenticationSessionPolicy, resp *http.Response, err error) {
+	return s.GetGlobalPolicyWithContext(context.Background())
+}
+
+//GetGlobalPolicyWithContext - Get the global authentication session policy.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *SessionService) GetGlobalPolicyWithContext(ctx context.Context) (output *models.GlobalAuthenticationSessionPolicy, resp *http.Response, err error) {
+	path := "/session/authenticationSessionPolicies/global"
+	op := &request.Operation{
+		Name:       "GetGlobalPolicy",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
+	}
+	output = &models.GlobalAuthenticationSessionPolicy{}
+	req := s.newRequest(op, nil, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
+
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
+	}
+	return nil, req.HTTPResponse, req.Error
+}
+
+//UpdateGlobalPolicy - Update the global authentication session policy.
+//RequestType: PUT
+//Input: input *UpdateGlobalPolicyInput
+func (s *SessionService) UpdateGlobalPolicy(input *UpdateGlobalPolicyInput) (output *models.GlobalAuthenticationSessionPolicy, resp *http.Response, err error) {
+	return s.UpdateGlobalPolicyWithContext(context.Background(), input)
+}
+
+//UpdateGlobalPolicyWithContext - Update the global authentication session policy.
+//RequestType: PUT
+//Input: ctx context.Context, input *UpdateGlobalPolicyInput
+func (s *SessionService) UpdateGlobalPolicyWithContext(ctx context.Context, input *UpdateGlobalPolicyInput) (output *models.GlobalAuthenticationSessionPolicy, resp *http.Response, err error) {
+	path := "/session/authenticationSessionPolicies/global"
+	op := &request.Operation{
+		Name:       "UpdateGlobalPolicy",
+		HTTPMethod: "PUT",
+		HTTPPath:   path,
+	}
+	output = &models.GlobalAuthenticationSessionPolicy{}
 	req := s.newRequest(op, input.Body, output)
 	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 

@@ -37,8 +37,8 @@ func New(cfg *config.Config) *DataStoresService {
 }
 
 // newRequest creates a new request for a DataStores operation
-func (c *DataStoresService) newRequest(op *request.Operation, params, data interface{}) *request.Request {
-	req := c.NewRequest(op, params, data)
+func (s *DataStoresService) newRequest(op *request.Operation, params, data interface{}) *request.Request {
+	req := s.NewRequest(op, params, data)
 
 	return req
 }

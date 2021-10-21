@@ -2909,3 +2909,31 @@ func expandProxySettings(in map[string]interface{}) *pf.ProxySettings {
 	}
 	return &result
 }
+
+func expandClientRegistrationOIDCPolicy(in map[string]interface{}) *pf.ClientRegistrationOIDCPolicy {
+	var result pf.ClientRegistrationOIDCPolicy
+	if val, ok := in["id_token_signing_algorithm"]; ok {
+		result.IdTokenSigningAlgorithm = String(val.(string))
+	}
+	if val, ok := in["id_token_encryption_algorithm"]; ok {
+		result.IdTokenEncryptionAlgorithm = String(val.(string))
+	}
+	if val, ok := in["id_token_content_encryption_algorithm"]; ok {
+		result.IdTokenContentEncryptionAlgorithm = String(val.(string))
+	}
+	if val, ok := in["policy_group"]; ok && len(val.([]interface{})) > 0 {
+		result.PolicyGroup = expandResourceLink(val.([]interface{})[0].(map[string]interface{}))
+	}
+	return &result
+}
+
+func expandResourceLinkList(configured []interface{}) *[]*pf.ResourceLink {
+	vs := make([]*pf.ResourceLink, 0, len(configured))
+	for _, v := range configured {
+		val, ok := v.(string)
+		if ok && val != "" {
+			vs = append(vs, &pf.ResourceLink{Id: String(val)})
+		}
+	}
+	return &vs
+}

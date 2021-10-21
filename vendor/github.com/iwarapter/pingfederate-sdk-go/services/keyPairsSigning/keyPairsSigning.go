@@ -239,6 +239,35 @@ func (s *KeyPairsSigningService) ImportCsrResponseWithContext(ctx context.Contex
 	return nil, req.HTTPResponse, req.Error
 }
 
+//ExportPEMFile - Download the key pair in PEM format.
+//RequestType: POST
+//Input: input *ExportPEMFileInput
+func (s *KeyPairsSigningService) ExportPEMFile(input *ExportPEMFileInput) (resp *http.Response, err error) {
+	return s.ExportPEMFileWithContext(context.Background(), input)
+}
+
+//ExportPEMFileWithContext - Download the key pair in PEM format.
+//RequestType: POST
+//Input: ctx context.Context, input *ExportPEMFileInput
+func (s *KeyPairsSigningService) ExportPEMFileWithContext(ctx context.Context, input *ExportPEMFileInput) (resp *http.Response, err error) {
+	path := "/keyPairs/signing/{id}/pem"
+	path = strings.Replace(path, "{id}", input.Id, -1)
+
+	op := &request.Operation{
+		Name:       "ExportPEMFile",
+		HTTPMethod: "POST",
+		HTTPPath:   path,
+	}
+
+	req := s.newRequest(op, input.Body, nil)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
+
+	if req.Send() == nil {
+		return req.HTTPResponse, nil
+	}
+	return req.HTTPResponse, req.Error
+}
+
 //ExportPKCS12File - Download the key pair in PKCS12 format.
 //RequestType: POST
 //Input: input *ExportPKCS12FileInput
@@ -404,8 +433,13 @@ type ExportCsrInput struct {
 	Id string
 }
 
+type ExportPEMFileInput struct {
+	Body models.KeyPairExportSettings
+	Id   string
+}
+
 type ExportPKCS12FileInput struct {
-	Body models.PKCS12ExportSettings
+	Body models.KeyPairExportSettings
 	Id   string
 }
 
@@ -423,7 +457,7 @@ type ImportCsrResponseInput struct {
 }
 
 type ImportKeyPairInput struct {
-	Body models.PKCS12File
+	Body models.KeyPairFile
 }
 
 type UpdateRotationSettingsInput struct {

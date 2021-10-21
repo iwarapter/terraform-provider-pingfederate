@@ -27,7 +27,7 @@ func resourcePingFederateKeypairSslServerResourceCreate(ctx context.Context, d *
 	svc := m.(pfClient).KeyPairsSslServer
 	if _, ok := d.GetOk("file_data"); ok {
 		input := keyPairsSslServer.ImportKeyPairInput{
-			Body: pf.PKCS12File{
+			Body: pf.KeyPairFile{
 				FileData: String(d.Get("file_data").(string)),
 				Password: String(d.Get("password").(string)),
 			},

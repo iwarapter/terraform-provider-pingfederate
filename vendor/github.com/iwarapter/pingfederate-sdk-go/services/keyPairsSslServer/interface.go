@@ -29,6 +29,9 @@ type KeyPairsSslServerAPI interface {
 	ImportCsrResponse(input *ImportCsrResponseInput) (output *models.KeyPairView, resp *http.Response, err error)
 	ImportCsrResponseWithContext(ctx context.Context, input *ImportCsrResponseInput) (output *models.KeyPairView, resp *http.Response, err error)
 
+	ExportPEMFile(input *ExportPEMFileInput) (resp *http.Response, err error)
+	ExportPEMFileWithContext(ctx context.Context, input *ExportPEMFileInput) (resp *http.Response, err error)
+
 	ExportPKCS12File(input *ExportPKCS12FileInput) (resp *http.Response, err error)
 	ExportPKCS12FileWithContext(ctx context.Context, input *ExportPKCS12FileInput) (resp *http.Response, err error)
 

@@ -14,17 +14,17 @@ type SessionAPI interface {
 	UpdateSessionSettings(input *UpdateSessionSettingsInput) (output *models.SessionSettings, resp *http.Response, err error)
 	UpdateSessionSettingsWithContext(ctx context.Context, input *UpdateSessionSettingsInput) (output *models.SessionSettings, resp *http.Response, err error)
 
-	GetGlobalPolicy() (output *models.GlobalAuthenticationSessionPolicy, resp *http.Response, err error)
-	GetGlobalPolicyWithContext(ctx context.Context) (output *models.GlobalAuthenticationSessionPolicy, resp *http.Response, err error)
-
-	UpdateGlobalPolicy(input *UpdateGlobalPolicyInput) (output *models.GlobalAuthenticationSessionPolicy, resp *http.Response, err error)
-	UpdateGlobalPolicyWithContext(ctx context.Context, input *UpdateGlobalPolicyInput) (output *models.GlobalAuthenticationSessionPolicy, resp *http.Response, err error)
-
 	GetApplicationPolicy() (output *models.ApplicationSessionPolicy, resp *http.Response, err error)
 	GetApplicationPolicyWithContext(ctx context.Context) (output *models.ApplicationSessionPolicy, resp *http.Response, err error)
 
 	UpdateApplicationPolicy(input *UpdateApplicationPolicyInput) (output *models.ApplicationSessionPolicy, resp *http.Response, err error)
 	UpdateApplicationPolicyWithContext(ctx context.Context, input *UpdateApplicationPolicyInput) (output *models.ApplicationSessionPolicy, resp *http.Response, err error)
+
+	GetGlobalPolicy() (output *models.GlobalAuthenticationSessionPolicy, resp *http.Response, err error)
+	GetGlobalPolicyWithContext(ctx context.Context) (output *models.GlobalAuthenticationSessionPolicy, resp *http.Response, err error)
+
+	UpdateGlobalPolicy(input *UpdateGlobalPolicyInput) (output *models.GlobalAuthenticationSessionPolicy, resp *http.Response, err error)
+	UpdateGlobalPolicyWithContext(ctx context.Context, input *UpdateGlobalPolicyInput) (output *models.GlobalAuthenticationSessionPolicy, resp *http.Response, err error)
 
 	GetSourcePolicies() (output *models.AuthenticationSessionPolicies, resp *http.Response, err error)
 	GetSourcePoliciesWithContext(ctx context.Context) (output *models.AuthenticationSessionPolicies, resp *http.Response, err error)

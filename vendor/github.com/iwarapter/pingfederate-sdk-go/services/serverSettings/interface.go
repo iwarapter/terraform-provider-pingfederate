@@ -32,11 +32,11 @@ type ServerSettingsAPI interface {
 	UpdateCaptchaSettings(input *UpdateCaptchaSettingsInput) (output *models.CaptchaSettings, resp *http.Response, err error)
 	UpdateCaptchaSettingsWithContext(ctx context.Context, input *UpdateCaptchaSettingsInput) (output *models.CaptchaSettings, resp *http.Response, err error)
 
-	GetSystemKeys() (output *models.SystemKeys, resp *http.Response, err error)
-	GetSystemKeysWithContext(ctx context.Context) (output *models.SystemKeys, resp *http.Response, err error)
-
 	UpdateSystemKeys(input *UpdateSystemKeysInput) (output *models.SystemKeys, resp *http.Response, err error)
 	UpdateSystemKeysWithContext(ctx context.Context, input *UpdateSystemKeysInput) (output *models.SystemKeys, resp *http.Response, err error)
+
+	GetSystemKeys() (output *models.SystemKeys, resp *http.Response, err error)
+	GetSystemKeysWithContext(ctx context.Context) (output *models.SystemKeys, resp *http.Response, err error)
 
 	RotateSystemKeys() (output *models.SystemKeys, resp *http.Response, err error)
 	RotateSystemKeysWithContext(ctx context.Context) (output *models.SystemKeys, resp *http.Response, err error)

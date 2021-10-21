@@ -261,33 +261,6 @@ func (s *ServerSettingsService) UpdateCaptchaSettingsWithContext(ctx context.Con
 	return nil, req.HTTPResponse, req.Error
 }
 
-//GetSystemKeys - Get the system keys.
-//RequestType: GET
-//Input:
-func (s *ServerSettingsService) GetSystemKeys() (output *models.SystemKeys, resp *http.Response, err error) {
-	return s.GetSystemKeysWithContext(context.Background())
-}
-
-//GetSystemKeysWithContext - Get the system keys.
-//RequestType: GET
-//Input: ctx context.Context,
-func (s *ServerSettingsService) GetSystemKeysWithContext(ctx context.Context) (output *models.SystemKeys, resp *http.Response, err error) {
-	path := "/serverSettings/systemKeys"
-	op := &request.Operation{
-		Name:       "GetSystemKeys",
-		HTTPMethod: "GET",
-		HTTPPath:   path,
-	}
-	output = &models.SystemKeys{}
-	req := s.newRequest(op, nil, output)
-	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
-
-	if req.Send() == nil {
-		return output, req.HTTPResponse, nil
-	}
-	return nil, req.HTTPResponse, req.Error
-}
-
 //UpdateSystemKeys - Update the system keys.
 //RequestType: PUT
 //Input: input *UpdateSystemKeysInput
@@ -307,6 +280,33 @@ func (s *ServerSettingsService) UpdateSystemKeysWithContext(ctx context.Context,
 	}
 	output = &models.SystemKeys{}
 	req := s.newRequest(op, input.Body, output)
+	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
+
+	if req.Send() == nil {
+		return output, req.HTTPResponse, nil
+	}
+	return nil, req.HTTPResponse, req.Error
+}
+
+//GetSystemKeys - Get the system keys.
+//RequestType: GET
+//Input:
+func (s *ServerSettingsService) GetSystemKeys() (output *models.SystemKeys, resp *http.Response, err error) {
+	return s.GetSystemKeysWithContext(context.Background())
+}
+
+//GetSystemKeysWithContext - Get the system keys.
+//RequestType: GET
+//Input: ctx context.Context,
+func (s *ServerSettingsService) GetSystemKeysWithContext(ctx context.Context) (output *models.SystemKeys, resp *http.Response, err error) {
+	path := "/serverSettings/systemKeys"
+	op := &request.Operation{
+		Name:       "GetSystemKeys",
+		HTTPMethod: "GET",
+		HTTPPath:   path,
+	}
+	output = &models.SystemKeys{}
+	req := s.newRequest(op, nil, output)
 	req.HTTPRequest = req.HTTPRequest.WithContext(ctx)
 
 	if req.Send() == nil {

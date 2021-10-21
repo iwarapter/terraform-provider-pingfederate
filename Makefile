@@ -20,10 +20,10 @@ pf-init:
 		-e TAIL_LOG_FILES="/opt/out/instance/log/server.log /opt/out/instance/log/admin-api.log" \
 		-e SERVER_PROFILE_URL=https://github.com/pingidentity/pingidentity-server-profiles.git \
 		-e SERVER_PROFILE_PATH=getting-started/pingfederate \
-		-e IMAGE_VERSION=pingfederate-alpine-az11-10.2.2-${CURDATE}-d9b5 \
+		-e IMAGE_VERSION=pingfederate-alpine-az11-10.3.1-${CURDATE}-d9b5 \
 		--publish 9999:9999 \
 		--publish 9031:9031 \
-		pingidentity/pingfederate:10.2.2-edge
+		pingidentity/pingfederate:10.3.1-edge
 
 checks:
 	@go fmt ./...
@@ -34,7 +34,6 @@ checks:
 
 unit-test:
 	@go test -mod=vendor ./... -v
-
 
 sweep:
 	@echo "WARNING: This will destroy infrastructure. Use only in development accounts."
@@ -61,7 +60,7 @@ func-init:
 	@rm -rf func-tests/.terraform
 	@rm -rf func-tests/crash.log
 	@rm -rf func-tests/run.log
-	@cd func-tests && terraform init -lock=true
+	@cd func-tests && terraform init
 
 func-plan:
 	@cd func-tests && TF_LOG=TRACE TF_LOG_PATH=./terraform.log terraform plan
