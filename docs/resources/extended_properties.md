@@ -3,15 +3,18 @@
 page_title: "pingfederate_extended_properties Resource - terraform-provider-pingfederate"
 subcategory: ""
 description: |-
-  Manages the PingFederate instance server settings.
+  Manages the PingFederate instance extended properties.
   -> This resource manages a singleton within PingFederate and as such you should ONLY ever declare one of this resource type. Deleting this resource simply stops tracking changes.
+  !> This resource cannot be used together with pingfederate_oauth_client_settings as both API's configure the same client metadata.
 ---
 
 # pingfederate_extended_properties (Resource)
 
-Manages the PingFederate instance server settings.
+Manages the PingFederate instance extended properties.
 
-  -> This resource manages a singleton within PingFederate and as such you should ONLY ever declare one of this resource type. Deleting this resource simply stops tracking changes.
+-> This resource manages a singleton within PingFederate and as such you should ONLY ever declare one of this resource type. Deleting this resource simply stops tracking changes.
+
+!> This resource cannot be used together with `pingfederate_oauth_client_settings` as both API's configure the same client metadata.
 
 ## Example Usage
 

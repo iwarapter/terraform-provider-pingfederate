@@ -2937,3 +2937,25 @@ func expandResourceLinkList(configured []interface{}) *[]*pf.ResourceLink {
 	}
 	return &vs
 }
+
+func expandClientMetadataList(in []interface{}) *[]*pf.ClientMetadata {
+	var result []*pf.ClientMetadata
+	for _, v := range in {
+		result = append(result, expandClientMetadata(v.(map[string]interface{})))
+	}
+	return &result
+}
+
+func expandClientMetadata(in map[string]interface{}) *pf.ClientMetadata {
+	var result pf.ClientMetadata
+	if val, ok := in["parameter"]; ok {
+		result.Parameter = String(val.(string))
+	}
+	if val, ok := in["description"]; ok {
+		result.Description = String(val.(string))
+	}
+	if val, ok := in["multi_valued"]; ok {
+		result.MultiValued = Bool(val.(bool))
+	}
+	return &result
+}

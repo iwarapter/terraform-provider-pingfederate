@@ -26,7 +26,7 @@ func TestAccPingFederateOauthClientSettings(t *testing.T) {
 				Config: testAccPingFederateOauthClientSettingsConfig("true"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateOauthClientSettingsExists(t, resourceName),
-					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.allow_client_delete", "true"),
+					//resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.allow_client_delete", "true"),
 					//resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.allowed_exclusive_scopes", ""),
 					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.bypass_activation_code_confirmation_override", "false"),
 					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.ciba_polling_interval", "3"),
@@ -37,8 +37,8 @@ func TestAccPingFederateOauthClientSettings(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.device_flow_setting_type", "SERVER_DEFAULT"),
 					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.device_polling_interval_override", "0"),
 					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.disable_registration_access_tokens", "false"),
-					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.enforce_replay_prevention", "false"),
-					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.initial_access_token_scope", ""),
+					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.enforce_replay_prevention", "true"),
+					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.initial_access_token_scope", "openid"),
 					//resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.oidc_policy", ""),
 					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.pending_authorization_timeout_override", "0"),
 					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.persistent_grant_expiration_time", "0"),
@@ -50,15 +50,15 @@ func TestAccPingFederateOauthClientSettings(t *testing.T) {
 					//resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.policy_refs", ""),
 					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.refresh_rolling", "SERVER_DEFAULT"),
 					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.refresh_token_rolling_interval", "0"),
-					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.refresh_token_rolling_interval_type", "SERVER_DEFAULT"),
+					//resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.refresh_token_rolling_interval_type", "SERVER_DEFAULT"),
 					//resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.request_policy_ref", ""),
-					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.require_proof_key_for_code_exchange", "false"),
+					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.require_proof_key_for_code_exchange", "true"),
 					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.require_signed_requests", "false"),
-					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.restrict_common_scopes", "false"),
+					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.restrict_common_scopes", "true"),
 					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.restrict_to_default_access_token_manager", "false"),
 					//resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.restricted_common_scopes", ""),
-					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.rotate_client_secret", "true"),
-					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.rotate_registration_access_token", "true"),
+					//resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.rotate_client_secret", "true"),
+					//resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.rotate_registration_access_token", "true"),
 					//resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.token_exchange_processor_policy_ref", ""),
 					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.user_authorization_url_override", ""),
 				),
@@ -67,7 +67,7 @@ func TestAccPingFederateOauthClientSettings(t *testing.T) {
 				Config: testAccPingFederateOauthClientSettingsConfig("false"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateOauthClientSettingsExists(t, resourceName),
-					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.allow_client_delete", "false"),
+					//resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.allow_client_delete", "false"),
 					//resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.allowed_exclusive_scopes", ""),
 					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.bypass_activation_code_confirmation_override", "false"),
 					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.ciba_polling_interval", "3"),
@@ -78,8 +78,8 @@ func TestAccPingFederateOauthClientSettings(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.device_flow_setting_type", "SERVER_DEFAULT"),
 					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.device_polling_interval_override", "0"),
 					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.disable_registration_access_tokens", "false"),
-					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.enforce_replay_prevention", "false"),
-					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.initial_access_token_scope", ""),
+					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.enforce_replay_prevention", "true"),
+					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.initial_access_token_scope", "openid"),
 					//resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.oidc_policy", ""),
 					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.pending_authorization_timeout_override", "0"),
 					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.persistent_grant_expiration_time", "0"),
@@ -91,15 +91,15 @@ func TestAccPingFederateOauthClientSettings(t *testing.T) {
 					//resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.policy_refs", ""),
 					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.refresh_rolling", "SERVER_DEFAULT"),
 					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.refresh_token_rolling_interval", "0"),
-					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.refresh_token_rolling_interval_type", "SERVER_DEFAULT"),
+					//resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.refresh_token_rolling_interval_type", "SERVER_DEFAULT"),
 					//resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.request_policy_ref", ""),
-					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.require_proof_key_for_code_exchange", "false"),
+					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.require_proof_key_for_code_exchange", "true"),
 					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.require_signed_requests", "false"),
 					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.restrict_common_scopes", "false"),
 					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.restrict_to_default_access_token_manager", "false"),
 					//resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.restricted_common_scopes", ""),
-					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.rotate_client_secret", "true"),
-					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.rotate_registration_access_token", "true"),
+					//resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.rotate_client_secret", "true"),
+					//resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.rotate_registration_access_token", "true"),
 					//resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.token_exchange_processor_policy_ref", ""),
 					resource.TestCheckResourceAttr(resourceName, "dynamic_client_registration.0.user_authorization_url_override", ""),
 				),
@@ -122,8 +122,18 @@ func testAccCheckPingFederateOauthClientSettingsDestroy(s *terraform.State) erro
 func testAccPingFederateOauthClientSettingsConfig(configUpdate string) string {
 	return fmt.Sprintf(`
 	resource "pingfederate_oauth_client_settings" "settings" {
+		client_metadata {
+			parameter = "example1"
+		}
+		client_metadata {
+			parameter 	= "example2"
+			description = "example2"
+		}
 		dynamic_client_registration {
-			allow_client_delete = %s
+			restrict_common_scopes 				= %s
+			initial_access_token_scope 			= "openid"
+			enforce_replay_prevention 			= true
+			require_proof_key_for_code_exchange = true
 		}
 	}`, configUpdate)
 }
@@ -143,7 +153,7 @@ func testAccCheckPingFederateOauthClientSettingsExists(t *testing.T, n string) r
 		result, _, err := conn.GetClientSettings()
 
 		assert.NoError(t, err)
-		assert.Equal(t, strconv.FormatBool(*result.DynamicClientRegistration.AllowClientDelete), rs.Primary.Attributes["dynamic_client_registration.0.allow_client_delete"])
+		assert.Equal(t, strconv.FormatBool(*result.DynamicClientRegistration.RestrictCommonScopes), rs.Primary.Attributes["dynamic_client_registration.0.restrict_common_scopes"])
 		//assert.Equal(t, *result.Description, rs.Primary.Attributes["description"])
 
 		return nil
@@ -158,6 +168,18 @@ func Test_resourcePingFederateOauthClientSettingsResourceReadResult(t *testing.T
 		{
 			Version: "10.3.1",
 			Resource: pf.ClientSettings{
+				ClientMetadata: &[]*pf.ClientMetadata{
+					{
+						Parameter:   String("example1"),
+						Description: String(""),
+						MultiValued: Bool(false),
+					},
+					{
+						Parameter:   String("example2"),
+						Description: String("example2"),
+						MultiValued: Bool(false),
+					},
+				},
 				DynamicClientRegistration: &pf.DynamicClientRegistration{
 					AllowClientDelete:                        Bool(true),
 					AllowedExclusiveScopes:                   &[]*string{String("foo")},
@@ -205,13 +227,17 @@ func Test_resourcePingFederateOauthClientSettingsResourceReadResult(t *testing.T
 				},
 			},
 		},
+		{
+			Version:  "10.3.1",
+			Resource: pf.ClientSettings{},
+		},
 	}
 	for i, tc := range cases {
 		t.Run(fmt.Sprintf("tc:%v", i), func(t *testing.T) {
 
 			resourceSchema := resourcePingFederateOauthClientSettingsResource().Schema
 			resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})
-			resourcePingFederateOauthClientSettingsResourceReadResult(resourceLocalData, &tc.Resource)
+			resourcePingFederateOauthClientSettingsResourceReadResult(resourceLocalData, &tc.Resource, tc.Version)
 
 			assert.Equal(t, tc.Resource, *resourcePingFederateOauthClientSettingsResourceReadData(resourceLocalData, tc.Version))
 		})

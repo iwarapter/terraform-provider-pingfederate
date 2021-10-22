@@ -1,6 +1,8 @@
 package pingfederate
 
 import (
+	"regexp"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
@@ -2989,7 +2991,12 @@ func flattenProxySettings(in *pf.ProxySettings) []map[string]interface{} {
 	return append(m, s)
 }
 
-func flattenDynamicClientRegistration(in *pf.DynamicClientRegistration) []map[string]interface{} {
+func flattenDynamicClientRegistration(in *pf.DynamicClientRegistration, pfVersion string) []map[string]interface{} {
+	re := regexp.MustCompile(`^(10\.[1-9])`)
+	isPF10_1 := re.MatchString(pfVersion)
+	re = regexp.MustCompile(`^(10\.[3-9])`)
+	isPF10_3 := re.MatchString(pfVersion)
+
 	m := make([]map[string]interface{}, 0, 1)
 	s := make(map[string]interface{})
 	if in.RestrictCommonScopes != nil {
@@ -3034,8 +3041,10 @@ func flattenDynamicClientRegistration(in *pf.DynamicClientRegistration) []map[st
 	if in.TokenExchangeProcessorPolicyRef != nil {
 		s["token_exchange_processor_policy_ref"] = flattenResourceLink(in.TokenExchangeProcessorPolicyRef)
 	}
-	if in.RotateRegistrationAccessToken != nil {
+	if isPF10_1 && in.RotateRegistrationAccessToken != nil {
 		s["rotate_registration_access_token"] = *in.RotateRegistrationAccessToken
+	} else {
+		s["rotate_registration_access_token"] = true
 	}
 	if in.AllowedExclusiveScopes != nil {
 		s["allowed_exclusive_scopes"] = *in.AllowedExclusiveScopes
@@ -3064,8 +3073,10 @@ func flattenDynamicClientRegistration(in *pf.DynamicClientRegistration) []map[st
 	if in.OidcPolicy != nil {
 		s["oidc_policy"] = flattenClientRegistrationOIDCPolicy(in.OidcPolicy)
 	}
-	if in.RotateClientSecret != nil {
+	if isPF10_1 && in.RotateClientSecret != nil {
 		s["rotate_client_secret"] = *in.RotateClientSecret
+	} else {
+		s["rotate_client_secret"] = true
 	}
 	if in.RequestPolicyRef != nil {
 		s["request_policy_ref"] = flattenResourceLink(in.RequestPolicyRef)
@@ -3085,8 +3096,10 @@ func flattenDynamicClientRegistration(in *pf.DynamicClientRegistration) []map[st
 	if in.ClientCertIssuerType != nil {
 		s["client_cert_issuer_type"] = *in.ClientCertIssuerType
 	}
-	if in.RefreshTokenRollingIntervalType != nil {
+	if isPF10_3 && in.RefreshTokenRollingIntervalType != nil {
 		s["refresh_token_rolling_interval_type"] = *in.RefreshTokenRollingIntervalType
+	} else {
+		s["refresh_token_rolling_interval_type"] = "SERVER_DEFAULT"
 	}
 	if in.DeviceFlowSettingType != nil {
 		s["device_flow_setting_type"] = *in.DeviceFlowSettingType
@@ -3124,4 +3137,26 @@ func flattenResourceLinks(in *[]*pf.ResourceLink) []interface{} {
 		vs = append(vs, *v.Id)
 	}
 	return vs
+}
+
+func flattenClientMetadatas(in *[]*pf.ClientMetadata) []interface{} {
+	m := make([]interface{}, 0, len(*in))
+	for _, v := range *in {
+		m = append(m, flattenClientMetadata(v))
+	}
+	return m
+}
+
+func flattenClientMetadata(in *pf.ClientMetadata) map[string]interface{} {
+	s := make(map[string]interface{})
+	if in.Description != nil {
+		s["description"] = *in.Description
+	}
+	if in.MultiValued != nil {
+		s["multi_valued"] = *in.MultiValued
+	}
+	if in.Parameter != nil {
+		s["parameter"] = *in.Parameter
+	}
+	return s
 }
