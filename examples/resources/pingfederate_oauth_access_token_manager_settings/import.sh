@@ -1,0 +1,2 @@
+# singleton resource with fixed id.
+terraform import pingfederate_oauth_access_token_manager_settings.settings default_oauth_access_token_manager_settings
