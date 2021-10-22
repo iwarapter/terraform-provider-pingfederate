@@ -29,7 +29,7 @@ func resourcePingFederateKeypairSigningResourceCreate(ctx context.Context, d *sc
 	svc := m.(pfClient).KeyPairsSigning
 	if _, ok := d.GetOk("file_data"); ok {
 		input := keyPairsSigning.ImportKeyPairInput{
-			Body: pf.PKCS12File{
+			Body: pf.KeyPairFile{
 				FileData: String(d.Get("file_data").(string)),
 				Password: String(d.Get("password").(string)),
 			},

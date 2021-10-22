@@ -1,3 +1,18 @@
+## 0.0.22 (Unreleased)
+
+NOTES:
+
+* This is an early release experimental build for PingFederate 10.x
+
+FEATURES:
+
+- Add support from `pingfederate_oauth_client_settings` (singleton). (#145)
+- Add support from `pingfederate_oauth_client_registration_policy` to support DCR settings. (#145)
+
+BUG FIXES:
+
+- Authentication policy tree default enabled status regression has been fixed back to `true`. (#139)
+
 ## 0.0.21 (September 13th, 2021)
 
 NOTES:

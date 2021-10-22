@@ -124,6 +124,20 @@ type AdditionalAllowedEntitiesConfiguration struct {
 	AllowAllEntities          *bool      `json:"allowAllEntities,omitempty"`
 }
 
+//AdditionalKeySet - The attributes used to configure an OAuth/OpenID Connect additional signing key set with virtual issuers.
+type AdditionalKeySet struct {
+	Description *string          `json:"description,omitempty"`
+	Id          *string          `json:"id,omitempty"`
+	Issuers     *[]*ResourceLink `json:"issuers,omitempty"`
+	Name        *string          `json:"name,omitempty"`
+	SigningKeys *SigningKeys     `json:"signingKeys,omitempty"`
+}
+
+//AdditionalKeySets - A collection of OAuth/OpenID Connect additional signing key sets.
+type AdditionalKeySets struct {
+	Items *[]*AdditionalKeySet `json:"items,omitempty"`
+}
+
 //AdministrativeAccount - A PingFederate administrator account.
 type AdministrativeAccount struct {
 	Active            *bool      `json:"active,omitempty"`
@@ -483,6 +497,7 @@ type AuthorizationServerSettings struct {
 	BypassAuthorizationForApprovedGrants   *bool                    `json:"bypassAuthorizationForApprovedGrants,omitempty"`
 	DefaultScopeDescription                *string                  `json:"defaultScopeDescription,omitempty"`
 	DevicePollingInterval                  *int                     `json:"devicePollingInterval,omitempty"`
+	DisallowPlainPKCE                      *bool                    `json:"disallowPlainPKCE,omitempty"`
 	ExclusiveScopeGroups                   *[]*ScopeGroupEntry      `json:"exclusiveScopeGroups,omitempty"`
 	ExclusiveScopes                        *[]*ScopeEntry           `json:"exclusiveScopes,omitempty"`
 	ParReferenceLength                     *int                     `json:"parReferenceLength,omitempty"`
@@ -750,6 +765,8 @@ type Client struct {
 	PersistentGrantIdleTimeoutType           *string                     `json:"persistentGrantIdleTimeoutType,omitempty"`
 	RedirectUris                             *[]*string                  `json:"redirectUris,omitempty"`
 	RefreshRolling                           *string                     `json:"refreshRolling,omitempty"`
+	RefreshTokenRollingInterval              *int                        `json:"refreshTokenRollingInterval,omitempty"`
+	RefreshTokenRollingIntervalType          *string                     `json:"refreshTokenRollingIntervalType,omitempty"`
 	RequestObjectSigningAlgorithm            *string                     `json:"requestObjectSigningAlgorithm,omitempty"`
 	RequestPolicyRef                         *ResourceLink               `json:"requestPolicyRef,omitempty"`
 	RequireProofKeyForCodeExchange           *bool                       `json:"requireProofKeyForCodeExchange,omitempty"`
@@ -1173,6 +1190,8 @@ type DynamicClientRegistration struct {
 	PersistentGrantIdleTimeoutType           *string                       `json:"persistentGrantIdleTimeoutType,omitempty"`
 	PolicyRefs                               *[]*ResourceLink              `json:"policyRefs,omitempty"`
 	RefreshRolling                           *string                       `json:"refreshRolling,omitempty"`
+	RefreshTokenRollingInterval              *int                          `json:"refreshTokenRollingInterval,omitempty"`
+	RefreshTokenRollingIntervalType          *string                       `json:"refreshTokenRollingIntervalType,omitempty"`
 	RequestPolicyRef                         *ResourceLink                 `json:"requestPolicyRef,omitempty"`
 	RequireProofKeyForCodeExchange           *bool                         `json:"requireProofKeyForCodeExchange,omitempty"`
 	RequireSignedRequests                    *bool                         `json:"requireSignedRequests,omitempty"`
@@ -1224,6 +1243,8 @@ type EmailVerificationConfig struct {
 	FieldStoringVerificationStatus       *string       `json:"fieldStoringVerificationStatus,omitempty"`
 	NotificationPublisherRef             *ResourceLink `json:"notificationPublisherRef,omitempty"`
 	OtlTimeToLive                        *int          `json:"otlTimeToLive,omitempty"`
+	RequireVerifiedEmail                 *bool         `json:"requireVerifiedEmail,omitempty"`
+	RequireVerifiedEmailTemplateName     *string       `json:"requireVerifiedEmailTemplateName,omitempty"`
 	VerifyEmailTemplateName              *string       `json:"verifyEmailTemplateName,omitempty"`
 }
 
@@ -1645,6 +1666,20 @@ type IssuanceCriteria struct {
 	ExpressionCriteria  *[]*ExpressionIssuanceCriteriaEntry  `json:"expressionCriteria,omitempty"`
 }
 
+//Issuer - The set of attributes used to configure a virtual issuer.
+type Issuer struct {
+	Description *string `json:"description,omitempty"`
+	Host        *string `json:"host,omitempty"`
+	Id          *string `json:"id,omitempty"`
+	Name        *string `json:"name,omitempty"`
+	Path        *string `json:"path,omitempty"`
+}
+
+//Issuers - A collection of virtual issuers.
+type Issuers struct {
+	Items *[]*Issuer `json:"items,omitempty"`
+}
+
 //JdbcAttributeSource - The configured settings used to look up attributes from a JDBC data store.
 type JdbcAttributeSource struct {
 	AttributeContractFulfillment map[string]*AttributeFulfillmentValue `json:"attributeContractFulfillment,omitempty"`
@@ -1726,6 +1761,21 @@ type KeyAlgorithm struct {
 //KeyAlgorithms - A collection of key algorithms.
 type KeyAlgorithms struct {
 	Items *[]*KeyAlgorithm `json:"items,omitempty"`
+}
+
+//KeyPairExportSettings - Settings for exporting a key pair file from the system.
+type KeyPairExportSettings struct {
+	Password *string `json:"password,omitempty"`
+}
+
+//KeyPairFile - Represents the contents of a PKCS12 or PEM file.
+type KeyPairFile struct {
+	CryptoProvider    *string `json:"cryptoProvider,omitempty"`
+	EncryptedPassword *string `json:"encryptedPassword,omitempty"`
+	FileData          *string `json:"fileData,omitempty"`
+	Format            *string `json:"format,omitempty"`
+	Id                *string `json:"id,omitempty"`
+	Password          *string `json:"password,omitempty"`
 }
 
 //KeyPairRotationSettings - Key Pair Rotation Details
@@ -2083,6 +2133,7 @@ type OIDCProviderSettings struct {
 	AuthenticationScheme           *string                  `json:"authenticationScheme,omitempty"`
 	AuthenticationSigningAlgorithm *string                  `json:"authenticationSigningAlgorithm,omitempty"`
 	AuthorizationEndpoint          *string                  `json:"authorizationEndpoint,omitempty"`
+	EnablePKCE                     *bool                    `json:"enablePKCE,omitempty"`
 	JwksURL                        *string                  `json:"jwksURL,omitempty"`
 	LoginType                      *string                  `json:"loginType,omitempty"`
 	RequestParameters              *[]*OIDCRequestParameter `json:"requestParameters,omitempty"`
@@ -2240,20 +2291,6 @@ type P14EKeyPairView struct {
 //P14EKeysView - The collection of PingOne for Enterprise connection key pair details.
 type P14EKeysView struct {
 	KeyPairs *[]*P14EKeyPairView `json:"keyPairs,omitempty"`
-}
-
-//PKCS12ExportSettings - Settings for exporting a PKCS12 file from the system.
-type PKCS12ExportSettings struct {
-	Password *string `json:"password,omitempty"`
-}
-
-//PKCS12File - Represents the contents of a PKCS12 file.
-type PKCS12File struct {
-	CryptoProvider    *string `json:"cryptoProvider,omitempty"`
-	EncryptedPassword *string `json:"encryptedPassword,omitempty"`
-	FileData          *string `json:"fileData,omitempty"`
-	Id                *string `json:"id,omitempty"`
-	Password          *string `json:"password,omitempty"`
 }
 
 //ParameterValues - Parameter Values.
@@ -2746,6 +2783,22 @@ type SessionValidationSettings struct {
 	IncludeSessionId             *bool `json:"includeSessionId,omitempty"`
 	Inherited                    *bool `json:"inherited,omitempty"`
 	UpdateAuthnSessionActivity   *bool `json:"updateAuthnSessionActivity,omitempty"`
+}
+
+//SigningKeys - Setting for a OAuth/OpenID Connect signing key set while using multiple virtual issuers.
+type SigningKeys struct {
+	P256ActiveCertRef       *ResourceLink `json:"p256ActiveCertRef,omitempty"`
+	P256PreviousCertRef     *ResourceLink `json:"p256PreviousCertRef,omitempty"`
+	P256PublishX5cParameter *bool         `json:"p256PublishX5cParameter,omitempty"`
+	P384ActiveCertRef       *ResourceLink `json:"p384ActiveCertRef,omitempty"`
+	P384PreviousCertRef     *ResourceLink `json:"p384PreviousCertRef,omitempty"`
+	P384PublishX5cParameter *bool         `json:"p384PublishX5cParameter,omitempty"`
+	P521ActiveCertRef       *ResourceLink `json:"p521ActiveCertRef,omitempty"`
+	P521PreviousCertRef     *ResourceLink `json:"p521PreviousCertRef,omitempty"`
+	P521PublishX5cParameter *bool         `json:"p521PublishX5cParameter,omitempty"`
+	RsaActiveCertRef        *ResourceLink `json:"rsaActiveCertRef,omitempty"`
+	RsaPreviousCertRef      *ResourceLink `json:"rsaPreviousCertRef,omitempty"`
+	RsaPublishX5cParameter  *bool         `json:"rsaPublishX5cParameter,omitempty"`
 }
 
 //SigningSettings - Settings related to signing messages sent to this partner.

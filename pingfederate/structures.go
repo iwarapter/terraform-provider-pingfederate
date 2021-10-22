@@ -3665,3 +3665,246 @@ func resourceProxySettings() *schema.Resource {
 		},
 	}
 }
+
+//ClientMetadata - The client metadata.
+func resourceClientMetadata() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"description": {
+				Type:        schema.TypeString,
+				Description: "The metadata description.",
+				Optional:    true,
+			},
+			"multi_valued": {
+				Type:        schema.TypeBool,
+				Description: "If the field should allow multiple values.",
+				Optional:    true,
+			},
+			"parameter": {
+				Type:        schema.TypeString,
+				Description: "The metadata name.",
+				Required:    true,
+			},
+		},
+	}
+}
+
+//DynamicClientRegistration - Dynamic client registration settings.
+func resourceDynamicClientRegistration() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"allow_client_delete": {
+				Type:        schema.TypeBool,
+				Description: "Allow client deletion from dynamic client management.",
+				Optional:    true,
+			},
+			"allowed_exclusive_scopes": {
+				Type: schema.TypeList,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Description: "The exclusive scopes to allow.",
+				Optional:    true,
+			},
+			"bypass_activation_code_confirmation_override": {
+				Type:        schema.TypeBool,
+				Description: "Indicates if the Activation Code Confirmation page should be bypassed if 'verification_url_complete' is used by the end user to authorize a device.",
+				Optional:    true,
+			},
+			"ciba_polling_interval": {
+				Type:        schema.TypeInt,
+				Description: "The minimum amount of time in seconds that the Client must wait between polling requests to the token endpoint. The default is 3 seconds.",
+				Optional:    true,
+				Default:     3,
+			},
+			"ciba_require_signed_requests": {
+				Type:        schema.TypeBool,
+				Description: "Determines whether CIBA signed requests are required for this client.",
+				Optional:    true,
+				Default:     false,
+			},
+			"client_cert_issuer_ref": resourceLinkSchema(),
+			"client_cert_issuer_type": {
+				Type:        schema.TypeString,
+				Description: "Client TLS Certificate Issuer Type.",
+				Optional:    true,
+				Default:     "NONE",
+			},
+			"default_access_token_manager_ref": resourceLinkSchema(),
+			"device_flow_setting_type": {
+				Type:        schema.TypeString,
+				Description: "Allows an administrator to override the Device Authorization Settings set globally for the OAuth AS. Defaults to SERVER_DEFAULT.",
+				Optional:    true,
+				Default:     "SERVER_DEFAULT",
+			},
+			"device_polling_interval_override": {
+				Type:        schema.TypeInt,
+				Description: "The amount of time client should wait between polling requests, in seconds.",
+				Optional:    true,
+			},
+			"disable_registration_access_tokens": {
+				Type:        schema.TypeBool,
+				Description: "Disable registration access tokens. Local standards may mandate different registration access token requirements. If applicable, implement custom validation and enforcement rules using the DynamicClientRegistrationPlugin interface from the PingFederate SDK, configure the client registration policies (policyRefs), and set this property (disableRegistrationAccessTokens) to true. CAUTION: When the disableRegistrationAccessTokens property is set to true, all clients, not just the ones created using the Dynamic Client Registration protocol, are vulnerable to unrestricted retrievals, updates (including modifications to the client authentication scheme and redirect URIs), and deletes at the /as/clients.oauth2 endpoint unless one or more client registration policies are in place to protect against unauthorized attempts.",
+				Optional:    true,
+			},
+			"enforce_replay_prevention": {
+				Type:        schema.TypeBool,
+				Description: "Enforce replay prevention.",
+				Optional:    true,
+				Default:     false,
+			},
+			"initial_access_token_scope": {
+				Type:        schema.TypeString,
+				Description: "The initial access token to prevent unwanted client registrations.",
+				Optional:    true,
+			},
+			"oidc_policy": {
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Elem:        resourceClientRegistrationOIDCPolicy(),
+				Description: "Open ID Connect Policy settings.  This is included in the message only when OIDC is enabled.",
+				Optional:    true,
+			},
+			"pending_authorization_timeout_override": {
+				Type:        schema.TypeInt,
+				Description: "The 'device_code' and 'user_code' timeout, in seconds.",
+				Optional:    true,
+			},
+			"persistent_grant_expiration_time": {
+				Type:        schema.TypeInt,
+				Description: "The persistent grant expiration time.",
+				Optional:    true,
+			},
+			"persistent_grant_expiration_time_unit": {
+				Type:        schema.TypeString,
+				Description: "The persistent grant expiration time unit.",
+				Optional:    true,
+			},
+			"persistent_grant_expiration_type": {
+				Type:        schema.TypeString,
+				Description: "Allows an administrator to override the Persistent Grant Lifetime set globally for the OAuth AS. Defaults to SERVER_DEFAULT.",
+				Optional:    true,
+				Default:     "SERVER_DEFAULT",
+			},
+			"persistent_grant_idle_timeout": {
+				Type:        schema.TypeInt,
+				Description: "The persistent grant idle timeout.",
+				Optional:    true,
+			},
+			"persistent_grant_idle_timeout_time_unit": {
+				Type:        schema.TypeString,
+				Description: "The persistent grant idle timeout time unit.",
+				Optional:    true,
+			},
+			"persistent_grant_idle_timeout_type": {
+				Type:        schema.TypeString,
+				Description: "Allows an administrator to override the Persistent Grant Idle Timeout set globally for the OAuth AS. Defaults to SERVER_DEFAULT.",
+				Optional:    true,
+				Default:     "SERVER_DEFAULT",
+			},
+			"policy_refs": {
+				Type: schema.TypeList,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Description: "The client registration policies.",
+				Optional:    true,
+			},
+			"refresh_rolling": {
+				Type:        schema.TypeString,
+				Description: "Use ROLL or DONT_ROLL to override the Roll Refresh Token Values setting on the Authorization Server Settings. SERVER_DEFAULT will default to the Roll Refresh Token Values setting on the Authorization Server Setting screen. Defaults to SERVER_DEFAULT.",
+				Optional:    true,
+				Default:     "SERVER_DEFAULT",
+			},
+			"refresh_token_rolling_interval": {
+				Type:        schema.TypeInt,
+				Description: "The minimum interval to roll refresh tokens, in hours. This value will override the Refresh Token Rolling Interval Value on the Authorization Server Settings.",
+				Optional:    true,
+			},
+			"refresh_token_rolling_interval_type": {
+				Type:        schema.TypeString,
+				Description: "Use OVERRIDE_SERVER_DEFAULT to override the Refresh Token Rolling Interval value on the Authorization Server Settings. SERVER_DEFAULT will default to the Refresh Token Rolling Interval value on the Authorization Server Setting. Defaults to SERVER_DEFAULT.",
+				Optional:    true,
+				Default:     "SERVER_DEFAULT",
+			},
+			"request_policy_ref": resourceLinkSchema(),
+			"require_proof_key_for_code_exchange": {
+				Type:        schema.TypeBool,
+				Description: "Determines whether Proof Key for Code Exchange (PKCE) is required for the dynamically created client.",
+				Optional:    true,
+				Default:     false,
+			},
+			"require_signed_requests": {
+				Type:        schema.TypeBool,
+				Description: "Require signed requests.",
+				Optional:    true,
+				Default:     false,
+			},
+			"restrict_common_scopes": {
+				Type:        schema.TypeBool,
+				Description: "Restrict common scopes.",
+				Optional:    true,
+				Default:     false,
+			},
+			"restrict_to_default_access_token_manager": {
+				Type:        schema.TypeBool,
+				Description: "Determines whether the client is restricted to using only its default access token manager. The default is false.",
+				Optional:    true,
+				Default:     false,
+			},
+			"restricted_common_scopes": {
+				Type: schema.TypeList,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Description: "The common scopes to restrict.",
+				Optional:    true,
+			},
+			"rotate_client_secret": {
+				Type:        schema.TypeBool,
+				Description: "Rotate registration access token on dynamic client management requests.",
+				Optional:    true,
+				Default:     true,
+			},
+			"rotate_registration_access_token": {
+				Type:        schema.TypeBool,
+				Description: "Rotate client secret on dynamic client management requests.",
+				Optional:    true,
+				Default:     true,
+			},
+			"token_exchange_processor_policy_ref": resourceLinkSchema(),
+			"user_authorization_url_override": {
+				Type:        schema.TypeString,
+				Description: "The URL is used as 'verification_url' and 'verification_url_complete' values in a Device Authorization request.",
+				Optional:    true,
+			},
+		},
+	}
+}
+
+//ClientRegistrationOIDCPolicy - Client Registration Open ID Connect Policy settings.
+func resourceClientRegistrationOIDCPolicy() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"id_token_content_encryption_algorithm": {
+				Type:         schema.TypeString,
+				Description:  "The JSON Web Encryption [JWE] content encryption algorithm for the ID Token.<br>AES_128_CBC_HMAC_SHA_256 - Composite AES-CBC-128 HMAC-SHA-256<br>AES_192_CBC_HMAC_SHA_384 - Composite AES-CBC-192 HMAC-SHA-384<br>AES_256_CBC_HMAC_SHA_512 - Composite AES-CBC-256 HMAC-SHA-512<br>AES-GCM-128 - AES_128_GCM<br>AES_192_GCM - AES-GCM-192<br>AES_256_GCM - AES-GCM-256",
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{`AES_128_CBC_HMAC_SHA_256`, `AES_192_CBC_HMAC_SHA_384`, `AES_256_CBC_HMAC_SHA_512`, `AES_128_GCM`, `AES_192_GCM`, `AES_256_GCM`}, false),
+			},
+			"id_token_encryption_algorithm": {
+				Type:         schema.TypeString,
+				Description:  "The JSON Web Encryption [JWE] encryption algorithm used to encrypt the content encryption key for the ID Token.<br>DIR - Direct Encryption with symmetric key<br>A128KW - AES-128 Key Wrap<br>A192KW - AES-192 Key Wrap<br>A256KW - AES-256 Key Wrap<br>A128GCMKW - AES-GCM-128 key encryption<br>A192GCMKW - AES-GCM-192 key encryption<br>A256GCMKW - AES-GCM-256 key encryption<br>ECDH_ES - ECDH-ES<br>ECDH_ES_A128KW - ECDH-ES with AES-128 Key Wrap<br>ECDH_ES_A192KW - ECDH-ES with AES-192 Key Wrap<br>ECDH_ES_A256KW - ECDH-ES with AES-256 Key Wrap<br>RSA_OAEP - RSAES OAEP<br>",
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{`DIR`, `A128KW`, `A192KW`, `A256KW`, `A128GCMKW`, `A192GCMKW`, `A256GCMKW`, `ECDH_ES`, `ECDH_ES_A128KW`, `ECDH_ES_A192KW`, `ECDH_ES_A256KW`, `RSA_OAEP`}, false),
+			},
+			"id_token_signing_algorithm": {
+				Type:         schema.TypeString,
+				Description:  "The JSON Web Signature [JWS] algorithm required for the ID Token.<br>NONE - No signing algorithm<br>HS256 - HMAC using SHA-256<br>HS384 - HMAC using SHA-384<br>HS512 - HMAC using SHA-512<br>RS256 - RSA using SHA-256<br>RS384 - RSA using SHA-384<br>RS512 - RSA using SHA-512<br>ES256 - ECDSA using P256 Curve and SHA-256<br>ES384 - ECDSA using P384 Curve and SHA-384<br>ES512 - ECDSA using P521 Curve and SHA-512<br>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256<br>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384<br>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512<br>A null value will represent the default algorithm which is RS256.<br>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11",
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{`NONE`, `HS256`, `HS384`, `HS512`, `RS256`, `RS384`, `RS512`, `ES256`, `ES384`, `ES512`, `PS256`, `PS384`, `PS512`}, false),
+			},
+			"policy_group": resourceRequiredLinkSchema(),
+		},
+	}
+}

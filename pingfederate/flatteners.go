@@ -1,6 +1,8 @@
 package pingfederate
 
 import (
+	"regexp"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
@@ -2987,4 +2989,174 @@ func flattenProxySettings(in *pf.ProxySettings) []map[string]interface{} {
 		s["port"] = *in.Port
 	}
 	return append(m, s)
+}
+
+func flattenDynamicClientRegistration(in *pf.DynamicClientRegistration, pfVersion string) []map[string]interface{} {
+	re := regexp.MustCompile(`^(10\.[1-9])`)
+	isPF10_1 := re.MatchString(pfVersion)
+	re = regexp.MustCompile(`^(10\.[3-9])`)
+	isPF10_3 := re.MatchString(pfVersion)
+
+	m := make([]map[string]interface{}, 0, 1)
+	s := make(map[string]interface{})
+	if in.RestrictCommonScopes != nil {
+		s["restrict_common_scopes"] = *in.RestrictCommonScopes
+	}
+	if in.PersistentGrantExpirationType != nil {
+		s["persistent_grant_expiration_type"] = *in.PersistentGrantExpirationType
+	}
+	if in.PersistentGrantExpirationTimeUnit != nil {
+		s["persistent_grant_expiration_time_unit"] = *in.PersistentGrantExpirationTimeUnit
+	}
+	if in.DisableRegistrationAccessTokens != nil {
+		s["disable_registration_access_tokens"] = *in.DisableRegistrationAccessTokens
+	}
+	if in.PendingAuthorizationTimeoutOverride != nil {
+		s["pending_authorization_timeout_override"] = *in.PendingAuthorizationTimeoutOverride
+	}
+	if in.BypassActivationCodeConfirmationOverride != nil {
+		s["bypass_activation_code_confirmation_override"] = *in.BypassActivationCodeConfirmationOverride
+	}
+	if in.CibaRequireSignedRequests != nil {
+		s["ciba_require_signed_requests"] = *in.CibaRequireSignedRequests
+	}
+	if in.AllowClientDelete != nil {
+		s["allow_client_delete"] = *in.AllowClientDelete
+	}
+	if in.PersistentGrantExpirationTime != nil {
+		s["persistent_grant_expiration_time"] = *in.PersistentGrantExpirationTime
+	}
+	if in.PolicyRefs != nil {
+		s["policy_refs"] = flattenResourceLinks(in.PolicyRefs)
+	}
+	if in.RestrictToDefaultAccessTokenManager != nil {
+		s["restrict_to_default_access_token_manager"] = *in.RestrictToDefaultAccessTokenManager
+	}
+	if in.PersistentGrantIdleTimeout != nil {
+		s["persistent_grant_idle_timeout"] = *in.PersistentGrantIdleTimeout
+	}
+	if in.RequireProofKeyForCodeExchange != nil {
+		s["require_proof_key_for_code_exchange"] = *in.RequireProofKeyForCodeExchange
+	}
+	if in.TokenExchangeProcessorPolicyRef != nil {
+		s["token_exchange_processor_policy_ref"] = flattenResourceLink(in.TokenExchangeProcessorPolicyRef)
+	}
+	if isPF10_1 && in.RotateRegistrationAccessToken != nil {
+		s["rotate_registration_access_token"] = *in.RotateRegistrationAccessToken
+	} else {
+		s["rotate_registration_access_token"] = true
+	}
+	if in.AllowedExclusiveScopes != nil {
+		s["allowed_exclusive_scopes"] = *in.AllowedExclusiveScopes
+	}
+	if in.EnforceReplayPrevention != nil {
+		s["enforce_replay_prevention"] = *in.EnforceReplayPrevention
+	}
+	if in.ClientCertIssuerRef != nil {
+		s["client_cert_issuer_ref"] = flattenResourceLink(in.ClientCertIssuerRef)
+	}
+	if in.RefreshRolling != nil {
+		s["refresh_rolling"] = *in.RefreshRolling
+	}
+	if in.RefreshTokenRollingInterval != nil {
+		s["refresh_token_rolling_interval"] = *in.RefreshTokenRollingInterval
+	}
+	if in.UserAuthorizationUrlOverride != nil {
+		s["user_authorization_url_override"] = *in.UserAuthorizationUrlOverride
+	}
+	if in.InitialAccessTokenScope != nil {
+		s["initial_access_token_scope"] = *in.InitialAccessTokenScope
+	}
+	if in.RestrictedCommonScopes != nil {
+		s["restricted_common_scopes"] = *in.RestrictedCommonScopes
+	}
+	if in.OidcPolicy != nil {
+		s["oidc_policy"] = flattenClientRegistrationOIDCPolicy(in.OidcPolicy)
+	}
+	if isPF10_1 && in.RotateClientSecret != nil {
+		s["rotate_client_secret"] = *in.RotateClientSecret
+	} else {
+		s["rotate_client_secret"] = true
+	}
+	if in.RequestPolicyRef != nil {
+		s["request_policy_ref"] = flattenResourceLink(in.RequestPolicyRef)
+	}
+	if in.PersistentGrantIdleTimeoutTimeUnit != nil {
+		s["persistent_grant_idle_timeout_time_unit"] = *in.PersistentGrantIdleTimeoutTimeUnit
+	}
+	if in.CibaPollingInterval != nil {
+		s["ciba_polling_interval"] = *in.CibaPollingInterval
+	}
+	if in.PersistentGrantIdleTimeoutType != nil {
+		s["persistent_grant_idle_timeout_type"] = *in.PersistentGrantIdleTimeoutType
+	}
+	if in.DevicePollingIntervalOverride != nil {
+		s["device_polling_interval_override"] = *in.DevicePollingIntervalOverride
+	}
+	if in.ClientCertIssuerType != nil {
+		s["client_cert_issuer_type"] = *in.ClientCertIssuerType
+	}
+	if isPF10_3 && in.RefreshTokenRollingIntervalType != nil {
+		s["refresh_token_rolling_interval_type"] = *in.RefreshTokenRollingIntervalType
+	} else {
+		s["refresh_token_rolling_interval_type"] = "SERVER_DEFAULT"
+	}
+	if in.DeviceFlowSettingType != nil {
+		s["device_flow_setting_type"] = *in.DeviceFlowSettingType
+	}
+	if in.RequireSignedRequests != nil {
+		s["require_signed_requests"] = *in.RequireSignedRequests
+	}
+	if in.DefaultAccessTokenManagerRef != nil {
+		s["default_access_token_manager_ref"] = flattenResourceLink(in.DefaultAccessTokenManagerRef)
+	}
+	return append(m, s)
+}
+
+func flattenClientRegistrationOIDCPolicy(in *pf.ClientRegistrationOIDCPolicy) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, 1)
+	s := make(map[string]interface{})
+	if in.IdTokenSigningAlgorithm != nil {
+		s["id_token_signing_algorithm"] = *in.IdTokenSigningAlgorithm
+	}
+	if in.IdTokenEncryptionAlgorithm != nil {
+		s["id_token_encryption_algorithm"] = *in.IdTokenEncryptionAlgorithm
+	}
+	if in.IdTokenContentEncryptionAlgorithm != nil {
+		s["id_token_content_encryption_algorithm"] = *in.IdTokenContentEncryptionAlgorithm
+	}
+	if in.PolicyGroup != nil {
+		s["policy_group"] = flattenResourceLink(in.PolicyGroup)
+	}
+	return append(m, s)
+}
+
+func flattenResourceLinks(in *[]*pf.ResourceLink) []interface{} {
+	vs := make([]interface{}, 0, len(*in))
+	for _, v := range *in {
+		vs = append(vs, *v.Id)
+	}
+	return vs
+}
+
+func flattenClientMetadatas(in *[]*pf.ClientMetadata) []interface{} {
+	m := make([]interface{}, 0, len(*in))
+	for _, v := range *in {
+		m = append(m, flattenClientMetadata(v))
+	}
+	return m
+}
+
+func flattenClientMetadata(in *pf.ClientMetadata) map[string]interface{} {
+	s := make(map[string]interface{})
+	if in.Description != nil {
+		s["description"] = *in.Description
+	}
+	if in.MultiValued != nil {
+		s["multi_valued"] = *in.MultiValued
+	}
+	if in.Parameter != nil {
+		s["parameter"] = *in.Parameter
+	}
+	return s
 }

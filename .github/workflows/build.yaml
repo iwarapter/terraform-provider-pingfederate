@@ -15,10 +15,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        pingfederate-version: [ 9.3.3, 10.0.6, 10.1.5, 10.2.4, 10.3.1 ]
+        pingfederate-version: [ 2009-9.3.3-P15, 2011-10.0.11, 2105-10.1.8, 10.2.5-edge, 10.3.1-edge ]
     services:
       pingfederate:
-        image: pingidentity/pingfederate:${{ matrix.pingfederate-version }}-edge
+        image: pingidentity/pingfederate:${{ matrix.pingfederate-version }}
         env:
           PING_IDENTITY_ACCEPT_EULA: YES
           PING_IDENTITY_DEVOPS_USER: ${{ secrets.PING_IDENTITY_DEVOPS_USER }}

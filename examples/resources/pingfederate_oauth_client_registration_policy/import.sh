@@ -1,0 +1,1 @@
+terraform import pingfederate_oauth_client_registration_policy.example example
