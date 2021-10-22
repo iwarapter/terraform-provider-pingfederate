@@ -84,6 +84,7 @@ func Provider() *schema.Provider {
 			"pingfederate_oauth_client_registration_policy":             resourcePingFederateOAuthClientRegistrationPolicyResource(),
 			"pingfederate_oauth_client_settings":                        resourcePingFederateOauthClientSettingsResource(),
 			"pingfederate_oauth_access_token_manager":                   resourcePingFederateOauthAccessTokenManagersResource(),
+			"pingfederate_oauth_access_token_manager_settings":          resourcePingFederateOAuthAccessTokenManagerSettingsResource(),
 			"pingfederate_oauth_access_token_mappings":                  resourcePingFederateOauthAccessTokenMappingsResource(),
 			"pingfederate_oauth_openid_connect_policy":                  resourcePingFederateOpenIdConnectPolicyResource(),
 			"pingfederate_oauth_resource_owner_credentials_mappings":    resourcePingFederateOauthResourceOwnerCredentialsMappingsResource(),
