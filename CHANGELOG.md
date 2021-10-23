@@ -6,8 +6,9 @@ NOTES:
 
 FEATURES:
 
-- Add support from `pingfederate_oauth_client_settings` (singleton). (#145)
-- Add support from `pingfederate_oauth_client_registration_policy` to support DCR settings. (#145)
+- Add support for `pingfederate_oauth_client_settings` (singleton). (#145)
+- Add support for `pingfederate_oauth_client_registration_policy` to support DCR settings. (#145)
+- Add support for `pingfederate_oauth_access_token_manager_settings`. (#143)
 
 BUG FIXES:
 
