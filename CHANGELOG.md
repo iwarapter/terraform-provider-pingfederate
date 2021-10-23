@@ -1,4 +1,4 @@
-## 0.0.22 (Unreleased)
+## 0.0.22 (October 23rd, 2021)
 
 NOTES:
 
