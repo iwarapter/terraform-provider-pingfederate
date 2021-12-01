@@ -104,11 +104,25 @@ resource "pingfederate_authentication_policies" "demo" {
             id = "idptestme"
           }
         }
+		attribute_rules {
+			items {
+				attribute_name = "sub"
+				expected_value = "boo"
+				result = "Condition"
+				condition = "EQUALS"
+			}
+		}
       }
       children {
         action {
           type = "RESTART"
           context = "Fail"
+        }
+      }
+      children {
+        action {
+          type = "CONTINUE"
+          context = "Condition"
         }
       }
       children {
