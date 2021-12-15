@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        pingfederate-version: [ 2009-9.3.3-P15, 2011-10.0.11, 2105-10.1.8, 10.2.5-edge, 10.3.1-edge ]
+        pingfederate-version: [ 2105-10.1.8, 10.2.5-edge, 10.3.1-edge ]
     services:
       pingfederate:
         image: pingidentity/pingfederate:${{ matrix.pingfederate-version }}
