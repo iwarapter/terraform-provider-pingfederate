@@ -53,7 +53,9 @@ func TestAccPingFederateAuthenticationPoliciesResource(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "authn_selection_trees.0.root_node.0.children.0.action.0.type", "RESTART"),
 					resource.TestCheckResourceAttr(resourceName, "authn_selection_trees.0.root_node.0.children.0.action.0.context", "Fail"),
 					resource.TestCheckResourceAttr(resourceName, "authn_selection_trees.0.root_node.0.children.1.action.0.type", "DONE"),
-					resource.TestCheckResourceAttr(resourceName, "authn_selection_trees.0.root_node.0.children.1.action.0.context", "Success"),
+					resource.TestCheckResourceAttr(resourceName, "authn_selection_trees.0.root_node.0.children.1.action.0.context", "Condition"),
+					resource.TestCheckResourceAttr(resourceName, "authn_selection_trees.0.root_node.0.children.2.action.0.type", "DONE"),
+					resource.TestCheckResourceAttr(resourceName, "authn_selection_trees.0.root_node.0.children.2.action.0.context", "Success"),
 				),
 			},
 			{
@@ -121,7 +123,7 @@ resource "pingfederate_authentication_policies" "demo" {
       }
       children {
         action {
-          type = "CONTINUE"
+          type = "DONE"
           context = "Condition"
         }
       }
