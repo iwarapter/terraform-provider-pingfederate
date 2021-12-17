@@ -50,7 +50,7 @@ func init() {
 }
 
 func TestAccPingFederateOauthOpenIdConnectPolicy(t *testing.T) {
-	re := regexp.MustCompile(`^((10)\.[0-9])`)
+	re := regexp.MustCompile(`^((10|11)\.[0-9])`)
 	if !re.MatchString(pfVersion) {
 		t.Skipf("This test only runs against PingFederate 10.0 and above, not: %s", pfVersion)
 	}

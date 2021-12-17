@@ -94,7 +94,7 @@ func testAccPingFederateSpAdapterConfig(configUpdate string) string {
 data "pingfederate_version" "instance" {}
 
 locals {
-  isSupported = length(regexall("10.[1-9]", data.pingfederate_version.instance.version)) > 0
+  isSupported = length(regexall("(10|11).[0-9]", data.pingfederate_version.instance.version)) > 0
 }
 
 resource "pingfederate_sp_adapter" "demo" {
