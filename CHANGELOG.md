@@ -1,3 +1,13 @@
+## 0.0.23 (Unreleased)
+
+NOTES:
+
+* Regression testing against 9.3.3 and 10.0.x has been removed as PingIdentity no longer provider working container images.
+
+BUG FIXES:
+
+- Authentication policy failed marshalling of `attribute_rules` in PingFederate API. (#148)
+
 ## 0.0.22 (October 23rd, 2021)
 
 NOTES:

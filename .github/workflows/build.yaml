@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        pingfederate-version: [ 2009-9.3.3-P15, 2011-10.0.11, 2105-10.1.8, 10.2.5-edge, 10.3.1-edge ]
+        pingfederate-version: [ 2105-10.1.8, 10.2.5-edge, 10.3.1-edge ]
     services:
       pingfederate:
         image: pingidentity/pingfederate:${{ matrix.pingfederate-version }}
@@ -35,10 +35,10 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Go 1.16
+      - name: Set up Go 1.17
         uses: actions/setup-go@v2.1.4
         with:
-          go-version: 1.16
+          go-version: 1.17
         id: go
 
       - name: Checkout Source
@@ -48,6 +48,12 @@ jobs:
         run: |
           TF_ACC=1 go test -mod=vendor ./... -v -trimpath -coverprofile=coverage.out
           go tool cover -func=coverage.out
+
+      - name: Container logs
+        if: ${{ failure() }}
+        run: |
+          docker ps
+          docker logs "${{ job.services.pingfederate.id }}"
 
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
