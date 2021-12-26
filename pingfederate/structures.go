@@ -1395,7 +1395,7 @@ func resourceSpWsTrust() *schema.Resource {
 				},
 				Required: true,
 			},
-			"request_contract_ref": resourceRequiredLinkSchema(),
+			"request_contract_ref": resourceLinkSchema(),
 			"token_processor_mappings": {
 				Type:     schema.TypeList,
 				Elem:     resourceIdpTokenProcessorMapping(),
