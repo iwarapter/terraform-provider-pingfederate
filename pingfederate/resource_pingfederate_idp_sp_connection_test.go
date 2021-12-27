@@ -315,6 +315,11 @@ resource "pingfederate_ldap_data_store" "test" {
 provider "pingfederate" {
   bypass_external_validation = true
 }
+data "pingfederate_version" "instance" {}
+
+locals {
+  isSupported = length(regexall("(11).[0-9]", data.pingfederate_version.instance.version)) > 0
+}
 
 resource "pingfederate_idp_sp_connection" "demo" {
   name         = "acc_test_foo"
@@ -451,6 +456,60 @@ resource "pingfederate_idp_sp_connection" "demo" {
     target_settings {
       inherited = false
       name      = "Provisioning Options"
+    }
+
+	dynamic "target_settings" {
+      for_each = local.isSupported ? [1] : []
+      content {
+        name  = "createNewUsers"
+        value = "true"
+      }
+    }
+	dynamic "target_settings" {
+      for_each = local.isSupported ? [1] : []
+      content {
+        name  = "updateNewUsers"
+        value = "true"
+      }
+    }
+	dynamic "target_settings" {
+      for_each = local.isSupported ? [1] : []
+      content {
+        name  = "disableNewUsers"
+        value = "true"
+      }
+    }
+	dynamic "target_settings" {
+      for_each = local.isSupported ? [1] : []
+      content {
+        name  = "disableNewUsers"
+        value = "true"
+      }
+    }
+	dynamic "target_settings" {
+      for_each = local.isSupported ? [1] : []
+      content {
+        name  = "provisionDisabledUsers"
+        value = "true"
+      }
+    }
+	dynamic "target_settings" {
+      for_each = local.isSupported ? [1] : []
+      content {
+        name  = "manageDevices"
+      }
+    }
+	dynamic "target_settings" {
+      for_each = local.isSupported ? [1] : []
+      content {
+        name  = "primaryDevice"
+      }
+    }
+	dynamic "target_settings" {
+      for_each = local.isSupported ? [1] : []
+      content {
+        name  = "removeAction"
+      }
     }
   }
 }

@@ -56,6 +56,11 @@ func testAccPingFederateCustomDataStoreDataSourceConfig() string {
 provider "pingfederate" {
   bypass_external_validation = true
 }
+data "pingfederate_version" "instance" {}
+
+locals {
+  isSupported = length(regexall("(11).[0-9]", data.pingfederate_version.instance.version)) > 0
+}
 
 data "pingfederate_custom_data_store" "test" {
 	name = pingfederate_custom_data_store.example.name
@@ -156,6 +161,34 @@ resource "pingfederate_custom_data_store" "example" {
 	fields {
 	  name = "Test Connection URL"
 	}
+	dynamic "fields" {
+      for_each = local.isSupported ? [1] : []
+      content {
+        name  = "Client Secret Reference"
+        value = null
+      }
+    }
+	dynamic "fields" {
+      for_each = local.isSupported ? [1] : []
+      content {
+        name  = "HTTP Method"
+        value = "GET"
+      }
+    }
+	dynamic "fields" {
+      for_each = local.isSupported ? [1] : []
+      content {
+        name  = "Password Reference"
+        value = null
+      }
+    }
+	dynamic "fields" {
+      for_each = local.isSupported ? [1] : []
+      content {
+        name  = "Test Connection Body"
+        value = null
+      }
+    }
   }
 }`
 }
