@@ -38,11 +38,11 @@ func init() {
 }
 
 func TestAccPingFederateIdpSpConnection(t *testing.T) {
-	re := regexp.MustCompile(`^((10)\.[0-9])`)
+	resourceName := "pingfederate_idp_sp_connection.demo"
+	re := regexp.MustCompile(`^((10|11)\.[0-9])`)
 	if !re.MatchString(pfVersion) {
 		t.Skipf("This test only runs against PingFederate 10.0 and above, not: %s", pfVersion)
 	}
-	resourceName := "pingfederate_idp_sp_connection.demo"
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
@@ -104,7 +104,8 @@ func testAccCheckPingFederateIdpSpConnectionDestroy(s *terraform.State) error {
 }
 
 func testAccPingFederateIdpSpConnectionConfig(configUpdate string) string {
-	return fmt.Sprintf(`
+	if regexp.MustCompile(`^(10.2)`).MatchString(pfVersion) {
+		return fmt.Sprintf(`
 provider "pingfederate" {
   bypass_external_validation = true
 }
@@ -309,6 +310,220 @@ resource "pingfederate_ldap_data_store" "test" {
   max_connections  = 1
 }
 `, configUpdate)
+	} else {
+		return fmt.Sprintf(`
+provider "pingfederate" {
+  bypass_external_validation = true
+}
+data "pingfederate_version" "instance" {}
+
+locals {
+  isSupported = length(regexall("(11).[0-9]", data.pingfederate_version.instance.version)) > 0
+}
+
+resource "pingfederate_idp_sp_connection" "demo" {
+  name         = "acc_test_foo"
+  entity_id    = "foo"
+  active       = true
+  logging_mode = "STANDARD"
+  contact_info {
+  }
+  credentials {
+    certs {
+      x509_file {
+        file_data = file("test_cases/amazon_root_ca1.pem")
+      }
+    }
+    inbound_back_channel_auth {
+      type                    = "INBOUND"
+      digital_signature       = false
+      require_ssl             = false
+      verification_subject_dn = "cn=%s"
+    }
+  }
+  attribute_query {
+    jdbc_attribute_source {
+      filter      = "*"
+      description = "foo"
+      schema      = "INFORMATION_SCHEMA"
+      table       = "ADMINISTRABLE_ROLE_AUTHORIZATIONS"
+      id          = "foo"
+      data_store_ref {
+        id = "ProvisionerDS"
+      }
+    }
+
+    attribute_contract_fulfillment {
+      key_name = "foo"
+      source {
+        type = "JDBC_DATA_STORE"
+        id   = "foo"
+      }
+      value = "GRANTEE"
+    }
+
+    attributes = ["foo"]
+    policy {
+      sign_response                  = false
+      sign_assertion                 = false
+      encrypt_assertion              = false
+      require_signed_attribute_query = false
+      require_encrypted_name_id      = false
+    }
+  }
+  outbound_provision {
+    type = "PingIDForWorkforce"
+
+    channels {
+      active      = false
+      max_threads = 1
+      name        = "bar"
+      timeout     = 60
+
+      attribute_mapping {
+        field_name = "userName"
+
+        saas_field_info {
+          attribute_names = []
+          character_case  = "NONE"
+          create_only     = false
+          masked          = false
+          parser          = "NONE"
+          trim            = false
+          default_value   = "asdasd"
+        }
+      }
+      dynamic "attribute_mapping" {
+        for_each = toset( ["email", "fName", "lName", "mfaEmail1", "mfaEmail2", "mfaEmail3", "mfaSms1", "mfaSms2", "mfaSms3", "mfaVoice1", "mfaVoice2", "mfaVoice3"] )
+        content {
+          field_name = attribute_mapping.key
+          saas_field_info {
+            attribute_names = []
+            character_case  = "NONE"
+            create_only     = false
+            masked          = false
+            parser          = "NONE"
+            trim            = false
+          }
+        }
+      }
+
+      channel_source {
+        base_dn             = "cn=bar"
+        guid_attribute_name = "entryUUID"
+        guid_binary         = false
+
+        account_management_settings {
+          account_status_algorithm      = "ACCOUNT_STATUS_ALGORITHM_FLAG"
+          account_status_attribute_name = "nsaccountlock"
+          default_status                = true
+          flag_comparison_status        = false
+          flag_comparison_value         = "true"
+        }
+
+        change_detection_settings {
+          changed_users_algorithm   = "TIMESTAMP_NO_NEGATION"
+          group_object_class        = "groupOfUniqueNames"
+          time_stamp_attribute_name = "modifyTimestamp"
+          user_object_class         = "person"
+        }
+
+        data_source {
+          id = pingfederate_ldap_data_store.test.id
+        }
+
+        group_membership_detection {
+          group_member_attribute_name = "uniqueMember"
+        }
+
+        group_source_location {
+          nested_search = false
+        }
+
+        user_source_location {
+          group_dn      = "cn=bar"
+          nested_search = false
+        }
+      }
+    }
+
+    target_settings {
+      inherited = false
+      name      = "PingID Properties"
+      value     = "dXNlX2Jhc2U2NF9rZXk9Zm9vCnRva2VuPWZvbwppZHBfdXJsPWZvbwpvcmdfYWxpYXM9Zm9v"
+    }
+
+    target_settings {
+      inherited = false
+      name      = "Provisioning Options"
+    }
+
+	dynamic "target_settings" {
+      for_each = local.isSupported ? [1] : []
+      content {
+        name  = "createNewUsers"
+        value = "true"
+      }
+    }
+	dynamic "target_settings" {
+      for_each = local.isSupported ? [1] : []
+      content {
+        name  = "updateNewUsers"
+        value = "true"
+      }
+    }
+	dynamic "target_settings" {
+      for_each = local.isSupported ? [1] : []
+      content {
+        name  = "disableNewUsers"
+        value = "true"
+      }
+    }
+	dynamic "target_settings" {
+      for_each = local.isSupported ? [1] : []
+      content {
+        name  = "disableNewUsers"
+        value = "true"
+      }
+    }
+	dynamic "target_settings" {
+      for_each = local.isSupported ? [1] : []
+      content {
+        name  = "provisionDisabledUsers"
+        value = "true"
+      }
+    }
+	dynamic "target_settings" {
+      for_each = local.isSupported ? [1] : []
+      content {
+        name  = "manageDevices"
+      }
+    }
+	dynamic "target_settings" {
+      for_each = local.isSupported ? [1] : []
+      content {
+        name  = "primaryDevice"
+      }
+    }
+	dynamic "target_settings" {
+      for_each = local.isSupported ? [1] : []
+      content {
+        name  = "removeAction"
+      }
+    }
+  }
+}
+
+resource "pingfederate_ldap_data_store" "test" {
+  name             = "idpspconnectiontest"
+  ldap_type        = "PING_DIRECTORY"
+  hostnames        = ["host.docker.internal:1389"]
+  bind_anonymously = true
+  min_connections  = 1
+  max_connections  = 1
+}
+`, configUpdate)
+	}
 }
 
 func testAccCheckPingFederateIdpSpConnectionExists(n string) resource.TestCheckFunc {
