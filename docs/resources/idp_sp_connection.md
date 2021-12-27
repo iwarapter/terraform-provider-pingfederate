@@ -1945,7 +1945,6 @@ Required:
 
 - **attribute_contract** (Block List, Min: 1) (see [below for nested schema](#nestedblock--ws_trust--attribute_contract))
 - **partner_service_ids** (List of String)
-- **request_contract_ref** (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--ws_trust--request_contract_ref))
 - **token_processor_mappings** (Block List, Min: 1) (see [below for nested schema](#nestedblock--ws_trust--token_processor_mappings))
 
 Optional:
@@ -1958,6 +1957,7 @@ Optional:
 - **minutes_after** (Number)
 - **minutes_before** (Number)
 - **o_auth_assertion_profiles** (Boolean)
+- **request_contract_ref** (Block List, Max: 1) (see [below for nested schema](#nestedblock--ws_trust--request_contract_ref))
 
 <a id="nestedblock--ws_trust--attribute_contract"></a>
 ### Nested Schema for `ws_trust.attribute_contract`
@@ -1984,18 +1984,6 @@ Required:
 - **name** (String)
 - **namespace** (String)
 
-
-
-<a id="nestedblock--ws_trust--request_contract_ref"></a>
-### Nested Schema for `ws_trust.request_contract_ref`
-
-Required:
-
-- **id** (String) The ID of the resource.
-
-Read-Only:
-
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 
 <a id="nestedblock--ws_trust--token_processor_mappings"></a>
@@ -2283,3 +2271,15 @@ Optional:
 
 - **context_name** (String)
 - **message_expression** (String)
+
+
+<a id="nestedblock--ws_trust--request_contract_ref"></a>
+### Nested Schema for `ws_trust.request_contract_ref`
+
+Required:
+
+- **id** (String) The ID of the resource.
+
+Read-Only:
+
+- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
