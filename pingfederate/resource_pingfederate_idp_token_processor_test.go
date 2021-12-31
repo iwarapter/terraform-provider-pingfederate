@@ -53,7 +53,7 @@ func TestAccPingFederateIdpTokenProcessor(t *testing.T) {
 				Config: testAccPingFederateIdpTokenProcessorConfig("foo"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateIdpTokenProcessorExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", "acctest"),
+					resource.TestCheckResourceAttr(resourceName, "name", "acctest_demo"),
 					resource.TestCheckResourceAttr(resourceName, "plugin_descriptor_ref.0.id", "org.sourceid.wstrust.processor.jwt.JWTTokenProcessor"),
 					resource.TestCheckResourceAttr(resourceName, "configuration.0.fields.0.name", "Expiry Tolerance"),
 					resource.TestCheckResourceAttr(resourceName, "configuration.0.fields.0.value", "0"),
@@ -67,7 +67,7 @@ func TestAccPingFederateIdpTokenProcessor(t *testing.T) {
 				Config: testAccPingFederateIdpTokenProcessorConfig("bar"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateIdpTokenProcessorExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", "acctest"),
+					resource.TestCheckResourceAttr(resourceName, "name", "acctest_demo"),
 					resource.TestCheckResourceAttr(resourceName, "plugin_descriptor_ref.0.id", "org.sourceid.wstrust.processor.jwt.JWTTokenProcessor"),
 					resource.TestCheckResourceAttr(resourceName, "configuration.0.fields.0.name", "Expiry Tolerance"),
 					resource.TestCheckResourceAttr(resourceName, "configuration.0.fields.0.value", "0"),
@@ -81,10 +81,6 @@ func TestAccPingFederateIdpTokenProcessor(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateVerifyIgnore: []string{
-					"outbound_provision.0.sensitive_target_settings.0.value",
-					"outbound_provision.0.sensitive_target_settings.1.value",
-				},
 			},
 		},
 	})
@@ -98,7 +94,7 @@ func testAccPingFederateIdpTokenProcessorConfig(configUpdate string) string {
 	return fmt.Sprintf(`
 resource "pingfederate_idp_token_processor" "demo" {
   processor_id = "test123"
-  name = "acctest"
+  name = "acctest_demo"
   plugin_descriptor_ref {
 	id = "org.sourceid.wstrust.processor.jwt.JWTTokenProcessor"
   }

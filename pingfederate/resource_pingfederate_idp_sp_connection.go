@@ -104,6 +104,7 @@ func resourcePingFederateIdpSpConnectionResourceSchema() map[string]*schema.Sche
 			Type:        schema.TypeString,
 			Description: "The level of transaction logging applicable for this connection. Default is STANDARD.",
 			Optional:    true,
+			Default:     "STANDARD",
 		},
 		"metadata_reload_settings": {
 			Type:        schema.TypeList,

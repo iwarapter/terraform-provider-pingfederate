@@ -1158,14 +1158,15 @@ func expandSpWsTrust(in map[string]interface{}) *pf.SpWsTrust {
 	if val, ok := in["token_processor_mappings"]; ok && len(val.([]interface{})) > 0 {
 		result.TokenProcessorMappings = expandIdpTokenProcessorMappingList(val.([]interface{}))
 	}
-	if val, ok := in["abort_if_not_fulfilled_from_request"]; ok {
-		result.AbortIfNotFulfilledFromRequest = Bool(val.(bool))
-	}
 	if val, ok := in["attribute_contract"]; ok && len(val.([]interface{})) > 0 {
 		result.AttributeContract = expandSpWsTrustAttributeContract(val.([]interface{})[0].(map[string]interface{}))
 	}
 	if val, ok := in["request_contract_ref"]; ok && len(val.([]interface{})) > 0 {
 		result.RequestContractRef = expandResourceLink(val.([]interface{})[0].(map[string]interface{}))
+		//issues#159 this field is only set with a request_contract_ref and terraform defaults it to false.
+		if val, ok := in["abort_if_not_fulfilled_from_request"]; ok {
+			result.AbortIfNotFulfilledFromRequest = Bool(val.(bool))
+		}
 	}
 	if val, ok := in["message_customizations"]; ok && len(val.([]interface{})) > 0 {
 		result.MessageCustomizations = expandProtocolMessageCustomizationList(val.([]interface{}))
