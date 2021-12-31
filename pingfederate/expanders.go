@@ -2959,3 +2959,39 @@ func expandClientMetadata(in map[string]interface{}) *pf.ClientMetadata {
 	}
 	return &result
 }
+
+func expandTokenProcessorAttributes(in []interface{}) *[]*pf.TokenProcessorAttribute {
+	attributes := &[]*pf.TokenProcessorAttribute{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		c := &pf.TokenProcessorAttribute{}
+		if val, ok := l["name"]; ok {
+			c.Name = String(val.(string))
+		}
+		if val, ok := l["masked"]; ok {
+			c.Masked = Bool(val.(bool))
+		}
+		*attributes = append(*attributes, c)
+	}
+	return attributes
+}
+
+func expandTokenProcessorAttributeContract(in []interface{}) *pf.TokenProcessorAttributeContract {
+	tpac := &pf.TokenProcessorAttributeContract{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		if v, ok := l["extended_attributes"]; ok && len(v.(*schema.Set).List()) > 0 {
+			tpac.ExtendedAttributes = expandTokenProcessorAttributes(v.(*schema.Set).List())
+		}
+		if v, ok := l["core_attributes"]; ok && len(v.(*schema.Set).List()) > 0 {
+			tpac.CoreAttributes = expandTokenProcessorAttributes(v.(*schema.Set).List())
+		}
+		if v, ok := l["mask_ognl_values"]; ok {
+			tpac.MaskOgnlValues = Bool(v.(bool))
+		}
+		if v, ok := l["inherited"]; ok {
+			tpac.Inherited = Bool(v.(bool))
+		}
+	}
+	return tpac
+}

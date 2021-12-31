@@ -68,6 +68,7 @@ func Provider() *schema.Provider {
 			"pingfederate_jdbc_data_store":                              resourcePingFederateJdbcDataStoreResource(),
 			"pingfederate_ldap_data_store":                              resourcePingFederateLdapDataStoreResource(),
 			"pingfederate_idp_sp_connection":                            resourcePingFederateIdpSpConnectionResource(),
+			"pingfederate_idp_token_processor":                          resourcePingFederateIdpTokenProcessorResource(),
 			"pingfederate_idp_adapter":                                  resourcePingFederateIdpAdapterResource(),
 			"pingfederate_incoming_proxy_settings":                      resourcePingFederateIncomingProxySettingsResource(),
 			"pingfederate_kerberos_realm":                               resourcePingFederateKerberosRealmResource(),

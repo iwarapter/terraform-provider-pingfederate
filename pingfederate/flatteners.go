@@ -3160,3 +3160,35 @@ func flattenClientMetadata(in *pf.ClientMetadata) map[string]interface{} {
 	}
 	return s
 }
+
+func flattenTokenProcessorAttributes(in []*pf.TokenProcessorAttribute) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, len(in))
+	for _, v := range in {
+		s := make(map[string]interface{})
+		s["name"] = *v.Name
+		if v.Masked != nil {
+			s["masked"] = *v.Masked
+		}
+		m = append(m, s)
+	}
+	return m
+}
+
+func flattenTokenProcessorAttributeContract(in *pf.TokenProcessorAttributeContract) []map[string]interface{} {
+	m := make([]map[string]interface{}, 0, 1)
+	s := make(map[string]interface{})
+	if in.ExtendedAttributes != nil && len(*in.ExtendedAttributes) > 0 {
+		s["extended_attributes"] = flattenTokenProcessorAttributes(*in.ExtendedAttributes)
+	}
+	if in.CoreAttributes != nil && len(*in.CoreAttributes) > 0 {
+		s["core_attributes"] = flattenTokenProcessorAttributes(*in.CoreAttributes)
+	}
+	if in.Inherited != nil {
+		s["inherited"] = *in.Inherited
+	}
+	if in.MaskOgnlValues != nil {
+		s["mask_ognl_values"] = *in.MaskOgnlValues
+	}
+	m = append(m, s)
+	return m
+}
