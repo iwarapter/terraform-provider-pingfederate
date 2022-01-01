@@ -14,6 +14,7 @@ import (
 
 func resourcePingFederateIdpTokenProcessorResource() *schema.Resource {
 	return &schema.Resource{
+		Description:   "Provides configuration for IDP Token Processor within PingFederate.",
 		CreateContext: resourcePingFederateIdpTokenProcessorResourceCreate,
 		ReadContext:   resourcePingFederateIdpTokenProcessorResourceRead,
 		UpdateContext: resourcePingFederateIdpTokenProcessorResourceUpdate,

@@ -1943,13 +1943,13 @@ Optional:
 
 Required:
 
-- **attribute_contract** (Block List, Min: 1) (see [below for nested schema](#nestedblock--ws_trust--attribute_contract))
 - **partner_service_ids** (List of String)
 - **token_processor_mappings** (Block List, Min: 1) (see [below for nested schema](#nestedblock--ws_trust--token_processor_mappings))
 
 Optional:
 
 - **abort_if_not_fulfilled_from_request** (Boolean)
+- **attribute_contract** (Block List) (see [below for nested schema](#nestedblock--ws_trust--attribute_contract))
 - **default_token_type** (String)
 - **encrypt_saml2_assertion** (Boolean)
 - **generate_key** (Boolean)
@@ -1958,33 +1958,6 @@ Optional:
 - **minutes_before** (Number)
 - **o_auth_assertion_profiles** (Boolean)
 - **request_contract_ref** (Block List, Max: 1) (see [below for nested schema](#nestedblock--ws_trust--request_contract_ref))
-
-<a id="nestedblock--ws_trust--attribute_contract"></a>
-### Nested Schema for `ws_trust.attribute_contract`
-
-Optional:
-
-- **core_attributes** (Block List) (see [below for nested schema](#nestedblock--ws_trust--attribute_contract--core_attributes))
-- **extended_attributes** (Block List) (see [below for nested schema](#nestedblock--ws_trust--attribute_contract--extended_attributes))
-
-<a id="nestedblock--ws_trust--attribute_contract--core_attributes"></a>
-### Nested Schema for `ws_trust.attribute_contract.core_attributes`
-
-Required:
-
-- **name** (String)
-- **namespace** (String)
-
-
-<a id="nestedblock--ws_trust--attribute_contract--extended_attributes"></a>
-### Nested Schema for `ws_trust.attribute_contract.extended_attributes`
-
-Required:
-
-- **name** (String)
-- **namespace** (String)
-
-
 
 <a id="nestedblock--ws_trust--token_processor_mappings"></a>
 ### Nested Schema for `ws_trust.token_processor_mappings`
@@ -2261,6 +2234,39 @@ Optional:
 - **id** (String) The attribute source ID that refers to the attribute source that this key references. In some resources, the ID is optional and will be ignored. In these cases the ID should be omitted. If the source type is not an attribute source then the ID can be omitted.
 
 
+
+
+
+<a id="nestedblock--ws_trust--attribute_contract"></a>
+### Nested Schema for `ws_trust.attribute_contract`
+
+Optional:
+
+- **core_attributes** (Block List) (see [below for nested schema](#nestedblock--ws_trust--attribute_contract--core_attributes))
+- **extended_attributes** (Block List) (see [below for nested schema](#nestedblock--ws_trust--attribute_contract--extended_attributes))
+
+<a id="nestedblock--ws_trust--attribute_contract--core_attributes"></a>
+### Nested Schema for `ws_trust.attribute_contract.core_attributes`
+
+Required:
+
+- **name** (String)
+
+Optional:
+
+- **namespace** (String)
+
+
+<a id="nestedblock--ws_trust--attribute_contract--extended_attributes"></a>
+### Nested Schema for `ws_trust.attribute_contract.extended_attributes`
+
+Required:
+
+- **name** (String)
+
+Optional:
+
+- **namespace** (String)
 
 
 
