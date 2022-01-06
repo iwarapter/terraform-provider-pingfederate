@@ -9,10 +9,7 @@ import (
 )
 
 func TestAccPingFederateJdbcDataStoreDataSource(t *testing.T) {
-	re := regexp.MustCompile(`^((10|11)\.[0-9])`)
-	if !re.MatchString(pfVersion) {
-		t.Skipf("This test only runs against PingFederate 10.0 and above, not: %s", pfVersion)
-	}
+
 	resourceName := "data.pingfederate_jdbc_data_store.test"
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },

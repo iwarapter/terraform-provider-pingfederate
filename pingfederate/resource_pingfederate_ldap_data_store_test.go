@@ -2,7 +2,6 @@ package pingfederate
 
 import (
 	"fmt"
-	"regexp"
 	"testing"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/dataStores"
@@ -39,10 +38,6 @@ func init() {
 }
 
 func TestAccPingFederateLdapDataStoreResource(t *testing.T) {
-	re := regexp.MustCompile(`^((10|11)\.[0-9])`)
-	if !re.MatchString(pfVersion) {
-		t.Skipf("This test only runs against PingFederate 10.0 and above, not: %s", pfVersion)
-	}
 	resourceName := "pingfederate_ldap_data_store.demo"
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,

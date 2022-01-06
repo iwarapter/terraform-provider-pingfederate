@@ -1,14 +1,16 @@
 ## 0.0.24 (Unreleased)
 
 FEATURES:
-
 - Add support for `pingfederate_idp_token_processor`. (#160)
--
+
+BREAKING CHANGES:
+- Behaviour change for `pingfederate_idp_sp_connection` the `ws_trust.attribute_contract.core_attributes` is computed and can no longer be set. (#159)
+
 BUG FIXES:
 
+- Fixed issue `incoming_proxy_settings` didn't run on 11+ . (#162)
 - Fixed issue `ws_trust` on `pingfederate_idp_sp_connection` when `request_contract_ref` is not provided. (#158)
 - Ensure `logging_module` on `pingfederate_idp_sp_connection` has a default (`STANDARD`). (#159)
-- Behaviour change for `pingfederate_idp_sp_connection` the `ws_trust.attribute_contract` needs to have the default `core_attributes` set to ensure the resource is created. (#159)
 
 ## 0.0.23 (December 27th, 2021)
 

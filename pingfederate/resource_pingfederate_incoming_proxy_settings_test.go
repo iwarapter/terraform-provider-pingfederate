@@ -2,7 +2,6 @@ package pingfederate
 
 import (
 	"fmt"
-	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -10,9 +9,8 @@ import (
 )
 
 func TestAccPingFederateIncomingProxySettings(t *testing.T) {
-	re := regexp.MustCompile(`^((10)\.[1-9])`)
-	if !re.MatchString(pfVersion) {
-		t.Skipf("This test only runs against PingFederate 10.1 and above, not: %s", pfVersion)
+	if !pfc.IsPF10_1orGreater() {
+		t.Skipf("This test only runs against PingFederate 10.1 and above, not: %s", pfc.apiVersion)
 	}
 	resourceName := "pingfederate_incoming_proxy_settings.settings"
 	resource.Test(t, resource.TestCase{
