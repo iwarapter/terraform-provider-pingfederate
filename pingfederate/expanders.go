@@ -1160,6 +1160,14 @@ func expandSpWsTrust(in map[string]interface{}) *pf.SpWsTrust {
 	}
 	if val, ok := in["attribute_contract"]; ok && len(val.([]interface{})) > 0 {
 		result.AttributeContract = expandSpWsTrustAttributeContract(val.([]interface{})[0].(map[string]interface{}))
+	} else {
+		result.AttributeContract = &pf.SpWsTrustAttributeContract{
+			CoreAttributes: &[]*pf.SpWsTrustAttribute{
+				{
+					Name: String("TOKEN_SUBJECT"),
+				},
+			},
+		}
 	}
 	if val, ok := in["request_contract_ref"]; ok && len(val.([]interface{})) > 0 {
 		result.RequestContractRef = expandResourceLink(val.([]interface{})[0].(map[string]interface{}))
@@ -1266,6 +1274,12 @@ func expandSpWsTrustAttributeContract(in map[string]interface{}) *pf.SpWsTrustAt
 	}
 	if val, ok := in["core_attributes"]; ok {
 		result.CoreAttributes = expandSpWsTrustAttributeList(val.([]interface{}))
+	} else {
+		result.CoreAttributes = &[]*pf.SpWsTrustAttribute{
+			{
+				Name: String("TOKEN_SUBJECT"),
+			},
+		}
 	}
 	return &result
 }

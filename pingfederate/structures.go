@@ -1336,7 +1336,6 @@ func resourceSpWsTrustAttributeContract() *schema.Resource {
 				Type:     schema.TypeList,
 				Elem:     resourceSpWsTrustAttribute(),
 				Computed: true,
-				Optional: true,
 			},
 			"extended_attributes": {
 				Type:     schema.TypeList,
@@ -1359,6 +1358,7 @@ func resourceSpWsTrust() *schema.Resource {
 				Type:     schema.TypeList,
 				Elem:     resourceSpWsTrustAttributeContract(),
 				Optional: true,
+				Computed: true,
 			},
 			"default_token_type": {
 				Type:     schema.TypeString,

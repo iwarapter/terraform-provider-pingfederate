@@ -2242,20 +2242,11 @@ Optional:
 
 Optional:
 
-- **core_attributes** (Block List) (see [below for nested schema](#nestedblock--ws_trust--attribute_contract--core_attributes))
 - **extended_attributes** (Block List) (see [below for nested schema](#nestedblock--ws_trust--attribute_contract--extended_attributes))
 
-<a id="nestedblock--ws_trust--attribute_contract--core_attributes"></a>
-### Nested Schema for `ws_trust.attribute_contract.core_attributes`
+Read-Only:
 
-Required:
-
-- **name** (String)
-
-Optional:
-
-- **namespace** (String)
-
+- **core_attributes** (List of Object) (see [below for nested schema](#nestedatt--ws_trust--attribute_contract--core_attributes))
 
 <a id="nestedblock--ws_trust--attribute_contract--extended_attributes"></a>
 ### Nested Schema for `ws_trust.attribute_contract.extended_attributes`
@@ -2266,6 +2257,15 @@ Required:
 
 Optional:
 
+- **namespace** (String)
+
+
+<a id="nestedatt--ws_trust--attribute_contract--core_attributes"></a>
+### Nested Schema for `ws_trust.attribute_contract.core_attributes`
+
+Read-Only:
+
+- **name** (String)
 - **namespace** (String)
 
 

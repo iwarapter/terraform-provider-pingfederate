@@ -598,12 +598,6 @@ resource "pingfederate_idp_sp_connection" "demo" {
       "https://%s.url"
     ]
 
-    attribute_contract {
-      core_attributes {
-        name      = "TOKEN_SUBJECT"
-      }
-    }
-
     token_processor_mappings {
       attribute_contract_fulfillment {
         key_name = "TOKEN_SUBJECT"
