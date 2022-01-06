@@ -38,10 +38,6 @@ func init() {
 }
 
 func TestAccPingFederateAuthenticationSelectorResource(t *testing.T) {
-	re := regexp.MustCompile(`^((9|10)\.[0-9])`)
-	if !re.MatchString(pfVersion) {
-		t.Skipf("This test only runs against PingFederate 9.x or 10.x and above, not: %s", pfVersion)
-	}
 	resourceName := "pingfederate_authentication_selector.demo"
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,

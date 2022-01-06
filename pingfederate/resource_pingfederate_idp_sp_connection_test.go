@@ -39,10 +39,6 @@ func init() {
 
 func TestAccPingFederateIdpSpConnection(t *testing.T) {
 	resourceName := "pingfederate_idp_sp_connection.demo"
-	re := regexp.MustCompile(`^((10|11)\.[0-9])`)
-	if !re.MatchString(pfVersion) {
-		t.Skipf("This test only runs against PingFederate 10.0 and above, not: %s", pfVersion)
-	}
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
@@ -150,7 +146,7 @@ func testAccCheckPingFederateIdpSpConnectionDestroy(s *terraform.State) error {
 }
 
 func testAccPingFederateIdpSpConnectionConfig(configUpdate string) string {
-	if regexp.MustCompile(`^(10.2)`).MatchString(pfVersion) {
+	if regexp.MustCompile(`^(10.2)`).MatchString(pfc.apiVersion) {
 		return fmt.Sprintf(`
 provider "pingfederate" {
   bypass_external_validation = true

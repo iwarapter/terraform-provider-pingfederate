@@ -2,7 +2,6 @@ package pingfederate
 
 import (
 	"fmt"
-	"regexp"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -37,9 +36,8 @@ func init() {
 }
 
 func TestAccPingFederateAuthenticationPolicyFragmentResource(t *testing.T) {
-	re := regexp.MustCompile(`^((10)\.[2-9])`)
-	if !re.MatchString(pfVersion) {
-		t.Skipf("This test only runs against PingFederate 10.2 and above, not: %s", pfVersion)
+	if !pfc.IsPF10_2orGreater() {
+		t.Skipf("This test only runs against PingFederate 10.2 and above, not: %s", pfc.apiVersion)
 	}
 	resourceName := "pingfederate_authentication_policy_fragment.demo"
 	resource.ParallelTest(t, resource.TestCase{
