@@ -1,11 +1,14 @@
 package pingfederate
 
 import (
+	"fmt"
 	"net"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 )
@@ -81,6 +84,87 @@ func TestConfig_Client(t *testing.T) {
 			if !reflect.DeepEqual(diags, tt.want) {
 				t.Errorf("Client() diags = %v, want %v", diags, tt.want)
 			}
+		})
+	}
+}
+
+func TestIsPF10(t *testing.T) {
+	cli := pfClient{}
+	tests := []struct {
+		version string
+		expect  bool
+	}{
+		{"10.0", true},
+		{"10.1", true},
+		{"10.2", true},
+		{"10.3", true},
+		{"11.0", true},
+		{"11.1", true},
+		{"11.2", true},
+		{"11.3", true},
+		{"12.0", true},
+		{"12.1", true},
+		{"12.2", true},
+		{"12.3", true},
+	}
+	for _, tt := range tests {
+		t.Run(fmt.Sprintf("we handle %s", tt.version), func(t *testing.T) {
+			cli.apiVersion = tt.version
+			assert.Equal(t, tt.expect, cli.IsPF10())
+		})
+	}
+}
+
+func TestIsPF10_1orGreater(t *testing.T) {
+	cli := pfClient{}
+	tests := []struct {
+		version string
+		expect  bool
+	}{
+		{"10.0", false},
+		{"10.1", true},
+		{"10.2", true},
+		{"10.3", true},
+		{"11.0", true},
+		{"11.1", true},
+		{"11.2", true},
+		{"11.3", true},
+		{"12.0", true},
+		{"12.1", true},
+		{"12.2", true},
+		{"12.3", true},
+	}
+	for _, tt := range tests {
+		t.Run(fmt.Sprintf("we handle %s", tt.version), func(t *testing.T) {
+			cli.apiVersion = tt.version
+			assert.Equal(t, tt.expect, cli.IsPF10_1orGreater())
+		})
+	}
+}
+
+func TestIsPF10_2orGreater(t *testing.T) {
+	cli := pfClient{}
+	tests := []struct {
+		version string
+		expect  bool
+	}{
+		{"10.0", false},
+		{"10.1", false},
+		{"10.2", true},
+		{"10.3", true},
+		{"11.0", true},
+		{"11.1", true},
+		{"11.2", true},
+		{"11.3", true},
+		{"12.0", true},
+		{"12.1", true},
+		{"12.2", true},
+		{"12.3", true},
+	}
+	for _, tt := range tests {
+		t.Run(fmt.Sprintf("we handle %s", tt.version), func(t *testing.T) {
+			cli.apiVersion = tt.version
+			assert.Equal(t, tt.expect, cli.IsPF10_2orGreater())
 		})
 	}
 }

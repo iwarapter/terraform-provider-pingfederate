@@ -261,20 +261,20 @@ func (c pfClient) PfVersion() string {
 
 // Checks whether we are running against PingFederate 10.x
 func (c pfClient) IsPF10() bool {
-	re := regexp.MustCompile(`^(10\.[0-9])`)
+	re := regexp.MustCompile(`^(10|11|12)\.[0-9]`)
 	return re.MatchString(c.apiVersion)
 }
 
 // Checks whether we are running against PingFederate 10.1+
 func (c pfClient) IsPF10_1orGreater() bool {
-	re := regexp.MustCompile(`^(10\.[1-9])`)
-	return re.MatchString(c.apiVersion)
+	re := regexp.MustCompile(`^(10\.0)`)
+	return c.IsPF10() && !re.MatchString(c.apiVersion)
 }
 
 // Checks whether we are running against PingFederate 10.2+
 func (c pfClient) IsPF10_2orGreater() bool {
-	re := regexp.MustCompile(`^(10\.[2-9])`)
-	return re.MatchString(c.apiVersion)
+	re := regexp.MustCompile(`^(10\.[0-1])`)
+	return c.IsPF10() && !re.MatchString(c.apiVersion)
 }
 
 func checkErr(err error) string {
