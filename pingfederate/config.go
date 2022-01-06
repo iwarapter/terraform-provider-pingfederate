@@ -170,7 +170,7 @@ func (c *pfConfig) Client() (interface{}, diag.Diagnostics) {
 
 	cfg := config.NewConfig().WithEndpoint(baseURL.String() + c.Context).WithUsername(c.Username).WithPassword(c.Password)
 
-	if os.Getenv("TF_LOG") == "DEBUG" || os.Getenv("TF_LOG") == "TRACE" {
+	if os.Getenv("TF_LOG") == "DEBUG" || os.Getenv("TF_LOG") == "TRACE" || os.Getenv("TF_LOG_PROVIDER") == "DEBUG" || os.Getenv("TF_LOG_PROVIDER") == "TRACE" {
 		cfg.WithDebug(true)
 	}
 

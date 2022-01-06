@@ -1158,14 +1158,23 @@ func expandSpWsTrust(in map[string]interface{}) *pf.SpWsTrust {
 	if val, ok := in["token_processor_mappings"]; ok && len(val.([]interface{})) > 0 {
 		result.TokenProcessorMappings = expandIdpTokenProcessorMappingList(val.([]interface{}))
 	}
-	if val, ok := in["abort_if_not_fulfilled_from_request"]; ok {
-		result.AbortIfNotFulfilledFromRequest = Bool(val.(bool))
-	}
 	if val, ok := in["attribute_contract"]; ok && len(val.([]interface{})) > 0 {
 		result.AttributeContract = expandSpWsTrustAttributeContract(val.([]interface{})[0].(map[string]interface{}))
+	} else {
+		result.AttributeContract = &pf.SpWsTrustAttributeContract{
+			CoreAttributes: &[]*pf.SpWsTrustAttribute{
+				{
+					Name: String("TOKEN_SUBJECT"),
+				},
+			},
+		}
 	}
 	if val, ok := in["request_contract_ref"]; ok && len(val.([]interface{})) > 0 {
 		result.RequestContractRef = expandResourceLink(val.([]interface{})[0].(map[string]interface{}))
+		//issues#159 this field is only set with a request_contract_ref and terraform defaults it to false.
+		if val, ok := in["abort_if_not_fulfilled_from_request"]; ok {
+			result.AbortIfNotFulfilledFromRequest = Bool(val.(bool))
+		}
 	}
 	if val, ok := in["message_customizations"]; ok && len(val.([]interface{})) > 0 {
 		result.MessageCustomizations = expandProtocolMessageCustomizationList(val.([]interface{}))
@@ -1265,6 +1274,12 @@ func expandSpWsTrustAttributeContract(in map[string]interface{}) *pf.SpWsTrustAt
 	}
 	if val, ok := in["core_attributes"]; ok {
 		result.CoreAttributes = expandSpWsTrustAttributeList(val.([]interface{}))
+	} else {
+		result.CoreAttributes = &[]*pf.SpWsTrustAttribute{
+			{
+				Name: String("TOKEN_SUBJECT"),
+			},
+		}
 	}
 	return &result
 }
@@ -2958,4 +2973,40 @@ func expandClientMetadata(in map[string]interface{}) *pf.ClientMetadata {
 		result.MultiValued = Bool(val.(bool))
 	}
 	return &result
+}
+
+func expandTokenProcessorAttributes(in []interface{}) *[]*pf.TokenProcessorAttribute {
+	attributes := &[]*pf.TokenProcessorAttribute{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		c := &pf.TokenProcessorAttribute{}
+		if val, ok := l["name"]; ok {
+			c.Name = String(val.(string))
+		}
+		if val, ok := l["masked"]; ok {
+			c.Masked = Bool(val.(bool))
+		}
+		*attributes = append(*attributes, c)
+	}
+	return attributes
+}
+
+func expandTokenProcessorAttributeContract(in []interface{}) *pf.TokenProcessorAttributeContract {
+	tpac := &pf.TokenProcessorAttributeContract{}
+	for _, raw := range in {
+		l := raw.(map[string]interface{})
+		if v, ok := l["extended_attributes"]; ok && len(v.(*schema.Set).List()) > 0 {
+			tpac.ExtendedAttributes = expandTokenProcessorAttributes(v.(*schema.Set).List())
+		}
+		if v, ok := l["core_attributes"]; ok && len(v.(*schema.Set).List()) > 0 {
+			tpac.CoreAttributes = expandTokenProcessorAttributes(v.(*schema.Set).List())
+		}
+		if v, ok := l["mask_ognl_values"]; ok {
+			tpac.MaskOgnlValues = Bool(v.(bool))
+		}
+		if v, ok := l["inherited"]; ok {
+			tpac.Inherited = Bool(v.(bool))
+		}
+	}
+	return tpac
 }

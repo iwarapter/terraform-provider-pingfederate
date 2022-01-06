@@ -99,6 +99,52 @@ func TestAccPingFederateIdpSpConnection(t *testing.T) {
 	})
 }
 
+func TestAccPingFederateIdpSpConnectionIssue159(t *testing.T) {
+	resourceName := "pingfederate_idp_sp_connection.demo"
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckPingFederateIdpSpConnectionDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccPingFederateIdpSpConnectionConfigIssue158("foo"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckPingFederateIdpSpConnectionExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "active", "true"),
+					resource.TestCheckResourceAttr(resourceName, "base_url", "https://some.url"),
+					resource.TestCheckResourceAttr(resourceName, "entity_id", "acc_test_issue159"),
+					resource.TestCheckResourceAttr(resourceName, "name", "acc_test_issue159"),
+					resource.TestCheckResourceAttrSet(resourceName, "credentials.0.signing_settings.0.signing_key_pair_ref.0.id"),
+					resource.TestCheckResourceAttr(resourceName, "ws_trust.0.default_token_type", "SAML20"),
+					resource.TestCheckResourceAttr(resourceName, "ws_trust.0.minutes_after", "60"),
+					resource.TestCheckResourceAttr(resourceName, "ws_trust.0.minutes_before", "5"),
+					resource.TestCheckResourceAttr(resourceName, "ws_trust.0.partner_service_ids.0", "https://foo.url"),
+				),
+			},
+			{
+				Config: testAccPingFederateIdpSpConnectionConfigIssue158("bar"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckPingFederateIdpSpConnectionExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "active", "true"),
+					resource.TestCheckResourceAttr(resourceName, "base_url", "https://some.url"),
+					resource.TestCheckResourceAttr(resourceName, "entity_id", "acc_test_issue159"),
+					resource.TestCheckResourceAttr(resourceName, "name", "acc_test_issue159"),
+					resource.TestCheckResourceAttrSet(resourceName, "credentials.0.signing_settings.0.signing_key_pair_ref.0.id"),
+					resource.TestCheckResourceAttr(resourceName, "ws_trust.0.default_token_type", "SAML20"),
+					resource.TestCheckResourceAttr(resourceName, "ws_trust.0.minutes_after", "60"),
+					resource.TestCheckResourceAttr(resourceName, "ws_trust.0.minutes_before", "5"),
+					resource.TestCheckResourceAttr(resourceName, "ws_trust.0.partner_service_ids.0", "https://bar.url"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func testAccCheckPingFederateIdpSpConnectionDestroy(s *terraform.State) error {
 	return nil
 }
@@ -524,6 +570,85 @@ resource "pingfederate_ldap_data_store" "test" {
 }
 `, configUpdate)
 	}
+}
+
+func testAccPingFederateIdpSpConnectionConfigIssue158(configUpdate string) string {
+	return fmt.Sprintf(`
+resource "pingfederate_idp_sp_connection" "demo" {
+  active    = true
+  base_url  = "https://some.url"
+  entity_id = "acc_test_issue159"
+  name      = "acc_test_issue159"
+  type      = "SP"
+
+  credentials {
+    signing_settings {
+      signing_key_pair_ref {
+        id = pingfederate_keypair_signing.test_generate.id
+      }
+	  algorithm = "SHA256withRSA"
+    }
+  }
+
+  ws_trust {
+    default_token_type = "SAML20"
+    minutes_after      = 60
+    minutes_before     = 5
+    partner_service_ids = [
+      "https://%s.url"
+    ]
+
+    token_processor_mappings {
+      attribute_contract_fulfillment {
+        key_name = "TOKEN_SUBJECT"
+        value    = "null"
+
+        source {
+          type = "TEXT"
+        }
+      }
+
+      idp_token_processor_ref {
+        id = pingfederate_idp_token_processor.demo.id
+      }
+    }
+  }
+}
+resource "pingfederate_keypair_signing" "test_generate" {
+	city = "Test"
+	common_name = "Test"
+	country = "GB"
+	key_algorithm = "RSA"
+	key_size = 2048
+	organization = "Test"
+	organization_unit = "Test"
+	state = "Test"
+	valid_days = 365
+	subject_alternative_names = ["foo", "bar"]
+}
+
+resource "pingfederate_idp_token_processor" "demo" {
+  processor_id = "test1234"
+  name = "acctest_issue158"
+  plugin_descriptor_ref {
+	id = "org.sourceid.wstrust.processor.jwt.JWTTokenProcessor"
+  }
+  configuration {
+    fields {
+      name  = "JWKS Endpoint URI"
+      value = "https://foo.jwks"
+    }
+    fields {
+      name  = "Issuer"
+      value = "example"
+    }
+	fields {
+ 	  name = "Expiry Tolerance"
+ 	  value = "0"
+	}
+  }
+}
+`, configUpdate)
 }
 
 func testAccCheckPingFederateIdpSpConnectionExists(n string) resource.TestCheckFunc {
@@ -1482,6 +1607,7 @@ func Test_resourcePingFederateIdpSpConnectionResourceReadData(t *testing.T) {
 					Email:     String("foo"),
 					Phone:     String("foo"),
 				},
+				LoggingMode: String("STANDARD"),
 			},
 		},
 		{
@@ -1491,6 +1617,7 @@ func Test_resourcePingFederateIdpSpConnectionResourceReadData(t *testing.T) {
 				Type:             String("SP"),
 				VirtualEntityIds: &[]*string{},
 				ContactInfo:      &pf.ContactInfo{},
+				LoggingMode:      String("STANDARD"),
 			},
 		},
 		{
@@ -1499,6 +1626,7 @@ func Test_resourcePingFederateIdpSpConnectionResourceReadData(t *testing.T) {
 				Active:           Bool(false),
 				Type:             String("SP"),
 				VirtualEntityIds: &[]*string{},
+				LoggingMode:      String("STANDARD"),
 			},
 		},
 	}

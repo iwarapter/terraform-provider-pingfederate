@@ -1335,7 +1335,7 @@ func resourceSpWsTrustAttributeContract() *schema.Resource {
 			"core_attributes": {
 				Type:     schema.TypeList,
 				Elem:     resourceSpWsTrustAttribute(),
-				Optional: true,
+				Computed: true,
 			},
 			"extended_attributes": {
 				Type:     schema.TypeList,
@@ -1357,7 +1357,8 @@ func resourceSpWsTrust() *schema.Resource {
 			"attribute_contract": {
 				Type:     schema.TypeList,
 				Elem:     resourceSpWsTrustAttributeContract(),
-				Required: true,
+				Optional: true,
+				Computed: true,
 			},
 			"default_token_type": {
 				Type:     schema.TypeString,
@@ -2240,7 +2241,7 @@ func resourceSpWsTrustAttribute() *schema.Resource {
 			},
 			"namespace": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 		},
 	}
@@ -3905,6 +3906,55 @@ func resourceClientRegistrationOIDCPolicy() *schema.Resource {
 				ValidateFunc: validation.StringInSlice([]string{`NONE`, `HS256`, `HS384`, `HS512`, `RS256`, `RS384`, `RS512`, `ES256`, `ES384`, `ES512`, `PS256`, `PS384`, `PS512`}, false),
 			},
 			"policy_group": resourceRequiredLinkSchema(),
+		},
+	}
+}
+
+func resourceTokenProcessorAttribute() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"name": {
+				Type:        schema.TypeString,
+				Description: "The name of this attribute.",
+				Required:    true,
+			},
+			"masked": {
+				Type:        schema.TypeBool,
+				Description: "Specifies whether this attribute is masked in PingFederate logs. Defaults to `false`.",
+				Optional:    true,
+				Default:     false,
+			},
+		},
+	}
+}
+
+func resourceTokenProcessorAttributeContract() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"inherited": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Whether this attribute contract is inherited from its parent instance. If true, the rest of the properties in this model become read-only. The default value is false.",
+			},
+			"mask_ognl_values": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Whether or not all OGNL expressions used to fulfill an outgoing assertion contract should be masked in the logs. Defaults to false.",
+			},
+			"core_attributes": {
+				Type:        schema.TypeSet,
+				Computed:    true,
+				Description: "A list of token processor attributes that correspond to the attributes exposed by the token processor type.",
+				Elem:        resourceTokenProcessorAttribute(),
+			},
+			"extended_attributes": {
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Description: "A list of additional attributes that can be returned by the token processor. The extended attributes are only used if the token processor supports them.",
+				Elem:        resourceTokenProcessorAttribute(),
+			},
 		},
 	}
 }
