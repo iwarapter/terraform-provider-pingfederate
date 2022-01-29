@@ -679,40 +679,6 @@ func flattenAccessTokenMappingContext(in *pf.AccessTokenMappingContext) []map[st
 	return m
 }
 
-//func flattenAttributeSources(d *schema.ResourceData, rv *[]*pf.AttributeSource) error {
-//	if *rv != nil && len(*rv) > 0 {
-//		var ldapAttributes []interface{}
-//		var jdbcAttributes []interface{}
-//		var customAttributes []interface{}
-//		for _, v := range *rv {
-//			switch *v.Type {
-//			case "LDAP":
-//				ldapAttributes = append(ldapAttributes, flattenLdapAttributeSource(&v.LdapAttributeSource))
-//			case "JDBC":
-//				jdbcAttributes = append(jdbcAttributes, flattenJdbcAttributeSource(v))
-//			case "CUSTOM":
-//				customAttributes = append(customAttributes, flattenCustomAttributeSource(&v.CustomAttributeSource))
-//			}
-//		}
-//		if len(ldapAttributes) > 0 {
-//			if err := d.Set("ldap_attribute_source", ldapAttributes); err != nil {
-//				return err
-//			}
-//		}
-//		if len(jdbcAttributes) > 0 {
-//			if err := d.Set("jdbc_attribute_source", jdbcAttributes); err != nil {
-//				return err
-//			}
-//		}
-//		if len(customAttributes) > 0 {
-//			if err := d.Set("custom_attribute_source", customAttributes); err != nil {
-//				return err
-//			}
-//		}
-//	}
-//	return nil
-//}
-
 func flattenOpenIdConnectAttributes(in []*pf.OpenIdConnectAttribute) []map[string]interface{} {
 	m := make([]map[string]interface{}, 0, len(in))
 	for _, v := range in {

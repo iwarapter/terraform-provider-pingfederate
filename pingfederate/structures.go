@@ -866,9 +866,10 @@ func resourceLdapAttributeSource() *schema.Resource {
 				Description: "The ID that defines this attribute source. Only alphanumeric characters allowed.<br>Note: Required for OpenID Connect policy attribute sources, OAuth IdP adapter mappings, OAuth access token mappings and APC-to-SP Adapter Mappings. IdP Connections will ignore this property since it only allows one attribute source to be defined per mapping. IdP-to-SP Adapter Mappings can contain multiple attribute sources.",
 			},
 			"search_scope": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Determines the node depth of the query.",
+				Type:         schema.TypeString,
+				Required:     true,
+				Description:  "Determines the node depth of the query.",
+				ValidateFunc: validation.StringInSlice([]string{"OBJECT", "ONE_LEVEL", "SUBTREE"}, false),
 			},
 			"description": {
 				Type:        schema.TypeString,
