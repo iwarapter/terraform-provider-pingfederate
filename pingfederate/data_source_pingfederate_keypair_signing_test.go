@@ -10,7 +10,7 @@ import (
 func TestAccPingFederateKeyPairSigningDataSource(t *testing.T) {
 	resourceName := "data.pingfederate_keypair_signing.test"
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPingFederateKeyPairSigningDataSourceDestroy,
