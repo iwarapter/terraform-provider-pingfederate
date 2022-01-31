@@ -1,6 +1,5 @@
 # Makefile
-VERSION ?= 0.0.1-BETA
-NAME=terraform-provider-pingfederate_v${VERSION}
+NAME=terraform-provider-pingfederate
 OS_NAME := $(shell uname -s | tr A-Z a-z)
 CURDATE := ${shell date +'%y%m%d'}
 
@@ -48,12 +47,6 @@ test-and-report:
 
 build:
 	@go build -mod=vendor -o ${NAME} -gcflags "all=-trimpath=$GOPATH" .
-
-deploy-local:
-	@mkdir -p ~/.terraform.d/plugins
-	@cp ${NAME} ~/.terraform.d/plugins/
-	@mkdir -p ~/.terraform.d/plugins/registry.terraform.io/iwarapter/pingfederate/${VERSION}/${OS_NAME}_amd64
-	@cp ${NAME} ~/.terraform.d/plugins/registry.terraform.io/iwarapter/pingfederate/${VERSION}/${OS_NAME}_amd64
 
 func-init:
 	@rm -rf func-tests/.terraform.lock.hcl

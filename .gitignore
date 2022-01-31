@@ -18,3 +18,7 @@ adapters/
 structor/
 func-tests/.terraform.lock.hcl
 bin/
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup

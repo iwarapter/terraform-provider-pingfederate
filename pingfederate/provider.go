@@ -49,6 +49,7 @@ func Provider() *schema.Provider {
 			"pingfederate_custom_data_store":      dataSourcePingFederateCustomDataStore(),
 			"pingfederate_jdbc_data_store":        dataSourcePingFederateJdbcDataStore(),
 			"pingfederate_ldap_data_store":        dataSourcePingFederateLdapDataStore(),
+			"pingfederate_keypair_signing":        dataSourcePingFederateKeyPairSigning(),
 			"pingfederate_keypair_signing_csr":    dataSourcePingFederateKeyPairSigningCsr(),
 			"pingfederate_keypair_ssl_server_csr": dataSourcePingFederateKeyPairSslServerCsr(),
 			"pingfederate_version":                dataSourcePingFederateVersion(),
