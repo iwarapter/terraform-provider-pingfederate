@@ -4,12 +4,8 @@ package pingfederate
 
 import (
 	"context"
-	"fmt"
-	"net/http"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthClients"
 
@@ -414,21 +410,9 @@ func resourcePingFederateOauthClientResourceCreate(ctx context.Context, d *schem
 	input := oauthClients.CreateClientInput{
 		Body: *resourcePingFederateOauthClientResourceReadData(d),
 	}
-	var result *pf.Client
-	err := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
-		var err error
-		var resp *http.Response
-		result, resp, err = svc.CreateClientWithContext(ctx, &input)
-		if resp != nil && resp.StatusCode == http.StatusUnprocessableEntity {
-			return resource.RetryableError(fmt.Errorf("unable to create with retry OauthClients: %s", err))
-		}
-		if err != nil {
-			return resource.NonRetryableError(fmt.Errorf("unable to create OauthClients: %s", err))
-		}
-		return nil
-	})
+	result, _, err := svc.CreateClient(&input)
 	if err != nil {
-		return diag.FromErr(err)
+		return diag.Errorf("unable to create OauthClients: %s", err)
 	}
 	d.SetId(*result.ClientId)
 	return resourcePingFederateOauthClientResourceReadResult(d, result)
