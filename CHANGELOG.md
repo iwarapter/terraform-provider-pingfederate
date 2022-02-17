@@ -8,6 +8,7 @@ BREAKING CHANGES:
 
 BUG FIXES:
 
+- Remove unnecessary retry on OAuth client creation. (#165)
 - Fixed issue `incoming_proxy_settings` didn't run on 11+ . (#162)
 - Fixed issue `ws_trust` on `pingfederate_idp_sp_connection` when `request_contract_ref` is not provided. (#158)
 - Ensure `logging_module` on `pingfederate_idp_sp_connection` has a default (`STANDARD`). (#159)
