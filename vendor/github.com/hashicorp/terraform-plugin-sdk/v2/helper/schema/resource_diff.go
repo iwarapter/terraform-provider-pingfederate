@@ -254,13 +254,13 @@ func (d *ResourceDiff) clear(key string) error {
 	return nil
 }
 
-// GetChangedKeysPrefix helps to implement Resource.CustomizeDiff where we need to act
-// on all nested fields without calling out each one separately.
-// An empty prefix is supported, returning all changed keys.
+// GetChangedKeysPrefix helps to implement Resource.CustomizeDiff
+// where we need to act on all nested fields
+// without calling out each one separately
 func (d *ResourceDiff) GetChangedKeysPrefix(prefix string) []string {
 	keys := make([]string, 0)
 	for k := range d.diff.Attributes {
-		if k == prefix || childAddrOf(k, prefix) || prefix == "" {
+		if k == prefix || childAddrOf(k, prefix) {
 			keys = append(keys, k)
 		}
 	}

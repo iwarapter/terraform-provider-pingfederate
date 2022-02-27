@@ -8,7 +8,7 @@ terraform-provider-pingfederate*
 run.log
 coverage.out
 report.json
-pingfederate/terraform.log
+internal/sdkv2provider/terraform.log
 terraform.log
 terraform-provider-pingfederate_vlocal
 dist

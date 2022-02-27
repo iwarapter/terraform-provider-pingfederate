@@ -4,7 +4,8 @@ import "encoding/json"
 
 //AccessTokenAttribute - An attribute for an Access Token's attribute contract.
 type AccessTokenAttribute struct {
-	Name *string `json:"name,omitempty"`
+	MultiValued *bool   `json:"multiValued,omitempty"`
+	Name        *string `json:"name,omitempty"`
 }
 
 //AccessTokenAttributeContract - A set of attributes exposed by an Access Token Manager.
@@ -78,7 +79,9 @@ type AccessTokenMappingContext struct {
 }
 
 //AccessTokenMappings - A collection of Access Token Attribute Mapping items.
-type AccessTokenMappings []*AccessTokenMapping
+type AccessTokenMappings struct {
+	Items *[]*AccessTokenMapping `json:"items,omitempty"`
+}
 
 //AccountManagementSettings - Account management settings.
 type AccountManagementSettings struct {
@@ -91,20 +94,33 @@ type AccountManagementSettings struct {
 
 //Action - A read-only plugin action that either represents a file download or an arbitrary invocation performed by the plugin.
 type Action struct {
-	Description   *string       `json:"description,omitempty"`
-	Download      *bool         `json:"download,omitempty"`
-	Id            *string       `json:"id,omitempty"`
-	InvocationRef *ResourceLink `json:"invocationRef,omitempty"`
-	Name          *string       `json:"name,omitempty"`
+	Description   *string             `json:"description,omitempty"`
+	Download      *bool               `json:"download,omitempty"`
+	Id            *string             `json:"id,omitempty"`
+	InvocationRef *ResourceLink       `json:"invocationRef,omitempty"`
+	Name          *string             `json:"name,omitempty"`
+	Parameters    *[]*FieldDescriptor `json:"parameters,omitempty"`
 }
 
 //ActionDescriptor - Describes an arbitrary action that is available for a plugin.
 type ActionDescriptor struct {
-	Description         *string `json:"description,omitempty"`
-	Download            *bool   `json:"download,omitempty"`
-	DownloadContentType *string `json:"downloadContentType,omitempty"`
-	DownloadFileName    *string `json:"downloadFileName,omitempty"`
-	Name                *string `json:"name,omitempty"`
+	Description         *string             `json:"description,omitempty"`
+	Download            *bool               `json:"download,omitempty"`
+	DownloadContentType *string             `json:"downloadContentType,omitempty"`
+	DownloadFileName    *string             `json:"downloadFileName,omitempty"`
+	Name                *string             `json:"name,omitempty"`
+	Parameters          *[]*FieldDescriptor `json:"parameters,omitempty"`
+}
+
+//ActionOptions - Action options to invoke action.
+type ActionOptions struct {
+	Parameters *[]*ActionParameter `json:"parameters,omitempty"`
+}
+
+//ActionParameter - An action parameter value.
+type ActionParameter struct {
+	Name  *string `json:"name,omitempty"`
+	Value *string `json:"value,omitempty"`
 }
 
 //ActionResult - The result for non-download plugin actions.
@@ -284,9 +300,9 @@ type AttributeRules struct {
 
 //AttributeSource - The configured settings to look up attributes from an associated data store.
 type AttributeSource struct {
-	LdapAttributeSource
 	CustomAttributeSource
 	JdbcAttributeSource
+	LdapAttributeSource
 	AttributeContractFulfillment map[string]*AttributeFulfillmentValue `json:"attributeContractFulfillment,omitempty"`
 	DataStoreRef                 *ResourceLink                         `json:"dataStoreRef,omitempty"`
 	Description                  *string                               `json:"description,omitempty"`
@@ -367,6 +383,7 @@ type AuthenticationPolicyTree struct {
 	AuthenticationApiApplicationRef *ResourceLink                 `json:"authenticationApiApplicationRef,omitempty"`
 	Description                     *string                       `json:"description,omitempty"`
 	Enabled                         *bool                         `json:"enabled,omitempty"`
+	Id                              *string                       `json:"id,omitempty"`
 	Name                            *string                       `json:"name,omitempty"`
 	RootNode                        *AuthenticationPolicyTreeNode `json:"rootNode,omitempty"`
 }
@@ -383,6 +400,7 @@ type AuthenticationSelector struct {
 	Configuration       *PluginConfiguration                     `json:"configuration,omitempty"`
 	Id                  *string                                  `json:"id,omitempty"`
 	Name                *string                                  `json:"name,omitempty"`
+	ParentRef           *ResourceLink                            `json:"parentRef,omitempty"`
 	PluginDescriptorRef *ResourceLink                            `json:"pluginDescriptorRef,omitempty"`
 }
 
@@ -441,11 +459,12 @@ type AuthenticationSource struct {
 
 //AuthnApiApplication - Authentication API Application.
 type AuthnApiApplication struct {
-	AdditionalAllowedOrigins *[]*string `json:"additionalAllowedOrigins,omitempty"`
-	Description              *string    `json:"description,omitempty"`
-	Id                       *string    `json:"id,omitempty"`
-	Name                     *string    `json:"name,omitempty"`
-	Url                      *string    `json:"url,omitempty"`
+	AdditionalAllowedOrigins     *[]*string    `json:"additionalAllowedOrigins,omitempty"`
+	ClientForRedirectlessModeRef *ResourceLink `json:"clientForRedirectlessModeRef,omitempty"`
+	Description                  *string       `json:"description,omitempty"`
+	Id                           *string       `json:"id,omitempty"`
+	Name                         *string       `json:"name,omitempty"`
+	Url                          *string       `json:"url,omitempty"`
 }
 
 //AuthnApiApplications - A collection of Authentication API Application items.
@@ -455,9 +474,11 @@ type AuthnApiApplications struct {
 
 //AuthnApiSettings - Authentication API Application Settings.
 type AuthnApiSettings struct {
-	ApiEnabled            *bool         `json:"apiEnabled,omitempty"`
-	DefaultApplicationRef *ResourceLink `json:"defaultApplicationRef,omitempty"`
-	EnableApiDescriptions *bool         `json:"enableApiDescriptions,omitempty"`
+	ApiEnabled                       *bool         `json:"apiEnabled,omitempty"`
+	DefaultApplicationRef            *ResourceLink `json:"defaultApplicationRef,omitempty"`
+	EnableApiDescriptions            *bool         `json:"enableApiDescriptions,omitempty"`
+	IncludeRequestContext            *bool         `json:"includeRequestContext,omitempty"`
+	RestrictAccessToRedirectlessMode *bool         `json:"restrictAccessToRedirectlessMode,omitempty"`
 }
 
 //AuthnContextMapping - The authentication context mapping between local and remote values.
@@ -500,6 +521,7 @@ type AuthorizationServerSettings struct {
 	DisallowPlainPKCE                      *bool                    `json:"disallowPlainPKCE,omitempty"`
 	ExclusiveScopeGroups                   *[]*ScopeGroupEntry      `json:"exclusiveScopeGroups,omitempty"`
 	ExclusiveScopes                        *[]*ScopeEntry           `json:"exclusiveScopes,omitempty"`
+	IncludeIssuerInAuthorizationResponse   *bool                    `json:"includeIssuerInAuthorizationResponse,omitempty"`
 	ParReferenceLength                     *int                     `json:"parReferenceLength,omitempty"`
 	ParReferenceTimeout                    *int                     `json:"parReferenceTimeout,omitempty"`
 	ParStatus                              *string                  `json:"parStatus,omitempty"`
@@ -509,7 +531,7 @@ type AuthorizationServerSettings struct {
 	PersistentGrantIdleTimeoutTimeUnit     *string                  `json:"persistentGrantIdleTimeoutTimeUnit,omitempty"`
 	PersistentGrantLifetime                *int                     `json:"persistentGrantLifetime,omitempty"`
 	PersistentGrantLifetimeUnit            *string                  `json:"persistentGrantLifetimeUnit,omitempty"`
-	PersistentGrantReuseGrantTypes         []*string                `json:"persistentGrantReuseGrantTypes,omitempty"`
+	PersistentGrantReuseGrantTypes         *[]*string               `json:"persistentGrantReuseGrantTypes,omitempty"`
 	RefreshRollingInterval                 *int                     `json:"refreshRollingInterval,omitempty"`
 	RefreshTokenLength                     *int                     `json:"refreshTokenLength,omitempty"`
 	RegisteredAuthorizationPath            *string                  `json:"registeredAuthorizationPath,omitempty"`
@@ -526,8 +548,8 @@ type AuthorizationServerSettings struct {
 
 //BackChannelAuth - The SOAP authentication methods when sending or receiving a message using SOAP back channel.
 type BackChannelAuth struct {
-	OutboundBackChannelAuth
 	InboundBackChannelAuth
+	OutboundBackChannelAuth
 	DigitalSignature     *bool                        `json:"digitalSignature,omitempty"`
 	HttpBasicCredentials *UsernamePasswordCredentials `json:"httpBasicCredentials,omitempty"`
 	Type                 *string                      `json:"type,omitempty"`
@@ -538,8 +560,6 @@ type BaseDefaultValueLocalIdentityField struct {
 	CheckboxLocalIdentityField
 	DateLocalIdentityField
 	TextLocalIdentityField
-	DropDownLocalIdentityField
-	HiddenLocalIdentityField
 	Attributes            map[string]*bool `json:"attributes,omitempty"`
 	DefaultValue          *string          `json:"defaultValue,omitempty"`
 	Id                    *string          `json:"id,omitempty"`
@@ -763,6 +783,8 @@ type Client struct {
 	PersistentGrantIdleTimeout               *int                        `json:"persistentGrantIdleTimeout,omitempty"`
 	PersistentGrantIdleTimeoutTimeUnit       *string                     `json:"persistentGrantIdleTimeoutTimeUnit,omitempty"`
 	PersistentGrantIdleTimeoutType           *string                     `json:"persistentGrantIdleTimeoutType,omitempty"`
+	PersistentGrantReuseGrantTypes           *[]*string                  `json:"persistentGrantReuseGrantTypes,omitempty"`
+	PersistentGrantReuseType                 *string                     `json:"persistentGrantReuseType,omitempty"`
 	RedirectUris                             *[]*string                  `json:"redirectUris,omitempty"`
 	RefreshRolling                           *string                     `json:"refreshRolling,omitempty"`
 	RefreshTokenRollingInterval              *int                        `json:"refreshTokenRollingInterval,omitempty"`
@@ -939,6 +961,17 @@ type ConfigTable struct {
 	Rows      *[]*ConfigRow `json:"rows,omitempty"`
 }
 
+//ConfigurationEncryptionKey - Configuration Encryption Key.
+type ConfigurationEncryptionKey struct {
+	CreationDate *string `json:"creationDate,omitempty"`
+	KeyId        *string `json:"keyId,omitempty"`
+}
+
+//ConfigurationEncryptionKeys - Configuration Encryption Keys.
+type ConfigurationEncryptionKeys struct {
+	Items *[]*ConfigurationEncryptionKey `json:"items,omitempty"`
+}
+
 //Connection - Settings shared by SP-side and IdP-side connections.
 type Connection struct {
 	IdpConnection
@@ -1082,18 +1115,12 @@ type CustomDataStoreDescriptors struct {
 	Items *[]*CustomDataStoreDescriptor `json:"items,omitempty"`
 }
 
-//DataSourceTag
-type DataSourceTag struct {
-	DefaultSource *bool      `json:"defaultSource,omitempty"`
-	Tags          *string    `json:"tags,omitempty"`
-	TagsHashSet   *[]*string `json:"tagsHashSet,omitempty"`
-}
-
 //DataStore - The set of attributes used to configure a data store.
 type DataStore struct {
+	CustomDataStore
 	JdbcDataStore
 	LdapDataStore
-	CustomDataStore
+	PingOneLdapGatewayDataStore
 	Id                  *string `json:"id,omitempty"`
 	MaskAttributeValues *bool   `json:"maskAttributeValues,omitempty"`
 	Type                *string `json:"type,omitempty"`
@@ -1235,14 +1262,20 @@ type EmailServerSettings struct {
 
 //EmailVerificationConfig - A local identity email verification configuration.
 type EmailVerificationConfig struct {
+	AllowedOtpCharacterSet               *string       `json:"allowedOtpCharacterSet,omitempty"`
 	EmailVerificationEnabled             *bool         `json:"emailVerificationEnabled,omitempty"`
 	EmailVerificationErrorTemplateName   *string       `json:"emailVerificationErrorTemplateName,omitempty"`
+	EmailVerificationOtpTemplateName     *string       `json:"emailVerificationOtpTemplateName,omitempty"`
 	EmailVerificationSentTemplateName    *string       `json:"emailVerificationSentTemplateName,omitempty"`
 	EmailVerificationSuccessTemplateName *string       `json:"emailVerificationSuccessTemplateName,omitempty"`
+	EmailVerificationType                *string       `json:"emailVerificationType,omitempty"`
 	FieldForEmailToVerify                *string       `json:"fieldForEmailToVerify,omitempty"`
 	FieldStoringVerificationStatus       *string       `json:"fieldStoringVerificationStatus,omitempty"`
 	NotificationPublisherRef             *ResourceLink `json:"notificationPublisherRef,omitempty"`
 	OtlTimeToLive                        *int          `json:"otlTimeToLive,omitempty"`
+	OtpLength                            *int          `json:"otpLength,omitempty"`
+	OtpRetryAttempts                     *int          `json:"otpRetryAttempts,omitempty"`
+	OtpTimeToLive                        *int          `json:"otpTimeToLive,omitempty"`
 	RequireVerifiedEmail                 *bool         `json:"requireVerifiedEmail,omitempty"`
 	RequireVerifiedEmailTemplateName     *string       `json:"requireVerifiedEmailTemplateName,omitempty"`
 	VerifyEmailTemplateName              *string       `json:"verifyEmailTemplateName,omitempty"`
@@ -1308,13 +1341,12 @@ type FieldConfig struct {
 
 //FieldDescriptor - Describes a plugin configuration field.
 type FieldDescriptor struct {
-	RadioGroupFieldDescriptor
-	SelectFieldDescriptor
+	BaseSelectionFieldDescriptor
 	CheckBoxFieldDescriptor
-	UploadFileFieldDescriptor
+	HashedTextFieldDescriptor
 	TextAreaFieldDescriptor
 	TextFieldDescriptor
-	HashedTextFieldDescriptor
+	UploadFileFieldDescriptor
 	Advanced     *bool   `json:"advanced,omitempty"`
 	DefaultValue *string `json:"defaultValue,omitempty"`
 	Description  *string `json:"description,omitempty"`
@@ -1429,7 +1461,7 @@ type IdpAdapterAttributeContract struct {
 	UniqueUserKeyAttribute *string                 `json:"uniqueUserKeyAttribute,omitempty"`
 }
 
-//IdpAdapterContractMapping
+//IdpAdapterContractMapping - An IdP Adapter Contract Mapping.
 type IdpAdapterContractMapping struct {
 	AttributeContractFulfillment map[string]*AttributeFulfillmentValue `json:"attributeContractFulfillment,omitempty"`
 	AttributeSources             *[]*AttributeSource                   `json:"attributeSources,omitempty"`
@@ -1683,6 +1715,7 @@ type Issuers struct {
 //JdbcAttributeSource - The configured settings used to look up attributes from a JDBC data store.
 type JdbcAttributeSource struct {
 	AttributeContractFulfillment map[string]*AttributeFulfillmentValue `json:"attributeContractFulfillment,omitempty"`
+	ColumnNames                  *[]*string                            `json:"columnNames,omitempty"`
 	DataStoreRef                 *ResourceLink                         `json:"dataStoreRef,omitempty"`
 	Description                  *string                               `json:"description,omitempty"`
 	Filter                       *string                               `json:"filter,omitempty"`
@@ -1725,15 +1758,23 @@ type JwksSettings struct {
 	JwksUrl *string `json:"jwksUrl,omitempty"`
 }
 
+//KerberosKeySet - Represents a set of Kerberos encryption keys.
+type KerberosKeySet struct {
+	DeactivatedAt   *string `json:"deactivatedAt,omitempty"`
+	EncryptedKeySet *string `json:"encryptedKeySet,omitempty"`
+}
+
 //KerberosRealm
 type KerberosRealm struct {
-	Id                              *string    `json:"id,omitempty"`
-	KerberosEncryptedPassword       *string    `json:"kerberosEncryptedPassword,omitempty"`
-	KerberosPassword                *string    `json:"kerberosPassword,omitempty"`
-	KerberosRealmName               *string    `json:"kerberosRealmName,omitempty"`
-	KerberosUsername                *string    `json:"kerberosUsername,omitempty"`
-	KeyDistributionCenters          *[]*string `json:"keyDistributionCenters,omitempty"`
-	SuppressDomainNameConcatenation *bool      `json:"suppressDomainNameConcatenation,omitempty"`
+	Id                                 *string            `json:"id,omitempty"`
+	KerberosEncryptedPassword          *string            `json:"kerberosEncryptedPassword,omitempty"`
+	KerberosPassword                   *string            `json:"kerberosPassword,omitempty"`
+	KerberosRealmName                  *string            `json:"kerberosRealmName,omitempty"`
+	KerberosUsername                   *string            `json:"kerberosUsername,omitempty"`
+	KeyDistributionCenters             *[]*string         `json:"keyDistributionCenters,omitempty"`
+	KeySets                            *[]*KerberosKeySet `json:"keySets,omitempty"`
+	RetainPreviousKeysOnPasswordChange *bool              `json:"retainPreviousKeysOnPasswordChange,omitempty"`
+	SuppressDomainNameConcatenation    *bool              `json:"suppressDomainNameConcatenation,omitempty"`
 }
 
 //KerberosRealms - A collection of Kerberos Realms.
@@ -1743,10 +1784,11 @@ type KerberosRealms struct {
 
 //KerberosRealmsSettings - Settings for all of the Kerberos Realms.
 type KerberosRealmsSettings struct {
-	DebugLogOutput *bool   `json:"debugLogOutput,omitempty"`
-	ForceTcp       *bool   `json:"forceTcp,omitempty"`
-	KdcRetries     *string `json:"kdcRetries,omitempty"`
-	KdcTimeout     *string `json:"kdcTimeout,omitempty"`
+	DebugLogOutput            *bool   `json:"debugLogOutput,omitempty"`
+	ForceTcp                  *bool   `json:"forceTcp,omitempty"`
+	KdcRetries                *string `json:"kdcRetries,omitempty"`
+	KdcTimeout                *string `json:"kdcTimeout,omitempty"`
+	KeySetRetentionPeriodMins *int    `json:"keySetRetentionPeriodMins,omitempty"`
 }
 
 //KeyAlgorithm - Details for a key algorithm.
@@ -1823,6 +1865,7 @@ type LdapAttributeSource struct {
 	Description                  *string                                 `json:"description,omitempty"`
 	Id                           *string                                 `json:"id,omitempty"`
 	MemberOfNestedGroup          *bool                                   `json:"memberOfNestedGroup,omitempty"`
+	SearchAttributes             *[]*string                              `json:"searchAttributes,omitempty"`
 	SearchFilter                 *string                                 `json:"searchFilter,omitempty"`
 	SearchScope                  *string                                 `json:"searchScope,omitempty"`
 	Type                         *string                                 `json:"type,omitempty"`
@@ -1947,14 +1990,11 @@ type LocalIdentityAuthSourceUpdatePolicy struct {
 
 //LocalIdentityField - Local identity profile fields.
 type LocalIdentityField struct {
-	CheckboxGroupLocalIdentityField
-	CheckboxLocalIdentityField
-	DateLocalIdentityField
-	TextLocalIdentityField
-	DropDownLocalIdentityField
+	BaseDefaultValueLocalIdentityField
+	BaseSelectionLocalIdentityField
 	EmailLocalIdentityField
-	PhoneLocalIdentityField
 	HiddenLocalIdentityField
+	PhoneLocalIdentityField
 	Attributes            map[string]*bool `json:"attributes,omitempty"`
 	Id                    *string          `json:"id,omitempty"`
 	Label                 *string          `json:"label,omitempty"`
@@ -2145,9 +2185,10 @@ type OIDCProviderSettings struct {
 
 //OIDCRequestParameter - An OIDC custom request parameter.
 type OIDCRequestParameter struct {
-	ApplicationEndpointOverride *bool   `json:"applicationEndpointOverride,omitempty"`
-	Name                        *string `json:"name,omitempty"`
-	Value                       *string `json:"value,omitempty"`
+	ApplicationEndpointOverride *bool                      `json:"applicationEndpointOverride,omitempty"`
+	AttributeValue              *AttributeFulfillmentValue `json:"attributeValue,omitempty"`
+	Name                        *string                    `json:"name,omitempty"`
+	Value                       *string                    `json:"value,omitempty"`
 }
 
 //OIDCSessionSettings - Settings relating to OpenID Connect session management.
@@ -2175,6 +2216,7 @@ type OcspSettings struct {
 type OpenIdConnectAttribute struct {
 	IncludeInIdToken  *bool   `json:"includeInIdToken,omitempty"`
 	IncludeInUserInfo *bool   `json:"includeInUserInfo,omitempty"`
+	MultiValued       *bool   `json:"multiValued,omitempty"`
 	Name              *string `json:"name,omitempty"`
 }
 
@@ -2200,6 +2242,7 @@ type OpenIdConnectPolicy struct {
 	IncludeSriInIdToken         *bool                           `json:"includeSriInIdToken,omitempty"`
 	IncludeUserInfoInIdToken    *bool                           `json:"includeUserInfoInIdToken,omitempty"`
 	Name                        *string                         `json:"name,omitempty"`
+	ReissueIdTokenInHybridFlow  *bool                           `json:"reissueIdTokenInHybridFlow,omitempty"`
 	ReturnIdTokenOnRefreshGrant *bool                           `json:"returnIdTokenOnRefreshGrant,omitempty"`
 	ScopeAttributeMappings      map[string]*ParameterValues     `json:"scopeAttributeMappings,omitempty"`
 }
@@ -2342,8 +2385,6 @@ type PasswordCredentialValidators struct {
 
 //Pattern
 type Pattern struct {
-	Flags   *int    `json:"flags,omitempty"`
-	Pattern *string `json:"pattern,omitempty"`
 }
 
 //PersistentGrantAttribute - A persistent grant contract attribute.
@@ -2419,6 +2460,20 @@ type PingOneForEnterpriseSettings struct {
 	PreviousAuthnKeyCreationTime     *string       `json:"previousAuthnKeyCreationTime,omitempty"`
 }
 
+//PingOneLdapGatewayDataStore - A LDAP gateway data store.
+type PingOneLdapGatewayDataStore struct {
+	BinaryAttributes     *[]*string    `json:"binaryAttributes,omitempty"`
+	Id                   *string       `json:"id,omitempty"`
+	LdapType             *string       `json:"ldapType,omitempty"`
+	MaskAttributeValues  *bool         `json:"maskAttributeValues,omitempty"`
+	Name                 *string       `json:"name,omitempty"`
+	PingOneConnectionRef *ResourceLink `json:"pingOneConnectionRef,omitempty"`
+	PingOneEnvironmentId *string       `json:"pingOneEnvironmentId,omitempty"`
+	PingOneLdapGatewayId *string       `json:"pingOneLdapGatewayId,omitempty"`
+	Type                 *string       `json:"type,omitempty"`
+	UseSsl               *bool         `json:"useSsl,omitempty"`
+}
+
 //PluginConfigDescriptor - Defines the configuration fields available for a plugin.
 type PluginConfigDescriptor struct {
 	ActionDescriptors *[]*ActionDescriptor `json:"actionDescriptors,omitempty"`
@@ -2435,6 +2490,18 @@ type PluginConfiguration struct {
 
 //PluginDescriptor - Defines a plugin type, including available configuration parameters.
 type PluginDescriptor struct {
+	AccessTokenManagerDescriptor
+	AuthenticationSelectorDescriptor
+	ClientRegistrationPolicyDescriptor
+	CustomDataStoreDescriptor
+	IdpAdapterDescriptor
+	NotificationPublisherDescriptor
+	OutOfBandAuthPluginDescriptor
+	PasswordCredentialValidatorDescriptor
+	SecretManagerDescriptor
+	SpAdapterDescriptor
+	TokenGeneratorDescriptor
+	TokenProcessorDescriptor
 	AttributeContract        *[]*string              `json:"attributeContract,omitempty"`
 	ClassName                *string                 `json:"className,omitempty"`
 	ConfigDescriptor         *PluginConfigDescriptor `json:"configDescriptor,omitempty"`
@@ -2455,13 +2522,13 @@ type PluginInstance struct {
 //PolicyAction - An authentication policy selection action.
 type PolicyAction struct {
 	ApcMappingPolicyAction
-	LocalIdentityMappingPolicyAction
 	AuthnSelectorPolicyAction
 	AuthnSourcePolicyAction
 	ContinuePolicyAction
-	RestartPolicyAction
 	DonePolicyAction
 	FragmentPolicyAction
+	LocalIdentityMappingPolicyAction
+	RestartPolicyAction
 	Context *string `json:"context,omitempty"`
 	Type    *string `json:"type,omitempty"`
 }
@@ -2720,6 +2787,35 @@ type ScopeGroupEntry struct {
 	Scopes      *[]*string `json:"scopes,omitempty"`
 }
 
+//SecretManager - A secret manager plugin instance.
+type SecretManager struct {
+	Configuration       *PluginConfiguration `json:"configuration,omitempty"`
+	Id                  *string              `json:"id,omitempty"`
+	Name                *string              `json:"name,omitempty"`
+	ParentRef           *ResourceLink        `json:"parentRef,omitempty"`
+	PluginDescriptorRef *ResourceLink        `json:"pluginDescriptorRef,omitempty"`
+}
+
+//SecretManagerDescriptor - A secret manager plugin descriptor.
+type SecretManagerDescriptor struct {
+	AttributeContract        *[]*string              `json:"attributeContract,omitempty"`
+	ClassName                *string                 `json:"className,omitempty"`
+	ConfigDescriptor         *PluginConfigDescriptor `json:"configDescriptor,omitempty"`
+	Id                       *string                 `json:"id,omitempty"`
+	Name                     *string                 `json:"name,omitempty"`
+	SupportsExtendedContract *bool                   `json:"supportsExtendedContract,omitempty"`
+}
+
+//SecretManagerDescriptors - A collection of secret manager plugin descriptors.
+type SecretManagerDescriptors struct {
+	Items *[]*SecretManagerDescriptor `json:"items,omitempty"`
+}
+
+//SecretManagers - A collection of secret manager plugin instances.
+type SecretManagers struct {
+	Items *[]*SecretManager `json:"items,omitempty"`
+}
+
 //SelectFieldDescriptor - A selection field that is intended to be rendered as a dropdown list of options.
 type SelectFieldDescriptor struct {
 	Advanced     *bool           `json:"advanced,omitempty"`
@@ -2816,7 +2912,7 @@ type SloServiceEndpoint struct {
 	Url         *string `json:"url,omitempty"`
 }
 
-//SourceTypeIdKey - A key that is meant to reference a source from which an attribute can be retrieved. This model is usually paired with a value which, depending on the SourceType, can be a hardcoded value or a reference to an attribute name specific to that SourceType. Not all values are applicable - a validation error will be returned for incorrect values.<br>For each SourceType, the value should be:<br>ACCOUNT_LINK - If account linking was enabled for the browser SSO, the value must be 'Local User ID', unless it has been overridden in PingFederate's server configuration.<br>ADAPTER - The value is one of the attributes of the IdP Adapter.<br>ASSERTION - The value is one of the attributes coming from the SAML assertion.<br>AUTHENTICATION_POLICY_CONTRACT - The value is one of the attributes coming from an authentication policy contract.<br>LOCAL_IDENTITY_PROFILE - The value is one of the fields coming from a local identity profile.<br>CONTEXT - The value must be one of the following ['TargetResource' or 'OAuthScopes' or 'ClientId' or 'AuthenticationCtx' or 'ClientIp' or 'Locale' or 'StsBasicAuthUsername' or 'StsSSLClientCertSubjectDN' or 'StsSSLClientCertChain' or 'VirtualServerId' or 'AuthenticatingAuthority' or 'DefaultPersistentGrantLifetime']<br>CLAIMS - Attributes provided by the OIDC Provider.<br>CUSTOM_DATA_STORE - The value is one of the attributes returned by this custom data store.<br>EXPRESSION - The value is an OGNL expression.<br>EXTENDED_CLIENT_METADATA - The value is from an OAuth extended client metadata parameter. This source type is deprecated and has been replaced by EXTENDED_PROPERTIES.<br>EXTENDED_PROPERTIES - The value is from an OAuth Client's extended property.<br>IDP_CONNECTION - The value is one of the attributes passed in by the IdP connection.<br>JDBC_DATA_STORE - The value is one of the column names returned from the JDBC attribute source.<br>LDAP_DATA_STORE - The value is one of the LDAP attributes supported by your LDAP data store.<br>MAPPED_ATTRIBUTES - The value is the name of one of the mapped attributes that is defined in the associated attribute mapping.<br>OAUTH_PERSISTENT_GRANT - The value is one of the attributes from the persistent grant.<br>PASSWORD_CREDENTIAL_VALIDATOR - The value is one of the attributes of the PCV.<br>NO_MAPPING - A placeholder value to indicate that an attribute currently has no mapped source.TEXT - A hardcoded value that is used to populate the corresponding attribute.<br>TOKEN - The value is one of the token attributes.<br>REQUEST - The value is from the request context such as the CIBA identity hint contract or the request contract for Ws-Trust.<br>TRACKED_HTTP_PARAMS - The value is from the original request parameters.<br>SUBJECT_TOKEN - The value is one of the OAuth 2.0 Token exchange subject_token attributes.<br>ACTOR_TOKEN - The value is one of the OAuth 2.0 Token exchange actor_token attributes.<br>TOKEN_EXCHANGE_PROCESSOR_POLICY - The value is one of the attributes coming from a Token Exchange Processor policy.<br>FRAGMENT - The value is one of the attributes coming from an authentication policy fragment.<br>INPUTS - The value is one of the attributes coming from an attribute defined in the input authentication policy contract for an authentication policy fragment.
+//SourceTypeIdKey - A key that is meant to reference a source from which an attribute can be retrieved. This model is usually paired with a value which, depending on the SourceType, can be a hardcoded value or a reference to an attribute name specific to that SourceType. Not all values are applicable - a validation error will be returned for incorrect values.<br>For each SourceType, the value should be:<br>ACCOUNT_LINK - If account linking was enabled for the browser SSO, the value must be 'Local User ID', unless it has been overridden in PingFederate's server configuration.<br>ADAPTER - The value is one of the attributes of the IdP Adapter.<br>ASSERTION - The value is one of the attributes coming from the SAML assertion.<br>AUTHENTICATION_POLICY_CONTRACT - The value is one of the attributes coming from an authentication policy contract.<br>LOCAL_IDENTITY_PROFILE - The value is one of the fields coming from a local identity profile.<br>CONTEXT - The value must be one of the following ['TargetResource' or 'OAuthScopes' or 'ClientId' or 'AuthenticationCtx' or 'ClientIp' or 'Locale' or 'StsBasicAuthUsername' or 'StsSSLClientCertSubjectDN' or 'StsSSLClientCertChain' or 'VirtualServerId' or 'AuthenticatingAuthority' or 'DefaultPersistentGrantLifetime'.]<br>CLAIMS - Attributes provided by the OIDC Provider.<br>CUSTOM_DATA_STORE - The value is one of the attributes returned by this custom data store.<br>EXPRESSION - The value is an OGNL expression.<br>EXTENDED_CLIENT_METADATA - The value is from an OAuth extended client metadata parameter. This source type is deprecated and has been replaced by EXTENDED_PROPERTIES.<br>EXTENDED_PROPERTIES - The value is from an OAuth Client's extended property.<br>IDP_CONNECTION - The value is one of the attributes passed in by the IdP connection.<br>JDBC_DATA_STORE - The value is one of the column names returned from the JDBC attribute source.<br>LDAP_DATA_STORE - The value is one of the LDAP attributes supported by your LDAP data store.<br>MAPPED_ATTRIBUTES - The value is the name of one of the mapped attributes that is defined in the associated attribute mapping.<br>OAUTH_PERSISTENT_GRANT - The value is one of the attributes from the persistent grant.<br>PASSWORD_CREDENTIAL_VALIDATOR - The value is one of the attributes of the PCV.<br>NO_MAPPING - A placeholder value to indicate that an attribute currently has no mapped source.TEXT - A hardcoded value that is used to populate the corresponding attribute.<br>TOKEN - The value is one of the token attributes.<br>REQUEST - The value is from the request context such as the CIBA identity hint contract or the request contract for Ws-Trust.<br>TRACKED_HTTP_PARAMS - The value is from the original request parameters.<br>SUBJECT_TOKEN - The value is one of the OAuth 2.0 Token exchange subject_token attributes.<br>ACTOR_TOKEN - The value is one of the OAuth 2.0 Token exchange actor_token attributes.<br>TOKEN_EXCHANGE_PROCESSOR_POLICY - The value is one of the attributes coming from a Token Exchange Processor policy.<br>FRAGMENT - The value is one of the attributes coming from an authentication policy fragment.<br>INPUTS - The value is one of the attributes coming from an attribute defined in the input authentication policy contract for an authentication policy fragment.
 type SourceTypeIdKey struct {
 	Id   *string `json:"id,omitempty"`
 	Type *string `json:"type,omitempty"`
