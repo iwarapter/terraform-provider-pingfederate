@@ -396,7 +396,7 @@ func expandAttributeMapping(in []interface{}) *pf.AttributeMapping {
 		if v, ok := l["attribute_contract_fulfillment"]; ok {
 			iac.AttributeContractFulfillment = expandMapOfAttributeFulfillmentValue(v.(*schema.Set).List())
 		}
-		if v, ok := l["issuance_criteria"]; ok && len(v.([]interface{})) > 0 {
+		if v, ok := l["issuance_criteria"]; ok && len(v.([]interface{})) > 0 && v.([]interface{})[0] != nil {
 			iac.IssuanceCriteria = expandIssuanceCriteria(v.([]interface{})[0].(map[string]interface{}))
 		}
 

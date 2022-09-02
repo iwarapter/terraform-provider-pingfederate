@@ -2,6 +2,7 @@ package pingfederate
 
 import (
 	"fmt"
+	"regexp"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -67,6 +68,77 @@ func TestAccPingFederateAuthenticationPolicyFragmentResource(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccPingFederateAuthenticationPolicyFragementResourceIssue213(t *testing.T) {
+	resource.ParallelTest(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckPingFederateAuthenticationPolicyFragmentResourceDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: `
+resource "pingfederate_authentication_policy_fragment" "first_factor" {
+  name        = "FirstFactor"
+  description = "Used for CIAM - First Factor"
+  inputs {
+    id = "example"
+  }
+  outputs {
+    id = "example"
+  }
+
+  root_node {
+    action {
+      type = "AUTHN_SOURCE"
+      authentication_source {
+        type = "IDP_ADAPTER"
+        source_ref {
+          id = "example"
+        }
+      }
+      attribute_rules {
+        items {
+          attribute_name = "policy.action"
+          condition = "EQUALS_CASE_INSENSITIVE"
+          expected_value = "identity.registration"
+          result = "Register"
+        }
+        fallback_to_success = true
+      }
+    }
+    children {
+      action {
+        type    = "DONE"
+        context = "Fail"
+      }
+    }
+    children {
+      action {
+        type    = "LOCAL_IDENTITY_MAPPING"
+        context = "Register"
+        local_identity_ref {
+          id = "test"
+        }
+        outbound_attribute_mapping {
+          attribute_contract_fulfillment {
+            key_name = "test"
+            source {
+              type = "LOCAL_IDENTITY_PROFILE"
+              id = "regIdentityProfile"
+            }
+            value = "test"
+          }
+          issuance_criteria {}
+        }
+      }
+    }
+  }
+}
+`,
+				ExpectError: regexp.MustCompile(`The local identity profile ID is not valid.`),
 			},
 		},
 	})

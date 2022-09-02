@@ -164,6 +164,9 @@ func validateConfiguration(d *schema.ResourceDiff, desc *pf.PluginConfigDescript
 }
 
 func hasField(name string, c *pf.PluginConfiguration) bool {
+	if c.Fields == nil {
+		return false
+	}
 	for _, field := range *c.Fields {
 		if *field.Name == name {
 			return true
