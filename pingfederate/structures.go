@@ -1257,7 +1257,7 @@ func resourceAttributeMapping() *schema.Resource {
 			},
 			"attribute_contract_fulfillment": {
 				Type:        schema.TypeSet,
-				Required:    true,
+				Optional:    true,
 				Description: "A list of mappings from attribute names to their fulfillment values.",
 				Elem:        resourceAttributeFulfillmentValue(),
 			},

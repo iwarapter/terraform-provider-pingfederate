@@ -392,6 +392,9 @@ func expandOpenIdConnectAttributeContract(in []interface{}) *pf.OpenIdConnectAtt
 func expandAttributeMapping(in []interface{}) *pf.AttributeMapping {
 	iac := &pf.AttributeMapping{AttributeSources: &[]*pf.AttributeSource{}}
 	for _, raw := range in {
+		if raw == nil {
+			continue
+		}
 		l := raw.(map[string]interface{})
 		if v, ok := l["attribute_contract_fulfillment"]; ok {
 			iac.AttributeContractFulfillment = expandMapOfAttributeFulfillmentValue(v.(*schema.Set).List())
