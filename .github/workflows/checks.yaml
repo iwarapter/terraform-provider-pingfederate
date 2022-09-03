@@ -6,10 +6,10 @@ jobs:
     env:
       GO111MODULE: on
     steps:
-      - name: Set up Go 1.17
+      - name: Set up Go
         uses: actions/setup-go@v2.1.5
         with:
-          go-version: 1.17
+          go-version: 1.18
 
       - name: Install tools
         run: |
@@ -23,7 +23,6 @@ jobs:
         run: |
           export PATH=$PATH:$(go env GOPATH)/bin
           staticcheck ./...
-
       - name: Check dependencies
         run: |
           go mod tidy
@@ -36,9 +35,7 @@ jobs:
 
       - name: Run Gosec Security Scanner
         uses: securego/gosec@master
+        env:
+          GOROOT: ''
         with:
-          args: '-no-fail -fmt sarif -out results.sarif ./...'
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: results.sarif
+          args: ./...
