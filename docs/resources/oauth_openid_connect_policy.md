@@ -128,12 +128,9 @@ Read-Only:
 <a id="nestedblock--attribute_mapping"></a>
 ### Nested Schema for `attribute_mapping`
 
-Required:
-
-- `attribute_contract_fulfillment` (Block Set, Min: 1) A list of mappings from attribute names to their fulfillment values. (see [below for nested schema](#nestedblock--attribute_mapping--attribute_contract_fulfillment))
-
 Optional:
 
+- `attribute_contract_fulfillment` (Block Set) A list of mappings from attribute names to their fulfillment values. (see [below for nested schema](#nestedblock--attribute_mapping--attribute_contract_fulfillment))
 - `custom_attribute_source` (Block List) A list of custom configured data stores to look up attributes from. (see [below for nested schema](#nestedblock--attribute_mapping--custom_attribute_source))
 - `issuance_criteria` (Block List, Max: 1) The issuance criteria that this transaction must meet before the corresponding attribute contract is fulfilled. (see [below for nested schema](#nestedblock--attribute_mapping--issuance_criteria))
 - `jdbc_attribute_source` (Block List) A list of jdbc configured data stores to look up attributes from. (see [below for nested schema](#nestedblock--attribute_mapping--jdbc_attribute_source))

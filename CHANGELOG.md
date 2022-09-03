@@ -1,4 +1,16 @@
-## 0.0.24 (Unreleased)
+## 0.0.25 (Unreleased)
+
+FEATURES:
+
+- Add support for `user_id_authenticated` within `AUTHN_SOURCE` policy actions. (#215)
+
+BUG FIXES:
+
+- Fixed issue with empty configuration blocks. (#206)
+- Fixed issue with empty issuance criteria blocks. (#213)
+- Allowed empty `inbound_mapping` for policies. (#213)
+
+## 0.0.24 (February 17th, 2022)
 
 FEATURES:
 - Add support for `pingfederate_idp_token_processor`. (#160)
