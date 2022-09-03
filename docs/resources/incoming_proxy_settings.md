@@ -32,17 +32,17 @@ resource "pingfederate_incoming_proxy_settings" "settings" {
 
 ### Optional
 
-- **client_cert_chain_sslheader_name** (String) While the proxy server is configured to pass client certificates as HTTP request headers, specify the chain header name here.
-- **client_cert_sslheader_name** (String) While the proxy server is configured to pass client certificates as HTTP request headers, specify the header name here.
-- **forwarded_host_header_index** (String) PingFederate combines multiple comma-separated header values into the same order that they are received. Define which hostname you want to use. Default is to use the last hostname.
-- **forwarded_host_header_name** (String) Globally specify the header name (for example, X-Forwarded-Host) where PingFederate should attempt to retrieve the hostname and port in all HTTP requests.
-- **forwarded_ip_address_header_index** (String) PingFederate combines multiple comma-separated header values into the same order that they are received. Define which IP address you want to use. Default is to use the last address.
-- **forwarded_ip_address_header_name** (String) Globally specify the header name (for example, X-Forwarded-For) where PingFederate should attempt to retrieve the client IP address in all HTTP requests.
-- **proxy_terminates_https_conns** (Boolean) Allows you to globally specify that connections to the reverse proxy are made over HTTPS even when HTTP is used between the reverse proxy and PingFederate.
+- `client_cert_chain_sslheader_name` (String) While the proxy server is configured to pass client certificates as HTTP request headers, specify the chain header name here.
+- `client_cert_sslheader_name` (String) While the proxy server is configured to pass client certificates as HTTP request headers, specify the header name here.
+- `forwarded_host_header_index` (String) PingFederate combines multiple comma-separated header values into the same order that they are received. Define which hostname you want to use. Default is to use the last hostname.
+- `forwarded_host_header_name` (String) Globally specify the header name (for example, X-Forwarded-Host) where PingFederate should attempt to retrieve the hostname and port in all HTTP requests.
+- `forwarded_ip_address_header_index` (String) PingFederate combines multiple comma-separated header values into the same order that they are received. Define which IP address you want to use. Default is to use the last address.
+- `forwarded_ip_address_header_name` (String) Globally specify the header name (for example, X-Forwarded-For) where PingFederate should attempt to retrieve the client IP address in all HTTP requests.
+- `proxy_terminates_https_conns` (Boolean) Allows you to globally specify that connections to the reverse proxy are made over HTTPS even when HTTP is used between the reverse proxy and PingFederate.
 
 ### Read-Only
 
-- **id** (String) The ID of this resource.
+- `id` (String) The ID of this resource.
 
 ## Import
 

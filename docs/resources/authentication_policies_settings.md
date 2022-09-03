@@ -27,12 +27,12 @@ resource "pingfederate_authentication_policies_settings" "settings" {
 
 ### Optional
 
-- **enable_idp_authn_selection** (Boolean) Enable IdP authentication policies.
-- **enable_sp_authn_selection** (Boolean) Enable SP authentication policies.
+- `enable_idp_authn_selection` (Boolean) Enable IdP authentication policies.
+- `enable_sp_authn_selection` (Boolean) Enable SP authentication policies.
 
 ### Read-Only
 
-- **id** (String) The ID of this resource.
+- `id` (String) The ID of this resource.
 
 ## Import
 

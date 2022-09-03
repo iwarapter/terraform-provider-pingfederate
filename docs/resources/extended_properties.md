@@ -33,23 +33,23 @@ resource "pingfederate_extended_properties" "example" {
 
 ### Optional
 
-- **property** (Block Set) The actual list of Extended Property definitions. (see [below for nested schema](#nestedblock--property))
+- `property` (Block Set) The actual list of Extended Property definitions. (see [below for nested schema](#nestedblock--property))
 
 ### Read-Only
 
-- **id** (String) The ID of this resource.
+- `id` (String) The ID of this resource.
 
 <a id="nestedblock--property"></a>
 ### Nested Schema for `property`
 
 Required:
 
-- **name** (String) The property name.
+- `name` (String) The property name.
 
 Optional:
 
-- **description** (String) The property description.
-- **multi_valued** (Boolean) Indicates whether the property should allow multiple values.
+- `description` (String) The property description.
+- `multi_valued` (Boolean) Indicates whether the property should allow multiple values.
 
 ## Import
 

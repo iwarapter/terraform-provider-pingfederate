@@ -523,6 +523,9 @@ func expandPolicyAction(in []interface{}) *pf.PolicyAction {
 		if v, ok := l["fragment"]; ok && len(v.([]interface{})) > 0 {
 			action.Fragment = expandResourceLink(v.([]interface{})[0].(map[string]interface{}))
 		}
+		if v, ok := l["user_id_authenticated"]; ok && action.Type != nil && *action.Type == "AUTHN_SOURCE" {
+			action.AuthnSourcePolicyAction.UserIdAuthenticated = Bool(v.(bool))
+		}
 	}
 	return action
 }

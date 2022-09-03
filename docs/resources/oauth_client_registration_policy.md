@@ -57,41 +57,41 @@ resource "pingfederate_oauth_client_registration_policy" "demo" {
 
 ### Required
 
-- **configuration** (Block List, Min: 1, Max: 1) Plugin instance configuration. (see [below for nested schema](#nestedblock--configuration))
-- **name** (String) The plugin instance name. The name cannot be modified once the instance is created.
-- **plugin_descriptor_ref** (Block List, Min: 1, Max: 1) Reference to the plugin descriptor for this instance. The plugin descriptor cannot be modified once the instance is created.
+- `configuration` (Block List, Min: 1, Max: 1) Plugin instance configuration. (see [below for nested schema](#nestedblock--configuration))
+- `name` (String) The plugin instance name. The name cannot be modified once the instance is created.
+- `plugin_descriptor_ref` (Block List, Min: 1, Max: 1) Reference to the plugin descriptor for this instance. The plugin descriptor cannot be modified once the instance is created.
 Note: Ignored when specifying a connection's adapter override. (see [below for nested schema](#nestedblock--plugin_descriptor_ref))
 
 ### Optional
 
-- **parent_ref** (Block List, Max: 1) The reference to this plugin's parent instance. The parent reference is only accepted if the plugin type supports parent instances.
+- `parent_ref` (Block List, Max: 1) The reference to this plugin's parent instance. The parent reference is only accepted if the plugin type supports parent instances.
 Note: This parent reference is required if this plugin instance is used as an overriding plugin (e.g. connection adapter overrides) (see [below for nested schema](#nestedblock--parent_ref))
-- **policy_id** (String) The persistent, unique ID for the plugin instance. It can be any combination of [a-zA-Z0-9._-]. This property is system-assigned if not specified.
+- `policy_id` (String) The persistent, unique ID for the plugin instance. It can be any combination of [a-zA-Z0-9._-]. This property is system-assigned if not specified.
 
 ### Read-Only
 
-- **id** (String) The ID of this resource.
+- `id` (String) The ID of this resource.
 
 <a id="nestedblock--configuration"></a>
 ### Nested Schema for `configuration`
 
 Optional:
 
-- **fields** (Block Set) List of configuration fields. (see [below for nested schema](#nestedblock--configuration--fields))
-- **sensitive_fields** (Block Set) List of sensitive configuration fields. (see [below for nested schema](#nestedblock--configuration--sensitive_fields))
-- **tables** (Block List) List of configuration tables. (see [below for nested schema](#nestedblock--configuration--tables))
+- `fields` (Block Set) List of configuration fields. (see [below for nested schema](#nestedblock--configuration--fields))
+- `sensitive_fields` (Block Set) List of sensitive configuration fields. (see [below for nested schema](#nestedblock--configuration--sensitive_fields))
+- `tables` (Block List) List of configuration tables. (see [below for nested schema](#nestedblock--configuration--tables))
 
 <a id="nestedblock--configuration--fields"></a>
 ### Nested Schema for `configuration.fields`
 
 Required:
 
-- **name** (String) The name of the configuration field.
+- `name` (String) The name of the configuration field.
 
 Optional:
 
-- **inherited** (Boolean) Whether this field is inherited from its parent instance. If true, the value/encrypted value properties become read-only. The default value is false.
-- **value** (String) The value for the configuration field.
+- `inherited` (Boolean) Whether this field is inherited from its parent instance. If true, the value/encrypted value properties become read-only. The default value is false.
+- `value` (String) The value for the configuration field.
 
 
 <a id="nestedblock--configuration--sensitive_fields"></a>
@@ -99,12 +99,12 @@ Optional:
 
 Required:
 
-- **name** (String) The name of the configuration field.
+- `name` (String) The name of the configuration field.
 
 Optional:
 
-- **inherited** (Boolean) Whether this field is inherited from its parent instance. If true, the value/encrypted value properties become read-only. The default value is false.
-- **value** (String, Sensitive) The value for the configuration field. For encrypted or hashed fields, GETs will not return this attribute. To update an encrypted or hashed field, specify the new value in this attribute.
+- `inherited` (Boolean) Whether this field is inherited from its parent instance. If true, the value/encrypted value properties become read-only. The default value is false.
+- `value` (String, Sensitive) The value for the configuration field. For encrypted or hashed fields, GETs will not return this attribute. To update an encrypted or hashed field, specify the new value in this attribute.
 
 
 <a id="nestedblock--configuration--tables"></a>
@@ -112,33 +112,33 @@ Optional:
 
 Required:
 
-- **name** (String) The name of the table.
+- `name` (String) The name of the table.
 
 Optional:
 
-- **inherited** (Boolean) Whether this table is inherited from its parent instance. If true, the rows become read-only. The default value is false.
-- **rows** (Block List) List of table rows. (see [below for nested schema](#nestedblock--configuration--tables--rows))
+- `inherited` (Boolean) Whether this table is inherited from its parent instance. If true, the rows become read-only. The default value is false.
+- `rows` (Block List) List of table rows. (see [below for nested schema](#nestedblock--configuration--tables--rows))
 
 <a id="nestedblock--configuration--tables--rows"></a>
 ### Nested Schema for `configuration.tables.rows`
 
 Optional:
 
-- **default_row** (Boolean) Whether this row is the default.
-- **fields** (Block Set) List of configuration fields. (see [below for nested schema](#nestedblock--configuration--tables--rows--fields))
-- **sensitive_fields** (Block Set) List of sensitive configuration fields. (see [below for nested schema](#nestedblock--configuration--tables--rows--sensitive_fields))
+- `default_row` (Boolean) Whether this row is the default.
+- `fields` (Block Set) List of configuration fields. (see [below for nested schema](#nestedblock--configuration--tables--rows--fields))
+- `sensitive_fields` (Block Set) List of sensitive configuration fields. (see [below for nested schema](#nestedblock--configuration--tables--rows--sensitive_fields))
 
 <a id="nestedblock--configuration--tables--rows--fields"></a>
 ### Nested Schema for `configuration.tables.rows.fields`
 
 Required:
 
-- **name** (String) The name of the configuration field.
+- `name` (String) The name of the configuration field.
 
 Optional:
 
-- **inherited** (Boolean) Whether this field is inherited from its parent instance. If true, the value/encrypted value properties become read-only. The default value is false.
-- **value** (String) The value for the configuration field.
+- `inherited` (Boolean) Whether this field is inherited from its parent instance. If true, the value/encrypted value properties become read-only. The default value is false.
+- `value` (String) The value for the configuration field.
 
 
 <a id="nestedblock--configuration--tables--rows--sensitive_fields"></a>
@@ -146,12 +146,12 @@ Optional:
 
 Required:
 
-- **name** (String) The name of the configuration field.
+- `name` (String) The name of the configuration field.
 
 Optional:
 
-- **inherited** (Boolean) Whether this field is inherited from its parent instance. If true, the value/encrypted value properties become read-only. The default value is false.
-- **value** (String, Sensitive) The value for the configuration field. For encrypted or hashed fields, GETs will not return this attribute. To update an encrypted or hashed field, specify the new value in this attribute.
+- `inherited` (Boolean) Whether this field is inherited from its parent instance. If true, the value/encrypted value properties become read-only. The default value is false.
+- `value` (String, Sensitive) The value for the configuration field. For encrypted or hashed fields, GETs will not return this attribute. To update an encrypted or hashed field, specify the new value in this attribute.
 
 
 
@@ -162,11 +162,11 @@ Optional:
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 
 <a id="nestedblock--parent_ref"></a>
@@ -174,11 +174,11 @@ Read-Only:
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 ## Import
 

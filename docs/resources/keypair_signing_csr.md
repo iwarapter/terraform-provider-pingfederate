@@ -81,9 +81,9 @@ resource "tls_self_signed_cert" "example" {
 
 ### Required
 
-- **file_data** (String) The CSR response file data in PKCS7 format or as an X.509 certificate. PEM encoding (with or without the header and footer lines) is required. New line characters should be omitted or encoded in this value.
-- **keypair_id** (String) ID of the key pair.
+- `file_data` (String) The CSR response file data in PKCS7 format or as an X.509 certificate. PEM encoding (with or without the header and footer lines) is required. New line characters should be omitted or encoded in this value.
+- `keypair_id` (String) ID of the key pair.
 
 ### Read-Only
 
-- **id** (String) The ID of this resource.
+- `id` (String) The ID of this resource.

@@ -147,6 +147,7 @@ The `action` block
 - `context` - (Optional) The result context.
 - `input_user_id_mapping` - (Optional) The input user id mapping.
 - `type` - (Required) The authentication selection type.
+- `user_id_authenticated` (Boolean) Indicates whether the user ID obtained by the user ID mapping is authenticated.
 
 #### ContinuePolicyAction
 

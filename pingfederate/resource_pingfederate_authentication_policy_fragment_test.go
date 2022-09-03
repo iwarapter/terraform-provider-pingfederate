@@ -294,27 +294,6 @@ func Test_resourcePingFederateAuthenticationPolicyFragmentResourceReadData(t *te
 						AuthnSelectorPolicyAction: pf.AuthnSelectorPolicyAction{
 							AuthenticationSelectorRef: &pf.ResourceLink{Id: String("foo")},
 						},
-						AuthnSourcePolicyAction: pf.AuthnSourcePolicyAction{
-							AuthenticationSource: &pf.AuthenticationSource{
-								SourceRef: &pf.ResourceLink{Id: String("foo")},
-								Type:      String("foo"),
-							},
-							InputUserIdMapping: &pf.AttributeFulfillmentValue{
-								Value:  String("bar"),
-								Source: &pf.SourceTypeIdKey{Id: String("key"), Type: String("t")},
-							},
-							AttributeRules: &pf.AttributeRules{
-								FallbackToSuccess: Bool(true),
-								Items: &[]*pf.AttributeRule{
-									{
-										AttributeName: String("foo"),
-										Condition:     String("foo"),
-										ExpectedValue: String("foo"),
-										Result:        String("foo"),
-									},
-								},
-							},
-						},
 						FragmentPolicyAction: pf.FragmentPolicyAction{
 							Fragment: &pf.ResourceLink{
 								Id: String("2"),
@@ -335,8 +314,30 @@ func Test_resourcePingFederateAuthenticationPolicyFragmentResourceReadData(t *te
 					Children: &[]*pf.AuthenticationPolicyTreeNode{
 						{
 							Action: &pf.PolicyAction{
-								Type:    String("RESTART"),
+								Type:    String("AUTHN_SOURCE"),
 								Context: String("Fail"),
+								AuthnSourcePolicyAction: pf.AuthnSourcePolicyAction{
+									AuthenticationSource: &pf.AuthenticationSource{
+										SourceRef: &pf.ResourceLink{Id: String("foo")},
+										Type:      String("foo"),
+									},
+									InputUserIdMapping: &pf.AttributeFulfillmentValue{
+										Value:  String("bar"),
+										Source: &pf.SourceTypeIdKey{Id: String("key"), Type: String("t")},
+									},
+									AttributeRules: &pf.AttributeRules{
+										FallbackToSuccess: Bool(true),
+										Items: &[]*pf.AttributeRule{
+											{
+												AttributeName: String("foo"),
+												Condition:     String("foo"),
+												ExpectedValue: String("foo"),
+												Result:        String("foo"),
+											},
+										},
+									},
+									UserIdAuthenticated: Bool(true),
+								},
 							},
 							Children: &[]*pf.AuthenticationPolicyTreeNode{
 								{

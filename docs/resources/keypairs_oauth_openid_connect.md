@@ -33,49 +33,49 @@ resource "pingfederate_keypairs_oauth_openid_connect" "example" {
 
 ### Required
 
-- **rsa_active_cert_ref** (Block List, Min: 1, Max: 1) Reference to the RSA key currently active. (see [below for nested schema](#nestedblock--rsa_active_cert_ref))
-- **static_jwks_enabled** (Boolean) Enable static keys.
+- `rsa_active_cert_ref` (Block List, Min: 1, Max: 1) Reference to the RSA key currently active. (see [below for nested schema](#nestedblock--rsa_active_cert_ref))
+- `static_jwks_enabled` (Boolean) Enable static keys.
 
 ### Optional
 
-- **p256_active_cert_ref** (Block List, Max: 1) Reference to the P-256 key currently active. (see [below for nested schema](#nestedblock--p256_active_cert_ref))
-- **p256_decryption_active_cert_ref** (Block List, Max: 1) Reference to the P-256 decryption key currently active. (see [below for nested schema](#nestedblock--p256_decryption_active_cert_ref))
-- **p256_decryption_previous_cert_ref** (Block List, Max: 1) Reference to the P-256 decryption key previously active. (see [below for nested schema](#nestedblock--p256_decryption_previous_cert_ref))
-- **p256_decryption_publish_x5c_parameter** (Boolean) Enable publishing of the P-256 certificate chain associated with the active key.
-- **p256_previous_cert_ref** (Block List, Max: 1) Reference to the P-256 key previously active. (see [below for nested schema](#nestedblock--p256_previous_cert_ref))
-- **p256_publish_x5c_parameter** (Boolean) Enable publishing of the P-256 certificate chain associated with the active key.
-- **p384_active_cert_ref** (Block List, Max: 1) Reference to the P-384 key currently active. (see [below for nested schema](#nestedblock--p384_active_cert_ref))
-- **p384_decryption_active_cert_ref** (Block List, Max: 1) Reference to the P-384 decryption key currently active. (see [below for nested schema](#nestedblock--p384_decryption_active_cert_ref))
-- **p384_decryption_previous_cert_ref** (Block List, Max: 1) Reference to the P-384 decryption key previously active. (see [below for nested schema](#nestedblock--p384_decryption_previous_cert_ref))
-- **p384_decryption_publish_x5c_parameter** (Boolean) Enable publishing of the P-384 certificate chain associated with the active key.
-- **p384_previous_cert_ref** (Block List, Max: 1) Reference to the P-384 key previously active. (see [below for nested schema](#nestedblock--p384_previous_cert_ref))
-- **p384_publish_x5c_parameter** (Boolean) Enable publishing of the P-384 certificate chain associated with the active key.
-- **p521_active_cert_ref** (Block List, Max: 1) Reference to the P-521 key currently active. (see [below for nested schema](#nestedblock--p521_active_cert_ref))
-- **p521_decryption_active_cert_ref** (Block List, Max: 1) Reference to the P-521 decryption key currently active. (see [below for nested schema](#nestedblock--p521_decryption_active_cert_ref))
-- **p521_decryption_previous_cert_ref** (Block List, Max: 1) Reference to the P-521 decryption key previously active. (see [below for nested schema](#nestedblock--p521_decryption_previous_cert_ref))
-- **p521_decryption_publish_x5c_parameter** (Boolean) Enable publishing of the P-521 certificate chain associated with the active key.
-- **p521_previous_cert_ref** (Block List, Max: 1) Reference to the P-521 key previously active. (see [below for nested schema](#nestedblock--p521_previous_cert_ref))
-- **p521_publish_x5c_parameter** (Boolean) Enable publishing of the P-521 certificate chain associated with the active key.
-- **rsa_decryption_active_cert_ref** (Block List, Max: 1) Reference to the RSA decryption key currently active. (see [below for nested schema](#nestedblock--rsa_decryption_active_cert_ref))
-- **rsa_decryption_previous_cert_ref** (Block List, Max: 1) Reference to the RSA decryption key previously active. (see [below for nested schema](#nestedblock--rsa_decryption_previous_cert_ref))
-- **rsa_decryption_publish_x5c_parameter** (Boolean) Enable publishing of the RSA certificate chain associated with the active key.
-- **rsa_previous_cert_ref** (Block List, Max: 1) Reference to the RSA key previously active. (see [below for nested schema](#nestedblock--rsa_previous_cert_ref))
-- **rsa_publish_x5c_parameter** (Boolean) Enable publishing of the RSA certificate chain associated with the active key.
+- `p256_active_cert_ref` (Block List, Max: 1) Reference to the P-256 key currently active. (see [below for nested schema](#nestedblock--p256_active_cert_ref))
+- `p256_decryption_active_cert_ref` (Block List, Max: 1) Reference to the P-256 decryption key currently active. (see [below for nested schema](#nestedblock--p256_decryption_active_cert_ref))
+- `p256_decryption_previous_cert_ref` (Block List, Max: 1) Reference to the P-256 decryption key previously active. (see [below for nested schema](#nestedblock--p256_decryption_previous_cert_ref))
+- `p256_decryption_publish_x5c_parameter` (Boolean) Enable publishing of the P-256 certificate chain associated with the active key.
+- `p256_previous_cert_ref` (Block List, Max: 1) Reference to the P-256 key previously active. (see [below for nested schema](#nestedblock--p256_previous_cert_ref))
+- `p256_publish_x5c_parameter` (Boolean) Enable publishing of the P-256 certificate chain associated with the active key.
+- `p384_active_cert_ref` (Block List, Max: 1) Reference to the P-384 key currently active. (see [below for nested schema](#nestedblock--p384_active_cert_ref))
+- `p384_decryption_active_cert_ref` (Block List, Max: 1) Reference to the P-384 decryption key currently active. (see [below for nested schema](#nestedblock--p384_decryption_active_cert_ref))
+- `p384_decryption_previous_cert_ref` (Block List, Max: 1) Reference to the P-384 decryption key previously active. (see [below for nested schema](#nestedblock--p384_decryption_previous_cert_ref))
+- `p384_decryption_publish_x5c_parameter` (Boolean) Enable publishing of the P-384 certificate chain associated with the active key.
+- `p384_previous_cert_ref` (Block List, Max: 1) Reference to the P-384 key previously active. (see [below for nested schema](#nestedblock--p384_previous_cert_ref))
+- `p384_publish_x5c_parameter` (Boolean) Enable publishing of the P-384 certificate chain associated with the active key.
+- `p521_active_cert_ref` (Block List, Max: 1) Reference to the P-521 key currently active. (see [below for nested schema](#nestedblock--p521_active_cert_ref))
+- `p521_decryption_active_cert_ref` (Block List, Max: 1) Reference to the P-521 decryption key currently active. (see [below for nested schema](#nestedblock--p521_decryption_active_cert_ref))
+- `p521_decryption_previous_cert_ref` (Block List, Max: 1) Reference to the P-521 decryption key previously active. (see [below for nested schema](#nestedblock--p521_decryption_previous_cert_ref))
+- `p521_decryption_publish_x5c_parameter` (Boolean) Enable publishing of the P-521 certificate chain associated with the active key.
+- `p521_previous_cert_ref` (Block List, Max: 1) Reference to the P-521 key previously active. (see [below for nested schema](#nestedblock--p521_previous_cert_ref))
+- `p521_publish_x5c_parameter` (Boolean) Enable publishing of the P-521 certificate chain associated with the active key.
+- `rsa_decryption_active_cert_ref` (Block List, Max: 1) Reference to the RSA decryption key currently active. (see [below for nested schema](#nestedblock--rsa_decryption_active_cert_ref))
+- `rsa_decryption_previous_cert_ref` (Block List, Max: 1) Reference to the RSA decryption key previously active. (see [below for nested schema](#nestedblock--rsa_decryption_previous_cert_ref))
+- `rsa_decryption_publish_x5c_parameter` (Boolean) Enable publishing of the RSA certificate chain associated with the active key.
+- `rsa_previous_cert_ref` (Block List, Max: 1) Reference to the RSA key previously active. (see [below for nested schema](#nestedblock--rsa_previous_cert_ref))
+- `rsa_publish_x5c_parameter` (Boolean) Enable publishing of the RSA certificate chain associated with the active key.
 
 ### Read-Only
 
-- **id** (String) The ID of this resource.
+- `id` (String) The ID of this resource.
 
 <a id="nestedblock--rsa_active_cert_ref"></a>
 ### Nested Schema for `rsa_active_cert_ref`
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 
 <a id="nestedblock--p256_active_cert_ref"></a>
@@ -83,11 +83,11 @@ Read-Only:
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 
 <a id="nestedblock--p256_decryption_active_cert_ref"></a>
@@ -95,11 +95,11 @@ Read-Only:
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 
 <a id="nestedblock--p256_decryption_previous_cert_ref"></a>
@@ -107,11 +107,11 @@ Read-Only:
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 
 <a id="nestedblock--p256_previous_cert_ref"></a>
@@ -119,11 +119,11 @@ Read-Only:
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 
 <a id="nestedblock--p384_active_cert_ref"></a>
@@ -131,11 +131,11 @@ Read-Only:
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 
 <a id="nestedblock--p384_decryption_active_cert_ref"></a>
@@ -143,11 +143,11 @@ Read-Only:
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 
 <a id="nestedblock--p384_decryption_previous_cert_ref"></a>
@@ -155,11 +155,11 @@ Read-Only:
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 
 <a id="nestedblock--p384_previous_cert_ref"></a>
@@ -167,11 +167,11 @@ Read-Only:
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 
 <a id="nestedblock--p521_active_cert_ref"></a>
@@ -179,11 +179,11 @@ Read-Only:
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 
 <a id="nestedblock--p521_decryption_active_cert_ref"></a>
@@ -191,11 +191,11 @@ Read-Only:
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 
 <a id="nestedblock--p521_decryption_previous_cert_ref"></a>
@@ -203,11 +203,11 @@ Read-Only:
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 
 <a id="nestedblock--p521_previous_cert_ref"></a>
@@ -215,11 +215,11 @@ Read-Only:
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 
 <a id="nestedblock--rsa_decryption_active_cert_ref"></a>
@@ -227,11 +227,11 @@ Read-Only:
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 
 <a id="nestedblock--rsa_decryption_previous_cert_ref"></a>
@@ -239,11 +239,11 @@ Read-Only:
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 
 <a id="nestedblock--rsa_previous_cert_ref"></a>
@@ -251,11 +251,11 @@ Read-Only:
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 ## Import
 

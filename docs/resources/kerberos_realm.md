@@ -26,20 +26,20 @@ resource "pingfederate_kerberos_realm" "demo" {
 
 ### Required
 
-- **kerberos_realm_name** (String) The Domain/Realm name used for display in UI screens.
-- **kerberos_username** (String) The Domain/Realm username.
+- `kerberos_realm_name` (String) The Domain/Realm name used for display in UI screens.
+- `kerberos_username` (String) The Domain/Realm username.
 
 ### Optional
 
-- **kerberos_encrypted_password** (String) For GET requests, this field contains the encrypted Domain/Realm password, if one exists. For POST and PUT requests, if you wish to reuse the existing password, this field should be passed back unchanged.
-- **kerberos_password** (String, Sensitive) The Domain/Realm password. GETs will not return this attribute. To update this field, specify the new value in this attribute.
-- **key_distribution_centers** (Set of String) The Domain Controller/Key Distribution Center Host Action Names.
-- **realm_id** (String) The persistent, unique ID for the Kerberos Realm. It can be any combination of [a-z0-9._-]. This property is system-assigned if not specified.
-- **suppress_domain_name_concatenation** (Boolean) Controls whether the KDC hostnames and the realm name are concatenated in the auto-generated krb5.conf file. Default is false.
+- `kerberos_encrypted_password` (String) For GET requests, this field contains the encrypted Domain/Realm password, if one exists. For POST and PUT requests, if you wish to reuse the existing password, this field should be passed back unchanged.
+- `kerberos_password` (String, Sensitive) The Domain/Realm password. GETs will not return this attribute. To update this field, specify the new value in this attribute.
+- `key_distribution_centers` (Set of String) The Domain Controller/Key Distribution Center Host Action Names.
+- `realm_id` (String) The persistent, unique ID for the Kerberos Realm. It can be any combination of [a-z0-9._-]. This property is system-assigned if not specified.
+- `suppress_domain_name_concatenation` (Boolean) Controls whether the KDC hostnames and the realm name are concatenated in the auto-generated krb5.conf file. Default is false.
 
 ### Read-Only
 
-- **id** (String) The ID of this resource.
+- `id` (String) The ID of this resource.
 
 ## Import
 

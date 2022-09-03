@@ -39,34 +39,34 @@ resource "pingfederate_keypair_signing" "example_generate" {
 
 ### Optional
 
-- **city** (String) City.
-- **common_name** (String) Common name for key pair subject.
-- **country** (String) Country.
-- **crypto_provider** (String) Cryptographic Provider.  This is only applicable if Hybrid HSM mode is true.
-- **file_data** (String) Base64 encoded PKCS12 file data. New line characters should be omitted or encoded in this value.
-- **key_algorithm** (String) Key generation algorithm. Supported algorithms are available through the /keyPairs/keyAlgorithms endpoint.
-- **key_size** (Number) Key size, in bits. If this property is unset, the default size for the key algorithm will be used. Supported key sizes are available through the /keyPairs/keyAlgorithms endpoint.
-- **keypair_id** (String) The persistent, unique ID for the certificate. It can be any combination of [a-z0-9._-]. This property is system-assigned if not specified.
-- **organization** (String) Organization.
-- **organization_unit** (String) Organization unit.
-- **password** (String, Sensitive) Password for the PKCS12 file.
-- **state** (String) State.
-- **subject_alternative_names** (Set of String) The subject alternative names (SAN).
-- **valid_days** (Number) Number of days the key pair will be valid for.
+- `city` (String) City.
+- `common_name` (String) Common name for key pair subject.
+- `country` (String) Country.
+- `crypto_provider` (String) Cryptographic Provider.  This is only applicable if Hybrid HSM mode is true.
+- `file_data` (String) Base64 encoded PKCS12 file data. New line characters should be omitted or encoded in this value.
+- `key_algorithm` (String) Key generation algorithm. Supported algorithms are available through the /keyPairs/keyAlgorithms endpoint.
+- `key_size` (Number) Key size, in bits. If this property is unset, the default size for the key algorithm will be used. Supported key sizes are available through the /keyPairs/keyAlgorithms endpoint.
+- `keypair_id` (String) The persistent, unique ID for the certificate. It can be any combination of [a-z0-9._-]. This property is system-assigned if not specified.
+- `organization` (String) Organization.
+- `organization_unit` (String) Organization unit.
+- `password` (String, Sensitive) Password for the PKCS12 file.
+- `state` (String) State.
+- `subject_alternative_names` (Set of String) The subject alternative names (SAN).
+- `valid_days` (Number) Number of days the key pair will be valid for.
 
 ### Read-Only
 
-- **expires** (String) The end date up until which the item is valid, in ISO 8601 format (UTC).
-- **id** (String) The ID of this resource.
-- **issuer_dn** (String) The issuer's distinguished name.
-- **serial_number** (String) The serial number assigned by the CA.
-- **sha1_fingerprint** (String) SHA-1 fingerprint in Hex encoding.
-- **sha256_fingerprint** (String) SHA-256 fingerprint in Hex encoding.
-- **signature_algorithm** (String) Signature algorithm. If this property is unset, the default signature algorithm for the key algorithm will be used. Supported signature algorithms are available through the /keyPairs/keyAlgorithms endpoint.
-- **status** (String) Status of the item.
-- **subject_dn** (String) The subject's distinguished name.
-- **valid_from** (String) The start date from which the item is valid, in ISO 8601 format (UTC).
-- **version** (Number) The X.509 version to which the item conforms.
+- `expires` (String) The end date up until which the item is valid, in ISO 8601 format (UTC).
+- `id` (String) The ID of this resource.
+- `issuer_dn` (String) The issuer's distinguished name.
+- `serial_number` (String) The serial number assigned by the CA.
+- `sha1_fingerprint` (String) SHA-1 fingerprint in Hex encoding.
+- `sha256_fingerprint` (String) SHA-256 fingerprint in Hex encoding.
+- `signature_algorithm` (String) Signature algorithm. If this property is unset, the default signature algorithm for the key algorithm will be used. Supported signature algorithms are available through the /keyPairs/keyAlgorithms endpoint.
+- `status` (String) Status of the item.
+- `subject_dn` (String) The subject's distinguished name.
+- `valid_from` (String) The start date from which the item is valid, in ISO 8601 format (UTC).
+- `version` (Number) The X.509 version to which the item conforms.
 
 ## Import
 

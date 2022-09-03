@@ -32,23 +32,23 @@ resource "pingfederate_certificates_revocation_settings" "settings" {
 
 ### Optional
 
-- **crl_settings** (Block List) Certificate revocation CRL settings. CRL revocation is enabled by default. It will be disabled if this attribute is not defined in the request body. (see [below for nested schema](#nestedblock--crl_settings))
-- **ocsp_settings** (Block List) Certificate revocation OCSP settings. OCSP revocation is disabled by default. It will be enabled if this attribute is defined in the request body. (see [below for nested schema](#nestedblock--ocsp_settings))
-- **proxy_settings** (Block List) If OCSP messaging is routed through a proxy server, specify the server's host (DNS name or IP address) and the port number. The same proxy information applies to CRL checking, when CRL is enabled for failover. (see [below for nested schema](#nestedblock--proxy_settings))
+- `crl_settings` (Block List) Certificate revocation CRL settings. CRL revocation is enabled by default. It will be disabled if this attribute is not defined in the request body. (see [below for nested schema](#nestedblock--crl_settings))
+- `ocsp_settings` (Block List) Certificate revocation OCSP settings. OCSP revocation is disabled by default. It will be enabled if this attribute is defined in the request body. (see [below for nested schema](#nestedblock--ocsp_settings))
+- `proxy_settings` (Block List) If OCSP messaging is routed through a proxy server, specify the server's host (DNS name or IP address) and the port number. The same proxy information applies to CRL checking, when CRL is enabled for failover. (see [below for nested schema](#nestedblock--proxy_settings))
 
 ### Read-Only
 
-- **id** (String) The ID of this resource.
+- `id` (String) The ID of this resource.
 
 <a id="nestedblock--crl_settings"></a>
 ### Nested Schema for `crl_settings`
 
 Optional:
 
-- **next_retry_mins_when_next_update_in_past** (Number) Next retry on next update expiration in minutes. This value defaults to `60`.
-- **next_retry_mins_when_resolve_failed** (Number) Next retry on resolution failure in minutes. This value defaults to `1440`.
-- **treat_non_retrievable_crl_as_revoked** (Boolean) Treat non retrievable CRL as revoked. This setting defaults to disabled.
-- **verify_crl_signature** (Boolean) Verify CRL signature. This setting defaults to enabled.
+- `next_retry_mins_when_next_update_in_past` (Number) Next retry on next update expiration in minutes. This value defaults to `60`.
+- `next_retry_mins_when_resolve_failed` (Number) Next retry on resolution failure in minutes. This value defaults to `1440`.
+- `treat_non_retrievable_crl_as_revoked` (Boolean) Treat non retrievable CRL as revoked. This setting defaults to disabled.
+- `verify_crl_signature` (Boolean) Verify CRL signature. This setting defaults to enabled.
 
 
 <a id="nestedblock--ocsp_settings"></a>
@@ -56,30 +56,30 @@ Optional:
 
 Required:
 
-- **responder_url** (String) Responder URL address. This field is required if OCSP revocation is enabled.
+- `responder_url` (String) Responder URL address. This field is required if OCSP revocation is enabled.
 
 Optional:
 
-- **action_on_responder_unavailable** (String) Action on responder unavailable. This value defaults to `CONTINUE`.
-- **action_on_status_unknown** (String) Action on status unknown. This value defaults to `FAIL`.
-- **action_on_unsuccessful_response** (String) Action on unsuccessful response. This value defaults to `FAIL`.
-- **current_update_grace_period** (Number) Current update grace period in minutes. This value defaults to `5`.
-- **next_update_grace_period** (Number) Next update grace period in minutes. This value defaults to `5`.
-- **requester_add_nonce** (Boolean) Do not allow responder to use cached responses. This setting defaults to disabled.
-- **responder_cert_reference** (Block List, Max: 1) Resource link to OCSP responder signature verification certificate. A previously selected certificate will be deselected if this attribute is not defined. (see [below for nested schema](#nestedblock--ocsp_settings--responder_cert_reference))
-- **responder_timeout** (Number) Responder connection timeout in seconds. This value defaults to `5`.
-- **response_cache_period** (Number) Response cache period in hours. This value defaults to `48`.
+- `action_on_responder_unavailable` (String) Action on responder unavailable. This value defaults to `CONTINUE`.
+- `action_on_status_unknown` (String) Action on status unknown. This value defaults to `FAIL`.
+- `action_on_unsuccessful_response` (String) Action on unsuccessful response. This value defaults to `FAIL`.
+- `current_update_grace_period` (Number) Current update grace period in minutes. This value defaults to `5`.
+- `next_update_grace_period` (Number) Next update grace period in minutes. This value defaults to `5`.
+- `requester_add_nonce` (Boolean) Do not allow responder to use cached responses. This setting defaults to disabled.
+- `responder_cert_reference` (Block List, Max: 1) Resource link to OCSP responder signature verification certificate. A previously selected certificate will be deselected if this attribute is not defined. (see [below for nested schema](#nestedblock--ocsp_settings--responder_cert_reference))
+- `responder_timeout` (Number) Responder connection timeout in seconds. This value defaults to `5`.
+- `response_cache_period` (Number) Response cache period in hours. This value defaults to `48`.
 
 <a id="nestedblock--ocsp_settings--responder_cert_reference"></a>
 ### Nested Schema for `ocsp_settings.responder_cert_reference`
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 
 
@@ -88,8 +88,8 @@ Read-Only:
 
 Optional:
 
-- **host** (String) Host name.
-- **port** (Number) Port number.
+- `host` (String) Host name.
+- `port` (Number) Port number.
 
 ## Import
 

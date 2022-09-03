@@ -115,8 +115,8 @@ and can be sourced from the `PINGFEDERATE_CONTEXT` environment variable.
 
 ### Optional
 
-- **base_url** (String) The base url of the pingfederate API.
-- **bypass_external_validation** (Boolean) External validation will be bypassed when set to true. Default to false.
-- **context** (String) The context path of the pingfederate API.
-- **password** (String) The password for pingfederate API.
-- **username** (String) The username for pingfederate API.
+- `base_url` (String) The base url of the pingfederate API.
+- `bypass_external_validation` (Boolean) External validation will be bypassed when set to true. Default to false.
+- `context` (String) The context path of the pingfederate API.
+- `password` (String) The password for pingfederate API.
+- `username` (String) The username for pingfederate API.

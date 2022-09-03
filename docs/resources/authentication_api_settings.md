@@ -30,24 +30,24 @@ resource "pingfederate_authentication_api_settings" "settings" {
 
 ### Optional
 
-- **api_enabled** (Boolean) Specifies whether the authentication API is enabled. The default value is false.
-- **default_application_ref** (Block List, Max: 1) Application for non authentication policy use cases. (see [below for nested schema](#nestedblock--default_application_ref))
-- **enable_api_descriptions** (Boolean) Enable the API Descriptions endpoint.
+- `api_enabled` (Boolean) Specifies whether the authentication API is enabled. The default value is false.
+- `default_application_ref` (Block List, Max: 1) Application for non authentication policy use cases. (see [below for nested schema](#nestedblock--default_application_ref))
+- `enable_api_descriptions` (Boolean) Enable the API Descriptions endpoint.
 
 ### Read-Only
 
-- **id** (String) The ID of this resource.
+- `id` (String) The ID of this resource.
 
 <a id="nestedblock--default_application_ref"></a>
 ### Nested Schema for `default_application_ref`
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 ## Import
 
