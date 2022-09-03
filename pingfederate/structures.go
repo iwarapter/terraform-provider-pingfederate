@@ -402,6 +402,11 @@ func resourcePolicyActionSchema() *schema.Schema {
 					Elem:        resourceLinkResource(),
 					Description: "Reference to the associated authentication fragment.",
 				},
+				"user_id_authenticated": {
+					Type:        schema.TypeBool,
+					Optional:    true,
+					Description: "Indicates whether the user ID obtained by the user ID mapping is authenticated.",
+				},
 			},
 		},
 	}
@@ -1252,7 +1257,7 @@ func resourceAttributeMapping() *schema.Resource {
 			},
 			"attribute_contract_fulfillment": {
 				Type:        schema.TypeSet,
-				Required:    true,
+				Optional:    true,
 				Description: "A list of mappings from attribute names to their fulfillment values.",
 				Elem:        resourceAttributeFulfillmentValue(),
 			},

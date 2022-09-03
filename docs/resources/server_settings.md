@@ -63,26 +63,26 @@ resource "pingfederate_server_settings" "settings" {
 
 ### Required
 
-- **federation_info** (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--federation_info))
+- `federation_info` (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--federation_info))
 
 ### Optional
 
-- **roles_and_protocols** (Block List, Max: 1, Deprecated) (see [below for nested schema](#nestedblock--roles_and_protocols))
+- `roles_and_protocols` (Block List, Max: 1, Deprecated) (see [below for nested schema](#nestedblock--roles_and_protocols))
 
 ### Read-Only
 
-- **id** (String) The ID of this resource.
+- `id` (String) The ID of this resource.
 
 <a id="nestedblock--federation_info"></a>
 ### Nested Schema for `federation_info`
 
 Optional:
 
-- **base_url** (String) The fully qualified host name, port, and path (if applicable) on which the PingFederate server runs.
-- **saml1x_issuer_id** (String) This ID identifies your federation server for SAML 1.x transactions. As with SAML 2.0, it is usually defined as an organization's URL or a DNS address. The SourceID used for artifact resolution is derived from this ID using SHA1.
-- **saml1x_source_id** (String) If supplied, the Source ID value entered here is used for SAML 1.x, instead of being derived from the SAML 1.x Issuer/Audience.
-- **saml2_entity_id** (String) This ID defines your organization as the entity operating the server for SAML 2.0 transactions. It is usually defined as an organization's URL or a DNS address; for example: pingidentity.com. The SAML SourceID used for artifact resolution is derived from this ID using SHA1.
-- **wsfed_realm** (String) The URI of the realm associated with the PingFederate server. A realm represents a single unit of security administration or trust.
+- `base_url` (String) The fully qualified host name, port, and path (if applicable) on which the PingFederate server runs.
+- `saml1x_issuer_id` (String) This ID identifies your federation server for SAML 1.x transactions. As with SAML 2.0, it is usually defined as an organization's URL or a DNS address. The SourceID used for artifact resolution is derived from this ID using SHA1.
+- `saml1x_source_id` (String) If supplied, the Source ID value entered here is used for SAML 1.x, instead of being derived from the SAML 1.x Issuer/Audience.
+- `saml2_entity_id` (String) This ID defines your organization as the entity operating the server for SAML 2.0 transactions. It is usually defined as an organization's URL or a DNS address; for example: pingidentity.com. The SAML SourceID used for artifact resolution is derived from this ID using SHA1.
+- `wsfed_realm` (String) The URI of the realm associated with the PingFederate server. A realm represents a single unit of security administration or trust.
 
 
 <a id="nestedblock--roles_and_protocols"></a>
@@ -90,34 +90,34 @@ Optional:
 
 Required:
 
-- **idp_role** (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--roles_and_protocols--idp_role))
-- **oauth_role** (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--roles_and_protocols--oauth_role))
-- **sp_role** (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--roles_and_protocols--sp_role))
+- `idp_role` (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--roles_and_protocols--idp_role))
+- `oauth_role` (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--roles_and_protocols--oauth_role))
+- `sp_role` (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--roles_and_protocols--sp_role))
 
 Optional:
 
-- **enable_idp_discovery** (Boolean)
+- `enable_idp_discovery` (Boolean)
 
 <a id="nestedblock--roles_and_protocols--idp_role"></a>
 ### Nested Schema for `roles_and_protocols.idp_role`
 
 Optional:
 
-- **enable** (Boolean)
-- **enable_outbound_provisioning** (Boolean)
-- **enable_saml10** (Boolean)
-- **enable_saml11** (Boolean)
-- **enable_ws_fed** (Boolean)
-- **enable_ws_trust** (Boolean)
-- **saml20_profile** (Block List, Max: 1) (see [below for nested schema](#nestedblock--roles_and_protocols--idp_role--saml20_profile))
+- `enable` (Boolean)
+- `enable_outbound_provisioning` (Boolean)
+- `enable_saml10` (Boolean)
+- `enable_saml11` (Boolean)
+- `enable_ws_fed` (Boolean)
+- `enable_ws_trust` (Boolean)
+- `saml20_profile` (Block List, Max: 1) (see [below for nested schema](#nestedblock--roles_and_protocols--idp_role--saml20_profile))
 
 <a id="nestedblock--roles_and_protocols--idp_role--saml20_profile"></a>
 ### Nested Schema for `roles_and_protocols.idp_role.saml20_profile`
 
 Optional:
 
-- **enable** (Boolean)
-- **enable_auto_connect** (Boolean)
+- `enable` (Boolean)
+- `enable_auto_connect` (Boolean)
 
 
 
@@ -126,8 +126,8 @@ Optional:
 
 Optional:
 
-- **enable_oauth** (Boolean)
-- **enable_openid_connect** (Boolean)
+- `enable_oauth` (Boolean)
+- `enable_openid_connect` (Boolean)
 
 
 <a id="nestedblock--roles_and_protocols--sp_role"></a>
@@ -135,23 +135,23 @@ Optional:
 
 Optional:
 
-- **enable** (Boolean)
-- **enable_inbound_provisioning** (Boolean)
-- **enable_openid_connect** (Boolean)
-- **enable_saml10** (Boolean)
-- **enable_saml11** (Boolean)
-- **enable_ws_fed** (Boolean)
-- **enable_ws_trust** (Boolean)
-- **saml20_profile** (Block List, Max: 1) (see [below for nested schema](#nestedblock--roles_and_protocols--sp_role--saml20_profile))
+- `enable` (Boolean)
+- `enable_inbound_provisioning` (Boolean)
+- `enable_openid_connect` (Boolean)
+- `enable_saml10` (Boolean)
+- `enable_saml11` (Boolean)
+- `enable_ws_fed` (Boolean)
+- `enable_ws_trust` (Boolean)
+- `saml20_profile` (Block List, Max: 1) (see [below for nested schema](#nestedblock--roles_and_protocols--sp_role--saml20_profile))
 
 <a id="nestedblock--roles_and_protocols--sp_role--saml20_profile"></a>
 ### Nested Schema for `roles_and_protocols.sp_role.saml20_profile`
 
 Optional:
 
-- **enable** (Boolean)
-- **enable_auto_connect** (Boolean)
-- **enable_xasp** (Boolean)
+- `enable` (Boolean)
+- `enable_auto_connect` (Boolean)
+- `enable_xasp` (Boolean)
 
 ## Import
 

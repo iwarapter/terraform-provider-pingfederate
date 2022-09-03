@@ -23,8 +23,8 @@ data "pingfederate_keypair_signing_csr" "csr" {
 
 ### Required
 
-- **id** (String) Resource ID of the signing keypair to retrieve the CSR for.
+- `id` (String) Resource ID of the signing keypair to retrieve the CSR for.
 
 ### Read-Only
 
-- **cert_request_pem** (String) PEM-encoded CSR of the signing keypair.
+- `cert_request_pem` (String) PEM-encoded CSR of the signing keypair.

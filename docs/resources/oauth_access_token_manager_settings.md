@@ -28,22 +28,22 @@ resource "pingfederate_oauth_access_token_manager_settings" "demo" {
 
 ### Optional
 
-- **default_access_token_manager_ref** (Block List, Max: 1) Reference to the default access token manager, if one is defined. (see [below for nested schema](#nestedblock--default_access_token_manager_ref))
+- `default_access_token_manager_ref` (Block List, Max: 1) Reference to the default access token manager, if one is defined. (see [below for nested schema](#nestedblock--default_access_token_manager_ref))
 
 ### Read-Only
 
-- **id** (String) The ID of this resource.
+- `id` (String) The ID of this resource.
 
 <a id="nestedblock--default_access_token_manager_ref"></a>
 ### Nested Schema for `default_access_token_manager_ref`
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 ## Import
 

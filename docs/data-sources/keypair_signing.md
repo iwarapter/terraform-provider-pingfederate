@@ -21,34 +21,34 @@ data "pingfederate_keypair_signing" "example" {}
 
 ### Read-Only
 
-- **id** (String) The ID of this resource.
-- **keys** (Set of Object) (see [below for nested schema](#nestedatt--keys))
+- `id` (String) The ID of this resource.
+- `keys` (Set of Object) (see [below for nested schema](#nestedatt--keys))
 
 <a id="nestedatt--keys"></a>
 ### Nested Schema for `keys`
 
 Read-Only:
 
-- **city** (String)
-- **common_name** (String)
-- **country** (String)
-- **crypto_provider** (String)
-- **expires** (String)
-- **id** (String)
-- **issuer_dn** (String)
-- **key_algorithm** (String)
-- **key_size** (Number)
-- **keypair_id** (String)
-- **organization** (String)
-- **organization_unit** (String)
-- **serial_number** (String)
-- **sha1_fingerprint** (String)
-- **sha256_fingerprint** (String)
-- **signature_algorithm** (String)
-- **state** (String)
-- **status** (String)
-- **subject_alternative_names** (Set of String)
-- **subject_dn** (String)
-- **valid_days** (Number)
-- **valid_from** (String)
-- **version** (Number)
+- `city` (String)
+- `common_name` (String)
+- `country` (String)
+- `crypto_provider` (String)
+- `expires` (String)
+- `id` (String)
+- `issuer_dn` (String)
+- `key_algorithm` (String)
+- `key_size` (Number)
+- `keypair_id` (String)
+- `organization` (String)
+- `organization_unit` (String)
+- `serial_number` (String)
+- `sha1_fingerprint` (String)
+- `sha256_fingerprint` (String)
+- `signature_algorithm` (String)
+- `state` (String)
+- `status` (String)
+- `subject_alternative_names` (Set of String)
+- `subject_dn` (String)
+- `valid_days` (Number)
+- `valid_from` (String)
+- `version` (Number)

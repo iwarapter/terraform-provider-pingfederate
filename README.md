@@ -9,8 +9,6 @@ PingFederate Terraform Provider
   ![GitHub release (latest by date)](https://img.shields.io/github/v/release/iwarapter/terraform-provider-pingfederate)
   [![Github All Releases](https://img.shields.io/github/downloads/iwarapter/terraform-provider-pingfederate/total.svg)]()
 
-<img src="https://cdn.rawgit.com/hashicorp/terraform-website/master/content/source/assets/images/logo-hashicorp.svg" width="600px">
-
 Requirements
 ------------
 
@@ -23,15 +21,17 @@ Using the Provider
 Please see the terraform registry docs for detailed usage documentation:
 https://registry.terraform.io/providers/iwarapter/pingfederate/latest/docs
 
-The provider is current tested against the following versions of PingFederate
+The provider is currently tested against the following versions of PingFederate
 
 | PingFederate | Status                                                                                                                                                                                                  |
 |--------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | ~~9.3.3~~    | PingIdentity no longer supply working containers for this version                                                                                                                                       |
 | ~~10.0.6~~   | PingIdentity no longer supply working containers for this version                                                                                                                                       |
-| 10.1.5       | [![ci](https://github.com/iwarapter/terraform-provider-pingfederate/actions/workflows/build.yaml/badge.svg)](https://github.com/iwarapter/terraform-provider-pingfederate/actions/workflows/build.yaml) |
-| 10.2.4       | [![ci](https://github.com/iwarapter/terraform-provider-pingfederate/actions/workflows/build.yaml/badge.svg)](https://github.com/iwarapter/terraform-provider-pingfederate/actions/workflows/build.yaml) |
-| 10.3.1       | [![ci](https://github.com/iwarapter/terraform-provider-pingfederate/actions/workflows/build.yaml/badge.svg)](https://github.com/iwarapter/terraform-provider-pingfederate/actions/workflows/build.yaml) |
+| ~~10.1.5~~   | PingIdentity no longer supply working containers for this version                                                                                                                                       |
+| 10.2.7       | [![ci](https://github.com/iwarapter/terraform-provider-pingfederate/actions/workflows/build.yaml/badge.svg)](https://github.com/iwarapter/terraform-provider-pingfederate/actions/workflows/build.yaml) |
+| 10.3.7       | [![ci](https://github.com/iwarapter/terraform-provider-pingfederate/actions/workflows/build.yaml/badge.svg)](https://github.com/iwarapter/terraform-provider-pingfederate/actions/workflows/build.yaml) |
+| 11.0.4       | [![ci](https://github.com/iwarapter/terraform-provider-pingfederate/actions/workflows/build.yaml/badge.svg)](https://github.com/iwarapter/terraform-provider-pingfederate/actions/workflows/build.yaml) |
+| 11.1.1       | [![ci](https://github.com/iwarapter/terraform-provider-pingfederate/actions/workflows/build.yaml/badge.svg)](https://github.com/iwarapter/terraform-provider-pingfederate/actions/workflows/build.yaml) |
 
 Whilst 9.3.3 and 10.0.x should both still be compatible, PingIdentity no longer supply **working** docker images and so have been removed from the regression test pack.
 

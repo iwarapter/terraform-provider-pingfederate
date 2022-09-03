@@ -23,17 +23,17 @@ data "pingfederate_custom_data_store" "example" {
 
 ### Required
 
-- **name** (String) The plugin instance name.
+- `name` (String) The plugin instance name.
 
 ### Read-Only
 
-- **configuration** (List of Object) Plugin instance configuration. (see [below for nested schema](#nestedatt--configuration))
-- **data_store_id** (String) The persistent, unique ID for the data store. It can be any combination of [a-zA-Z0-9._-]. This property is system-assigned if not specified.
-- **id** (String) The ID of this resource.
-- **mask_attribute_values** (Boolean) Whether attribute values should be masked in the log.
-- **parent_ref** (List of Object) The reference to this plugin's parent instance. The parent reference is only accepted if the plugin type supports parent instances.
+- `configuration` (List of Object) Plugin instance configuration. (see [below for nested schema](#nestedatt--configuration))
+- `data_store_id` (String) The persistent, unique ID for the data store. It can be any combination of [a-zA-Z0-9._-]. This property is system-assigned if not specified.
+- `id` (String) The ID of this resource.
+- `mask_attribute_values` (Boolean) Whether attribute values should be masked in the log.
+- `parent_ref` (List of Object) The reference to this plugin's parent instance. The parent reference is only accepted if the plugin type supports parent instances.
 Note: This parent reference is required if this plugin instance is used as an overriding plugin (e.g. connection adapter overrides) (see [below for nested schema](#nestedatt--parent_ref))
-- **plugin_descriptor_ref** (List of Object) Reference to the plugin descriptor for this instance. The plugin descriptor cannot be modified once the instance is created.
+- `plugin_descriptor_ref` (List of Object) Reference to the plugin descriptor for this instance. The plugin descriptor cannot be modified once the instance is created.
 Note: Ignored when specifying a connection's adapter override. (see [below for nested schema](#nestedatt--plugin_descriptor_ref))
 
 <a id="nestedatt--configuration"></a>
@@ -41,18 +41,18 @@ Note: Ignored when specifying a connection's adapter override. (see [below for n
 
 Read-Only:
 
-- **fields** (Set of Object) (see [below for nested schema](#nestedobjatt--configuration--fields))
-- **sensitive_fields** (Set of Object) (see [below for nested schema](#nestedobjatt--configuration--sensitive_fields))
-- **tables** (List of Object) (see [below for nested schema](#nestedobjatt--configuration--tables))
+- `fields` (Set of Object) (see [below for nested schema](#nestedobjatt--configuration--fields))
+- `sensitive_fields` (Set of Object) (see [below for nested schema](#nestedobjatt--configuration--sensitive_fields))
+- `tables` (List of Object) (see [below for nested schema](#nestedobjatt--configuration--tables))
 
 <a id="nestedobjatt--configuration--fields"></a>
 ### Nested Schema for `configuration.fields`
 
 Read-Only:
 
-- **inherited** (Boolean)
-- **name** (String)
-- **value** (String)
+- `inherited` (Boolean)
+- `name` (String)
+- `value` (String)
 
 
 <a id="nestedobjatt--configuration--sensitive_fields"></a>
@@ -60,9 +60,9 @@ Read-Only:
 
 Read-Only:
 
-- **inherited** (Boolean)
-- **name** (String)
-- **value** (String)
+- `inherited` (Boolean)
+- `name` (String)
+- `value` (String)
 
 
 <a id="nestedobjatt--configuration--tables"></a>
@@ -70,27 +70,27 @@ Read-Only:
 
 Read-Only:
 
-- **inherited** (Boolean)
-- **name** (String)
-- **rows** (List of Object) (see [below for nested schema](#nestedobjatt--configuration--tables--rows))
+- `inherited` (Boolean)
+- `name` (String)
+- `rows` (List of Object) (see [below for nested schema](#nestedobjatt--configuration--tables--rows))
 
 <a id="nestedobjatt--configuration--tables--rows"></a>
 ### Nested Schema for `configuration.tables.rows`
 
 Read-Only:
 
-- **default_row** (Boolean)
-- **fields** (Set of Object) (see [below for nested schema](#nestedobjatt--configuration--tables--rows--fields))
-- **sensitive_fields** (Set of Object) (see [below for nested schema](#nestedobjatt--configuration--tables--rows--sensitive_fields))
+- `default_row` (Boolean)
+- `fields` (Set of Object) (see [below for nested schema](#nestedobjatt--configuration--tables--rows--fields))
+- `sensitive_fields` (Set of Object) (see [below for nested schema](#nestedobjatt--configuration--tables--rows--sensitive_fields))
 
 <a id="nestedobjatt--configuration--tables--rows--fields"></a>
 ### Nested Schema for `configuration.tables.rows.sensitive_fields`
 
 Read-Only:
 
-- **inherited** (Boolean)
-- **name** (String)
-- **value** (String)
+- `inherited` (Boolean)
+- `name` (String)
+- `value` (String)
 
 
 <a id="nestedobjatt--configuration--tables--rows--sensitive_fields"></a>
@@ -98,9 +98,9 @@ Read-Only:
 
 Read-Only:
 
-- **inherited** (Boolean)
-- **name** (String)
-- **value** (String)
+- `inherited` (Boolean)
+- `name` (String)
+- `value` (String)
 
 
 
@@ -111,8 +111,8 @@ Read-Only:
 
 Read-Only:
 
-- **id** (String)
-- **location** (String)
+- `id` (String)
+- `location` (String)
 
 
 <a id="nestedatt--plugin_descriptor_ref"></a>
@@ -120,5 +120,5 @@ Read-Only:
 
 Read-Only:
 
-- **id** (String)
-- **location** (String)
+- `id` (String)
+- `location` (String)

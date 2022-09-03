@@ -24,17 +24,17 @@ resource "pingfederate_authentication_policy_contract" "example" {
 
 ### Required
 
-- **name** (String) The Authentication Policy Contract Name. Name is unique.
+- `name` (String) The Authentication Policy Contract Name. Name is unique.
 
 ### Optional
 
-- **extended_attributes** (Set of String) A list of additional attributes as needed.
-- **policy_contract_id** (String) The persistent, unique ID for the authentication policy contract. It can be any combination of [a-zA-Z0-9._-]. This property is system-assigned if not specified.
+- `extended_attributes` (Set of String) A list of additional attributes as needed.
+- `policy_contract_id` (String) The persistent, unique ID for the authentication policy contract. It can be any combination of [a-zA-Z0-9._-]. This property is system-assigned if not specified.
 
 ### Read-Only
 
-- **core_attributes** (Set of String) A list of read-only assertion attributes (for example, subject) that are automatically populated by PingFederate.
-- **id** (String) The ID of this resource.
+- `core_attributes` (Set of String) A list of read-only assertion attributes (for example, subject) that are automatically populated by PingFederate.
+- `id` (String) The ID of this resource.
 
 ## Import
 

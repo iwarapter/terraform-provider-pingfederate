@@ -24,29 +24,29 @@ resource "pingfederate_certificates_ca" "example" {
 
 ### Required
 
-- **file_data** (String) Base64 Encoded certificate data.
+- `file_data` (String) Base64 Encoded certificate data.
 
 ### Optional
 
-- **certificate_id** (String) The persistent, unique ID for the certificate.
-- **crypto_provider** (String) Cryptographic Provider. This is only applicable if Hybrid HSM mode is true.
+- `certificate_id` (String) The persistent, unique ID for the certificate.
+- `crypto_provider` (String) Cryptographic Provider. This is only applicable if Hybrid HSM mode is true.
 
 ### Read-Only
 
-- **expires** (String) The end date up until which the item is valid, in ISO 8601 format (UTC).
-- **id** (String) The ID of this resource.
-- **issuer_dn** (String) The issuer's distinguished name.
-- **key_algorithm** (String) The public key algorithm.
-- **key_size** (Number) The public key size.
-- **serial_number** (String) The serial number assigned by the CA.
-- **sha1_fingerprint** (String) SHA-1 fingerprint in Hex encoding.
-- **sha256_fingerprint** (String) SHA-256 fingerprint in Hex encoding.
-- **signature_algorithm** (String) The signature algorithm.
-- **status** (String) Status of the item.
-- **subject_alternative_names** (Set of String) The subject alternative names (SAN).
-- **subject_dn** (String) The subject's distinguished name.
-- **valid_from** (String) The start date from which the item is valid, in ISO 8601 format (UTC).
-- **version** (Number) The X.509 version to which the item conforms.
+- `expires` (String) The end date up until which the item is valid, in ISO 8601 format (UTC).
+- `id` (String) The ID of this resource.
+- `issuer_dn` (String) The issuer's distinguished name.
+- `key_algorithm` (String) The public key algorithm.
+- `key_size` (Number) The public key size.
+- `serial_number` (String) The serial number assigned by the CA.
+- `sha1_fingerprint` (String) SHA-1 fingerprint in Hex encoding.
+- `sha256_fingerprint` (String) SHA-256 fingerprint in Hex encoding.
+- `signature_algorithm` (String) The signature algorithm.
+- `status` (String) Status of the item.
+- `subject_alternative_names` (Set of String) The subject alternative names (SAN).
+- `subject_dn` (String) The subject's distinguished name.
+- `valid_from` (String) The start date from which the item is valid, in ISO 8601 format (UTC).
+- `version` (Number) The X.509 version to which the item conforms.
 
 ## Import
 

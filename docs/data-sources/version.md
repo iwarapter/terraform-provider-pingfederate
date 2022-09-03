@@ -21,5 +21,5 @@ data "pingfederate_version" "instance" {}
 
 ### Read-Only
 
-- **id** (String) The ID of this resource.
-- **version** (String) Server version.
+- `id` (String) The ID of this resource.
+- `version` (String) Server version.

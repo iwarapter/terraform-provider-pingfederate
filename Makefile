@@ -48,6 +48,9 @@ test-and-report:
 build:
 	@go build -mod=vendor -o ${NAME} -gcflags "all=-trimpath=$GOPATH" .
 
+install:
+	@go install -gcflags "all=-trimpath=$GOPATH" -mod=vendor .
+
 func-init:
 	@rm -rf func-tests/.terraform.lock.hcl
 	@rm -rf func-tests/.terraform

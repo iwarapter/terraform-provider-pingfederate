@@ -25,26 +25,26 @@ resource "pingfederate_pingone_connection" "example" {
 
 ### Required
 
-- **name** (String) The name of the PingOne connection.
+- `name` (String) The name of the PingOne connection.
 
 ### Optional
 
-- **active** (Boolean) Whether or not this connection is active. Defaults to true.
-- **credential** (String) The credential for the PingOne connection. To update the credential, specify the plaintext value of the credential in this field. This field will not be populated for GET requests.
-- **description** (String) A description for the PingOne connection.
-- **encrypted_credential** (String) The encrypted credential for the PingOne connection. For POST and PUT requests, if you wish to keep the existing credential, this field should be passed back unchanged.
+- `active` (Boolean) Whether or not this connection is active. Defaults to true.
+- `credential` (String) The credential for the PingOne connection. To update the credential, specify the plaintext value of the credential in this field. This field will not be populated for GET requests.
+- `description` (String) A description for the PingOne connection.
+- `encrypted_credential` (String) The encrypted credential for the PingOne connection. For POST and PUT requests, if you wish to keep the existing credential, this field should be passed back unchanged.
 
 ### Read-Only
 
-- **creation_date** (String) The creation date of the PingOne connection. This field is read only.
-- **credential_id** (String) The ID of the PingOne credential. This field is read only.
-- **environment_id** (String) The ID of the environment of the PingOne credential. This field is read only.
-- **id** (String) The ID of this resource.
-- **organization_name** (String) The name of the organization associated with this PingOne connection. This field is read only.
-- **ping_one_authentication_api_endpoint** (String) The PingOne authentication API endpoint. This field is read only.
-- **ping_one_connection_id** (String) The ID of the PingOne connection. This field is read only.
-- **ping_one_management_api_endpoint** (String) The PingOne management API endpoint. This field is read only.
-- **region** (String) The region of the PingOne connection. This field is read only.
+- `creation_date` (String) The creation date of the PingOne connection. This field is read only.
+- `credential_id` (String) The ID of the PingOne credential. This field is read only.
+- `environment_id` (String) The ID of the environment of the PingOne credential. This field is read only.
+- `id` (String) The ID of this resource.
+- `organization_name` (String) The name of the organization associated with this PingOne connection. This field is read only.
+- `ping_one_authentication_api_endpoint` (String) The PingOne authentication API endpoint. This field is read only.
+- `ping_one_connection_id` (String) The ID of the PingOne connection. This field is read only.
+- `ping_one_management_api_endpoint` (String) The PingOne management API endpoint. This field is read only.
+- `region` (String) The region of the PingOne connection. This field is read only.
 
 ## Import
 

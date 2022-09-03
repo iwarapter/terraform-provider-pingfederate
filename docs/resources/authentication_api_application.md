@@ -26,18 +26,18 @@ resource "pingfederate_authentication_api_application" "example" {
 
 ### Required
 
-- **name** (String) The Authentication API Application Name. Name must be unique.
-- **url** (String) The Authentication API Application redirect URL.
+- `name` (String) The Authentication API Application Name. Name must be unique.
+- `url` (String) The Authentication API Application redirect URL.
 
 ### Optional
 
-- **additional_allowed_origins** (Set of String) The domain in the redirect URL is always whitelisted. This field contains a list of additional allowed origin URL's for cross-origin resource sharing.
-- **app_id** (String) The persistent, unique ID for the Authentication API application. It can be any combination of [a-zA-Z0-9._-]. This property is system-assigned if not specified.
-- **description** (String) The Authentication API Application description.
+- `additional_allowed_origins` (Set of String) The domain in the redirect URL is always whitelisted. This field contains a list of additional allowed origin URL's for cross-origin resource sharing.
+- `app_id` (String) The persistent, unique ID for the Authentication API application. It can be any combination of [a-zA-Z0-9._-]. This property is system-assigned if not specified.
+- `description` (String) The Authentication API Application description.
 
 ### Read-Only
 
-- **id** (String) The ID of this resource.
+- `id` (String) The ID of this resource.
 
 ## Import
 

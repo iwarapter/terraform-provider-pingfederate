@@ -41,24 +41,24 @@ resource "pingfederate_oauth_client_settings" "settings" {
 
 ### Optional
 
-- **client_metadata** (Block Set) The client metadata. (see [below for nested schema](#nestedblock--client_metadata))
-- **dynamic_client_registration** (Block List, Max: 1) Dynamic client registration settings. (see [below for nested schema](#nestedblock--dynamic_client_registration))
+- `client_metadata` (Block Set) The client metadata. (see [below for nested schema](#nestedblock--client_metadata))
+- `dynamic_client_registration` (Block List, Max: 1) Dynamic client registration settings. (see [below for nested schema](#nestedblock--dynamic_client_registration))
 
 ### Read-Only
 
-- **id** (String) The ID of this resource.
+- `id` (String) The ID of this resource.
 
 <a id="nestedblock--client_metadata"></a>
 ### Nested Schema for `client_metadata`
 
 Required:
 
-- **parameter** (String) The metadata name.
+- `parameter` (String) The metadata name.
 
 Optional:
 
-- **description** (String) The metadata description.
-- **multi_valued** (Boolean) If the field should allow multiple values.
+- `description` (String) The metadata description.
+- `multi_valued` (Boolean) If the field should allow multiple values.
 
 
 <a id="nestedblock--dynamic_client_registration"></a>
@@ -66,52 +66,52 @@ Optional:
 
 Optional:
 
-- **allow_client_delete** (Boolean) Allow client deletion from dynamic client management.
-- **allowed_exclusive_scopes** (List of String) The exclusive scopes to allow.
-- **bypass_activation_code_confirmation_override** (Boolean) Indicates if the Activation Code Confirmation page should be bypassed if 'verification_url_complete' is used by the end user to authorize a device.
-- **ciba_polling_interval** (Number) The minimum amount of time in seconds that the Client must wait between polling requests to the token endpoint. The default is 3 seconds.
-- **ciba_require_signed_requests** (Boolean) Determines whether CIBA signed requests are required for this client.
-- **client_cert_issuer_ref** (Block List, Max: 1) (see [below for nested schema](#nestedblock--dynamic_client_registration--client_cert_issuer_ref))
-- **client_cert_issuer_type** (String) Client TLS Certificate Issuer Type.
-- **default_access_token_manager_ref** (Block List, Max: 1) (see [below for nested schema](#nestedblock--dynamic_client_registration--default_access_token_manager_ref))
-- **device_flow_setting_type** (String) Allows an administrator to override the Device Authorization Settings set globally for the OAuth AS. Defaults to SERVER_DEFAULT.
-- **device_polling_interval_override** (Number) The amount of time client should wait between polling requests, in seconds.
-- **disable_registration_access_tokens** (Boolean) Disable registration access tokens. Local standards may mandate different registration access token requirements. If applicable, implement custom validation and enforcement rules using the DynamicClientRegistrationPlugin interface from the PingFederate SDK, configure the client registration policies (policyRefs), and set this property (disableRegistrationAccessTokens) to true. CAUTION: When the disableRegistrationAccessTokens property is set to true, all clients, not just the ones created using the Dynamic Client Registration protocol, are vulnerable to unrestricted retrievals, updates (including modifications to the client authentication scheme and redirect URIs), and deletes at the /as/clients.oauth2 endpoint unless one or more client registration policies are in place to protect against unauthorized attempts.
-- **enforce_replay_prevention** (Boolean) Enforce replay prevention.
-- **initial_access_token_scope** (String) The initial access token to prevent unwanted client registrations.
-- **oidc_policy** (Block List, Max: 1) Open ID Connect Policy settings.  This is included in the message only when OIDC is enabled. (see [below for nested schema](#nestedblock--dynamic_client_registration--oidc_policy))
-- **pending_authorization_timeout_override** (Number) The 'device_code' and 'user_code' timeout, in seconds.
-- **persistent_grant_expiration_time** (Number) The persistent grant expiration time.
-- **persistent_grant_expiration_time_unit** (String) The persistent grant expiration time unit.
-- **persistent_grant_expiration_type** (String) Allows an administrator to override the Persistent Grant Lifetime set globally for the OAuth AS. Defaults to SERVER_DEFAULT.
-- **persistent_grant_idle_timeout** (Number) The persistent grant idle timeout.
-- **persistent_grant_idle_timeout_time_unit** (String) The persistent grant idle timeout time unit.
-- **persistent_grant_idle_timeout_type** (String) Allows an administrator to override the Persistent Grant Idle Timeout set globally for the OAuth AS. Defaults to SERVER_DEFAULT.
-- **policy_refs** (List of String) The client registration policies.
-- **refresh_rolling** (String) Use ROLL or DONT_ROLL to override the Roll Refresh Token Values setting on the Authorization Server Settings. SERVER_DEFAULT will default to the Roll Refresh Token Values setting on the Authorization Server Setting screen. Defaults to SERVER_DEFAULT.
-- **refresh_token_rolling_interval** (Number) The minimum interval to roll refresh tokens, in hours. This value will override the Refresh Token Rolling Interval Value on the Authorization Server Settings.
-- **refresh_token_rolling_interval_type** (String) Use OVERRIDE_SERVER_DEFAULT to override the Refresh Token Rolling Interval value on the Authorization Server Settings. SERVER_DEFAULT will default to the Refresh Token Rolling Interval value on the Authorization Server Setting. Defaults to SERVER_DEFAULT.
-- **request_policy_ref** (Block List, Max: 1) (see [below for nested schema](#nestedblock--dynamic_client_registration--request_policy_ref))
-- **require_proof_key_for_code_exchange** (Boolean) Determines whether Proof Key for Code Exchange (PKCE) is required for the dynamically created client.
-- **require_signed_requests** (Boolean) Require signed requests.
-- **restrict_common_scopes** (Boolean) Restrict common scopes.
-- **restrict_to_default_access_token_manager** (Boolean) Determines whether the client is restricted to using only its default access token manager. The default is false.
-- **restricted_common_scopes** (List of String) The common scopes to restrict.
-- **rotate_client_secret** (Boolean) Rotate registration access token on dynamic client management requests.
-- **rotate_registration_access_token** (Boolean) Rotate client secret on dynamic client management requests.
-- **token_exchange_processor_policy_ref** (Block List, Max: 1) (see [below for nested schema](#nestedblock--dynamic_client_registration--token_exchange_processor_policy_ref))
-- **user_authorization_url_override** (String) The URL is used as 'verification_url' and 'verification_url_complete' values in a Device Authorization request.
+- `allow_client_delete` (Boolean) Allow client deletion from dynamic client management.
+- `allowed_exclusive_scopes` (List of String) The exclusive scopes to allow.
+- `bypass_activation_code_confirmation_override` (Boolean) Indicates if the Activation Code Confirmation page should be bypassed if 'verification_url_complete' is used by the end user to authorize a device.
+- `ciba_polling_interval` (Number) The minimum amount of time in seconds that the Client must wait between polling requests to the token endpoint. The default is 3 seconds.
+- `ciba_require_signed_requests` (Boolean) Determines whether CIBA signed requests are required for this client.
+- `client_cert_issuer_ref` (Block List, Max: 1) (see [below for nested schema](#nestedblock--dynamic_client_registration--client_cert_issuer_ref))
+- `client_cert_issuer_type` (String) Client TLS Certificate Issuer Type.
+- `default_access_token_manager_ref` (Block List, Max: 1) (see [below for nested schema](#nestedblock--dynamic_client_registration--default_access_token_manager_ref))
+- `device_flow_setting_type` (String) Allows an administrator to override the Device Authorization Settings set globally for the OAuth AS. Defaults to SERVER_DEFAULT.
+- `device_polling_interval_override` (Number) The amount of time client should wait between polling requests, in seconds.
+- `disable_registration_access_tokens` (Boolean) Disable registration access tokens. Local standards may mandate different registration access token requirements. If applicable, implement custom validation and enforcement rules using the DynamicClientRegistrationPlugin interface from the PingFederate SDK, configure the client registration policies (policyRefs), and set this property (disableRegistrationAccessTokens) to true. CAUTION: When the disableRegistrationAccessTokens property is set to true, all clients, not just the ones created using the Dynamic Client Registration protocol, are vulnerable to unrestricted retrievals, updates (including modifications to the client authentication scheme and redirect URIs), and deletes at the /as/clients.oauth2 endpoint unless one or more client registration policies are in place to protect against unauthorized attempts.
+- `enforce_replay_prevention` (Boolean) Enforce replay prevention.
+- `initial_access_token_scope` (String) The initial access token to prevent unwanted client registrations.
+- `oidc_policy` (Block List, Max: 1) Open ID Connect Policy settings.  This is included in the message only when OIDC is enabled. (see [below for nested schema](#nestedblock--dynamic_client_registration--oidc_policy))
+- `pending_authorization_timeout_override` (Number) The 'device_code' and 'user_code' timeout, in seconds.
+- `persistent_grant_expiration_time` (Number) The persistent grant expiration time.
+- `persistent_grant_expiration_time_unit` (String) The persistent grant expiration time unit.
+- `persistent_grant_expiration_type` (String) Allows an administrator to override the Persistent Grant Lifetime set globally for the OAuth AS. Defaults to SERVER_DEFAULT.
+- `persistent_grant_idle_timeout` (Number) The persistent grant idle timeout.
+- `persistent_grant_idle_timeout_time_unit` (String) The persistent grant idle timeout time unit.
+- `persistent_grant_idle_timeout_type` (String) Allows an administrator to override the Persistent Grant Idle Timeout set globally for the OAuth AS. Defaults to SERVER_DEFAULT.
+- `policy_refs` (List of String) The client registration policies.
+- `refresh_rolling` (String) Use ROLL or DONT_ROLL to override the Roll Refresh Token Values setting on the Authorization Server Settings. SERVER_DEFAULT will default to the Roll Refresh Token Values setting on the Authorization Server Setting screen. Defaults to SERVER_DEFAULT.
+- `refresh_token_rolling_interval` (Number) The minimum interval to roll refresh tokens, in hours. This value will override the Refresh Token Rolling Interval Value on the Authorization Server Settings.
+- `refresh_token_rolling_interval_type` (String) Use OVERRIDE_SERVER_DEFAULT to override the Refresh Token Rolling Interval value on the Authorization Server Settings. SERVER_DEFAULT will default to the Refresh Token Rolling Interval value on the Authorization Server Setting. Defaults to SERVER_DEFAULT.
+- `request_policy_ref` (Block List, Max: 1) (see [below for nested schema](#nestedblock--dynamic_client_registration--request_policy_ref))
+- `require_proof_key_for_code_exchange` (Boolean) Determines whether Proof Key for Code Exchange (PKCE) is required for the dynamically created client.
+- `require_signed_requests` (Boolean) Require signed requests.
+- `restrict_common_scopes` (Boolean) Restrict common scopes.
+- `restrict_to_default_access_token_manager` (Boolean) Determines whether the client is restricted to using only its default access token manager. The default is false.
+- `restricted_common_scopes` (List of String) The common scopes to restrict.
+- `rotate_client_secret` (Boolean) Rotate registration access token on dynamic client management requests.
+- `rotate_registration_access_token` (Boolean) Rotate client secret on dynamic client management requests.
+- `token_exchange_processor_policy_ref` (Block List, Max: 1) (see [below for nested schema](#nestedblock--dynamic_client_registration--token_exchange_processor_policy_ref))
+- `user_authorization_url_override` (String) The URL is used as 'verification_url' and 'verification_url_complete' values in a Device Authorization request.
 
 <a id="nestedblock--dynamic_client_registration--client_cert_issuer_ref"></a>
 ### Nested Schema for `dynamic_client_registration.client_cert_issuer_ref`
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 
 <a id="nestedblock--dynamic_client_registration--default_access_token_manager_ref"></a>
@@ -119,11 +119,11 @@ Read-Only:
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 
 <a id="nestedblock--dynamic_client_registration--oidc_policy"></a>
@@ -131,24 +131,24 @@ Read-Only:
 
 Required:
 
-- **policy_group** (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--dynamic_client_registration--oidc_policy--policy_group))
+- `policy_group` (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--dynamic_client_registration--oidc_policy--policy_group))
 
 Optional:
 
-- **id_token_content_encryption_algorithm** (String) The JSON Web Encryption [JWE] content encryption algorithm for the ID Token.<br>AES_128_CBC_HMAC_SHA_256 - Composite AES-CBC-128 HMAC-SHA-256<br>AES_192_CBC_HMAC_SHA_384 - Composite AES-CBC-192 HMAC-SHA-384<br>AES_256_CBC_HMAC_SHA_512 - Composite AES-CBC-256 HMAC-SHA-512<br>AES-GCM-128 - AES_128_GCM<br>AES_192_GCM - AES-GCM-192<br>AES_256_GCM - AES-GCM-256
-- **id_token_encryption_algorithm** (String) The JSON Web Encryption [JWE] encryption algorithm used to encrypt the content encryption key for the ID Token.<br>DIR - Direct Encryption with symmetric key<br>A128KW - AES-128 Key Wrap<br>A192KW - AES-192 Key Wrap<br>A256KW - AES-256 Key Wrap<br>A128GCMKW - AES-GCM-128 key encryption<br>A192GCMKW - AES-GCM-192 key encryption<br>A256GCMKW - AES-GCM-256 key encryption<br>ECDH_ES - ECDH-ES<br>ECDH_ES_A128KW - ECDH-ES with AES-128 Key Wrap<br>ECDH_ES_A192KW - ECDH-ES with AES-192 Key Wrap<br>ECDH_ES_A256KW - ECDH-ES with AES-256 Key Wrap<br>RSA_OAEP - RSAES OAEP<br>
-- **id_token_signing_algorithm** (String) The JSON Web Signature [JWS] algorithm required for the ID Token.<br>NONE - No signing algorithm<br>HS256 - HMAC using SHA-256<br>HS384 - HMAC using SHA-384<br>HS512 - HMAC using SHA-512<br>RS256 - RSA using SHA-256<br>RS384 - RSA using SHA-384<br>RS512 - RSA using SHA-512<br>ES256 - ECDSA using P256 Curve and SHA-256<br>ES384 - ECDSA using P384 Curve and SHA-384<br>ES512 - ECDSA using P521 Curve and SHA-512<br>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256<br>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384<br>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512<br>A null value will represent the default algorithm which is RS256.<br>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11
+- `id_token_content_encryption_algorithm` (String) The JSON Web Encryption [JWE] content encryption algorithm for the ID Token.<br>AES_128_CBC_HMAC_SHA_256 - Composite AES-CBC-128 HMAC-SHA-256<br>AES_192_CBC_HMAC_SHA_384 - Composite AES-CBC-192 HMAC-SHA-384<br>AES_256_CBC_HMAC_SHA_512 - Composite AES-CBC-256 HMAC-SHA-512<br>AES-GCM-128 - AES_128_GCM<br>AES_192_GCM - AES-GCM-192<br>AES_256_GCM - AES-GCM-256
+- `id_token_encryption_algorithm` (String) The JSON Web Encryption [JWE] encryption algorithm used to encrypt the content encryption key for the ID Token.<br>DIR - Direct Encryption with symmetric key<br>A128KW - AES-128 Key Wrap<br>A192KW - AES-192 Key Wrap<br>A256KW - AES-256 Key Wrap<br>A128GCMKW - AES-GCM-128 key encryption<br>A192GCMKW - AES-GCM-192 key encryption<br>A256GCMKW - AES-GCM-256 key encryption<br>ECDH_ES - ECDH-ES<br>ECDH_ES_A128KW - ECDH-ES with AES-128 Key Wrap<br>ECDH_ES_A192KW - ECDH-ES with AES-192 Key Wrap<br>ECDH_ES_A256KW - ECDH-ES with AES-256 Key Wrap<br>RSA_OAEP - RSAES OAEP<br>
+- `id_token_signing_algorithm` (String) The JSON Web Signature [JWS] algorithm required for the ID Token.<br>NONE - No signing algorithm<br>HS256 - HMAC using SHA-256<br>HS384 - HMAC using SHA-384<br>HS512 - HMAC using SHA-512<br>RS256 - RSA using SHA-256<br>RS384 - RSA using SHA-384<br>RS512 - RSA using SHA-512<br>ES256 - ECDSA using P256 Curve and SHA-256<br>ES384 - ECDSA using P384 Curve and SHA-384<br>ES512 - ECDSA using P521 Curve and SHA-512<br>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256<br>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384<br>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512<br>A null value will represent the default algorithm which is RS256.<br>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11
 
 <a id="nestedblock--dynamic_client_registration--oidc_policy--policy_group"></a>
 ### Nested Schema for `dynamic_client_registration.oidc_policy.policy_group`
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 
 
@@ -157,11 +157,11 @@ Read-Only:
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 
 <a id="nestedblock--dynamic_client_registration--token_exchange_processor_policy_ref"></a>
@@ -169,11 +169,11 @@ Read-Only:
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 ## Import
 

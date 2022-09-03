@@ -29,14 +29,14 @@ resource "pingfederate_keypair_ssl_server_settings" "example" {
 
 ### Required
 
-- **active_admin_server_certs** (Set of String) The active SSL Server Certificate Key pairs for PF Administrator Console.
-- **active_runtime_server_certs** (Set of String) The active SSL Server Certificate Key pairs for Runtime Server.
-- **admin_server_cert** (String) Reference to the default SSL Server Certificate Key pair active for PF Administrator Console.
-- **runtime_server_cert** (String) Reference to the default SSL Server Certificate Key pair active for Runtime Server.
+- `active_admin_server_certs` (Set of String) The active SSL Server Certificate Key pairs for PF Administrator Console.
+- `active_runtime_server_certs` (Set of String) The active SSL Server Certificate Key pairs for Runtime Server.
+- `admin_server_cert` (String) Reference to the default SSL Server Certificate Key pair active for PF Administrator Console.
+- `runtime_server_cert` (String) Reference to the default SSL Server Certificate Key pair active for Runtime Server.
 
 ### Read-Only
 
-- **id** (String) The ID of this resource.
+- `id` (String) The ID of this resource.
 
 ## Import
 

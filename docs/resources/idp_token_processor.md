@@ -41,42 +41,42 @@ resource "pingfederate_idp_token_processor" "example" {
 
 ### Required
 
-- **configuration** (Block List, Min: 1, Max: 1) Plugin instance configuration. (see [below for nested schema](#nestedblock--configuration))
-- **name** (String) The plugin instance name.
-- **plugin_descriptor_ref** (Block List, Min: 1, Max: 1) Reference to the plugin descriptor for this instance. The plugin descriptor cannot be modified once the instance is created.
+- `configuration` (Block List, Min: 1, Max: 1) Plugin instance configuration. (see [below for nested schema](#nestedblock--configuration))
+- `name` (String) The plugin instance name.
+- `plugin_descriptor_ref` (Block List, Min: 1, Max: 1) Reference to the plugin descriptor for this instance. The plugin descriptor cannot be modified once the instance is created.
 Note: Ignored when specifying a connection's adapter override. (see [below for nested schema](#nestedblock--plugin_descriptor_ref))
-- **processor_id** (String) The persistent, unique ID for the connection. It can be any combination of [a-zA-Z0-9._-]. This property is system-assigned if not specified.
+- `processor_id` (String) The persistent, unique ID for the connection. It can be any combination of [a-zA-Z0-9._-]. This property is system-assigned if not specified.
 
 ### Optional
 
-- **attribute_contract** (Block List, Max: 1) The list of attributes that the Authentication Selector provides. (see [below for nested schema](#nestedblock--attribute_contract))
-- **parent_ref** (Block List, Max: 1) The reference to this plugin's parent instance. The parent reference is only accepted if the plugin type supports parent instances.
+- `attribute_contract` (Block List, Max: 1) The list of attributes that the Authentication Selector provides. (see [below for nested schema](#nestedblock--attribute_contract))
+- `parent_ref` (Block List, Max: 1) The reference to this plugin's parent instance. The parent reference is only accepted if the plugin type supports parent instances.
 Note: This parent reference is required if this plugin instance is used as an overriding plugin (e.g. connection adapter overrides) (see [below for nested schema](#nestedblock--parent_ref))
 
 ### Read-Only
 
-- **id** (String) The ID of this resource.
+- `id` (String) The ID of this resource.
 
 <a id="nestedblock--configuration"></a>
 ### Nested Schema for `configuration`
 
 Optional:
 
-- **fields** (Block Set) List of configuration fields. (see [below for nested schema](#nestedblock--configuration--fields))
-- **sensitive_fields** (Block Set) List of sensitive configuration fields. (see [below for nested schema](#nestedblock--configuration--sensitive_fields))
-- **tables** (Block List) List of configuration tables. (see [below for nested schema](#nestedblock--configuration--tables))
+- `fields` (Block Set) List of configuration fields. (see [below for nested schema](#nestedblock--configuration--fields))
+- `sensitive_fields` (Block Set) List of sensitive configuration fields. (see [below for nested schema](#nestedblock--configuration--sensitive_fields))
+- `tables` (Block List) List of configuration tables. (see [below for nested schema](#nestedblock--configuration--tables))
 
 <a id="nestedblock--configuration--fields"></a>
 ### Nested Schema for `configuration.fields`
 
 Required:
 
-- **name** (String) The name of the configuration field.
+- `name` (String) The name of the configuration field.
 
 Optional:
 
-- **inherited** (Boolean) Whether this field is inherited from its parent instance. If true, the value/encrypted value properties become read-only. The default value is false.
-- **value** (String) The value for the configuration field.
+- `inherited` (Boolean) Whether this field is inherited from its parent instance. If true, the value/encrypted value properties become read-only. The default value is false.
+- `value` (String) The value for the configuration field.
 
 
 <a id="nestedblock--configuration--sensitive_fields"></a>
@@ -84,12 +84,12 @@ Optional:
 
 Required:
 
-- **name** (String) The name of the configuration field.
+- `name` (String) The name of the configuration field.
 
 Optional:
 
-- **inherited** (Boolean) Whether this field is inherited from its parent instance. If true, the value/encrypted value properties become read-only. The default value is false.
-- **value** (String, Sensitive) The value for the configuration field. For encrypted or hashed fields, GETs will not return this attribute. To update an encrypted or hashed field, specify the new value in this attribute.
+- `inherited` (Boolean) Whether this field is inherited from its parent instance. If true, the value/encrypted value properties become read-only. The default value is false.
+- `value` (String, Sensitive) The value for the configuration field. For encrypted or hashed fields, GETs will not return this attribute. To update an encrypted or hashed field, specify the new value in this attribute.
 
 
 <a id="nestedblock--configuration--tables"></a>
@@ -97,33 +97,33 @@ Optional:
 
 Required:
 
-- **name** (String) The name of the table.
+- `name` (String) The name of the table.
 
 Optional:
 
-- **inherited** (Boolean) Whether this table is inherited from its parent instance. If true, the rows become read-only. The default value is false.
-- **rows** (Block List) List of table rows. (see [below for nested schema](#nestedblock--configuration--tables--rows))
+- `inherited` (Boolean) Whether this table is inherited from its parent instance. If true, the rows become read-only. The default value is false.
+- `rows` (Block List) List of table rows. (see [below for nested schema](#nestedblock--configuration--tables--rows))
 
 <a id="nestedblock--configuration--tables--rows"></a>
 ### Nested Schema for `configuration.tables.rows`
 
 Optional:
 
-- **default_row** (Boolean) Whether this row is the default.
-- **fields** (Block Set) List of configuration fields. (see [below for nested schema](#nestedblock--configuration--tables--rows--fields))
-- **sensitive_fields** (Block Set) List of sensitive configuration fields. (see [below for nested schema](#nestedblock--configuration--tables--rows--sensitive_fields))
+- `default_row` (Boolean) Whether this row is the default.
+- `fields` (Block Set) List of configuration fields. (see [below for nested schema](#nestedblock--configuration--tables--rows--fields))
+- `sensitive_fields` (Block Set) List of sensitive configuration fields. (see [below for nested schema](#nestedblock--configuration--tables--rows--sensitive_fields))
 
 <a id="nestedblock--configuration--tables--rows--fields"></a>
 ### Nested Schema for `configuration.tables.rows.fields`
 
 Required:
 
-- **name** (String) The name of the configuration field.
+- `name` (String) The name of the configuration field.
 
 Optional:
 
-- **inherited** (Boolean) Whether this field is inherited from its parent instance. If true, the value/encrypted value properties become read-only. The default value is false.
-- **value** (String) The value for the configuration field.
+- `inherited` (Boolean) Whether this field is inherited from its parent instance. If true, the value/encrypted value properties become read-only. The default value is false.
+- `value` (String) The value for the configuration field.
 
 
 <a id="nestedblock--configuration--tables--rows--sensitive_fields"></a>
@@ -131,12 +131,12 @@ Optional:
 
 Required:
 
-- **name** (String) The name of the configuration field.
+- `name` (String) The name of the configuration field.
 
 Optional:
 
-- **inherited** (Boolean) Whether this field is inherited from its parent instance. If true, the value/encrypted value properties become read-only. The default value is false.
-- **value** (String, Sensitive) The value for the configuration field. For encrypted or hashed fields, GETs will not return this attribute. To update an encrypted or hashed field, specify the new value in this attribute.
+- `inherited` (Boolean) Whether this field is inherited from its parent instance. If true, the value/encrypted value properties become read-only. The default value is false.
+- `value` (String, Sensitive) The value for the configuration field. For encrypted or hashed fields, GETs will not return this attribute. To update an encrypted or hashed field, specify the new value in this attribute.
 
 
 
@@ -147,11 +147,11 @@ Optional:
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 
 <a id="nestedblock--attribute_contract"></a>
@@ -159,24 +159,24 @@ Read-Only:
 
 Optional:
 
-- **extended_attributes** (Block Set) A list of additional attributes that can be returned by the token processor. The extended attributes are only used if the token processor supports them. (see [below for nested schema](#nestedblock--attribute_contract--extended_attributes))
-- **inherited** (Boolean) Whether this attribute contract is inherited from its parent instance. If true, the rest of the properties in this model become read-only. The default value is false.
-- **mask_ognl_values** (Boolean) Whether or not all OGNL expressions used to fulfill an outgoing assertion contract should be masked in the logs. Defaults to false.
+- `extended_attributes` (Block Set) A list of additional attributes that can be returned by the token processor. The extended attributes are only used if the token processor supports them. (see [below for nested schema](#nestedblock--attribute_contract--extended_attributes))
+- `inherited` (Boolean) Whether this attribute contract is inherited from its parent instance. If true, the rest of the properties in this model become read-only. The default value is false.
+- `mask_ognl_values` (Boolean) Whether or not all OGNL expressions used to fulfill an outgoing assertion contract should be masked in the logs. Defaults to false.
 
 Read-Only:
 
-- **core_attributes** (Set of Object) A list of token processor attributes that correspond to the attributes exposed by the token processor type. (see [below for nested schema](#nestedatt--attribute_contract--core_attributes))
+- `core_attributes` (Set of Object) A list of token processor attributes that correspond to the attributes exposed by the token processor type. (see [below for nested schema](#nestedatt--attribute_contract--core_attributes))
 
 <a id="nestedblock--attribute_contract--extended_attributes"></a>
 ### Nested Schema for `attribute_contract.extended_attributes`
 
 Required:
 
-- **name** (String) The name of this attribute.
+- `name` (String) The name of this attribute.
 
 Optional:
 
-- **masked** (Boolean) Specifies whether this attribute is masked in PingFederate logs. Defaults to `false`.
+- `masked` (Boolean) Specifies whether this attribute is masked in PingFederate logs. Defaults to `false`.
 
 
 <a id="nestedatt--attribute_contract--core_attributes"></a>
@@ -184,8 +184,8 @@ Optional:
 
 Read-Only:
 
-- **masked** (Boolean)
-- **name** (String)
+- `masked` (Boolean)
+- `name` (String)
 
 
 
@@ -194,11 +194,11 @@ Read-Only:
 
 Required:
 
-- **id** (String) The ID of the resource.
+- `id` (String) The ID of the resource.
 
 Read-Only:
 
-- **location** (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 ## Import
 
