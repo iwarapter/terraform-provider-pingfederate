@@ -246,6 +246,9 @@ func expandSensitiveConfigFields(in []interface{}) *[]*pf.ConfigField {
 func expandPluginConfiguration(in []interface{}) *pf.PluginConfiguration {
 	config := &pf.PluginConfiguration{}
 	for _, raw := range in {
+		if raw == nil {
+			continue
+		}
 		l := raw.(map[string]interface{})
 		if val, ok := l["tables"]; ok && len(val.([]interface{})) > 0 {
 			config.Tables = expandConfigTableList(val.([]interface{}))
