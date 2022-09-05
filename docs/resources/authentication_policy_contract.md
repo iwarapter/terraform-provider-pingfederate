@@ -3,12 +3,12 @@
 page_title: "pingfederate_authentication_policy_contract Resource - terraform-provider-pingfederate"
 subcategory: ""
 description: |-
-  Authentication Policy Contracts carry user attributes from the identity provider to the service provider.
+  Provides configuration for Authentication Policy Contracts within PingFederate.
 ---
 
 # pingfederate_authentication_policy_contract (Resource)
 
-Authentication Policy Contracts carry user attributes from the identity provider to the service provider.
+Provides configuration for Authentication Policy Contracts within PingFederate.
 
 ## Example Usage
 
@@ -24,23 +24,17 @@ resource "pingfederate_authentication_policy_contract" "example" {
 
 ### Required
 
-- **name** (String) The Authentication Policy Contract Name. Name is unique.
+- `name` (String) The Authentication Policy Contract Name. Name is unique.
 
 ### Optional
 
-- **extended_attributes** (List of String) A list of additional attributes as needed.
-- **id** (String) The persistent, unique ID for the authentication policy contract. It can be any combination of [a-zA-Z0-9._-]. This property is system-assigned if not specified.
+- `extended_attributes` (Set of String) A list of additional attributes as needed.
+- `policy_contract_id` (String) The persistent, unique ID for the authentication policy contract. It can be any combination of [a-zA-Z0-9._-]. This property is system-assigned if not specified.
 
 ### Read-Only
 
-- **core_attributes** (Attributes List) A list of read-only assertion attributes (for example, subject) that are automatically populated by PingFederate. (see [below for nested schema](#nestedatt--core_attributes))
-
-<a id="nestedatt--core_attributes"></a>
-### Nested Schema for `core_attributes`
-
-Read-Only:
-
-- **name** (String) The name of this attribute.
+- `core_attributes` (Set of String) A list of read-only assertion attributes (for example, subject) that are automatically populated by PingFederate.
+- `id` (String) The ID of this resource.
 
 ## Import
 

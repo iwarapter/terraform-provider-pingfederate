@@ -246,6 +246,9 @@ func expandSensitiveConfigFields(in []interface{}) *[]*pf.ConfigField {
 func expandPluginConfiguration(in []interface{}) *pf.PluginConfiguration {
 	config := &pf.PluginConfiguration{}
 	for _, raw := range in {
+		if raw == nil {
+			continue
+		}
 		l := raw.(map[string]interface{})
 		if val, ok := l["tables"]; ok && len(val.([]interface{})) > 0 {
 			config.Tables = expandConfigTableList(val.([]interface{}))
@@ -392,11 +395,14 @@ func expandOpenIdConnectAttributeContract(in []interface{}) *pf.OpenIdConnectAtt
 func expandAttributeMapping(in []interface{}) *pf.AttributeMapping {
 	iac := &pf.AttributeMapping{AttributeSources: &[]*pf.AttributeSource{}}
 	for _, raw := range in {
+		if raw == nil {
+			continue
+		}
 		l := raw.(map[string]interface{})
 		if v, ok := l["attribute_contract_fulfillment"]; ok {
 			iac.AttributeContractFulfillment = expandMapOfAttributeFulfillmentValue(v.(*schema.Set).List())
 		}
-		if v, ok := l["issuance_criteria"]; ok && len(v.([]interface{})) > 0 {
+		if v, ok := l["issuance_criteria"]; ok && len(v.([]interface{})) > 0 && v.([]interface{})[0] != nil {
 			iac.IssuanceCriteria = expandIssuanceCriteria(v.([]interface{})[0].(map[string]interface{}))
 		}
 
@@ -522,6 +528,9 @@ func expandPolicyAction(in []interface{}) *pf.PolicyAction {
 		}
 		if v, ok := l["fragment"]; ok && len(v.([]interface{})) > 0 {
 			action.Fragment = expandResourceLink(v.([]interface{})[0].(map[string]interface{}))
+		}
+		if v, ok := l["user_id_authenticated"]; ok && action.Type != nil && *action.Type == "AUTHN_SOURCE" {
+			action.AuthnSourcePolicyAction.UserIdAuthenticated = Bool(v.(bool))
 		}
 	}
 	return action

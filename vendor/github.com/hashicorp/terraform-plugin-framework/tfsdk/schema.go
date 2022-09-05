@@ -4,11 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"sort"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/internal/fwschema"
+	"github.com/hashicorp/terraform-plugin-framework/internal/totftypes"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
 )
 
@@ -23,6 +25,9 @@ var (
 	// block, not an attribute. Use blockAtPath on the path instead.
 	ErrPathIsBlock = errors.New("path leads to block, not an attribute")
 )
+
+// Schema must satify the fwschema.Schema interface.
+var _ fwschema.Schema = Schema{}
 
 // Schema is used to define the shape of practitioner-provider information,
 // like resources, data sources, and providers. Think of it as a type
@@ -56,9 +61,9 @@ type Schema struct {
 	//   https://www.terraform.io/docs/language/syntax/configuration.html
 	//   https://www.terraform.io/docs/language/expressions/dynamic-blocks.html
 	//
-	// Deprecated: Attributes are preferred over Blocks. Blocks should only be
-	// used for configuration compatibility with previously existing schemas
-	// from an older Terraform Plugin SDK. Efforts should be made to convert
+	// Attributes are preferred over Blocks. Blocks should typically be used
+	// for configuration compatibility with previously existing schemas from
+	// an older Terraform Plugin SDK. Efforts should be made to convert from
 	// Blocks to Attributes as a breaking change for practitioners.
 	Blocks map[string]Block
 
@@ -97,19 +102,49 @@ func (s Schema) ApplyTerraform5AttributePathStep(step tftypes.AttributePathStep)
 }
 
 // AttributeType returns a types.ObjectType composed from the schema types.
+// Deprecated: Use Type() instead.
 func (s Schema) AttributeType() attr.Type {
-	attrTypes := map[string]attr.Type{}
-	for name, attr := range s.Attributes {
-		attrTypes[name] = attr.attributeType()
-	}
-	for name, block := range s.Blocks {
-		attrTypes[name] = block.attributeType()
-	}
-	return types.ObjectType{AttrTypes: attrTypes}
+	return s.Type()
 }
 
 // AttributeTypeAtPath returns the attr.Type of the attribute at the given path.
+//
+// Deprecated: Use the TypeAtPath() or TypeAtTerraformPath() method.
 func (s Schema) AttributeTypeAtPath(path *tftypes.AttributePath) (attr.Type, error) {
+	return s.TypeAtTerraformPath(context.Background(), path)
+}
+
+// TypeAtPath returns the framework type at the given schema path.
+func (s Schema) TypeAtPath(ctx context.Context, schemaPath path.Path) (attr.Type, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	tftypesPath, tftypesDiags := totftypes.AttributePath(ctx, schemaPath)
+
+	diags.Append(tftypesDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	attrType, err := s.TypeAtTerraformPath(ctx, tftypesPath)
+
+	if err != nil {
+		diags.AddAttributeError(
+			schemaPath,
+			"Invalid Schema Path",
+			"When attempting to get the framework type associated with a schema path, an unexpected error was returned. "+
+				"This is either an issue with the provider or terraform-plugin-framework. Please report this to the provider developers.\n\n"+
+				fmt.Sprintf("Path: %s\n", schemaPath.String())+
+				fmt.Sprintf("Original Error: %s", err),
+		)
+		return nil, diags
+	}
+
+	return attrType, diags
+}
+
+// TypeAtTerraformPath returns the framework type at the given tftypes path.
+func (s Schema) TypeAtTerraformPath(_ context.Context, path *tftypes.AttributePath) (attr.Type, error) {
 	rawType, remaining, err := tftypes.WalkAttributePath(s, path)
 	if err != nil {
 		return nil, fmt.Errorf("%v still remains in the path: %w", remaining, err)
@@ -118,37 +153,87 @@ func (s Schema) AttributeTypeAtPath(path *tftypes.AttributePath) (attr.Type, err
 	switch typ := rawType.(type) {
 	case attr.Type:
 		return typ, nil
-	case nestedAttributes:
-		return typ.AttributeType(), nil
-	case nestedBlock:
-		return typ.Block.attributeType(), nil
+	case fwschema.UnderlyingAttributes:
+		return typ.Type(), nil
+	case fwschema.NestedBlock:
+		return typ.Block.Type(), nil
 	case Attribute:
-		return typ.attributeType(), nil
+		return typ.FrameworkType(), nil
 	case Block:
-		return typ.attributeType(), nil
+		return typ.Type(), nil
 	case Schema:
-		return typ.AttributeType(), nil
+		return typ.Type(), nil
 	default:
 		return nil, fmt.Errorf("got unexpected type %T", rawType)
 	}
 }
 
+// GetAttributes satisfies the fwschema.Schema interface.
+func (s Schema) GetAttributes() map[string]fwschema.Attribute {
+	return schemaAttributes(s.Attributes)
+}
+
+// GetBlocks satisfies the fwschema.Schema interface.
+func (s Schema) GetBlocks() map[string]fwschema.Block {
+	return schemaBlocks(s.Blocks)
+}
+
+// GetDeprecationMessage satisfies the fwschema.Schema interface.
+func (s Schema) GetDeprecationMessage() string {
+	return s.DeprecationMessage
+}
+
+// GetDescription satisfies the fwschema.Schema interface.
+func (s Schema) GetDescription() string {
+	return s.Description
+}
+
+// GetMarkdownDescription satisfies the fwschema.Schema interface.
+func (s Schema) GetMarkdownDescription() string {
+	return s.MarkdownDescription
+}
+
+// GetVersion satisfies the fwschema.Schema interface.
+func (s Schema) GetVersion() int64 {
+	return s.Version
+}
+
 // TerraformType returns a tftypes.Type that can represent the schema.
+// Deprecated: Use Type().TerraformType() instead.
 func (s Schema) TerraformType(ctx context.Context) tftypes.Type {
-	attrTypes := map[string]tftypes.Type{}
+	return s.Type().TerraformType(ctx)
+}
+
+// Type returns the framework type of the schema.
+func (s Schema) Type() attr.Type {
+	attrTypes := map[string]attr.Type{}
+
 	for name, attr := range s.Attributes {
-		attrTypes[name] = attr.terraformType(ctx)
+		attrTypes[name] = attr.FrameworkType()
 	}
+
 	for name, block := range s.Blocks {
-		attrTypes[name] = block.terraformType(ctx)
+		attrTypes[name] = block.Type()
 	}
-	return tftypes.Object{AttributeTypes: attrTypes}
+
+	return types.ObjectType{AttrTypes: attrTypes}
 }
 
 // AttributeAtPath returns the Attribute at the passed path. If the path points
 // to an element or attribute of a complex type, rather than to an Attribute,
 // it will return an ErrPathInsideAtomicAttribute error.
-func (s Schema) AttributeAtPath(path *tftypes.AttributePath) (Attribute, error) {
+//
+// Deprecated: The signature will be updated in the next release.
+// Use AttributeAtTerraformPath() if the *tftypes.AttributePath parameter is
+// still needed.
+func (s Schema) AttributeAtPath(path *tftypes.AttributePath) (fwschema.Attribute, error) {
+	return s.AttributeAtTerraformPath(context.Background(), path)
+}
+
+// AttributeAtPath returns the Attribute at the passed path. If the path points
+// to an element or attribute of a complex type, rather than to an Attribute,
+// it will return an ErrPathInsideAtomicAttribute error.
+func (s Schema) AttributeAtTerraformPath(_ context.Context, path *tftypes.AttributePath) (fwschema.Attribute, error) {
 	res, remaining, err := tftypes.WalkAttributePath(s, path)
 	if err != nil {
 		return Attribute{}, fmt.Errorf("%v still remains in the path: %w", remaining, err)
@@ -157,11 +242,11 @@ func (s Schema) AttributeAtPath(path *tftypes.AttributePath) (Attribute, error) 
 	switch r := res.(type) {
 	case attr.Type:
 		return Attribute{}, ErrPathInsideAtomicAttribute
-	case nestedAttributes:
+	case fwschema.UnderlyingAttributes:
 		return Attribute{}, ErrPathInsideAtomicAttribute
-	case nestedBlock:
+	case fwschema.NestedBlock:
 		return Attribute{}, ErrPathInsideAtomicAttribute
-	case Attribute:
+	case fwschema.Attribute:
 		return r, nil
 	case Block:
 		return Attribute{}, ErrPathIsBlock
@@ -170,161 +255,24 @@ func (s Schema) AttributeAtPath(path *tftypes.AttributePath) (Attribute, error) 
 	}
 }
 
-// blockAtPath returns the Block at the passed path. If the path points
-// to an element or attribute of a complex type, rather than to a Block,
-// it will return an ErrPathInsideAtomicAttribute error.
-func (s Schema) blockAtPath(path *tftypes.AttributePath) (Block, error) {
-	res, remaining, err := tftypes.WalkAttributePath(s, path)
-	if err != nil {
-		return Block{}, fmt.Errorf("%v still remains in the path: %w", remaining, err)
+// schemaAttributes is a tfsdk to fwschema type conversion function.
+func schemaAttributes(attributes map[string]Attribute) map[string]fwschema.Attribute {
+	result := make(map[string]fwschema.Attribute, len(attributes))
+
+	for name, attribute := range attributes {
+		result[name] = attribute
 	}
 
-	switch r := res.(type) {
-	case nestedBlock:
-		return Block{}, ErrPathInsideAtomicAttribute
-	case Block:
-		return r, nil
-	default:
-		return Block{}, fmt.Errorf("got unexpected type %T", res)
-	}
+	return result
 }
 
-// tfprotov6Schema returns the *tfprotov6.Schema equivalent of a Schema.
-func (s Schema) tfprotov6Schema(ctx context.Context) (*tfprotov6.Schema, error) {
-	result := &tfprotov6.Schema{
-		Version: s.Version,
+// schemaBlocks is a tfsdk to fwschema type conversion function.
+func schemaBlocks(blocks map[string]Block) map[string]fwschema.Block {
+	result := make(map[string]fwschema.Block, len(blocks))
+
+	for name, block := range blocks {
+		result[name] = block
 	}
 
-	var attrs []*tfprotov6.SchemaAttribute
-	var blocks []*tfprotov6.SchemaNestedBlock
-
-	for name, attr := range s.Attributes {
-		a, err := attr.tfprotov6SchemaAttribute(ctx, name, tftypes.NewAttributePath().WithAttributeName(name))
-
-		if err != nil {
-			return nil, err
-		}
-
-		attrs = append(attrs, a)
-	}
-
-	for name, block := range s.Blocks {
-		proto6, err := block.tfprotov6(ctx, name, tftypes.NewAttributePath().WithAttributeName(name))
-
-		if err != nil {
-			return nil, err
-		}
-
-		blocks = append(blocks, proto6)
-	}
-
-	sort.Slice(attrs, func(i, j int) bool {
-		if attrs[i] == nil {
-			return true
-		}
-
-		if attrs[j] == nil {
-			return false
-		}
-
-		return attrs[i].Name < attrs[j].Name
-	})
-
-	sort.Slice(blocks, func(i, j int) bool {
-		if blocks[i] == nil {
-			return true
-		}
-
-		if blocks[j] == nil {
-			return false
-		}
-
-		return blocks[i].TypeName < blocks[j].TypeName
-	})
-
-	result.Block = &tfprotov6.SchemaBlock{
-		// core doesn't do anything with version, as far as I can tell,
-		// so let's not set it.
-		Attributes: attrs,
-		BlockTypes: blocks,
-		Deprecated: s.DeprecationMessage != "",
-	}
-
-	if s.Description != "" {
-		result.Block.Description = s.Description
-		result.Block.DescriptionKind = tfprotov6.StringKindPlain
-	}
-
-	if s.MarkdownDescription != "" {
-		result.Block.Description = s.MarkdownDescription
-		result.Block.DescriptionKind = tfprotov6.StringKindMarkdown
-	}
-
-	return result, nil
-}
-
-// validate performs all Attribute validation.
-func (s Schema) validate(ctx context.Context, req ValidateSchemaRequest, resp *ValidateSchemaResponse) {
-	for name, attribute := range s.Attributes {
-
-		attributeReq := ValidateAttributeRequest{
-			AttributePath: tftypes.NewAttributePath().WithAttributeName(name),
-			Config:        req.Config,
-		}
-		attributeResp := &ValidateAttributeResponse{
-			Diagnostics: resp.Diagnostics,
-		}
-
-		attribute.validate(ctx, attributeReq, attributeResp)
-
-		resp.Diagnostics = attributeResp.Diagnostics
-	}
-
-	for name, block := range s.Blocks {
-		attributeReq := ValidateAttributeRequest{
-			AttributePath: tftypes.NewAttributePath().WithAttributeName(name),
-			Config:        req.Config,
-		}
-		attributeResp := &ValidateAttributeResponse{
-			Diagnostics: resp.Diagnostics,
-		}
-
-		block.validate(ctx, attributeReq, attributeResp)
-
-		resp.Diagnostics = attributeResp.Diagnostics
-	}
-
-	if s.DeprecationMessage != "" {
-		resp.Diagnostics.AddWarning(
-			"Deprecated",
-			s.DeprecationMessage,
-		)
-	}
-}
-
-// modifyPlan runs all AttributePlanModifiers in all schema attributes and blocks
-func (s Schema) modifyPlan(ctx context.Context, req ModifySchemaPlanRequest, resp *ModifySchemaPlanResponse) {
-	for name, attr := range s.Attributes {
-		attrReq := ModifyAttributePlanRequest{
-			AttributePath: tftypes.NewAttributePath().WithAttributeName(name),
-			Config:        req.Config,
-			State:         req.State,
-			Plan:          req.Plan,
-			ProviderMeta:  req.ProviderMeta,
-		}
-
-		attr.modifyPlan(ctx, attrReq, resp)
-	}
-
-	for name, block := range s.Blocks {
-		blockReq := ModifyAttributePlanRequest{
-			AttributePath: tftypes.NewAttributePath().WithAttributeName(name),
-			Config:        req.Config,
-			State:         req.State,
-			Plan:          req.Plan,
-			ProviderMeta:  req.ProviderMeta,
-		}
-
-		block.modifyPlan(ctx, blockReq, resp)
-	}
+	return result
 }

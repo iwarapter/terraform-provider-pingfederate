@@ -1,21 +1,28 @@
 package tfsdk
 
 import (
-	"context"
 	"fmt"
-	"sort"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/internal/fwschema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
 )
 
 var _ tftypes.AttributePathStepper = Block{}
 
+// Block must satify the fwschema.Block interface. It must also satisfy
+// fwxschema.BlockWithPlanModifiers and fwxschema.BlockWithValidators
+// interfaces, however we cannot check that here or it would introduce an
+// import cycle.
+var _ fwschema.Block = Block{}
+
 // Block defines the constraints and behaviors of a single structural field in a
 // schema.
+//
+// The NestingMode field must be set or a runtime error will be raised by the
+// framework when fetching the schema.
 type Block struct {
 	// Attributes are value fields inside the block. This map of attributes
 	// behaves exactly like the map of attributes on the Schema type.
@@ -25,9 +32,24 @@ type Block struct {
 	// behaves exactly like the map of blocks on the Schema type.
 	Blocks map[string]Block
 
-	// DeprecationMessage defines a message to display to practitioners
-	// using this block, warning them that it is deprecated and
-	// instructing them on what upgrade steps to take.
+	// DeprecationMessage defines warning diagnostic details to display to
+	// practitioners configuring this Block. The warning diagnostic summary
+	// is automatically set to "Block Deprecated" along with configuration
+	// source file and line information.
+	//
+	// This warning diagnostic is only displayed during Terraform's validation
+	// phase when this field is a non-empty string and if the practitioner
+	// configuration attempts to set the block value to a known or unknown
+	// value (which may eventually be null).
+	//
+	// Set this field to a practitioner actionable message such as:
+	//
+	//     - "Configure other_attribute instead. This block will be removed
+	//       in the next major version of the provider."
+	//     - "Remove this block's configuration as it no longer is used and
+	//       the block will be removed in the next major version of the
+	//       provider."
+	//
 	DeprecationMessage string
 
 	// Description is used in various tooling, like the language server, to
@@ -51,8 +73,9 @@ type Block struct {
 	// this configuration as required.
 	MinItems int64
 
-	// NestingMode indicates the block kind.
-	NestingMode BlockNestingMode
+	// NestingMode indicates the block kind. This field must be set or a
+	// runtime error will be raised by the framework when fetching the schema.
+	NestingMode fwschema.BlockNestingMode
 
 	// PlanModifiers defines a sequence of modifiers for this block at
 	// plan time. Block-level plan modifications occur before any
@@ -83,7 +106,7 @@ func (b Block) ApplyTerraform5AttributePathStep(step tftypes.AttributePathStep) 
 			return nil, fmt.Errorf("can't apply %T to block NestingModeList", step)
 		}
 
-		return nestedBlock{Block: b}, nil
+		return fwschema.NestedBlock{Block: b}, nil
 	case BlockNestingModeSet:
 		_, ok := step.(tftypes.ElementKeyValue)
 
@@ -91,53 +114,104 @@ func (b Block) ApplyTerraform5AttributePathStep(step tftypes.AttributePathStep) 
 			return nil, fmt.Errorf("can't apply %T to block NestingModeSet", step)
 		}
 
-		return nestedBlock{Block: b}, nil
+		return fwschema.NestedBlock{Block: b}, nil
 	default:
 		return nil, fmt.Errorf("unsupported block nesting mode: %v", b.NestingMode)
 	}
 }
 
 // Equal returns true if `b` and `o` should be considered Equal.
-func (b Block) Equal(o Block) bool {
-	if !cmp.Equal(b.Attributes, o.Attributes) {
+func (b Block) Equal(o fwschema.Block) bool {
+	if !cmp.Equal(b.GetAttributes(), o.GetAttributes()) {
 		return false
 	}
-	if !cmp.Equal(b.Blocks, o.Blocks) {
+	if !cmp.Equal(b.GetBlocks(), o.GetBlocks()) {
 		return false
 	}
-	if b.DeprecationMessage != o.DeprecationMessage {
+	if b.GetDeprecationMessage() != o.GetDeprecationMessage() {
 		return false
 	}
-	if b.Description != o.Description {
+	if b.GetDescription() != o.GetDescription() {
 		return false
 	}
-	if b.MarkdownDescription != o.MarkdownDescription {
+	if b.GetMarkdownDescription() != o.GetMarkdownDescription() {
 		return false
 	}
-	if b.MaxItems != o.MaxItems {
+	if b.GetMaxItems() != o.GetMaxItems() {
 		return false
 	}
-	if b.MinItems != o.MinItems {
+	if b.GetMinItems() != o.GetMinItems() {
 		return false
 	}
-	if b.NestingMode != o.NestingMode {
+	if b.GetNestingMode() != o.GetNestingMode() {
 		return false
 	}
 	return true
 }
 
+// GetAttributes satisfies the fwschema.Block interface.
+func (b Block) GetAttributes() map[string]fwschema.Attribute {
+	return schemaAttributes(b.Attributes)
+}
+
+// GetBlocks satisfies the fwschema.Block interface.
+func (b Block) GetBlocks() map[string]fwschema.Block {
+	return schemaBlocks(b.Blocks)
+}
+
+// GetDeprecationMessage satisfies the fwschema.Block interface.
+func (b Block) GetDeprecationMessage() string {
+	return b.DeprecationMessage
+}
+
+// GetDescription satisfies the fwschema.Block interface.
+func (b Block) GetDescription() string {
+	return b.Description
+}
+
+// GetMarkdownDescription satisfies the fwschema.Block interface.
+func (b Block) GetMarkdownDescription() string {
+	return b.MarkdownDescription
+}
+
+// GetMaxItems satisfies the fwschema.Block interface.
+func (b Block) GetMaxItems() int64 {
+	return b.MaxItems
+}
+
+// GetMinItems satisfies the fwschema.Block interface.
+func (b Block) GetMinItems() int64 {
+	return b.MinItems
+}
+
+// GetNestingMode satisfies the fwschema.Block interface.
+func (b Block) GetNestingMode() fwschema.BlockNestingMode {
+	return b.NestingMode
+}
+
+// GetPlanModifiers satisfies the fwxschema.BlockWithPlanModifiers
+// interface.
+func (b Block) GetPlanModifiers() AttributePlanModifiers {
+	return b.PlanModifiers
+}
+
+// GetValidators satisfies the fwxschema.BlockWithValidators interface.
+func (b Block) GetValidators() []AttributeValidator {
+	return b.Validators
+}
+
 // attributeType returns an attr.Type corresponding to the block.
-func (b Block) attributeType() attr.Type {
+func (b Block) Type() attr.Type {
 	attrType := types.ObjectType{
 		AttrTypes: map[string]attr.Type{},
 	}
 
 	for attrName, attr := range b.Attributes {
-		attrType.AttrTypes[attrName] = attr.attributeType()
+		attrType.AttrTypes[attrName] = attr.FrameworkType()
 	}
 
-	for blockName, block := range b.Attributes {
-		attrType.AttrTypes[blockName] = block.attributeType()
+	for blockName, block := range b.Blocks {
+		attrType.AttrTypes[blockName] = block.Type()
 	}
 
 	switch b.NestingMode {
@@ -152,429 +226,4 @@ func (b Block) attributeType() attr.Type {
 	default:
 		panic(fmt.Sprintf("unsupported block nesting mode: %v", b.NestingMode))
 	}
-}
-
-// modifyPlan performs all Block plan modification.
-func (b Block) modifyPlan(ctx context.Context, req ModifyAttributePlanRequest, resp *ModifySchemaPlanResponse) {
-	attributeConfig, diags := req.Config.getAttributeValue(ctx, req.AttributePath)
-	resp.Diagnostics.Append(diags...)
-
-	if diags.HasError() {
-		return
-	}
-
-	req.AttributeConfig = attributeConfig
-
-	attributePlan, diags := req.Plan.getAttributeValue(ctx, req.AttributePath)
-	resp.Diagnostics.Append(diags...)
-
-	if diags.HasError() {
-		return
-	}
-
-	req.AttributePlan = attributePlan
-
-	attributeState, diags := req.State.getAttributeValue(ctx, req.AttributePath)
-	resp.Diagnostics.Append(diags...)
-
-	if diags.HasError() {
-		return
-	}
-
-	req.AttributeState = attributeState
-
-	var requiresReplace bool
-	for _, planModifier := range b.PlanModifiers {
-		modifyResp := &ModifyAttributePlanResponse{
-			AttributePlan:   req.AttributePlan,
-			RequiresReplace: requiresReplace,
-		}
-
-		planModifier.Modify(ctx, req, modifyResp)
-
-		req.AttributePlan = modifyResp.AttributePlan
-		resp.Diagnostics.Append(modifyResp.Diagnostics...)
-		requiresReplace = modifyResp.RequiresReplace
-
-		// Only on new errors.
-		if modifyResp.Diagnostics.HasError() {
-			return
-		}
-	}
-
-	if requiresReplace {
-		resp.RequiresReplace = append(resp.RequiresReplace, req.AttributePath)
-	}
-
-	setAttrDiags := resp.Plan.SetAttribute(ctx, req.AttributePath, req.AttributePlan)
-	resp.Diagnostics.Append(setAttrDiags...)
-
-	if setAttrDiags.HasError() {
-		return
-	}
-
-	nm := b.NestingMode
-	switch nm {
-	case BlockNestingModeList:
-		l, ok := req.AttributePlan.(types.List)
-
-		if !ok {
-			err := fmt.Errorf("unknown block value type (%s) for nesting mode (%T) at path: %s", req.AttributeConfig.Type(ctx), nm, req.AttributePath)
-			resp.Diagnostics.AddAttributeError(
-				req.AttributePath,
-				"Block Plan Modification Error",
-				"Block validation cannot walk schema. Report this to the provider developer:\n\n"+err.Error(),
-			)
-
-			return
-		}
-
-		for idx := range l.Elems {
-			for name, attr := range b.Attributes {
-				attrReq := ModifyAttributePlanRequest{
-					AttributePath: req.AttributePath.WithElementKeyInt(idx).WithAttributeName(name),
-					Config:        req.Config,
-					Plan:          resp.Plan,
-					ProviderMeta:  req.ProviderMeta,
-					State:         req.State,
-				}
-
-				attr.modifyPlan(ctx, attrReq, resp)
-			}
-
-			for name, block := range b.Blocks {
-				blockReq := ModifyAttributePlanRequest{
-					AttributePath: req.AttributePath.WithElementKeyInt(idx).WithAttributeName(name),
-					Config:        req.Config,
-					Plan:          resp.Plan,
-					ProviderMeta:  req.ProviderMeta,
-					State:         req.State,
-				}
-
-				block.modifyPlan(ctx, blockReq, resp)
-			}
-		}
-	case BlockNestingModeSet:
-		s, ok := req.AttributePlan.(types.Set)
-
-		if !ok {
-			err := fmt.Errorf("unknown block value type (%s) for nesting mode (%T) at path: %s", req.AttributeConfig.Type(ctx), nm, req.AttributePath)
-			resp.Diagnostics.AddAttributeError(
-				req.AttributePath,
-				"Block Plan Modification Error",
-				"Block plan modification cannot walk schema. Report this to the provider developer:\n\n"+err.Error(),
-			)
-
-			return
-		}
-
-		for _, value := range s.Elems {
-			tfValue, err := value.ToTerraformValue(ctx)
-			if err != nil {
-				err := fmt.Errorf("error running ToTerraformValue on element value: %v", value)
-				resp.Diagnostics.AddAttributeError(
-					req.AttributePath,
-					"Block Plan Modification Error",
-					"Block plan modification cannot convert element into a Terraform value. Report this to the provider developer:\n\n"+err.Error(),
-				)
-
-				return
-			}
-
-			for name, attr := range b.Attributes {
-				attrReq := ModifyAttributePlanRequest{
-					AttributePath: req.AttributePath.WithElementKeyValue(tfValue).WithAttributeName(name),
-					Config:        req.Config,
-					Plan:          resp.Plan,
-					ProviderMeta:  req.ProviderMeta,
-					State:         req.State,
-				}
-
-				attr.modifyPlan(ctx, attrReq, resp)
-			}
-
-			for name, block := range b.Blocks {
-				blockReq := ModifyAttributePlanRequest{
-					AttributePath: req.AttributePath.WithElementKeyValue(tfValue).WithAttributeName(name),
-					Config:        req.Config,
-					Plan:          resp.Plan,
-					ProviderMeta:  req.ProviderMeta,
-					State:         req.State,
-				}
-
-				block.modifyPlan(ctx, blockReq, resp)
-			}
-		}
-	default:
-		err := fmt.Errorf("unknown block plan modification nesting mode (%T: %v) at path: %s", nm, nm, req.AttributePath)
-		resp.Diagnostics.AddAttributeError(
-			req.AttributePath,
-			"Block Plan Modification Error",
-			"Block plan modification cannot walk schema. Report this to the provider developer:\n\n"+err.Error(),
-		)
-
-		return
-	}
-}
-
-// terraformType returns an tftypes.Type corresponding to the block.
-func (b Block) terraformType(ctx context.Context) tftypes.Type {
-	return b.attributeType().TerraformType(ctx)
-}
-
-// tfprotov6 returns the *tfprotov6.SchemaNestedBlock equivalent of a Block.
-// Errors will be tftypes.AttributePathErrors based on `path`. `name` is the
-// name of the attribute.
-func (b Block) tfprotov6(ctx context.Context, name string, path *tftypes.AttributePath) (*tfprotov6.SchemaNestedBlock, error) {
-	schemaNestedBlock := &tfprotov6.SchemaNestedBlock{
-		Block: &tfprotov6.SchemaBlock{
-			Deprecated: b.DeprecationMessage != "",
-		},
-		MinItems: b.MinItems,
-		MaxItems: b.MaxItems,
-		TypeName: name,
-	}
-
-	if b.Description != "" {
-		schemaNestedBlock.Block.Description = b.Description
-		schemaNestedBlock.Block.DescriptionKind = tfprotov6.StringKindPlain
-	}
-
-	if b.MarkdownDescription != "" {
-		schemaNestedBlock.Block.Description = b.MarkdownDescription
-		schemaNestedBlock.Block.DescriptionKind = tfprotov6.StringKindMarkdown
-	}
-
-	nm := b.NestingMode
-	switch nm {
-	case BlockNestingModeList:
-		schemaNestedBlock.Nesting = tfprotov6.SchemaNestedBlockNestingModeList
-	case BlockNestingModeSet:
-		schemaNestedBlock.Nesting = tfprotov6.SchemaNestedBlockNestingModeSet
-	default:
-		return nil, path.NewErrorf("unrecognized nesting mode %v", nm)
-	}
-
-	for attrName, attr := range b.Attributes {
-		attrPath := path.WithAttributeName(attrName)
-		attrProto6, err := attr.tfprotov6SchemaAttribute(ctx, attrName, attrPath)
-
-		if err != nil {
-			return nil, err
-		}
-
-		schemaNestedBlock.Block.Attributes = append(schemaNestedBlock.Block.Attributes, attrProto6)
-	}
-
-	for blockName, block := range b.Blocks {
-		blockPath := path.WithAttributeName(blockName)
-		blockProto6, err := block.tfprotov6(ctx, blockName, blockPath)
-
-		if err != nil {
-			return nil, err
-		}
-
-		schemaNestedBlock.Block.BlockTypes = append(schemaNestedBlock.Block.BlockTypes, blockProto6)
-	}
-
-	sort.Slice(schemaNestedBlock.Block.Attributes, func(i, j int) bool {
-		if schemaNestedBlock.Block.Attributes[i] == nil {
-			return true
-		}
-
-		if schemaNestedBlock.Block.Attributes[j] == nil {
-			return false
-		}
-
-		return schemaNestedBlock.Block.Attributes[i].Name < schemaNestedBlock.Block.Attributes[j].Name
-	})
-
-	sort.Slice(schemaNestedBlock.Block.BlockTypes, func(i, j int) bool {
-		if schemaNestedBlock.Block.BlockTypes[i] == nil {
-			return true
-		}
-
-		if schemaNestedBlock.Block.BlockTypes[j] == nil {
-			return false
-		}
-
-		return schemaNestedBlock.Block.BlockTypes[i].TypeName < schemaNestedBlock.Block.BlockTypes[j].TypeName
-	})
-
-	return schemaNestedBlock, nil
-}
-
-// validate performs all Block validation.
-func (b Block) validate(ctx context.Context, req ValidateAttributeRequest, resp *ValidateAttributeResponse) {
-	attributeConfig, diags := req.Config.getAttributeValue(ctx, req.AttributePath)
-	resp.Diagnostics.Append(diags...)
-
-	if diags.HasError() {
-		return
-	}
-
-	req.AttributeConfig = attributeConfig
-
-	for _, validator := range b.Validators {
-		validator.Validate(ctx, req, resp)
-	}
-
-	nm := b.NestingMode
-	switch nm {
-	case BlockNestingModeList:
-		l, ok := req.AttributeConfig.(types.List)
-
-		if !ok {
-			err := fmt.Errorf("unknown block value type (%s) for nesting mode (%T) at path: %s", req.AttributeConfig.Type(ctx), nm, req.AttributePath)
-			resp.Diagnostics.AddAttributeError(
-				req.AttributePath,
-				"Block Validation Error",
-				"Block validation cannot walk schema. Report this to the provider developer:\n\n"+err.Error(),
-			)
-
-			return
-		}
-
-		for idx := range l.Elems {
-			for name, attr := range b.Attributes {
-				nestedAttrReq := ValidateAttributeRequest{
-					AttributePath: req.AttributePath.WithElementKeyInt(idx).WithAttributeName(name),
-					Config:        req.Config,
-				}
-				nestedAttrResp := &ValidateAttributeResponse{
-					Diagnostics: resp.Diagnostics,
-				}
-
-				attr.validate(ctx, nestedAttrReq, nestedAttrResp)
-
-				resp.Diagnostics = nestedAttrResp.Diagnostics
-			}
-
-			for name, block := range b.Blocks {
-				nestedAttrReq := ValidateAttributeRequest{
-					AttributePath: req.AttributePath.WithElementKeyInt(idx).WithAttributeName(name),
-					Config:        req.Config,
-				}
-				nestedAttrResp := &ValidateAttributeResponse{
-					Diagnostics: resp.Diagnostics,
-				}
-
-				block.validate(ctx, nestedAttrReq, nestedAttrResp)
-
-				resp.Diagnostics = nestedAttrResp.Diagnostics
-			}
-		}
-	case BlockNestingModeSet:
-		s, ok := req.AttributeConfig.(types.Set)
-
-		if !ok {
-			err := fmt.Errorf("unknown block value type (%s) for nesting mode (%T) at path: %s", req.AttributeConfig.Type(ctx), nm, req.AttributePath)
-			resp.Diagnostics.AddAttributeError(
-				req.AttributePath,
-				"Block Validation Error",
-				"Block validation cannot walk schema. Report this to the provider developer:\n\n"+err.Error(),
-			)
-
-			return
-		}
-
-		for _, value := range s.Elems {
-			tfValue, err := value.ToTerraformValue(ctx)
-			if err != nil {
-				err := fmt.Errorf("error running ToTerraformValue on element value: %v", value)
-				resp.Diagnostics.AddAttributeError(
-					req.AttributePath,
-					"Block Validation Error",
-					"Block validation cannot convert element into a Terraform value. Report this to the provider developer:\n\n"+err.Error(),
-				)
-
-				return
-			}
-
-			for name, attr := range b.Attributes {
-				nestedAttrReq := ValidateAttributeRequest{
-					AttributePath: req.AttributePath.WithElementKeyValue(tfValue).WithAttributeName(name),
-					Config:        req.Config,
-				}
-				nestedAttrResp := &ValidateAttributeResponse{
-					Diagnostics: resp.Diagnostics,
-				}
-
-				attr.validate(ctx, nestedAttrReq, nestedAttrResp)
-
-				resp.Diagnostics = nestedAttrResp.Diagnostics
-			}
-
-			for name, block := range b.Blocks {
-				nestedAttrReq := ValidateAttributeRequest{
-					AttributePath: req.AttributePath.WithElementKeyValue(tfValue).WithAttributeName(name),
-					Config:        req.Config,
-				}
-				nestedAttrResp := &ValidateAttributeResponse{
-					Diagnostics: resp.Diagnostics,
-				}
-
-				block.validate(ctx, nestedAttrReq, nestedAttrResp)
-
-				resp.Diagnostics = nestedAttrResp.Diagnostics
-			}
-		}
-	default:
-		err := fmt.Errorf("unknown block validation nesting mode (%T: %v) at path: %s", nm, nm, req.AttributePath)
-		resp.Diagnostics.AddAttributeError(
-			req.AttributePath,
-			"Block Validation Error",
-			"Block validation cannot walk schema. Report this to the provider developer:\n\n"+err.Error(),
-		)
-
-		return
-	}
-
-	if b.DeprecationMessage != "" && attributeConfig != nil {
-		tfValue, err := attributeConfig.ToTerraformValue(ctx)
-
-		if err != nil {
-			resp.Diagnostics.AddAttributeError(
-				req.AttributePath,
-				"Block Validation Error",
-				"Block validation cannot convert value. Report this to the provider developer:\n\n"+err.Error(),
-			)
-
-			return
-		}
-
-		if !tfValue.IsNull() {
-			resp.Diagnostics.AddAttributeWarning(
-				req.AttributePath,
-				"Block Deprecated",
-				b.DeprecationMessage,
-			)
-		}
-	}
-}
-
-type nestedBlock struct {
-	Block
-}
-
-// ApplyTerraform5AttributePathStep allows Blocks to be walked using
-// tftypes.Walk and tftypes.Transform.
-func (b nestedBlock) ApplyTerraform5AttributePathStep(step tftypes.AttributePathStep) (interface{}, error) {
-	a, ok := step.(tftypes.AttributeName)
-
-	if !ok {
-		return nil, fmt.Errorf("can't apply %T to block", step)
-	}
-
-	attrName := string(a)
-
-	if attr, ok := b.Block.Attributes[attrName]; ok {
-		return attr, nil
-	}
-
-	if block, ok := b.Block.Blocks[attrName]; ok {
-		return block, nil
-	}
-
-	return nil, fmt.Errorf("no attribute %q on Attributes or Blocks", a)
 }

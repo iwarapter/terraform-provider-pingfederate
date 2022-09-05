@@ -15,10 +15,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        pingfederate-version: [ 10.2.7-edge, 10.3.4-edge, 11.0.0-edge ]
+        pingfederate-version: [ 10.2.7, 10.3.7, 11.0.4, 11.1.1 ]
     services:
       pingfederate:
-        image: pingidentity/pingfederate:${{ matrix.pingfederate-version }}
+        image: ghcr.io/iwarapter/pingfederate:${{ matrix.pingfederate-version }}-edge
         env:
           PING_IDENTITY_ACCEPT_EULA: YES
           PING_IDENTITY_DEVOPS_USER: ${{ secrets.PING_IDENTITY_DEVOPS_USER }}
@@ -35,10 +35,10 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Go 1.17
+      - name: Set up Go 1.18
         uses: actions/setup-go@v2.1.5
         with:
-          go-version: 1.17
+          go-version: 1.18
         id: go
 
       - name: Checkout Source

@@ -120,7 +120,7 @@ func listJdbcAttributeSource() tfsdk.NestedAttributes {
 			Optional:    true,
 			Type:        types.StringType,
 		},
-	}, tfsdk.ListNestedAttributesOptions{})
+	})
 }
 
 func listLdapAttributeSource() tfsdk.NestedAttributes {
@@ -177,7 +177,7 @@ func listLdapAttributeSource() tfsdk.NestedAttributes {
 			Optional:    true,
 			Type:        types.StringType,
 		},
-	}, tfsdk.ListNestedAttributesOptions{})
+	})
 }
 
 func listCustomAttributeSource() tfsdk.NestedAttributes {
@@ -207,7 +207,7 @@ func listCustomAttributeSource() tfsdk.NestedAttributes {
 			Optional:    true,
 			Type:        types.StringType,
 		},
-	}, tfsdk.ListNestedAttributesOptions{})
+	})
 }
 
 func listConditionalIssuanceCriteriaEntry() tfsdk.NestedAttributes {
@@ -237,7 +237,7 @@ func listConditionalIssuanceCriteriaEntry() tfsdk.NestedAttributes {
 			Required:    true,
 			Type:        types.StringType,
 		},
-	}, tfsdk.ListNestedAttributesOptions{})
+	})
 }
 
 func listExpressionIssuanceCriteriaEntry() tfsdk.NestedAttributes {
@@ -252,7 +252,7 @@ func listExpressionIssuanceCriteriaEntry() tfsdk.NestedAttributes {
 			Required:    true,
 			Type:        types.StringType,
 		},
-	}, tfsdk.ListNestedAttributesOptions{})
+	})
 }
 
 func listAuthenticationPolicyContractAttribute() tfsdk.NestedAttributes {
@@ -262,7 +262,7 @@ func listAuthenticationPolicyContractAttribute() tfsdk.NestedAttributes {
 			Required:    true,
 			Type:        types.StringType,
 		},
-	}, tfsdk.ListNestedAttributesOptions{})
+	})
 }
 
 func singleSourceTypeIdKey() tfsdk.NestedAttributes {
@@ -287,7 +287,7 @@ func mapBinaryLdapAttributeSettings() tfsdk.NestedAttributes {
 			Optional:    true,
 			Type:        types.StringType,
 		},
-	}, tfsdk.MapNestedAttributesOptions{})
+	})
 }
 
 func singleIssuanceCriteria() tfsdk.NestedAttributes {
@@ -317,7 +317,7 @@ func mapAttributeFulfillmentValue() tfsdk.NestedAttributes {
 			Required:    true,
 			Type:        types.StringType,
 		},
-	}, tfsdk.MapNestedAttributesOptions{})
+	})
 }
 
 func listFieldEntry() tfsdk.NestedAttributes {
@@ -332,5 +332,5 @@ func listFieldEntry() tfsdk.NestedAttributes {
 			Optional:    true,
 			Type:        types.StringType,
 		},
-	}, tfsdk.ListNestedAttributesOptions{})
+	})
 }

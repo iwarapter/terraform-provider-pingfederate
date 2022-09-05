@@ -51,74 +51,86 @@ resource "pingfederate_authentication_policy_contract" "example" {
 
 ### Required
 
-- **attribute_contract_fulfillment** (Attributes Map) A list of mappings from attribute names to their fulfillment values. (see [below for nested schema](#nestedatt--attribute_contract_fulfillment))
-- **authentication_policy_contract_ref** (String) Reference to the associated authentication policy contract. The reference cannot be changed after the mapping has been created.
+- `attribute_contract_fulfillment` (Attributes Map) A list of mappings from attribute names to their fulfillment values. (see [below for nested schema](#nestedatt--attribute_contract_fulfillment))
+- `authentication_policy_contract_ref` (String) Reference to the associated authentication policy contract. The reference cannot be changed after the mapping has been created.
 
 ### Optional
 
-- **custom_attribute_sources** (Attributes List) The configured settings used to look up attributes from a custom data store. (see [below for nested schema](#nestedatt--custom_attribute_sources))
-- **issuance_criteria** (Attributes) The issuance criteria that this transaction must meet before the corresponding attribute contract is fulfilled. (see [below for nested schema](#nestedatt--issuance_criteria))
-- **jdbc_attribute_sources** (Attributes List) The configured settings used to look up attributes from a JDBC data store. (see [below for nested schema](#nestedatt--jdbc_attribute_sources))
-- **ldap_attribute_sources** (Attributes List) The configured settings used to look up attributes from a LDAP data store. (see [below for nested schema](#nestedatt--ldap_attribute_sources))
+- `custom_attribute_sources` (Attributes List) The configured settings used to look up attributes from a custom data store. (see [below for nested schema](#nestedatt--custom_attribute_sources))
+- `issuance_criteria` (Attributes) The issuance criteria that this transaction must meet before the corresponding attribute contract is fulfilled. (see [below for nested schema](#nestedatt--issuance_criteria))
+- `jdbc_attribute_sources` (Attributes List) The configured settings used to look up attributes from a JDBC data store. (see [below for nested schema](#nestedatt--jdbc_attribute_sources))
+- `ldap_attribute_sources` (Attributes List) The configured settings used to look up attributes from a LDAP data store. (see [below for nested schema](#nestedatt--ldap_attribute_sources))
 
 ### Read-Only
 
-- **id** (String) The ID of the authentication policy contract to persistent grant mapping.
+- `id` (String) The ID of the authentication policy contract to persistent grant mapping.
 
 <a id="nestedatt--attribute_contract_fulfillment"></a>
 ### Nested Schema for `attribute_contract_fulfillment`
 
 Required:
 
-- **source** (Attributes) The attribute value source. (see [below for nested schema](#nestedatt--attribute_contract_fulfillment--source))
-- **value** (String) The value for this attribute.
+- `source` (Attributes) The attribute value source. (see [below for nested schema](#nestedatt--attribute_contract_fulfillment--source))
+- `value` (String) The value for this attribute.
 
 <a id="nestedatt--attribute_contract_fulfillment--source"></a>
 ### Nested Schema for `attribute_contract_fulfillment.source`
 
 Required:
 
-- **id** (String) The attribute source ID that refers to the attribute source that this key references. In some resources, the ID is optional and will be ignored. In these cases the ID should be omitted. If the source type is not an attribute source then the ID can be omitted.
-- **type** (String) The source type of this key.
+- `type` (String) The source type of this key.
+
+Optional:
+
+- `id` (String) The attribute source ID that refers to the attribute source that this key references. In some resources, the ID is optional and will be ignored. In these cases the ID should be omitted. If the source type is not an attribute source then the ID can be omitted.
 
 
 
 <a id="nestedatt--custom_attribute_sources"></a>
 ### Nested Schema for `custom_attribute_sources`
 
+Required:
+
+- `data_store_ref` (String) Reference to the associated data store.
+
 Optional:
 
-- **attribute_contract_fulfillment** (Attributes Map) A list of mappings from attribute names to their fulfillment values. This field is only valid for the SP Connection's Browser SSO mappings (see [below for nested schema](#nestedatt--custom_attribute_sources--attribute_contract_fulfillment))
-- **data_store_ref** (String) Reference to the associated data store.
-- **description** (String) The description of this attribute source. The description needs to be unique amongst the attribute sources for the mapping.<br>Note: Required for APC-to-SP Adapter Mappings
-- **filter_fields** (Attributes List) The list of fields that can be used to filter a request to the custom data store. (see [below for nested schema](#nestedatt--custom_attribute_sources--filter_fields))
-- **id** (String) The ID that defines this attribute source. Only alphanumeric characters allowed.<br>Note: Required for OpenID Connect policy attribute sources, OAuth IdP adapter mappings, OAuth access token mappings and APC-to-SP Adapter Mappings. IdP Connections will ignore this property since it only allows one attribute source to be defined per mapping. IdP-to-SP Adapter Mappings can contain multiple attribute sources.
+- `attribute_contract_fulfillment` (Attributes Map) A list of mappings from attribute names to their fulfillment values. This field is only valid for the SP Connection's Browser SSO mappings (see [below for nested schema](#nestedatt--custom_attribute_sources--attribute_contract_fulfillment))
+- `description` (String) The description of this attribute source. The description needs to be unique amongst the attribute sources for the mapping.<br>Note: Required for APC-to-SP Adapter Mappings
+- `filter_fields` (Attributes List) The list of fields that can be used to filter a request to the custom data store. (see [below for nested schema](#nestedatt--custom_attribute_sources--filter_fields))
+- `id` (String) The ID that defines this attribute source. Only alphanumeric characters allowed.<br>Note: Required for OpenID Connect policy attribute sources, OAuth IdP adapter mappings, OAuth access token mappings and APC-to-SP Adapter Mappings. IdP Connections will ignore this property since it only allows one attribute source to be defined per mapping. IdP-to-SP Adapter Mappings can contain multiple attribute sources.
 
 <a id="nestedatt--custom_attribute_sources--attribute_contract_fulfillment"></a>
 ### Nested Schema for `custom_attribute_sources.attribute_contract_fulfillment`
 
-Optional:
+Required:
 
-- **source** (Attributes) The attribute value source. (see [below for nested schema](#nestedatt--custom_attribute_sources--attribute_contract_fulfillment--source))
-- **value** (String) The value for this attribute.
+- `source` (Attributes) The attribute value source. (see [below for nested schema](#nestedatt--custom_attribute_sources--attribute_contract_fulfillment--source))
+- `value` (String) The value for this attribute.
 
 <a id="nestedatt--custom_attribute_sources--attribute_contract_fulfillment--source"></a>
 ### Nested Schema for `custom_attribute_sources.attribute_contract_fulfillment.source`
 
+Required:
+
+- `type` (String) The source type of this key.
+
 Optional:
 
-- **id** (String) The attribute source ID that refers to the attribute source that this key references. In some resources, the ID is optional and will be ignored. In these cases the ID should be omitted. If the source type is not an attribute source then the ID can be omitted.
-- **type** (String) The source type of this key.
+- `id` (String) The attribute source ID that refers to the attribute source that this key references. In some resources, the ID is optional and will be ignored. In these cases the ID should be omitted. If the source type is not an attribute source then the ID can be omitted.
 
 
 
 <a id="nestedatt--custom_attribute_sources--filter_fields"></a>
 ### Nested Schema for `custom_attribute_sources.filter_fields`
 
+Required:
+
+- `name` (String) The name of this field.
+
 Optional:
 
-- **name** (String) The name of this field.
-- **value** (String) The value of this field. Whether or not the value is required will be determined by plugin validation checks.
+- `value` (String) The value of this field. Whether or not the value is required will be determined by plugin validation checks.
 
 
 
@@ -127,69 +139,84 @@ Optional:
 
 Optional:
 
-- **conditional_criteria** (Attributes List) A list of conditional issuance criteria where existing attributes must satisfy their conditions against expected values in order for the transaction to continue. (see [below for nested schema](#nestedatt--issuance_criteria--conditional_criteria))
-- **expression_criteria** (Attributes List) A list of expression issuance criteria where the OGNL expressions must evaluate to true in order for the transaction to continue. (see [below for nested schema](#nestedatt--issuance_criteria--expression_criteria))
+- `conditional_criteria` (Attributes List) A list of conditional issuance criteria where existing attributes must satisfy their conditions against expected values in order for the transaction to continue. (see [below for nested schema](#nestedatt--issuance_criteria--conditional_criteria))
+- `expression_criteria` (Attributes List) A list of expression issuance criteria where the OGNL expressions must evaluate to true in order for the transaction to continue. (see [below for nested schema](#nestedatt--issuance_criteria--expression_criteria))
 
 <a id="nestedatt--issuance_criteria--conditional_criteria"></a>
 ### Nested Schema for `issuance_criteria.conditional_criteria`
 
+Required:
+
+- `attribute_name` (String) The name of the attribute to use in this issuance criterion.
+- `condition` (String) The condition that will be applied to the source attribute's value and the expected value.
+- `source` (Attributes) The source of the attribute. (see [below for nested schema](#nestedatt--issuance_criteria--conditional_criteria--source))
+- `value` (String) The expected value of this issuance criterion.
+
 Optional:
 
-- **attribute_name** (String) The name of the attribute to use in this issuance criterion.
-- **condition** (String) The condition that will be applied to the source attribute's value and the expected value.
-- **error_result** (String) The error result to return if this issuance criterion fails. This error result will show up in the PingFederate server logs.
-- **source** (Attributes) The source of the attribute. (see [below for nested schema](#nestedatt--issuance_criteria--conditional_criteria--source))
-- **value** (String) The expected value of this issuance criterion.
+- `error_result` (String) The error result to return if this issuance criterion fails. This error result will show up in the PingFederate server logs.
 
 <a id="nestedatt--issuance_criteria--conditional_criteria--source"></a>
 ### Nested Schema for `issuance_criteria.conditional_criteria.source`
 
+Required:
+
+- `type` (String) The source type of this key.
+
 Optional:
 
-- **id** (String) The attribute source ID that refers to the attribute source that this key references. In some resources, the ID is optional and will be ignored. In these cases the ID should be omitted. If the source type is not an attribute source then the ID can be omitted.
-- **type** (String) The source type of this key.
+- `id` (String) The attribute source ID that refers to the attribute source that this key references. In some resources, the ID is optional and will be ignored. In these cases the ID should be omitted. If the source type is not an attribute source then the ID can be omitted.
 
 
 
 <a id="nestedatt--issuance_criteria--expression_criteria"></a>
 ### Nested Schema for `issuance_criteria.expression_criteria`
 
+Required:
+
+- `expression` (String) The OGNL expression to evaluate.
+
 Optional:
 
-- **error_result** (String) The error result to return if this issuance criterion fails. This error result will show up in the PingFederate server logs.
-- **expression** (String) The OGNL expression to evaluate.
+- `error_result` (String) The error result to return if this issuance criterion fails. This error result will show up in the PingFederate server logs.
 
 
 
 <a id="nestedatt--jdbc_attribute_sources"></a>
 ### Nested Schema for `jdbc_attribute_sources`
 
+Required:
+
+- `data_store_ref` (String) Reference to the associated data store.
+
 Optional:
 
-- **attribute_contract_fulfillment** (Attributes Map) A list of mappings from attribute names to their fulfillment values. This field is only valid for the SP Connection's Browser SSO mappings (see [below for nested schema](#nestedatt--jdbc_attribute_sources--attribute_contract_fulfillment))
-- **column_names** (List of String) A list of column names used to construct the SQL query to retrieve data from the specified table in the datastore.
-- **data_store_ref** (String) Reference to the associated data store.
-- **description** (String) The description of this attribute source. The description needs to be unique amongst the attribute sources for the mapping.<br>Note: Required for APC-to-SP Adapter Mappings
-- **filter** (String) The JDBC WHERE clause used to query your data store to locate a user record.
-- **id** (String) The ID that defines this attribute source. Only alphanumeric characters allowed.<br>Note: Required for OpenID Connect policy attribute sources, OAuth IdP adapter mappings, OAuth access token mappings and APC-to-SP Adapter Mappings. IdP Connections will ignore this property since it only allows one attribute source to be defined per mapping. IdP-to-SP Adapter Mappings can contain multiple attribute sources.
-- **schema** (String) Lists the table structure that stores information within a database. Some databases, such as Oracle, require a schema for a JDBC query. Other databases, such as MySQL, do not require a schema.
-- **table** (String) The name of the database table. The name is used to construct the SQL query to retrieve data from the data store.
+- `attribute_contract_fulfillment` (Attributes Map) A list of mappings from attribute names to their fulfillment values. This field is only valid for the SP Connection's Browser SSO mappings (see [below for nested schema](#nestedatt--jdbc_attribute_sources--attribute_contract_fulfillment))
+- `column_names` (List of String) A list of column names used to construct the SQL query to retrieve data from the specified table in the datastore.
+- `description` (String) The description of this attribute source. The description needs to be unique amongst the attribute sources for the mapping.<br>Note: Required for APC-to-SP Adapter Mappings
+- `filter` (String) The JDBC WHERE clause used to query your data store to locate a user record.
+- `id` (String) The ID that defines this attribute source. Only alphanumeric characters allowed.<br>Note: Required for OpenID Connect policy attribute sources, OAuth IdP adapter mappings, OAuth access token mappings and APC-to-SP Adapter Mappings. IdP Connections will ignore this property since it only allows one attribute source to be defined per mapping. IdP-to-SP Adapter Mappings can contain multiple attribute sources.
+- `schema` (String) Lists the table structure that stores information within a database. Some databases, such as Oracle, require a schema for a JDBC query. Other databases, such as MySQL, do not require a schema.
+- `table` (String) The name of the database table. The name is used to construct the SQL query to retrieve data from the data store.
 
 <a id="nestedatt--jdbc_attribute_sources--attribute_contract_fulfillment"></a>
 ### Nested Schema for `jdbc_attribute_sources.attribute_contract_fulfillment`
 
-Optional:
+Required:
 
-- **source** (Attributes) The attribute value source. (see [below for nested schema](#nestedatt--jdbc_attribute_sources--attribute_contract_fulfillment--source))
-- **value** (String) The value for this attribute.
+- `source` (Attributes) The attribute value source. (see [below for nested schema](#nestedatt--jdbc_attribute_sources--attribute_contract_fulfillment--source))
+- `value` (String) The value for this attribute.
 
 <a id="nestedatt--jdbc_attribute_sources--attribute_contract_fulfillment--source"></a>
 ### Nested Schema for `jdbc_attribute_sources.attribute_contract_fulfillment.source`
 
+Required:
+
+- `type` (String) The source type of this key.
+
 Optional:
 
-- **id** (String) The attribute source ID that refers to the attribute source that this key references. In some resources, the ID is optional and will be ignored. In these cases the ID should be omitted. If the source type is not an attribute source then the ID can be omitted.
-- **type** (String) The source type of this key.
+- `id` (String) The attribute source ID that refers to the attribute source that this key references. In some resources, the ID is optional and will be ignored. In these cases the ID should be omitted. If the source type is not an attribute source then the ID can be omitted.
 
 
 
@@ -197,34 +224,40 @@ Optional:
 <a id="nestedatt--ldap_attribute_sources"></a>
 ### Nested Schema for `ldap_attribute_sources`
 
+Required:
+
+- `data_store_ref` (String) Reference to the associated data store.
+
 Optional:
 
-- **attribute_contract_fulfillment** (Attributes Map) A list of mappings from attribute names to their fulfillment values. This field is only valid for the SP Connection's Browser SSO mappings (see [below for nested schema](#nestedatt--ldap_attribute_sources--attribute_contract_fulfillment))
-- **base_dn** (String) The base DN to search from. If not specified, the search will start at the LDAP's root.
-- **binary_attribute_settings** (Attributes Map) The advanced settings for binary LDAP attributes. (see [below for nested schema](#nestedatt--ldap_attribute_sources--binary_attribute_settings))
-- **data_store_ref** (String) Reference to the associated data store.
-- **description** (String) The description of this attribute source. The description needs to be unique amongst the attribute sources for the mapping.<br>Note: Required for APC-to-SP Adapter Mappings
-- **id** (String) The ID that defines this attribute source. Only alphanumeric characters allowed.<br>Note: Required for OpenID Connect policy attribute sources, OAuth IdP adapter mappings, OAuth access token mappings and APC-to-SP Adapter Mappings. IdP Connections will ignore this property since it only allows one attribute source to be defined per mapping. IdP-to-SP Adapter Mappings can contain multiple attribute sources.
-- **member_of_nested_group** (Boolean) Set this to true to return transitive group memberships for the 'memberOf' attribute.  This only applies for Active Directory data sources.  All other data sources will be set to false.
-- **search_attributes** (List of String) A list of LDAP attributes returned from search and available for mapping.
-- **search_filter** (String) The LDAP filter that will be used to lookup the objects from the directory.
-- **search_scope** (String) Determines the node depth of the query.
+- `attribute_contract_fulfillment` (Attributes Map) A list of mappings from attribute names to their fulfillment values. This field is only valid for the SP Connection's Browser SSO mappings (see [below for nested schema](#nestedatt--ldap_attribute_sources--attribute_contract_fulfillment))
+- `base_dn` (String) The base DN to search from. If not specified, the search will start at the LDAP's root.
+- `binary_attribute_settings` (Attributes Map) The advanced settings for binary LDAP attributes. (see [below for nested schema](#nestedatt--ldap_attribute_sources--binary_attribute_settings))
+- `description` (String) The description of this attribute source. The description needs to be unique amongst the attribute sources for the mapping.<br>Note: Required for APC-to-SP Adapter Mappings
+- `id` (String) The ID that defines this attribute source. Only alphanumeric characters allowed.<br>Note: Required for OpenID Connect policy attribute sources, OAuth IdP adapter mappings, OAuth access token mappings and APC-to-SP Adapter Mappings. IdP Connections will ignore this property since it only allows one attribute source to be defined per mapping. IdP-to-SP Adapter Mappings can contain multiple attribute sources.
+- `member_of_nested_group` (Boolean) Set this to true to return transitive group memberships for the 'memberOf' attribute.  This only applies for Active Directory data sources.  All other data sources will be set to false.
+- `search_attributes` (List of String) A list of LDAP attributes returned from search and available for mapping.
+- `search_filter` (String) The LDAP filter that will be used to lookup the objects from the directory.
+- `search_scope` (String) Determines the node depth of the query.
 
 <a id="nestedatt--ldap_attribute_sources--attribute_contract_fulfillment"></a>
 ### Nested Schema for `ldap_attribute_sources.attribute_contract_fulfillment`
 
-Optional:
+Required:
 
-- **source** (Attributes) The attribute value source. (see [below for nested schema](#nestedatt--ldap_attribute_sources--attribute_contract_fulfillment--source))
-- **value** (String) The value for this attribute.
+- `source` (Attributes) The attribute value source. (see [below for nested schema](#nestedatt--ldap_attribute_sources--attribute_contract_fulfillment--source))
+- `value` (String) The value for this attribute.
 
 <a id="nestedatt--ldap_attribute_sources--attribute_contract_fulfillment--source"></a>
 ### Nested Schema for `ldap_attribute_sources.attribute_contract_fulfillment.source`
 
+Required:
+
+- `type` (String) The source type of this key.
+
 Optional:
 
-- **id** (String) The attribute source ID that refers to the attribute source that this key references. In some resources, the ID is optional and will be ignored. In these cases the ID should be omitted. If the source type is not an attribute source then the ID can be omitted.
-- **type** (String) The source type of this key.
+- `id` (String) The attribute source ID that refers to the attribute source that this key references. In some resources, the ID is optional and will be ignored. In these cases the ID should be omitted. If the source type is not an attribute source then the ID can be omitted.
 
 
 
@@ -233,7 +266,7 @@ Optional:
 
 Optional:
 
-- **binary_encoding** (String) Get the encoding type for this attribute. If not specified, the default is BASE64.
+- `binary_encoding` (String) Get the encoding type for this attribute. If not specified, the default is BASE64.
 
 ## Import
 

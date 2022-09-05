@@ -14,6 +14,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthAuthenticationPolicyContractMappings"
 
+	res "github.com/hashicorp/terraform-plugin-framework/resource"
+
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
@@ -332,7 +334,7 @@ func Test_resourcePingFederateOauthAuthenticationPolicyContractMappingResourceRe
 }
 
 func Test_resourceWithExtraReturnedDataDoesntError(t *testing.T) {
-	p := provider{client: &pfClient{OauthAuthenticationPolicyContractMappings: oauthAuthenticationPolicyContractMappingsMock{}}}
+	p := pfprovider{client: &pfClient{OauthAuthenticationPolicyContractMappings: oauthAuthenticationPolicyContractMappingsMock{}}}
 
 	model := &pf.ApcToPersistentGrantMapping{
 		Id: String("foo"),
@@ -362,10 +364,10 @@ func Test_resourceWithExtraReturnedDataDoesntError(t *testing.T) {
 	resourceSchema, diags := resType.GetSchema(ctx)
 	require.False(t, diags.HasError())
 
-	res := pingfederateOauthAuthenticationPolicyContractMappingResource{p}
+	r := pingfederateOauthAuthenticationPolicyContractMappingResource{p}
 
-	resp := &tfsdk.CreateResourceResponse{}
-	res.Create(ctx, tfsdk.CreateResourceRequest{
+	resp := &res.CreateResponse{}
+	r.Create(ctx, res.CreateRequest{
 		Config: tfsdk.Config{
 			Schema: resourceSchema,
 		},

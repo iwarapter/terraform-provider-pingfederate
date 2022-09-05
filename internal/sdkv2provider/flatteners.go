@@ -855,6 +855,9 @@ func flattenPolicyAction(in *pf.PolicyAction) []map[string]interface{} {
 	if in.Fragment != nil {
 		s["fragment"] = flattenResourceLink(in.Fragment)
 	}
+	if in.UserIdAuthenticated != nil && in.Type != nil && *in.Type == "AUTHN_SOURCE" {
+		s["user_id_authenticated"] = *in.UserIdAuthenticated
+	}
 	return append(m, s)
 }
 

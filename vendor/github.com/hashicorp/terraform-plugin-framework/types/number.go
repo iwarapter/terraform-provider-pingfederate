@@ -8,6 +8,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
 )
 
+var (
+	_ attr.Value = Number{}
+)
+
 func numberValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
 	if !in.IsKnown() {
 		return Number{Unknown: true}, nil
@@ -22,8 +26,6 @@ func numberValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value
 	}
 	return Number{Value: n}, nil
 }
-
-var _ attr.Value = Number{}
 
 // Number represents a number value, exposed as a *big.Float. Numbers can be
 // floats or integers.
@@ -45,8 +47,7 @@ func (n Number) Type(_ context.Context) attr.Type {
 	return NumberType
 }
 
-// ToTerraformValue returns the data contained in the *Number as a
-// tftypes.Value.
+// ToTerraformValue returns the data contained in the Number as a tftypes.Value.
 func (n Number) ToTerraformValue(_ context.Context) (tftypes.Value, error) {
 	if n.Null {
 		return tftypes.NewValue(tftypes.Number, nil), nil
@@ -63,7 +64,7 @@ func (n Number) ToTerraformValue(_ context.Context) (tftypes.Value, error) {
 	return tftypes.NewValue(tftypes.Number, n.Value), nil
 }
 
-// Equal returns true if `other` is a *Number and has the same value as `n`.
+// Equal returns true if `other` is a Number and has the same value as `n`.
 func (n Number) Equal(other attr.Value) bool {
 	o, ok := other.(Number)
 	if !ok {
@@ -82,4 +83,29 @@ func (n Number) Equal(other attr.Value) bool {
 		return false
 	}
 	return n.Value.Cmp(o.Value) == 0
+}
+
+// IsNull returns true if the Number represents a null value.
+func (n Number) IsNull() bool {
+	return n.Null || (!n.Unknown && n.Value == nil)
+}
+
+// IsUnknown returns true if the Number represents a currently unknown value.
+func (n Number) IsUnknown() bool {
+	return n.Unknown
+}
+
+// String returns a human-readable representation of the Number value.
+// The string returned here is not protected by any compatibility guarantees,
+// and is intended for logging and error reporting.
+func (n Number) String() string {
+	if n.Unknown {
+		return attr.UnknownValueString
+	}
+
+	if n.IsNull() {
+		return attr.NullValueString
+	}
+
+	return n.Value.String()
 }

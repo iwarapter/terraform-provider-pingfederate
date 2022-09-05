@@ -8,12 +8,13 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
 )
 
 // Into uses the data in `val` to populate `target`, using the reflection
 // package to recursively reflect into structs and slices. If `target` is an
-// AttributeValue, its assignment method will be used instead of reflecting. If
+// attr.Value, its assignment method will be used instead of reflecting. If
 // `target` is a tftypes.ValueConverter, the FromTerraformValue method will be
 // used instead of using reflection. Primitives are set using the val.As
 // method. Structs use reflection: each exported struct field must have a
@@ -33,7 +34,7 @@ func Into(ctx context.Context, typ attr.Type, val tftypes.Value, target interfac
 		)
 		return diags
 	}
-	result, diags := BuildValue(ctx, typ, val, v.Elem(), opts, tftypes.NewAttributePath())
+	result, diags := BuildValue(ctx, typ, val, v.Elem(), opts, path.Empty())
 	if diags.HasError() {
 		return diags
 	}
@@ -46,7 +47,7 @@ func Into(ctx context.Context, typ attr.Type, val tftypes.Value, target interfac
 // to set, making it safe for use with pointer types which may be nil. It tries
 // to give consumers the ability to override its default behaviors wherever
 // possible.
-func BuildValue(ctx context.Context, typ attr.Type, val tftypes.Value, target reflect.Value, opts Options, path *tftypes.AttributePath) (reflect.Value, diag.Diagnostics) {
+func BuildValue(ctx context.Context, typ attr.Type, val tftypes.Value, target reflect.Value, opts Options, path path.Path) (reflect.Value, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	// if this isn't a valid reflect.Value, bail before we accidentally
@@ -104,7 +105,7 @@ func BuildValue(ctx context.Context, typ attr.Type, val tftypes.Value, target re
 		// we already handled unknown the only ways we can
 		// we checked that target doesn't have a SetUnknown method we
 		// can call
-		// we checked that target isn't an AttributeValue
+		// we checked that target isn't an attr.Value
 		// all that's left to us now is to set it as an empty value or
 		// throw an error, depending on what's in opts
 		if !opts.UnhandledUnknownAsEmpty {
@@ -124,7 +125,7 @@ func BuildValue(ctx context.Context, typ attr.Type, val tftypes.Value, target re
 		// we already handled null the only ways we can
 		// we checked that target doesn't have a SetNull method we can
 		// call
-		// we checked that target isn't an AttributeValue
+		// we checked that target isn't an attr.Value
 		// all that's left to us now is to set it as an empty value or
 		// throw an error, depending on what's in opts
 		if canBeNil(target) || opts.UnhandledNullAsEmpty {

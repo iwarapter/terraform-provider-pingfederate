@@ -1,8 +1,7 @@
 package diag
 
 import (
-	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
-	"github.com/hashicorp/terraform-plugin-go/tftypes"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 )
 
 // Diagnostics represents a collection of diagnostics.
@@ -12,12 +11,12 @@ import (
 type Diagnostics []Diagnostic
 
 // AddAttributeError adds a generic attribute error diagnostic to the collection.
-func (diags *Diagnostics) AddAttributeError(path *tftypes.AttributePath, summary string, detail string) {
+func (diags *Diagnostics) AddAttributeError(path path.Path, summary string, detail string) {
 	diags.Append(NewAttributeErrorDiagnostic(path, summary, detail))
 }
 
 // AddAttributeWarning adds a generic attribute warning diagnostic to the collection.
-func (diags *Diagnostics) AddAttributeWarning(path *tftypes.AttributePath, summary string, detail string) {
+func (diags *Diagnostics) AddAttributeWarning(path path.Path, summary string, detail string) {
 	diags.Append(NewAttributeWarningDiagnostic(path, summary, detail))
 }
 
@@ -61,6 +60,22 @@ func (diags Diagnostics) Contains(in Diagnostic) bool {
 	return false
 }
 
+// Equal returns true if all given diagnostics are equivalent in order and
+// content, based on the underlying (Diagnostic).Equal() method of each.
+func (diags Diagnostics) Equal(other Diagnostics) bool {
+	if len(diags) != len(other) {
+		return false
+	}
+
+	for diagIndex, diag := range diags {
+		if !diag.Equal(other[diagIndex]) {
+			return false
+		}
+	}
+
+	return true
+}
+
 // HasError returns true if the collection has an error severity Diagnostic.
 func (diags Diagnostics) HasError() bool {
 	for _, diag := range diags {
@@ -72,26 +87,38 @@ func (diags Diagnostics) HasError() bool {
 	return false
 }
 
-// ToTfprotov6Diagnostics converts the diagnostics into the tfprotov6 collection type.
-//
-// Usage of this method outside the framework is not supported nor considered
-// for backwards compatibility promises.
-func (diags Diagnostics) ToTfprotov6Diagnostics() []*tfprotov6.Diagnostic {
-	var results []*tfprotov6.Diagnostic
+// ErrorsCount returns the number of Diagnostic in Diagnostics that are SeverityError.
+func (diags Diagnostics) ErrorsCount() int {
+	return len(diags.Errors())
+}
 
-	for _, diag := range diags {
-		tfprotov6Diagnostic := &tfprotov6.Diagnostic{
-			Detail:   diag.Detail(),
-			Severity: diag.Severity().ToTfprotov6DiagnosticSeverity(),
-			Summary:  diag.Summary(),
+// WarningsCount returns the number of Diagnostic in Diagnostics that are SeverityWarning.
+func (diags Diagnostics) WarningsCount() int {
+	return len(diags.Warnings())
+}
+
+// Errors returns all the Diagnostic in Diagnostics that are SeverityError.
+func (diags Diagnostics) Errors() Diagnostics {
+	dd := Diagnostics{}
+
+	for _, d := range diags {
+		if SeverityError == d.Severity() {
+			dd = append(dd, d)
 		}
-
-		if diagWithPath, ok := diag.(DiagnosticWithPath); ok {
-			tfprotov6Diagnostic.Attribute = diagWithPath.Path()
-		}
-
-		results = append(results, tfprotov6Diagnostic)
 	}
 
-	return results
+	return dd
+}
+
+// Warnings returns all the Diagnostic in Diagnostics that are SeverityWarning.
+func (diags Diagnostics) Warnings() Diagnostics {
+	dd := Diagnostics{}
+
+	for _, d := range diags {
+		if SeverityWarning == d.Severity() {
+			dd = append(dd, d)
+		}
+	}
+
+	return dd
 }

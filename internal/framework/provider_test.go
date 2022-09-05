@@ -1,7 +1,6 @@
 package framework
 
 import (
-	"context"
 	"crypto/tls"
 	"flag"
 	"log"
@@ -10,12 +9,11 @@ import (
 	"os"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-framework/providerserver"
+
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
-	"github.com/hashicorp/terraform-plugin-go/tftypes"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/stretchr/testify/assert"
 )
 
 var pfc *pfClient
@@ -61,7 +59,7 @@ func TestMain(m *testing.M) {
 
 var testAccProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServer, error){
 	"pingfederate": func() (tfprotov6.ProviderServer, error) {
-		return tfsdk.NewProtocol6Server(New("test")()), nil
+		return providerserver.NewProtocol6(New("test"))(), nil
 	},
 }
 
@@ -282,34 +280,34 @@ func testAccPreCheck(t *testing.T) {
 //	return nil
 //}
 
-func Test_provider_Configure(t *testing.T) {
-	t.Skipf("todo")
-	p := &provider{}
-	schema, _ := p.GetSchema(context.Background())
-	tests := []struct {
-		name string
-		ctx  context.Context
-		req  tfsdk.ConfigureProviderRequest
-		resp tfsdk.ConfigureProviderResponse
-	}{
-		{
-			"no config allows for default",
-			context.Background(),
-			tfsdk.ConfigureProviderRequest{
-				Config: tfsdk.Config{
-					Raw:    tftypes.NewValue(tftypes.String, "foo"),
-					Schema: schema,
-				},
-			},
-			tfsdk.ConfigureProviderResponse{},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			resp := &tfsdk.ConfigureProviderResponse{}
-			p.Configure(tt.ctx, tt.req, resp)
-
-			assert.Equal(t, tt.resp, *resp)
-		})
-	}
-}
+//func Test_provider_Configure(t *testing.T) {
+//	t.Skipf("todo")
+//	p := &pfprovider{}
+//	schema, _ := p.GetSchema(context.Background())
+//	tests := []struct {
+//		name string
+//		ctx  context.Context
+//		req  provider.ConfigureProviderRequest
+//		resp tfsdk.ConfigureProviderResponse
+//	}{
+//		{
+//			"no config allows for default",
+//			context.Background(),
+//			tfsdk.ConfigureProviderRequest{
+//				Config: tfsdk.Config{
+//					Raw:    tftypes.NewValue(tftypes.String, "foo"),
+//					Schema: schema,
+//				},
+//			},
+//			tfsdk.ConfigureProviderResponse{},
+//		},
+//	}
+//	for _, tt := range tests {
+//		t.Run(tt.name, func(t *testing.T) {
+//			resp := &tfsdk.ConfigureProviderResponse{}
+//			p.Configure(tt.ctx, tt.req, resp)
+//
+//			assert.Equal(t, tt.resp, *resp)
+//		})
+//	}
+//}

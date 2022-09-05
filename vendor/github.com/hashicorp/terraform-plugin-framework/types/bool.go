@@ -2,9 +2,14 @@ package types
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
+)
+
+var (
+	_ attr.Value = Bool{}
 )
 
 func boolValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
@@ -26,8 +31,6 @@ func boolValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, 
 	return Bool{Value: b}, nil
 }
 
-var _ attr.Value = Bool{}
-
 // Bool represents a boolean value.
 type Bool struct {
 	// Unknown will be true if the value is not yet known.
@@ -47,7 +50,7 @@ func (b Bool) Type(_ context.Context) attr.Type {
 	return BoolType
 }
 
-// ToTerraformValue returns the data contained in the *Bool as a tftypes.Value.
+// ToTerraformValue returns the data contained in the Bool as a tftypes.Value.
 func (b Bool) ToTerraformValue(_ context.Context) (tftypes.Value, error) {
 	if b.Null {
 		return tftypes.NewValue(tftypes.Bool, nil), nil
@@ -74,4 +77,29 @@ func (b Bool) Equal(other attr.Value) bool {
 		return false
 	}
 	return b.Value == o.Value
+}
+
+// IsNull returns true if the Bool represents a null value.
+func (b Bool) IsNull() bool {
+	return b.Null
+}
+
+// IsUnknown returns true if the Bool represents a currently unknown value.
+func (b Bool) IsUnknown() bool {
+	return b.Unknown
+}
+
+// String returns a human-readable representation of the Bool value.
+// The string returned here is not protected by any compatibility guarantees,
+// and is intended for logging and error reporting.
+func (b Bool) String() string {
+	if b.Unknown {
+		return attr.UnknownValueString
+	}
+
+	if b.Null {
+		return attr.NullValueString
+	}
+
+	return fmt.Sprintf("%t", b.Value)
 }

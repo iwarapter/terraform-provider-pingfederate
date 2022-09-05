@@ -4,9 +4,12 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
-	"github.com/hashicorp/terraform-plugin-go/tftypes"
 	"github.com/iwarapter/pingfederate-sdk-go/services/authenticationPolicyContracts"
 )
 
@@ -19,25 +22,25 @@ func (p pingfederateAuthenticationPolicyContractType) GetSchema(ctx context.Cont
 	attribute.Required = false
 	attribute.Computed = true
 	attribute.PlanModifiers = tfsdk.AttributePlanModifiers{
-		tfsdk.UseStateForUnknown(),
+		resource.UseStateForUnknown(),
 	}
 	sch.Attributes["id"] = attribute
 	return sch, nil
 }
 
-func (p pingfederateAuthenticationPolicyContractType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
-	provider, diags := convertProviderType(in)
+func (p pingfederateAuthenticationPolicyContractType) NewResource(ctx context.Context, in provider.Provider) (resource.Resource, diag.Diagnostics) {
+	pf, diags := convertProviderType(in)
 
 	return pingfederateAuthenticationPolicyContractResource{
-		provider: provider,
+		provider: pf,
 	}, diags
 }
 
 type pingfederateAuthenticationPolicyContractResource struct {
-	provider provider
+	provider pfprovider
 }
 
-func (p pingfederateAuthenticationPolicyContractResource) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+func (p pingfederateAuthenticationPolicyContractResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data AuthenticationPolicyContractData
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -54,7 +57,7 @@ func (p pingfederateAuthenticationPolicyContractResource) Create(ctx context.Con
 	resp.Diagnostics.Append(resp.State.Set(ctx, *flattenAuthenticationPolicyContract(body))...)
 }
 
-func (p pingfederateAuthenticationPolicyContractResource) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+func (p pingfederateAuthenticationPolicyContractResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data AuthenticationPolicyContractData
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -71,7 +74,7 @@ func (p pingfederateAuthenticationPolicyContractResource) Read(ctx context.Conte
 	resp.Diagnostics.Append(resp.State.Set(ctx, *flattenAuthenticationPolicyContract(body))...)
 }
 
-func (p pingfederateAuthenticationPolicyContractResource) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+func (p pingfederateAuthenticationPolicyContractResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data AuthenticationPolicyContractData
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -91,7 +94,7 @@ func (p pingfederateAuthenticationPolicyContractResource) Update(ctx context.Con
 	resp.Diagnostics.Append(resp.State.Set(ctx, *flattenAuthenticationPolicyContract(body))...)
 }
 
-func (p pingfederateAuthenticationPolicyContractResource) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+func (p pingfederateAuthenticationPolicyContractResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data ApcToPersistentGrantMappingData
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -108,6 +111,6 @@ func (p pingfederateAuthenticationPolicyContractResource) Delete(ctx context.Con
 	resp.State.RemoveResource(ctx)
 }
 
-func (p pingfederateAuthenticationPolicyContractResource) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
-	tfsdk.ResourceImportStatePassthroughID(ctx, tftypes.NewAttributePath().WithAttributeName("id"), req, resp)
+func (p pingfederateAuthenticationPolicyContractResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

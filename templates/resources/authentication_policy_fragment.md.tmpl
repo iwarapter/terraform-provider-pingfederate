@@ -105,6 +105,7 @@ The `action` block
 - `context` - (Optional) The result context.
 - `input_user_id_mapping` - (Optional) The input user id mapping.
 - `type` - (Required) The authentication selection type.
+- `user_id_authenticated` (Boolean) Indicates whether the user ID obtained by the user ID mapping is authenticated.
 
 #### ContinuePolicyAction
 
@@ -149,7 +150,7 @@ The `attribute_contract_fulfillment` block - Defines how an attribute in an attr
 
 The `attribute_mapping` block - A list of mappings from attribute sources to attribute targets.
 
-- `attribute_contract_fulfillment` - (Required) A list of mappings from attribute names to their fulfillment values.
+- `attribute_contract_fulfillment` - (Optional) A list of mappings from attribute names to their fulfillment values.
 - `ldap_attribute_source` - (Optional) A list of configured ldap data stores to look up attributes from.
 - `jdbc_attribute_source` - (Optional) A list of configured jdbc data stores to look up attributes from.
 - `custom_attribute_source` - (Optional) A list of configured custom data stores to look up attributes from.
