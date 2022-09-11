@@ -47,8 +47,8 @@ func testAccPingFederateExtendedPropertiesResourceConfig(first string) string {
 	return fmt.Sprintf(`
 resource "pingfederate_extended_properties" "demo" {
   property {
-	name = "%s"
-	description = "my custom client property"
+    name        = "%s"
+    description = "my custom client property"
   }
 }
 `, first)

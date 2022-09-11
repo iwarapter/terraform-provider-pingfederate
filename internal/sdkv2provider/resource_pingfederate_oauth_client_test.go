@@ -71,52 +71,52 @@ func testAccCheckPingFederateOauthClientDestroy(s *terraform.State) error {
 
 func testAccPingFederateOauthClientConfig(configUpdate string) string {
 	return fmt.Sprintf(`
-	resource "pingfederate_oauth_client" "my_client" {
-		client_id = "tf-acc-woot"
-		name      = "tf-acc-woot"
+resource "pingfederate_oauth_client" "my_client" {
+  client_id = "tf-acc-woot"
+  name      = "tf-acc-woot"
 
-		grant_types = [
-			"EXTENSION",
-		]
+  grant_types = [
+    "EXTENSION",
+  ]
 
-		default_access_token_manager_ref {
-			id = "testme"
-		}
+  default_access_token_manager_ref {
+    id = "testme"
+  }
 
-		oidc_policy {
-			grant_access_session_revocation_api = false
-			logout_uris = [
-				"https://logout",
-				"%s"
-			]
-			ping_access_logout_capable = true
-		}
-	}
+  oidc_policy {
+    grant_access_session_revocation_api = false
+    logout_uris = [
+      "https://logout",
+      "%s"
+    ]
+    ping_access_logout_capable = true
+  }
+}
 
-	resource "pingfederate_oauth_client" "my_client_2" {
-		client_id = "tf-acc-woot-2"
-		name      = "tf-acc-woot-2"
+resource "pingfederate_oauth_client" "my_client_2" {
+  client_id = "tf-acc-woot-2"
+  name      = "tf-acc-woot-2"
 
-		grant_types = [
-			"CLIENT_CREDENTIALS",
-		]
+  grant_types = [
+    "CLIENT_CREDENTIALS",
+  ]
 
-		default_access_token_manager_ref {
-			id = "testme"
-		}
+  default_access_token_manager_ref {
+    id = "testme"
+  }
 
-		client_auth {
-			type = "SECRET"
-			secret = "Secret"
-		}
+  client_auth {
+    type   = "SECRET"
+    secret = "Secret"
+  }
 
-		oidc_policy {
-			grant_access_session_revocation_api = false
-			logout_uris = []
-			ping_access_logout_capable = false
-			pairwise_identifier_user_type = false
-		}
-	}`, configUpdate)
+  oidc_policy {
+    grant_access_session_revocation_api = false
+    logout_uris                         = []
+    ping_access_logout_capable          = false
+    pairwise_identifier_user_type       = false
+  }
+}`, configUpdate)
 }
 
 func testAccCheckPingFederateOauthClientExists(n string) resource.TestCheckFunc {

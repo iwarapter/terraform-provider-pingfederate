@@ -98,18 +98,18 @@ locals {
 }
 
 resource "pingfederate_sp_adapter" "demo" {
-  name = "bar"
+  name          = "bar"
   sp_adapter_id = "spadaptertest1"
   plugin_descriptor_ref {
     id = "com.pingidentity.adapters.opentoken.SpAuthnAdapter"
   }
 
   configuration {
-	dynamic "fields" {
+    dynamic "fields" {
       for_each = local.isSupported ? [1] : []
       content {
-        name      = "SameSite Cookie"
-	  	value     = "3"
+        name  = "SameSite Cookie"
+        value = "3"
       }
     }
     sensitive_fields {
@@ -212,8 +212,8 @@ resource "pingfederate_sp_adapter" "demo" {
   }
 
   target_application_info {
-	application_name = "foo"
-	application_icon_url = "https://%s"
+    application_name     = "foo"
+    application_icon_url = "https://%s"
   }
 }
 `, configUpdate)
@@ -222,7 +222,7 @@ resource "pingfederate_sp_adapter" "demo" {
 func testAccPingFederateSpAdapterConfigWrongPlugin() string {
 	return `
 resource "pingfederate_sp_adapter" "demo" {
-  name = "acctestbar"
+  name          = "acctestbar"
   sp_adapter_id = "acctesttest1"
   plugin_descriptor_ref {
     id = "com.pingidentity.adapters.opentoken.wrong"
@@ -236,8 +236,8 @@ resource "pingfederate_sp_adapter" "demo" {
   }
 
   target_application_info {
-	application_name = "foo"
-	application_icon_url = "https://%s"
+    application_name     = "foo"
+    application_icon_url = "https://%s"
   }
 }
 `

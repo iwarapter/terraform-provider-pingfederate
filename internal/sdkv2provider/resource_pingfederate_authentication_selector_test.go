@@ -77,54 +77,54 @@ func testAccPingFederateAuthenticationSelectorResourceConfig(configUpdate string
 	return fmt.Sprintf(`resource "pingfederate_authentication_selector" "demo" {
   name = "acctestwee"
   plugin_descriptor_ref {
-	id = "com.pingidentity.pf.selectors.cidr.CIDRAdapterSelector"
+    id = "com.pingidentity.pf.selectors.cidr.CIDRAdapterSelector"
   }
 
   configuration {
-	fields {
-      name = "Result Attribute Name"
-	  value = ""
-	}
-	tables {
-	  name = "Networks"
- 	  rows {
-		fields {
-		  name  = "Network Range (CIDR notation)"
-		  value = "127.0.1.1/32"
-		}
-	  }
-	  rows {
-		fields {
-		  name  = "Network Range (CIDR notation)"
-		  value = "%s"
-		}
-	  }
-	}
+    fields {
+      name  = "Result Attribute Name"
+      value = ""
+    }
+    tables {
+      name = "Networks"
+      rows {
+        fields {
+          name  = "Network Range (CIDR notation)"
+          value = "127.0.1.1/32"
+        }
+      }
+      rows {
+        fields {
+          name  = "Network Range (CIDR notation)"
+          value = "%s"
+        }
+      }
+    }
   }
 }
 
 resource "pingfederate_authentication_selector" "demo2" {
   name = "acctestfee"
   plugin_descriptor_ref {
-	id = "com.pingidentity.pf.selectors.saml.SamlAuthnContextAdapterSelector"
+    id = "com.pingidentity.pf.selectors.saml.SamlAuthnContextAdapterSelector"
   }
   configuration {
-	fields {
-      name = "Add or Update AuthN Context Attribute"
-	  value = "true"
-	}
-	fields {
-      name = "Enable 'No Match' Result Value"
-	  value = "true"
-	}
-	fields {
-      name = "Enable 'Not in Request' Result Value"
-	  value = "false"
-	}
+    fields {
+      name  = "Add or Update AuthN Context Attribute"
+      value = "true"
+    }
+    fields {
+      name  = "Enable 'No Match' Result Value"
+      value = "true"
+    }
+    fields {
+      name  = "Enable 'Not in Request' Result Value"
+      value = "false"
+    }
   }
 
   attribute_contract {
-	extended_attributes = ["bar", "asd"]
+    extended_attributes = ["bar", "asd"]
   }
 }
 `, configUpdate)
@@ -135,23 +135,23 @@ func testAccPingFederateAuthenticationSelectorResourceConfigWrongPlugins() strin
 resource "pingfederate_authentication_selector" "demo" {
   name = "acctestone"
   plugin_descriptor_ref {
-	id = "com.pingidentity.pf.selectors.cidr.wrong"
+    id = "com.pingidentity.pf.selectors.cidr.wrong"
   }
 
   configuration {
-	fields {
-      name = "Result Attribute Name"
-	  value = ""
-	}
-	tables {
-	  name = "Networks"
-	  rows {
-		fields {
-		  name  = "Network Range (CIDR notation)"
-		  value = "127.0.0.1/32"
-		}
-	  }
-	}
+    fields {
+      name  = "Result Attribute Name"
+      value = ""
+    }
+    tables {
+      name = "Networks"
+      rows {
+        fields {
+          name  = "Network Range (CIDR notation)"
+          value = "127.0.0.1/32"
+        }
+      }
+    }
   }
 }`
 }

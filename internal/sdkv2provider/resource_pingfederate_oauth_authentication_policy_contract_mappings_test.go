@@ -101,7 +101,7 @@ resource "pingfederate_oauth_authentication_policy_contract_mapping" "demo" {
 }
 
 resource "pingfederate_authentication_policy_contract" "demo" {
-  name = "acc_test_test3"
+  name                = "acc_test_test3"
   extended_attributes = ["foo", "email"]
 }`, configUpdate)
 }

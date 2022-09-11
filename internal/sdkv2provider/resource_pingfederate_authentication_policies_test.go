@@ -79,7 +79,7 @@ func testAccCheckPingFederateAuthenticationPoliciesResourceDestroy(s *terraform.
 func testAccPingFederateAuthenticationPoliciesResourceConfigTearDown() string {
 	return `
 resource "pingfederate_authentication_policies" "demo" {
-  fail_if_no_selection = false
+  fail_if_no_selection    = false
   tracked_http_parameters = ["foo"]
 }`
 }
@@ -87,7 +87,7 @@ resource "pingfederate_authentication_policies" "demo" {
 func testAccPingFederateAuthenticationPoliciesResourceConfig() string {
 	return `
 resource "pingfederate_authentication_policies" "demo" {
-  fail_if_no_selection = false
+  fail_if_no_selection    = false
   tracked_http_parameters = ["foo"]
   default_authentication_sources {
     type = "IDP_ADAPTER"
@@ -106,30 +106,30 @@ resource "pingfederate_authentication_policies" "demo" {
             id = "idptestme"
           }
         }
-		attribute_rules {
-			items {
-				attribute_name = "sub"
-				expected_value = "boo"
-				result = "Condition"
-				condition = "EQUALS"
-			}
-		}
+        attribute_rules {
+          items {
+            attribute_name = "sub"
+            expected_value = "boo"
+            result         = "Condition"
+            condition      = "EQUALS"
+          }
+        }
       }
       children {
         action {
-          type = "RESTART"
+          type    = "RESTART"
           context = "Fail"
         }
       }
       children {
         action {
-          type = "DONE"
+          type    = "DONE"
           context = "Condition"
         }
       }
       children {
         action {
-          type = "DONE"
+          type    = "DONE"
           context = "Success"
         }
       }
@@ -317,7 +317,7 @@ resource "pingfederate_authentication_policies" "demo" {
   //        context = "Success"
   //      }
   //    }
-	//}
+  //}
   //}
 }`
 }

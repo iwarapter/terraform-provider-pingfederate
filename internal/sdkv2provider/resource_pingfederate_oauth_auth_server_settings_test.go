@@ -47,62 +47,62 @@ func testAccCheckPingFederateOauthAuthServerSettingsDestroy(s *terraform.State) 
 
 func testAccPingFederateOauthAuthServerSettingsConfig(configUpdate string) string {
 	return fmt.Sprintf(`
-	resource "pingfederate_oauth_auth_server_settings" "settings" {
-		scopes {
-			name        = "address"
-			description = "address"
-		}
+resource "pingfederate_oauth_auth_server_settings" "settings" {
+  scopes {
+    name        = "address"
+    description = "address"
+  }
 
-		scopes {
-			name        = "mail"
-			description = "mail"
-		}
+  scopes {
+    name        = "mail"
+    description = "mail"
+  }
 
-		scopes {
-			name        = "openid"
-			description = "openid"
-		}
+  scopes {
+    name        = "openid"
+    description = "openid"
+  }
 
-		scopes {
-			name        = "phone"
-			description = "phone"
-		}
+  scopes {
+    name        = "phone"
+    description = "phone"
+  }
 
-		scopes {
-			name        = "profile"
-			description = "profile"
-		}
+  scopes {
+    name        = "profile"
+    description = "profile"
+  }
 
 		%s
-		scope_groups {
-			name        = "group1"
-			description = "group1"
+  scope_groups {
+    name        = "group1"
+    description = "group1"
 
-			scopes = [
-				"address",
-				"mail",
-				"phone",
-				"openid",
-				"profile",
-			]
-		}
+    scopes = [
+      "address",
+      "mail",
+      "phone",
+      "openid",
+      "profile",
+    ]
+  }
 
-		persistent_grant_contract {
-			extended_attributes = ["woot"]
-		}
+  persistent_grant_contract {
+    extended_attributes = ["woot"]
+  }
 
-		allowed_origins = [
-			"http://localhost"
-		]
+  allowed_origins = [
+    "http://localhost"
+  ]
 
-		persistent_grant_lifetime      = -1
-        persistent_grant_lifetime_unit = "DAYS"
-		default_scope_description  = ""
-		authorization_code_timeout = 60
-		authorization_code_entropy = 30
-		refresh_token_length       = 42
-		refresh_rolling_interval   = 0
-	}`, configUpdate)
+  persistent_grant_lifetime      = -1
+  persistent_grant_lifetime_unit = "DAYS"
+  default_scope_description      = ""
+  authorization_code_timeout     = 60
+  authorization_code_entropy     = 30
+  refresh_token_length           = 42
+  refresh_rolling_interval       = 0
+}`, configUpdate)
 }
 
 func testAccCheckPingFederateOauthAuthServerSettingsExists(n string) resource.TestCheckFunc {

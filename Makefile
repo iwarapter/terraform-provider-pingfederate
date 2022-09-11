@@ -22,7 +22,7 @@ pf-init:
 		-e IMAGE_VERSION=pingfederate-alpine-az11-10.3.1-${CURDATE}-d9b5 \
 		--publish 9999:9999 \
 		--publish 9031:9031 \
-		pingidentity/pingfederate:11.0.0-edge
+		pingidentity/pingfederate:11.1.1-edge
 
 checks:
 	@go fmt ./...
@@ -30,16 +30,28 @@ checks:
 	@staticcheck ./...
 	@gosec ./...
 	@goimports -w pingfederate
+	@govulncheck ./...
+
+fmt:
+	@find ./internal/sdkv2provider -type f -name '*_test.go' | sort -u | xargs -I {} terrafmt fmt --fmtcompat {}
+	@find ./internal/framework -type f -name '*_test.go' | sort -u | xargs -I {} terrafmt fmt --fmtcompat {}
 
 unit-test:
 	@go test -mod=vendor ./... -v
 
 sweep:
 	@echo "WARNING: This will destroy infrastructure. Use only in development accounts."
-	go test ./pingfederate -v -sweep=all -timeout 60m
+	@go test ./internal/framework -v -sweep=all -timeout 60m
+	@go test ./internal/sdkv2provider -v -sweep=all -timeout 60m
 
 test:
 	@rm -f pingfederate/terraform.log && TF_LOG=TRACE TF_LOG_PATH=./terraform.log TF_ACC=1 go test -mod=vendor ./... -v
+
+test-framework:
+	@TF_ACC=1 go test -mod=vendor ./internal/framework/. -v
+
+test-sdkv2:
+	@TF_LOG=INFO TF_ACC=1 go test -mod=vendor ./internal/sdkv2provider/. -v
 
 test-and-report:
 	@rm -f pingfederate/terraform.log coverage.out report.json

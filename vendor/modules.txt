@@ -19,7 +19,7 @@ github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/empty
 github.com/golang/protobuf/ptypes/timestamp
-# github.com/google/go-cmp v0.5.8
+# github.com/google/go-cmp v0.5.9
 ## explicit; go 1.13
 github.com/google/go-cmp/cmp
 github.com/google/go-cmp/cmp/cmpopts
@@ -94,7 +94,7 @@ github.com/hashicorp/terraform-exec/tfexec
 # github.com/hashicorp/terraform-json v0.14.0
 ## explicit; go 1.13
 github.com/hashicorp/terraform-json
-# github.com/hashicorp/terraform-plugin-framework v0.11.1
+# github.com/hashicorp/terraform-plugin-framework v0.11.1 => github.com/iwarapter/terraform-plugin-framework v0.6.2-0.20220909203355-0bc8787083a0
 ## explicit; go 1.18
 github.com/hashicorp/terraform-plugin-framework/attr
 github.com/hashicorp/terraform-plugin-framework/attr/xattr
@@ -184,8 +184,8 @@ github.com/hashicorp/terraform-svchost
 github.com/hashicorp/yamux
 # github.com/imdario/mergo v0.3.13
 ## explicit; go 1.13
-# github.com/iwarapter/pingfederate-sdk-go v0.0.0-20211215181851-7405f6e2e6d3 => ../pingfederate-sdk-go
-## explicit; go 1.14
+# github.com/iwarapter/pingfederate-sdk-go v0.0.0-20220911205657-1a8ea84ce461
+## explicit; go 1.18
 github.com/iwarapter/pingfederate-sdk-go/pingfederate
 github.com/iwarapter/pingfederate-sdk-go/pingfederate/client
 github.com/iwarapter/pingfederate-sdk-go/pingfederate/client/metadata
@@ -444,4 +444,4 @@ google.golang.org/protobuf/types/known/timestamppb
 # gopkg.in/yaml.v3 v3.0.1
 ## explicit
 gopkg.in/yaml.v3
-# github.com/iwarapter/pingfederate-sdk-go => ../pingfederate-sdk-go
+# github.com/hashicorp/terraform-plugin-framework => github.com/iwarapter/terraform-plugin-framework v0.6.2-0.20220909203355-0bc8787083a0

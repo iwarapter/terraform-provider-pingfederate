@@ -53,20 +53,20 @@ func testAccPingFederateServerSettingsResourceConfig(first string) string {
 	return fmt.Sprintf(`
 resource "pingfederate_server_settings" "demo" {
   federation_info {
-	base_url = "https://localhost:9031"
-	saml2_entity_id = "%s"
-	saml1x_issuer_id = "foo"
-	wsfed_realm = "foo"
+    base_url         = "https://localhost:9031"
+    saml2_entity_id  = "%s"
+    saml1x_issuer_id = "foo"
+    wsfed_realm      = "foo"
   }
   roles_and_protocols {
-	enable_idp_discovery = true
+    enable_idp_discovery = true
     idp_role {
-      enable = true
-	  enable_outbound_provisioning = true
-	  enable_saml10                = true
-	  enable_saml11                = true
-	  enable_ws_fed                = true
-	  enable_ws_trust              = true
+      enable                       = true
+      enable_outbound_provisioning = true
+      enable_saml10                = true
+      enable_saml11                = true
+      enable_ws_fed                = true
+      enable_ws_trust              = true
       saml20_profile {
         enable = true
       }
@@ -76,16 +76,16 @@ resource "pingfederate_server_settings" "demo" {
       enable_openid_connect = true
     }
     sp_role {
-      enable = true
-	  enable_inbound_provisioning = true
-	  enable_openid_connect       = true
-	  enable_saml10               = true
-	  enable_saml11               = true
-	  enable_ws_fed               = true
-	  enable_ws_trust             = true
-	  saml20_profile {
-        enable = true
-		enable_xasp         = true
+      enable                      = true
+      enable_inbound_provisioning = true
+      enable_openid_connect       = true
+      enable_saml10               = true
+      enable_saml11               = true
+      enable_ws_fed               = true
+      enable_ws_trust             = true
+      saml20_profile {
+        enable      = true
+        enable_xasp = true
       }
     }
   }

@@ -74,7 +74,7 @@ func testAccPingFederateCertificatesCaConfig(configUpdate string) string {
 	return fmt.Sprintf(`
 resource "pingfederate_certificates_ca" "demo" {
   certificate_id = "%s"
-  file_data = base64encode(file("test_cases/amazon_root_ca2.pem"))
+  file_data      = base64encode(file("test_cases/amazon_root_ca2.pem"))
 }
 `, configUpdate)
 }

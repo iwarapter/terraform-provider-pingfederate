@@ -78,10 +78,10 @@ func testAccCheckPingFederateAuthnApiApplicationResourceDestroy(s *terraform.Sta
 func testAccPingFederateAuthnApiApplicationResourceConfig(configUpdate string) string {
 	return fmt.Sprintf(`
 resource "pingfederate_authentication_api_application" "demo" {
-	name      				   = "test"
-	url				 		   = "https://foo"
-	description 			   = "this is words"
-	additional_allowed_origins = ["https://foo.com", "https://%s"]
+  name                       = "test"
+  url                        = "https://foo"
+  description                = "this is words"
+  additional_allowed_origins = ["https://foo.com", "https://%s"]
 }`, configUpdate)
 }
 

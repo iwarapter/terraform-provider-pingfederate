@@ -110,12 +110,12 @@ resource "pingfederate_idp_adapter" "demo" {
     core_attributes {
       name      = "username"
       pseudonym = true
-	  masked	= false
+      masked    = false
     }
     extended_attributes {
-      name = "sub"
-	  pseudonym = false
-	  masked	= false
+      name      = "sub"
+      pseudonym = false
+      masked    = false
     }
   }
   attribute_mapping {

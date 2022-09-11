@@ -125,7 +125,7 @@ func testAccPingFederateKeyPairSigningCsrConfigGenerateWithCSR(signedCert string
 	return fmt.Sprintf(`
 resource "pingfederate_keypair_signing_csr" "test" {
   keypair_id = "csr-test-1"
-  file_data = "%s"
+  file_data  = "%s"
 }
 `, base64.StdEncoding.EncodeToString([]byte(signedCert)))
 }

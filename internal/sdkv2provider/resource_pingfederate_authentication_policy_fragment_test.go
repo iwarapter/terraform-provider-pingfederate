@@ -102,9 +102,9 @@ resource "pingfederate_authentication_policy_fragment" "first_factor" {
       attribute_rules {
         items {
           attribute_name = "policy.action"
-          condition = "EQUALS_CASE_INSENSITIVE"
+          condition      = "EQUALS_CASE_INSENSITIVE"
           expected_value = "identity.registration"
-          result = "Register"
+          result         = "Register"
         }
         fallback_to_success = true
       }
@@ -127,7 +127,7 @@ resource "pingfederate_authentication_policy_fragment" "first_factor" {
             key_name = "test"
             source {
               type = "LOCAL_IDENTITY_PROFILE"
-              id = "regIdentityProfile"
+              id   = "regIdentityProfile"
             }
             value = "test"
           }
@@ -150,34 +150,34 @@ func testAccCheckPingFederateAuthenticationPolicyFragmentResourceDestroy(s *terr
 
 func testAccPingFederateAuthenticationPolicyFragmentResourceConfig(configUpdate string) string {
 	return fmt.Sprintf(`resource "pingfederate_authentication_policy_fragment" "demo" {
-  name = "fragtest"
+  name        = "fragtest"
   description = "functional test %s"
   inputs {
-	id = pingfederate_authentication_policy_contract.input.id
+    id = pingfederate_authentication_policy_contract.input.id
   }
   outputs {
-	id = pingfederate_authentication_policy_contract.output.id
+    id = pingfederate_authentication_policy_contract.output.id
   }
 
   root_node {
-	action {
+    action {
       type = "AUTHN_SELECTOR"
-	  authentication_selector_ref {
-		id = pingfederate_authentication_selector.demo.id
-	  }
-	}
-	children {
-	  action {
-		type    = "DONE"
-		context = "No"
-	  }
-	}
-	children {
-	  action {
-		type    = "DONE"
-		context = "Yes"
-	  }
-	}
+      authentication_selector_ref {
+        id = pingfederate_authentication_selector.demo.id
+      }
+    }
+    children {
+      action {
+        type    = "DONE"
+        context = "No"
+      }
+    }
+    children {
+      action {
+        type    = "DONE"
+        context = "Yes"
+      }
+    }
   }
 }
 

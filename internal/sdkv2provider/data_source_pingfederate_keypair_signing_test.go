@@ -41,20 +41,20 @@ func testAccCheckPingFederateKeyPairSigningDataSourceDestroy(s *terraform.State)
 
 func testAccPingFederateKeyPairSigningDataSourceConfig() string {
 	return `
-        resource "pingfederate_keypair_signing" "ds_test" {
-			city = "City"
-			common_name = "data source test"
-			country = "GB"
-			key_algorithm = "RSA"
-			key_size = 2048
-			organization = "Org"
-			organization_unit = "OrgUnit"
-			state = "State"
-			valid_days = 365
-			subject_alternative_names = ["foo", "bar"]
-        }
+resource "pingfederate_keypair_signing" "ds_test" {
+  city                      = "City"
+  common_name               = "data source test"
+  country                   = "GB"
+  key_algorithm             = "RSA"
+  key_size                  = 2048
+  organization              = "Org"
+  organization_unit         = "OrgUnit"
+  state                     = "State"
+  valid_days                = 365
+  subject_alternative_names = ["foo", "bar"]
+}
 
-        data "pingfederate_keypair_signing" "test" {
-			depends_on = [pingfederate_keypair_signing.ds_test]
-		}`
+data "pingfederate_keypair_signing" "test" {
+  depends_on = [pingfederate_keypair_signing.ds_test]
+}`
 }

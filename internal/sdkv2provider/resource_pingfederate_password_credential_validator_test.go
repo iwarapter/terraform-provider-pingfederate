@@ -84,38 +84,38 @@ func testAccCheckPingFederatePasswordCredentialValidatorResourceDestroy(s *terra
 
 func testAccPingFederatePasswordCredentialValidatorResourceConfig(configUpdate string) string {
 	return fmt.Sprintf(`resource "pingfederate_password_credential_validator" "demo" {
-	  name = "acctestfoo"
-	  plugin_descriptor_ref {
-		id = "org.sourceid.saml20.domain.SimpleUsernamePasswordCredentialValidator"
-	  }
+  name = "acctestfoo"
+  plugin_descriptor_ref {
+    id = "org.sourceid.saml20.domain.SimpleUsernamePasswordCredentialValidator"
+  }
 
-	  configuration {
-		tables {
-		  name = "Users"
-		  rows {
-			fields {
-			  name  = "Username"
-			  value = "%s"
-			}
+  configuration {
+    tables {
+      name = "Users"
+      rows {
+        fields {
+          name  = "Username"
+          value = "%s"
+        }
 
-			sensitive_fields {
-			  name  = "Password"
-			  value = "demo"
-			}
+        sensitive_fields {
+          name  = "Password"
+          value = "demo"
+        }
 
-			sensitive_fields {
-			  name  = "Confirm Password"
-			  value = "demo"
-			}
+        sensitive_fields {
+          name  = "Confirm Password"
+          value = "demo"
+        }
 
-			fields {
-			  name  = "Relax Password Requirements"
-			  value = "true"
-			}
-		  }
-		}
-	  }
-	}`, configUpdate)
+        fields {
+          name  = "Relax Password Requirements"
+          value = "true"
+        }
+      }
+    }
+  }
+}`, configUpdate)
 }
 
 func testAccPingFederatePasswordCredentialValidatorResourceConfigWrongPlugin() string {
@@ -123,34 +123,34 @@ func testAccPingFederatePasswordCredentialValidatorResourceConfigWrongPlugin() s
 resource "pingfederate_password_credential_validator" "demo" {
   name = "acctestfoo"
   plugin_descriptor_ref {
-	id = "org.sourceid.saml20.domain.wrong"
+    id = "org.sourceid.saml20.domain.wrong"
   }
 
   configuration {
-	tables {
-	  name = "Users"
-	  rows {
-		fields {
-		  name  = "Username"
-		  value = "%s"
-		}
+    tables {
+      name = "Users"
+      rows {
+        fields {
+          name  = "Username"
+          value = "%s"
+        }
 
-		sensitive_fields {
-		  name  = "Password"
-		  value = "demo"
-		}
+        sensitive_fields {
+          name  = "Password"
+          value = "demo"
+        }
 
-		sensitive_fields {
-		  name  = "Confirm Password"
-		  value = "demo"
-		}
+        sensitive_fields {
+          name  = "Confirm Password"
+          value = "demo"
+        }
 
-		fields {
-		  name  = "Relax Password Requirements"
-		  value = "true"
-		}
-	  }
-	}
+        fields {
+          name  = "Relax Password Requirements"
+          value = "true"
+        }
+      }
+    }
   }
 }`
 }

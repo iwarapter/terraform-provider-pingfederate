@@ -130,111 +130,111 @@ func testAccPingFederateKeypairsOauthOpenIdConnectResourceConfig(first string) s
 resource "pingfederate_keypairs_oauth_openid_connect" "settings" {
   static_jwks_enabled = true
   rsa_active_cert_ref {
-	id = pingfederate_keypair_signing.rsa[0].id
+    id = pingfederate_keypair_signing.rsa[0].id
   }
   rsa_previous_cert_ref {
-	id = pingfederate_keypair_signing.rsa[1].id
+    id = pingfederate_keypair_signing.rsa[1].id
   }
   rsa_decryption_active_cert_ref {
-	id = pingfederate_keypair_signing.rsa[0].id
+    id = pingfederate_keypair_signing.rsa[0].id
   }
   rsa_decryption_previous_cert_ref {
-	id = pingfederate_keypair_signing.rsa[1].id
+    id = pingfederate_keypair_signing.rsa[1].id
   }
 
   p256_active_cert_ref {
-	id = pingfederate_keypair_signing.ec256[0].id
+    id = pingfederate_keypair_signing.ec256[0].id
   }
   p256_previous_cert_ref {
-	id = pingfederate_keypair_signing.ec256[1].id
+    id = pingfederate_keypair_signing.ec256[1].id
   }
   p256_decryption_active_cert_ref {
-	id = pingfederate_keypair_signing.ec256[0].id
+    id = pingfederate_keypair_signing.ec256[0].id
   }
   p256_decryption_previous_cert_ref {
-	id = pingfederate_keypair_signing.ec256[1].id
+    id = pingfederate_keypair_signing.ec256[1].id
   }
 
   p384_active_cert_ref {
-	id = pingfederate_keypair_signing.ec384[0].id
+    id = pingfederate_keypair_signing.ec384[0].id
   }
   p384_previous_cert_ref {
-	id = pingfederate_keypair_signing.ec384[1].id
+    id = pingfederate_keypair_signing.ec384[1].id
   }
   p384_decryption_active_cert_ref {
-	id = pingfederate_keypair_signing.ec384[0].id
+    id = pingfederate_keypair_signing.ec384[0].id
   }
   p384_decryption_previous_cert_ref {
-	id = pingfederate_keypair_signing.ec384[1].id
+    id = pingfederate_keypair_signing.ec384[1].id
   }
 
   p521_active_cert_ref {
-	id = pingfederate_keypair_signing.ec521[0].id
+    id = pingfederate_keypair_signing.ec521[0].id
   }
   p521_previous_cert_ref {
-	id = pingfederate_keypair_signing.ec521[1].id
+    id = pingfederate_keypair_signing.ec521[1].id
   }
   p521_decryption_active_cert_ref {
-	id = pingfederate_keypair_signing.ec521[0].id
+    id = pingfederate_keypair_signing.ec521[0].id
   }
   p521_decryption_previous_cert_ref {
-	id = pingfederate_keypair_signing.ec521[1].id
+    id = pingfederate_keypair_signing.ec521[1].id
   }
-  rsa_publish_x5c_parameter = %s
-  p256_publish_x5c_parameter = %s
-  p384_publish_x5c_parameter = %s
-  p521_publish_x5c_parameter = %s
+  rsa_publish_x5c_parameter             = %s
+  p256_publish_x5c_parameter            = %s
+  p384_publish_x5c_parameter            = %s
+  p521_publish_x5c_parameter            = %s
   p256_decryption_publish_x5c_parameter = %s
   p384_decryption_publish_x5c_parameter = %s
   p521_decryption_publish_x5c_parameter = %s
-  rsa_decryption_publish_x5c_parameter = %s
+  rsa_decryption_publish_x5c_parameter  = %s
 }
 
 resource "pingfederate_keypair_signing" "rsa" {
-	count = 2
-	city = "Test"
-	common_name = "example${count.index}"
-	country = "GB"
-	key_algorithm = "RSA"
-	key_size = 2048
-	organization = "Test"
-	organization_unit = "Test"
-	state = "Test"
-	valid_days = 365
-	subject_alternative_names = ["foo", "bar"]
+  count                     = 2
+  city                      = "Test"
+  common_name               = "example${count.index}"
+  country                   = "GB"
+  key_algorithm             = "RSA"
+  key_size                  = 2048
+  organization              = "Test"
+  organization_unit         = "Test"
+  state                     = "Test"
+  valid_days                = 365
+  subject_alternative_names = ["foo", "bar"]
 }
 
 resource "pingfederate_keypair_signing" "ec256" {
-	count = 2
-	common_name = "example${count.index}"
-	country = "GB"
-	key_algorithm = "EC"
-	key_size = 256
-	organization = "Test"
-	valid_days = 365
-	subject_alternative_names = ["foo", "bar"]
+  count                     = 2
+  common_name               = "example${count.index}"
+  country                   = "GB"
+  key_algorithm             = "EC"
+  key_size                  = 256
+  organization              = "Test"
+  valid_days                = 365
+  subject_alternative_names = ["foo", "bar"]
 }
 
 resource "pingfederate_keypair_signing" "ec384" {
-	count = 2
-	common_name = "example${count.index}"
-	country = "GB"
-	key_algorithm = "EC"
-	key_size = 384
-	organization = "Test"
-	valid_days = 365
-	subject_alternative_names = ["foo", "bar"]
+  count                     = 2
+  common_name               = "example${count.index}"
+  country                   = "GB"
+  key_algorithm             = "EC"
+  key_size                  = 384
+  organization              = "Test"
+  valid_days                = 365
+  subject_alternative_names = ["foo", "bar"]
 }
 
 resource "pingfederate_keypair_signing" "ec521" {
-	count = 2
-	common_name = "example${count.index}"
-	country = "GB"
-	key_algorithm = "EC"
-	key_size = 521
-	organization = "Test"
-	valid_days = 365
-	subject_alternative_names = ["foo", "bar"]
+  count                     = 2
+  common_name               = "example${count.index}"
+  country                   = "GB"
+  key_algorithm             = "EC"
+  key_size                  = 521
+  organization              = "Test"
+  valid_days                = 365
+  subject_alternative_names = ["foo", "bar"]
 }
 `, first, first, first, first, first, first, first, first)
 }

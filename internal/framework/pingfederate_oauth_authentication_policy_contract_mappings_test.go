@@ -54,6 +54,7 @@ func TestAccPingFederateOauthAuthenticationPolicyContractMapping(t *testing.T) {
 	  data_store_ref = "ProvisionerDS"
 	  column_names = ["GRANTEE"]
 	  filter       = "*"
+	  description  = "JDBC"
 	  schema       = "INFORMATION_SCHEMA"
 	  table        = "ADMINISTRABLE_ROLE_AUTHORIZATIONS"
 	}
@@ -84,21 +85,26 @@ func testAccCheckPingFederateOauthAuthenticationPolicyContractMappingDestroy(s *
 
 func testAccPingFederateOauthAuthenticationPolicyContractMappingConfig(configUpdate string) string {
 	return fmt.Sprintf(`
+resource "pingfederate_authentication_policy_contract" "demo" {
+  name                = "acc_test_test3"
+  extended_attributes = ["foo", "email"]
+}
+
 resource "pingfederate_oauth_authentication_policy_contract_mapping" "demo" {
-  authentication_policy_contract_ref = "eazUFIL9gVa3scqY"
+  authentication_policy_contract_ref = pingfederate_authentication_policy_contract.demo.id
   attribute_contract_fulfillment = {
     "USER_NAME" = {
-	  source = {
-	    type = "AUTHENTICATION_POLICY_CONTRACT"
-	  }
-	  value = "subject"
-	},
+      source = {
+        type = "AUTHENTICATION_POLICY_CONTRACT"
+      }
+      value = "subject"
+    },
     "USER_KEY" = {
-	  source = {
-		type = "AUTHENTICATION_POLICY_CONTRACT"
-	  }
-	  value = "subject"
-  	}
+      source = {
+        type = "AUTHENTICATION_POLICY_CONTRACT"
+      }
+      value = "subject"
+    }
   }
   %s
 }

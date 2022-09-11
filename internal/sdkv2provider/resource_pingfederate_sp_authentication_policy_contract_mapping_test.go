@@ -87,36 +87,36 @@ locals {
 }
 
 resource "pingfederate_sp_authentication_policy_contract_mapping" "demo" {
-	source_id = pingfederate_authentication_policy_contract.demo.id
-	target_id = pingfederate_sp_adapter.demo.id
-    attribute_contract_fulfillment {
-      key_name = "subject"
-      source {
-        type = "AUTHENTICATION_POLICY_CONTRACT"
-      }
-      value = "subject"
+  source_id = pingfederate_authentication_policy_contract.demo.id
+  target_id = pingfederate_sp_adapter.demo.id
+  attribute_contract_fulfillment {
+    key_name = "subject"
+    source {
+      type = "AUTHENTICATION_POLICY_CONTRACT"
     }
-	default_target_resource = "https://%s"
+    value = "subject"
+  }
+  default_target_resource = "https://%s"
 }
 
 resource "pingfederate_authentication_policy_contract" "demo" {
-  name = "acctestspadaptertest2"
+  name                = "acctestspadaptertest2"
   extended_attributes = ["foo", "email"]
 }
 
 resource "pingfederate_sp_adapter" "demo" {
-  name = "acctestspadaptertest2"
+  name          = "acctestspadaptertest2"
   sp_adapter_id = "acctestspadaptertest2"
   plugin_descriptor_ref {
     id = "com.pingidentity.adapters.opentoken.SpAuthnAdapter"
   }
 
   configuration {
-	dynamic "fields" {
+    dynamic "fields" {
       for_each = local.isSupported ? [1] : []
       content {
-        name      = "SameSite Cookie"
-	  	value     = "3"
+        name  = "SameSite Cookie"
+        value = "3"
       }
     }
     sensitive_fields {
@@ -219,8 +219,8 @@ resource "pingfederate_sp_adapter" "demo" {
   }
 
   target_application_info {
-	application_name = "foo"
-	application_icon_url = "https://bar"
+    application_name     = "foo"
+    application_icon_url = "https://bar"
   }
 }`, configUpdate)
 }

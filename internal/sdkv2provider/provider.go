@@ -9,8 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-//Provider does stuff
-//
+// Provider does stuff
 func Provider() *schema.Provider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
@@ -60,7 +59,7 @@ func Provider() *schema.Provider {
 			"pingfederate_authentication_policy_fragment":   resourcePingFederateAuthenticationPolicyFragmentResource(),
 			"pingfederate_authentication_api_application":   resourcePingFederateAuthnApiApplicationResource(),
 			"pingfederate_authentication_api_settings":      resourcePingFederateAuthnApiSettingsResource(),
-			"pingfederate_authentication_policy_contract":   resourcePingFederateAuthenticationPolicyContractResource(),
+			//"pingfederate_authentication_policy_contract":   resourcePingFederateAuthenticationPolicyContractResource(),
 			"pingfederate_authentication_selector":          resourcePingFederateAuthenticationSelectorResource(),
 			"pingfederate_certificates_ca":                  resourcePingFederateCertificatesCaResource(),
 			"pingfederate_certificates_revocation_settings": resourcePingFederateCertificatesRevocationSettingsResource(),
@@ -82,7 +81,7 @@ func Provider() *schema.Provider {
 			"pingfederate_notification_publisher":           resourcePingFederateNotificationPublisherResource(),
 			"pingfederate_oauth_auth_server_settings":       resourcePingFederateOauthAuthServerSettingsResource(),
 			//"pingfederate_oauth_authentication_policy_contract_mapping": resourcePingFederateOauthAuthenticationPolicyContractMappingsResource(),
-			"pingfederate_oauth_client":                              resourcePingFederateOauthClientResource(),
+			//"pingfederate_oauth_client":                              resourcePingFederateOauthClientResource(),
 			"pingfederate_oauth_client_registration_policy":          resourcePingFederateOAuthClientRegistrationPolicyResource(),
 			"pingfederate_oauth_client_settings":                     resourcePingFederateOauthClientSettingsResource(),
 			"pingfederate_oauth_access_token_manager":                resourcePingFederateOauthAccessTokenManagersResource(),

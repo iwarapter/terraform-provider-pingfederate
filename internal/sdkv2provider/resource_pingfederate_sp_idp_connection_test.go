@@ -82,26 +82,26 @@ func testAccCheckPingFederateSpIdpConnectionDestroy(s *terraform.State) error {
 func testAccPingFederateSpIdpConnectionConfig(configUpdate string) string {
 	return fmt.Sprintf(`
 resource "pingfederate_sp_idp_connection" "demo" {
-  name = "foo"
-  entity_id = "foo"
-  active = true
+  name         = "foo"
+  entity_id    = "foo"
+  active       = true
   logging_mode = "STANDARD"
   credentials {
     outbound_back_channel_auth {
-      type = "OUTBOUND"
-      digital_signature = false
+      type                  = "OUTBOUND"
+      digital_signature     = false
       validate_partner_cert = false
     }
   }
   attribute_query {
-	url = "%s"
+    url = "%s"
     policy {
-      sign_attribute_query = false
-	  encrypt_name_id = false
-	  require_signed_response = false
-	  require_signed_assertion = false
-	  require_encrypted_assertion = false
-	  mask_attribute_values = false
+      sign_attribute_query        = false
+      encrypt_name_id             = false
+      require_signed_response     = false
+      require_signed_assertion    = false
+      require_encrypted_assertion = false
+      mask_attribute_values       = false
     }
   }
 }

@@ -58,23 +58,23 @@ provider "pingfederate" {
 }
 
 resource "pingfederate_ldap_data_store" "example" {
-	ldap_type        = "PING_DIRECTORY"
-	hostnames        = ["host.docker.internal:1636"]
-	user_dn          = "foo"
-	password         = "secret"
-	bind_anonymously = false
-	min_connections  = 1
-	max_connections  = 2
+  ldap_type        = "PING_DIRECTORY"
+  hostnames        = ["host.docker.internal:1636"]
+  user_dn          = "foo"
+  password         = "secret"
+  bind_anonymously = false
+  min_connections  = 1
+  max_connections  = 2
 }
 
 data "pingfederate_ldap_data_store" "test" {
-	name = pingfederate_ldap_data_store.example.name
+  name = pingfederate_ldap_data_store.example.name
 }`
 }
 
 func testAccPingFederateLdapDataStoreDataSourceConfigNonExistent() string {
 	return `
 data "pingfederate_ldap_data_store" "test" {
-	name = "junk"
+  name = "junk"
 }`
 }

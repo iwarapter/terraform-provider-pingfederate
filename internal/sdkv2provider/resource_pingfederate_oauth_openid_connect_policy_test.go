@@ -109,7 +109,7 @@ resource "pingfederate_oauth_openid_connect_policy" "demo" {
 
   scope_attribute_mappings {
     key_name = "address"
-	values = ["%s"]
+    values   = ["%s"]
   }
 }
 

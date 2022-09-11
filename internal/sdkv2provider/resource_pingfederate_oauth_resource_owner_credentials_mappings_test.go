@@ -92,7 +92,7 @@ func testAccPingFederateOauthResourceOwnerCredentialsMappingsConfig(configUpdate
 	return fmt.Sprintf(`
 resource "pingfederate_oauth_resource_owner_credentials_mappings" "demo" {
   password_validator_ref {
-	id = "pcvtestme"
+    id = "pcvtestme"
   }
 
   attribute_contract_fulfillment {

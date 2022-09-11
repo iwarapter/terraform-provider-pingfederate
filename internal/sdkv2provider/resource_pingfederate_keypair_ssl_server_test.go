@@ -102,25 +102,25 @@ func testAccPingFederateKeypairSslServerConfig() string {
 	return `
 resource "pingfederate_keypair_ssl_server" "demo" {
   file_data = filebase64("test_cases/provider.p12")
-  password = "password"
+  password  = "password"
 }
 `
 }
 
 func testAccPingFederateKeypairSslServerConfigGenerate() string {
 	return `
-        resource "pingfederate_keypair_ssl_server" "demo" {
-			city = "Test"
-			common_name = "Test"
-			country = "GB"
-			key_algorithm = "RSA"
-			key_size = 2048
-			organization = "Test"
-			organization_unit = "Test"
-			state = "Test"
-			valid_days = 365
-			subject_alternative_names = ["foo", "bar"]
-        }`
+resource "pingfederate_keypair_ssl_server" "demo" {
+  city                      = "Test"
+  common_name               = "Test"
+  country                   = "GB"
+  key_algorithm             = "RSA"
+  key_size                  = 2048
+  organization              = "Test"
+  organization_unit         = "Test"
+  state                     = "Test"
+  valid_days                = 365
+  subject_alternative_names = ["foo", "bar"]
+}`
 }
 
 func testAccCheckPingFederateKeypairSslServerExists(n string) resource.TestCheckFunc {

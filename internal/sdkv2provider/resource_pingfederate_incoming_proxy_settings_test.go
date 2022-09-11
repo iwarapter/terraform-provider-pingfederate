@@ -45,15 +45,15 @@ func testAccCheckPingFederateIncomingProxySettingsDestroy(s *terraform.State) er
 
 func testAccPingFederateIncomingProxySettingsConfig(configUpdate string) string {
 	return fmt.Sprintf(`
-	resource "pingfederate_incoming_proxy_settings" "settings" {
-		client_cert_chain_sslheader_name = "foo"
-		client_cert_sslheader_name = "foo"
-		forwarded_host_header_index = "LAST"
-		forwarded_host_header_name = "foo"
-		forwarded_ip_address_header_index = "LAST"
-		forwarded_ip_address_header_name = "%s"
-		proxy_terminates_https_conns = false
-	}`, configUpdate)
+resource "pingfederate_incoming_proxy_settings" "settings" {
+  client_cert_chain_sslheader_name  = "foo"
+  client_cert_sslheader_name        = "foo"
+  forwarded_host_header_index       = "LAST"
+  forwarded_host_header_name        = "foo"
+  forwarded_ip_address_header_index = "LAST"
+  forwarded_ip_address_header_name  = "%s"
+  proxy_terminates_https_conns      = false
+}`, configUpdate)
 }
 
 func testAccCheckPingFederateIncomingProxySettingsExists(n string) resource.TestCheckFunc {

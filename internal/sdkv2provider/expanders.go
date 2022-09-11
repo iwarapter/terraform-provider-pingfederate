@@ -2579,13 +2579,13 @@ func expandIdpAdapterAttributeList(in []interface{}) *[]*pf.IdpAdapterAttribute 
 	return &result
 }
 
-//func expandConfigFieldList(in []interface{}) *[]*pf.ConfigField {
-//	var result []*pf.ConfigField
-//	for _, v := range in {
-//		result = append(result, expandConfigField(v.(map[string]interface{})))
+//	func expandConfigFieldList(in []interface{}) *[]*pf.ConfigField {
+//		var result []*pf.ConfigField
+//		for _, v := range in {
+//			result = append(result, expandConfigField(v.(map[string]interface{})))
+//		}
+//		return &result
 //	}
-//	return &result
-//}
 func expandUrlWhitelistEntryList(in []interface{}) *[]*pf.UrlWhitelistEntry {
 	var result []*pf.UrlWhitelistEntry
 	for _, v := range in {

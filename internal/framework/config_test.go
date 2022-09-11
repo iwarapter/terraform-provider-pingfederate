@@ -10,7 +10,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 )
 
 func TestConfig_Client(t *testing.T) {
@@ -38,39 +38,21 @@ func TestConfig_Client(t *testing.T) {
 			username: "foo",
 			password: "bar",
 			baseURL:  "not a url",
-			want: diag.Diagnostics{
-				diag.Diagnostic{
-					Severity: diag.Error,
-					Summary:  "Invalid URL",
-					Detail:   "Unable to parse base_url for client: parse \"not a url\": invalid URI for request",
-				},
-			},
+			want:     diag.Diagnostics{diag.NewErrorDiagnostic("Invalid URL", "Unable to parse base_url for client: parse \"not a url\": invalid URI for request")},
 		},
 		{
 			name:     "handle unresponsive server",
 			username: "foo",
 			password: "bar",
 			baseURL:  "https://localhost:19999",
-			want: diag.Diagnostics{
-				diag.Diagnostic{
-					Severity: diag.Error,
-					Summary:  "Connection Error",
-					Detail:   "Unable to connect to PingFederate: Unknown host/port",
-				},
-			},
+			want:     diag.Diagnostics{diag.NewErrorDiagnostic("Connection Error", "Unable to connect to PingFederate: Unknown host/port")},
 		},
 		{
 			name:     "unauthenticated",
 			username: "foo",
 			password: "bar",
 			baseURL:  server.URL,
-			want: diag.Diagnostics{
-				diag.Diagnostic{
-					Severity: diag.Error,
-					Summary:  "Connection Error",
-					Detail:   "Unable to connect to PingFederate: The credentials you provided were not recognized.",
-				},
-			},
+			want:     diag.Diagnostics{diag.NewErrorDiagnostic("Connection Error", "Unable to connect to PingFederate: The credentials you provided were not recognized.")},
 		},
 	}
 	for _, tt := range tests {

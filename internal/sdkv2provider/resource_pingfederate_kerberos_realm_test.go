@@ -75,10 +75,10 @@ func testAccCheckPingFederateKerberosRealmResourceDestroy(s *terraform.State) er
 func testAccPingFederateKerberosRealmResourceConfig(configUpdate string) string {
 	return fmt.Sprintf(`
 resource "pingfederate_kerberos_realm" "demo" {
-	kerberos_realm_name      = "test"
-	key_distribution_centers = ["foo.com", "%s"]
-	kerberos_username 		 = "user"
-	kerberos_password 		 = "secret"
+  kerberos_realm_name      = "test"
+  key_distribution_centers = ["foo.com", "%s"]
+  kerberos_username        = "user"
+  kerberos_password        = "secret"
 }`, configUpdate)
 }
 

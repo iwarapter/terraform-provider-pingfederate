@@ -85,14 +85,14 @@ locals {
 }
 
 resource "pingfederate_notification_publisher" "demo" {
-  name = "acc_test_bar"
+  name         = "acc_test_bar"
   publisher_id = "foo1"
   plugin_descriptor_ref {
     id = "com.pingidentity.email.SmtpNotificationPlugin"
   }
 
   configuration {
-	dynamic "fields" {
+    dynamic "fields" {
       for_each = local.isSupported ? [1] : []
       content {
         name  = "UTF-8 Message Header Support"
@@ -117,40 +117,40 @@ resource "pingfederate_notification_publisher" "demo" {
     }
     fields {
       name  = "SMTPS Port"
-	  value = "465"
-	}
-	fields {
+      value = "465"
+    }
+    fields {
       name  = "Verify Hostname"
- 	  value = "true"
-	}
-	fields {
+      value = "true"
+    }
+    fields {
       name  = "Username"
-	  value = ""
-  	}
-	fields {
+      value = ""
+    }
+    fields {
       name  = "Password"
-	  value = ""
-	}
-	fields {
+      value = ""
+    }
+    fields {
       name  = "Test Address"
- 	  value = ""
-	}
-	fields {
+      value = ""
+    }
+    fields {
       name  = "Connection Timeout"
-	  value = "30"
-	}
-	fields {
+      value = "30"
+    }
+    fields {
       name  = "Retry Attempt"
-	  value = "2"
-	}
-	fields {
+      value = "2"
+    }
+    fields {
       name  = "Retry Delay"
-	  value = "2"
-	}
-	fields {
+      value = "2"
+    }
+    fields {
       name  = "Enable SMTP Debugging Messages"
-	  value = "false"
-	}
+      value = "false"
+    }
   }
 }
 `, configUpdate)
@@ -159,7 +159,7 @@ resource "pingfederate_notification_publisher" "demo" {
 func testAccPingFederateNotificationPublisherConfigWrongPlugin() string {
 	return `
 resource "pingfederate_notification_publisher" "demo" {
-  name = "acc_test_bar2"
+  name         = "acc_test_bar2"
   publisher_id = "acc_test_bar2"
   plugin_descriptor_ref {
     id = "com.pingidentity.adapters.opentoken.wrong"

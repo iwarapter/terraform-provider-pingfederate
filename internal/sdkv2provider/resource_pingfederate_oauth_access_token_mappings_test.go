@@ -26,7 +26,7 @@ func init() {
 			if err != nil {
 				return fmt.Errorf("unable to list oauth access token mappings %s", err)
 			}
-			for _, item := range *results.Items {
+			for _, item := range *results {
 				if strings.Contains(*item.Id, "acc_test") {
 					_, _, err := svc.DeleteMapping(&oauthAccessTokenMappings.DeleteMappingInput{Id: *item.Id})
 					if err != nil {
@@ -73,22 +73,22 @@ func testAccCheckPingFederateOauthAccessTokenMappingsDestroy(s *terraform.State)
 
 func testAccPingFederateOauthAccessTokenMappingsConfig(configUpdate string) string {
 	return fmt.Sprintf(`
-	resource "pingfederate_oauth_access_token_mappings" "demo" {
-		access_token_manager_ref {
-			id = "testme"
-		}
+resource "pingfederate_oauth_access_token_mappings" "demo" {
+  access_token_manager_ref {
+    id = "testme"
+  }
 
-		context {
-      		type = "CLIENT_CREDENTIALS"
-    	}
-		attribute_contract_fulfillment {
-		  key_name = "name"
-		  source {
-			type = "CONTEXT"
-		  }
-		  value = "%s"
-		}
-	}`, configUpdate)
+  context {
+    type = "CLIENT_CREDENTIALS"
+  }
+  attribute_contract_fulfillment {
+    key_name = "name"
+    source {
+      type = "CONTEXT"
+    }
+    value = "%s"
+  }
+}`, configUpdate)
 }
 
 func testAccCheckPingFederateOauthAccessTokenMappingsExists(n string) resource.TestCheckFunc {

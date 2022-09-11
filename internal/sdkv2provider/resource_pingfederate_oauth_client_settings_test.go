@@ -121,21 +121,21 @@ func testAccCheckPingFederateOauthClientSettingsDestroy(s *terraform.State) erro
 
 func testAccPingFederateOauthClientSettingsConfig(configUpdate string) string {
 	return fmt.Sprintf(`
-	resource "pingfederate_oauth_client_settings" "settings" {
-		client_metadata {
-			parameter = "example1"
-		}
-		client_metadata {
-			parameter 	= "example2"
-			description = "example2"
-		}
-		dynamic_client_registration {
-			restrict_common_scopes 				= %s
-			initial_access_token_scope 			= "openid"
-			enforce_replay_prevention 			= true
-			require_proof_key_for_code_exchange = true
-		}
-	}`, configUpdate)
+resource "pingfederate_oauth_client_settings" "settings" {
+  client_metadata {
+    parameter = "example1"
+  }
+  client_metadata {
+    parameter   = "example2"
+    description = "example2"
+  }
+  dynamic_client_registration {
+    restrict_common_scopes              = %s
+    initial_access_token_scope          = "openid"
+    enforce_replay_prevention           = true
+    require_proof_key_for_code_exchange = true
+  }
+}`, configUpdate)
 }
 
 func testAccCheckPingFederateOauthClientSettingsExists(t *testing.T, n string) resource.TestCheckFunc {

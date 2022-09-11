@@ -65,8 +65,8 @@ func testAccPingFederateCertificatesRevocationSettingsResourceConfig(enableOcsp 
 		return `resource "pingfederate_certificates_revocation_settings" "demo" {
   crl_settings {}
   ocsp_settings {
-	responder_url = "http://somewhere.foo"
-	action_on_status_unknown = "FAILOVER"
+    responder_url            = "http://somewhere.foo"
+    action_on_status_unknown = "FAILOVER"
   }
 }
 `

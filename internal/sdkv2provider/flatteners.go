@@ -2743,13 +2743,13 @@ func flattenAuthnContextMappings(in *[]*pf.AuthnContextMapping) []interface{} {
 	return m
 }
 
-//func flattenConfigTables(in *[]*pf.ConfigTable) []interface{} {
-//	m := make([]interface{}, 0, len(*in))
-//	for _, v := range *in {
-//		m = append(m, flattenConfigTable(v))
+//	func flattenConfigTables(in *[]*pf.ConfigTable) []interface{} {
+//		m := make([]interface{}, 0, len(*in))
+//		for _, v := range *in {
+//			m = append(m, flattenConfigTable(v))
+//		}
+//		return m
 //	}
-//	return m
-//}
 func flattenIdpSsoServiceEndpoints(in *[]*pf.IdpSsoServiceEndpoint) []interface{} {
 	m := make([]interface{}, 0, len(*in))
 	for _, v := range *in {
@@ -2765,13 +2765,13 @@ func flattenSpTokenGeneratorMappings(in *[]*pf.SpTokenGeneratorMapping) []interf
 	return m
 }
 
-//func flattenFieldEntrys(in *[]*pf.FieldEntry) []interface{} {
-//	m := make([]interface{}, 0, len(*in))
-//	for _, v := range *in {
-//		m = append(m, flattenFieldEntry(v))
+//	func flattenFieldEntrys(in *[]*pf.FieldEntry) []interface{} {
+//		m := make([]interface{}, 0, len(*in))
+//		for _, v := range *in {
+//			m = append(m, flattenFieldEntry(v))
+//		}
+//		return m
 //	}
-//	return m
-//}
 func flattenAccessTokenManagerMappings(in *[]*pf.AccessTokenManagerMapping) []interface{} {
 	m := make([]interface{}, 0, len(*in))
 	for _, v := range *in {
@@ -2802,13 +2802,13 @@ func flattenSpWsTrustAttributes(in *[]*pf.SpWsTrustAttribute) []interface{} {
 	return m
 }
 
-//func flattenConfigFields(in *[]*pf.ConfigField) []interface{} {
-//	m := make([]interface{}, 0, len(*in))
-//	for _, v := range *in {
-//		m = append(m, flattenConfigField(v))
+//	func flattenConfigFields(in *[]*pf.ConfigField) []interface{} {
+//		m := make([]interface{}, 0, len(*in))
+//		for _, v := range *in {
+//			m = append(m, flattenConfigField(v))
+//		}
+//		return m
 //	}
-//	return m
-//}
 func flattenSpBrowserSsoAttributes(in *[]*pf.SpBrowserSsoAttribute) []interface{} {
 	m := make([]interface{}, 0, len(*in))
 	for _, v := range *in {

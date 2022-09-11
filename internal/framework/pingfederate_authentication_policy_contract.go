@@ -4,11 +4,10 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/iwarapter/pingfederate-sdk-go/services/authenticationPolicyContracts"
 )
@@ -16,16 +15,7 @@ import (
 type pingfederateAuthenticationPolicyContractType struct{}
 
 func (p pingfederateAuthenticationPolicyContractType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	sch := resourceAuthenticationPolicyContract()
-	attribute := sch.Attributes["id"]
-	attribute.Optional = true
-	attribute.Required = false
-	attribute.Computed = true
-	attribute.PlanModifiers = tfsdk.AttributePlanModifiers{
-		resource.UseStateForUnknown(),
-	}
-	sch.Attributes["id"] = attribute
-	return sch, nil
+	return resourceAuthenticationPolicyContract(), nil
 }
 
 func (p pingfederateAuthenticationPolicyContractType) NewResource(ctx context.Context, in provider.Provider) (resource.Resource, diag.Diagnostics) {
@@ -42,7 +32,7 @@ type pingfederateAuthenticationPolicyContractResource struct {
 
 func (p pingfederateAuthenticationPolicyContractResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data AuthenticationPolicyContractData
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -95,7 +85,7 @@ func (p pingfederateAuthenticationPolicyContractResource) Update(ctx context.Con
 }
 
 func (p pingfederateAuthenticationPolicyContractResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data ApcToPersistentGrantMappingData
+	var data AuthenticationPolicyContractData
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {

@@ -59,26 +59,26 @@ func testAccCheckPingFederateKeyPairSslServerCsrDataSourceDestroy(s *terraform.S
 
 func testAccPingFederateKeyPairSslServerCsrDataSourceConfig() string {
 	return `
-        resource "pingfederate_keypair_ssl_server" "ds_test" {
-                city = "Test"
-                common_name = "data store test ssl server"
-                country = "GB"
-                key_algorithm = "RSA"
-                key_size = 2048
-                organization = "Test"
-                organization_unit = "Test"
-                state = "Test"
-                valid_days = 365
-        }
+resource "pingfederate_keypair_ssl_server" "ds_test" {
+  city              = "Test"
+  common_name       = "data store test ssl server"
+  country           = "GB"
+  key_algorithm     = "RSA"
+  key_size          = 2048
+  organization      = "Test"
+  organization_unit = "Test"
+  state             = "Test"
+  valid_days        = 365
+}
 
-        data "pingfederate_keypair_ssl_server_csr" "test" {
-			id = pingfederate_keypair_ssl_server.ds_test.id
-        }`
+data "pingfederate_keypair_ssl_server_csr" "test" {
+  id = pingfederate_keypair_ssl_server.ds_test.id
+}`
 }
 
 func testAccPingFederateKeyPairSslServerCsrDataSourceConfigNonExistent() string {
 	return `
-        data "pingfederate_keypair_ssl_server_csr" "test" {
-			id = "junk"
-        }`
+data "pingfederate_keypair_ssl_server_csr" "test" {
+  id = "junk"
+}`
 }

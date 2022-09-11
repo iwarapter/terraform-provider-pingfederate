@@ -1309,7 +1309,7 @@ func scopeAttributeMappingsHash(v interface{}) int {
 	return hashcodeString(buf.String())
 }
 
-//IdpAttributeQuery - The attribute query profile supports local applications in requesting user attributes from an attribute authority.
+// IdpAttributeQuery - The attribute query profile supports local applications in requesting user attributes from an attribute authority.
 func resourceIdpAttributeQuery() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -1334,7 +1334,7 @@ func resourceIdpAttributeQuery() *schema.Resource {
 	}
 }
 
-//SpWsTrustAttributeContract - A set of user attributes that this server will send in the token.
+// SpWsTrustAttributeContract - A set of user attributes that this server will send in the token.
 func resourceSpWsTrustAttributeContract() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -1352,7 +1352,7 @@ func resourceSpWsTrustAttributeContract() *schema.Resource {
 	}
 }
 
-//SpWsTrust - Ws-Trust STS provides security-token validation and creation to extend SSO access to identity-enabled Web Services
+// SpWsTrust - Ws-Trust STS provides security-token validation and creation to extend SSO access to identity-enabled Web Services
 func resourceSpWsTrust() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -1412,7 +1412,7 @@ func resourceSpWsTrust() *schema.Resource {
 	}
 }
 
-//IdpSsoServiceEndpoint - The settings that define an endpoint to an IdP SSO service.
+// IdpSsoServiceEndpoint - The settings that define an endpoint to an IdP SSO service.
 func resourceIdpSsoServiceEndpoint() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -1428,7 +1428,7 @@ func resourceIdpSsoServiceEndpoint() *schema.Resource {
 	}
 }
 
-//InboundBackChannelAuth
+// InboundBackChannelAuth
 func resourceInboundBackChannelAuth() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -1473,7 +1473,7 @@ func resourceInboundBackChannelAuth() *schema.Resource {
 	}
 }
 
-//EncryptionPolicy - Defines what to encrypt in the browser-based SSO profile.
+// EncryptionPolicy - Defines what to encrypt in the browser-based SSO profile.
 func resourceEncryptionPolicy() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -1500,7 +1500,7 @@ func resourceEncryptionPolicy() *schema.Resource {
 	}
 }
 
-//X509File - Encoded certificate data.
+// X509File - Encoded certificate data.
 func resourceX509File() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -1528,7 +1528,7 @@ func resourceX509File() *schema.Resource {
 	}
 }
 
-//AdditionalAllowedEntitiesConfiguration - Additional allowed entities or issuers configuration. Currently only used in OIDC IdP (RP) connection.
+// AdditionalAllowedEntitiesConfiguration - Additional allowed entities or issuers configuration. Currently only used in OIDC IdP (RP) connection.
 func resourceAdditionalAllowedEntitiesConfiguration() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -1552,7 +1552,7 @@ func resourceAdditionalAllowedEntitiesConfiguration() *schema.Resource {
 	}
 }
 
-//Entity
+// Entity
 func resourceEntity() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -1570,7 +1570,7 @@ func resourceEntity() *schema.Resource {
 	}
 }
 
-//IdpWsTrustAttribute - An attribute for the Ws-Trust attribute contract.
+// IdpWsTrustAttribute - An attribute for the Ws-Trust attribute contract.
 func resourceIdpWsTrustAttribute() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -1586,7 +1586,7 @@ func resourceIdpWsTrustAttribute() *schema.Resource {
 	}
 }
 
-//ConnectionCert - A certificate used for signature verification or XML encryption.
+// ConnectionCert - A certificate used for signature verification or XML encryption.
 func resourceConnectionCert() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -1627,7 +1627,7 @@ func resourceConnectionCert() *schema.Resource {
 	}
 }
 
-//IdpBrowserSso - The settings used to enable secure browser-based SSO to resources at your site.
+// IdpBrowserSso - The settings used to enable secure browser-based SSO to resources at your site.
 func resourceIdpBrowserSso() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -1755,7 +1755,7 @@ func resourceIdpBrowserSso() *schema.Resource {
 	}
 }
 
-//ContactInfo - Contact information.
+// ContactInfo - Contact information.
 func resourceContactInfo() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -1788,7 +1788,7 @@ func resourceContactInfo() *schema.Resource {
 	}
 }
 
-//SpAdapterMapping - A mapping to a SP adapter.
+// SpAdapterMapping - A mapping to a SP adapter.
 func resourceSpAdapterMapping() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -1853,7 +1853,7 @@ func resourceSpAdapterMapping() *schema.Resource {
 	}
 }
 
-//ChangeDetectionSettings - Setting to detect changes to a user or a group.
+// ChangeDetectionSettings - Setting to detect changes to a user or a group.
 func resourceChangeDetectionSettings() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -1881,7 +1881,7 @@ func resourceChangeDetectionSettings() *schema.Resource {
 	}
 }
 
-//Schema - Custom SCIM Attributes configuration.
+// Schema - Custom SCIM Attributes configuration.
 func resourceSchema() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -1898,7 +1898,7 @@ func resourceSchema() *schema.Resource {
 	}
 }
 
-//IdpAdapter - An IdP adapter instance.
+// IdpAdapter - An IdP adapter instance.
 func resourceIdpAdapter() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -1942,7 +1942,7 @@ func resourceIdpAdapter() *schema.Resource {
 	}
 }
 
-//GroupMembershipDetection - Settings to detect group memberships.
+// GroupMembershipDetection - Settings to detect group memberships.
 func resourceGroupMembershipDetection() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -1958,7 +1958,7 @@ func resourceGroupMembershipDetection() *schema.Resource {
 	}
 }
 
-//SaasAttributeMapping - Settings to map the source record attributes to target attributes.
+// SaasAttributeMapping - Settings to map the source record attributes to target attributes.
 func resourceSaasAttributeMapping() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -1975,7 +1975,7 @@ func resourceSaasAttributeMapping() *schema.Resource {
 	}
 }
 
-//SpAttributeQueryPolicy - The attribute query profile's security policy.
+// SpAttributeQueryPolicy - The attribute query profile's security policy.
 func resourceSpAttributeQueryPolicy() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2008,7 +2008,7 @@ func resourceSpAttributeQueryPolicy() *schema.Resource {
 	}
 }
 
-//SpBrowserSso - The SAML settings used to enable secure browser-based SSO to resources at your partner's site.
+// SpBrowserSso - The SAML settings used to enable secure browser-based SSO to resources at your partner's site.
 func resourceSpBrowserSso() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2137,7 +2137,7 @@ func resourceSpBrowserSso() *schema.Resource {
 	}
 }
 
-//OIDCProviderSettings - The OpenID Provider settings.
+// OIDCProviderSettings - The OpenID Provider settings.
 func resourceOIDCProviderSettings() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2186,7 +2186,7 @@ func resourceOIDCProviderSettings() *schema.Resource {
 	}
 }
 
-//UsernamePasswordCredentials - Username and password credentials.
+// UsernamePasswordCredentials - Username and password credentials.
 func resourceUsernamePasswordCredentials() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2209,7 +2209,7 @@ func resourceUsernamePasswordCredentials() *schema.Resource {
 	}
 }
 
-//DecryptionPolicy - Defines what to decrypt in the browser-based SSO profile.
+// DecryptionPolicy - Defines what to decrypt in the browser-based SSO profile.
 func resourceDecryptionPolicy() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2237,7 +2237,7 @@ func resourceDecryptionPolicy() *schema.Resource {
 	}
 }
 
-//SpWsTrustAttribute - An attribute for the Ws-Trust attribute contract.
+// SpWsTrustAttribute - An attribute for the Ws-Trust attribute contract.
 func resourceSpWsTrustAttribute() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2253,7 +2253,7 @@ func resourceSpWsTrustAttribute() *schema.Resource {
 	}
 }
 
-//IdpWsTrust - Ws-Trust STS provides validation of incoming tokens which enable SSO access to Web Services. It also allows generation of local tokens for Web Services.
+// IdpWsTrust - Ws-Trust STS provides validation of incoming tokens which enable SSO access to Web Services. It also allows generation of local tokens for Web Services.
 func resourceIdpWsTrust() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2275,7 +2275,7 @@ func resourceIdpWsTrust() *schema.Resource {
 	}
 }
 
-//Channel - A channel is a combination of a source data store and a provisioning target. It include settings of a source data store, managing provisioning threads and mapping of attributes.
+// Channel - A channel is a combination of a source data store and a provisioning target. It include settings of a source data store, managing provisioning threads and mapping of attributes.
 func resourceChannel() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2309,7 +2309,7 @@ func resourceChannel() *schema.Resource {
 	}
 }
 
-//ArtifactResolverLocation - The remote party URLs to resolve the artifact.
+// ArtifactResolverLocation - The remote party URLs to resolve the artifact.
 func resourceArtifactResolverLocation() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2325,7 +2325,7 @@ func resourceArtifactResolverLocation() *schema.Resource {
 	}
 }
 
-//AttributeQueryNameMapping - The attribute query name mappings between the SP and the IdP.
+// AttributeQueryNameMapping - The attribute query name mappings between the SP and the IdP.
 func resourceAttributeQueryNameMapping() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2343,7 +2343,7 @@ func resourceAttributeQueryNameMapping() *schema.Resource {
 	}
 }
 
-//IdpWsTrustAttributeContract - A set of user attributes that this server will receive in the token.
+// IdpWsTrustAttributeContract - A set of user attributes that this server will receive in the token.
 func resourceIdpWsTrustAttributeContract() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2361,7 +2361,7 @@ func resourceIdpWsTrustAttributeContract() *schema.Resource {
 	}
 }
 
-//IdpAdapterContractMapping
+// IdpAdapterContractMapping
 func resourceIdpAdapterContractMapping() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2399,7 +2399,7 @@ func resourceIdpAdapterContractMapping() *schema.Resource {
 	}
 }
 
-//SloServiceEndpoint - Where SLO logout messages are sent. Only applicable for SAML 2.0.
+// SloServiceEndpoint - Where SLO logout messages are sent. Only applicable for SAML 2.0.
 func resourceSloServiceEndpoint() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2419,7 +2419,7 @@ func resourceSloServiceEndpoint() *schema.Resource {
 	}
 }
 
-//IdpOAuthGrantAttributeMapping - The OAuth Assertion Grant settings used to map from your IdP.
+// IdpOAuthGrantAttributeMapping - The OAuth Assertion Grant settings used to map from your IdP.
 func resourceIdpOAuthGrantAttributeMapping() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2437,7 +2437,7 @@ func resourceIdpOAuthGrantAttributeMapping() *schema.Resource {
 	}
 }
 
-//AuthenticationPolicyContractMapping - An Authentication Policy Contract mapping into IdP Connection.
+// AuthenticationPolicyContractMapping - An Authentication Policy Contract mapping into IdP Connection.
 func resourceAuthenticationPolicyContractMapping() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2483,7 +2483,7 @@ func resourceAuthenticationPolicyContractMapping() *schema.Resource {
 	}
 }
 
-//ConnectionMetadataUrl - Configuration settings to enable automatic reload of partner's metadata.
+// ConnectionMetadataUrl - Configuration settings to enable automatic reload of partner's metadata.
 func resourceConnectionMetadataUrl() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2496,7 +2496,7 @@ func resourceConnectionMetadataUrl() *schema.Resource {
 	}
 }
 
-//ProtocolMessageCustomization - The message customization that will be executed on outgoing PingFederate messages.
+// ProtocolMessageCustomization - The message customization that will be executed on outgoing PingFederate messages.
 func resourceProtocolMessageCustomization() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2512,7 +2512,7 @@ func resourceProtocolMessageCustomization() *schema.Resource {
 	}
 }
 
-//OutboundProvision - Outbound Provisioning allows an IdP to create and maintain user accounts at standards-based partner sites using SCIM as well as select-proprietary provisioning partner sites that are protocol-enabled.
+// OutboundProvision - Outbound Provisioning allows an IdP to create and maintain user accounts at standards-based partner sites using SCIM as well as select-proprietary provisioning partner sites that are protocol-enabled.
 func resourceOutboundProvision() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2544,7 +2544,7 @@ func resourceOutboundProvision() *schema.Resource {
 	}
 }
 
-//SpTokenGeneratorMapping - The SP Token Generator Mapping.
+// SpTokenGeneratorMapping - The SP Token Generator Mapping.
 func resourceSpTokenGeneratorMapping() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2590,7 +2590,7 @@ func resourceSpTokenGeneratorMapping() *schema.Resource {
 	}
 }
 
-//AuthenticationPolicyContractAssertionMapping - The Authentication Policy Contract Assertion Mapping.
+// AuthenticationPolicyContractAssertionMapping - The Authentication Policy Contract Assertion Mapping.
 func resourceAuthenticationPolicyContractAssertionMapping() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2640,7 +2640,7 @@ func resourceAuthenticationPolicyContractAssertionMapping() *schema.Resource {
 	}
 }
 
-//OIDCRequestParameter - An OIDC custom request parameter.
+// OIDCRequestParameter - An OIDC custom request parameter.
 func resourceOIDCRequestParameter() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2660,7 +2660,7 @@ func resourceOIDCRequestParameter() *schema.Resource {
 	}
 }
 
-//ChannelSource - The source data source and LDAP settings.
+// ChannelSource - The source data source and LDAP settings.
 func resourceChannelSource() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2706,7 +2706,7 @@ func resourceChannelSource() *schema.Resource {
 	}
 }
 
-//ChannelSourceLocation - The location settings that includes a DN and a LDAP filter.
+// ChannelSourceLocation - The location settings that includes a DN and a LDAP filter.
 func resourceChannelSourceLocation() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2726,7 +2726,7 @@ func resourceChannelSourceLocation() *schema.Resource {
 	}
 }
 
-//OIDCClientCredentials - The OpenID Connect Client Credentials settings. This is required for an OIDC Connection.
+// OIDCClientCredentials - The OpenID Connect Client Credentials settings. This is required for an OIDC Connection.
 func resourceOIDCClientCredentials() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2746,7 +2746,7 @@ func resourceOIDCClientCredentials() *schema.Resource {
 	}
 }
 
-//AuthnContextMapping - The authentication context mapping between local and remote values.
+// AuthnContextMapping - The authentication context mapping between local and remote values.
 func resourceAuthnContextMapping() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2762,7 +2762,7 @@ func resourceAuthnContextMapping() *schema.Resource {
 	}
 }
 
-//OutboundBackChannelAuth
+// OutboundBackChannelAuth
 func resourceOutboundBackChannelAuth() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2794,7 +2794,7 @@ func resourceOutboundBackChannelAuth() *schema.Resource {
 	}
 }
 
-//SpAttributeQuery - The attribute query profile supports SPs in requesting user attributes.
+// SpAttributeQuery - The attribute query profile supports SPs in requesting user attributes.
 func resourceSpAttributeQuery() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2846,7 +2846,7 @@ func resourceSpAttributeQuery() *schema.Resource {
 	}
 }
 
-//CertView - Certificate details.
+// CertView - Certificate details.
 func resourceCertView() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2932,7 +2932,7 @@ func resourceCertView() *schema.Resource {
 	}
 }
 
-//AccessTokenManagerMapping - A mapping in a connection that defines how access tokens are created.
+// AccessTokenManagerMapping - A mapping in a connection that defines how access tokens are created.
 func resourceAccessTokenManagerMapping() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -2967,7 +2967,7 @@ func resourceAccessTokenManagerMapping() *schema.Resource {
 	}
 }
 
-//IdpAdapterAssertionMapping - The IdP Adapter Assertion Mapping.
+// IdpAdapterAssertionMapping - The IdP Adapter Assertion Mapping.
 func resourceIdpAdapterAssertionMapping() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -3037,7 +3037,7 @@ func resourceIdpAdapterAssertionMapping() *schema.Resource {
 	}
 }
 
-//IdpOAuthAttributeContract - A set of user attributes that the IdP sends in the OAuth Assertion Grant.
+// IdpOAuthAttributeContract - A set of user attributes that the IdP sends in the OAuth Assertion Grant.
 func resourceIdpOAuthAttributeContract() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -3055,7 +3055,7 @@ func resourceIdpOAuthAttributeContract() *schema.Resource {
 	}
 }
 
-//IdpBrowserSsoAttributeContract - A set of user attributes that the IdP sends in the SAML assertion.
+// IdpBrowserSsoAttributeContract - A set of user attributes that the IdP sends in the SAML assertion.
 func resourceIdpBrowserSsoAttributeContract() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -3073,7 +3073,7 @@ func resourceIdpBrowserSsoAttributeContract() *schema.Resource {
 	}
 }
 
-//AccountManagementSettings - Account management settings.
+// AccountManagementSettings - Account management settings.
 func resourceAccountManagementSettings() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -3101,7 +3101,7 @@ func resourceAccountManagementSettings() *schema.Resource {
 	}
 }
 
-//SsoOAuthMapping - IdP Browser SSO OAuth Attribute Mapping
+// SsoOAuthMapping - IdP Browser SSO OAuth Attribute Mapping
 func resourceSsoOAuthMapping() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -3135,7 +3135,7 @@ func resourceSsoOAuthMapping() *schema.Resource {
 	}
 }
 
-//IdpTokenProcessorMapping - The IdP Token Processor Mapping.
+// IdpTokenProcessorMapping - The IdP Token Processor Mapping.
 func resourceIdpTokenProcessorMapping() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -3177,7 +3177,7 @@ func resourceIdpTokenProcessorMapping() *schema.Resource {
 	}
 }
 
-//SpBrowserSsoAttribute - An attribute for the SP Browser SSO attribute contract.
+// SpBrowserSsoAttribute - An attribute for the SP Browser SSO attribute contract.
 func resourceSpBrowserSsoAttribute() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -3195,7 +3195,7 @@ func resourceSpBrowserSsoAttribute() *schema.Resource {
 	}
 }
 
-//ArtifactSettings - The settings for an Artifact binding.
+// ArtifactSettings - The settings for an Artifact binding.
 func resourceArtifactSettings() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -3216,7 +3216,7 @@ func resourceArtifactSettings() *schema.Resource {
 	}
 }
 
-//IdpAttributeQueryPolicy - The attribute query profile's security policy.
+// IdpAttributeQueryPolicy - The attribute query profile's security policy.
 func resourceIdpAttributeQueryPolicy() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -3254,7 +3254,7 @@ func resourceIdpAttributeQueryPolicy() *schema.Resource {
 	}
 }
 
-//SpAdapter - An SP adapter instance.
+// SpAdapter - An SP adapter instance.
 func resourceSpAdapter() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -3284,7 +3284,7 @@ func resourceSpAdapter() *schema.Resource {
 	}
 }
 
-//SchemaAttribute - A custom SCIM attribute.
+// SchemaAttribute - A custom SCIM attribute.
 func resourceSchemaAttribute() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -3314,7 +3314,7 @@ func resourceSchemaAttribute() *schema.Resource {
 	}
 }
 
-//SigningSettings - Settings related to signing messages sent to this partner.
+// SigningSettings - Settings related to signing messages sent to this partner.
 func resourceSigningSettings() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -3344,7 +3344,7 @@ func resourceSigningSettings() *schema.Resource {
 	}
 }
 
-//SaasFieldConfiguration - The settings that represent how attribute values from source data store will be mapped into Fields specified by the service provider.
+// SaasFieldConfiguration - The settings that represent how attribute values from source data store will be mapped into Fields specified by the service provider.
 func resourceSaasFieldConfiguration() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -3387,7 +3387,7 @@ func resourceSaasFieldConfiguration() *schema.Resource {
 	}
 }
 
-//SpBrowserSsoAttributeContract - A set of user attributes that the IdP sends in the SAML assertion.
+// SpBrowserSsoAttributeContract - A set of user attributes that the IdP sends in the SAML assertion.
 func resourceSpBrowserSsoAttributeContract() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -3405,7 +3405,7 @@ func resourceSpBrowserSsoAttributeContract() *schema.Resource {
 	}
 }
 
-//AssertionLifetime - The timeframe of validity before and after the issuance of the assertion.
+// AssertionLifetime - The timeframe of validity before and after the issuance of the assertion.
 func resourceAssertionLifetime() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -3421,7 +3421,7 @@ func resourceAssertionLifetime() *schema.Resource {
 	}
 }
 
-//IdpBrowserSsoAttribute - An attribute for the IdP Browser SSO attribute contract.
+// IdpBrowserSsoAttribute - An attribute for the IdP Browser SSO attribute contract.
 func resourceIdpBrowserSsoAttribute() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -3437,7 +3437,7 @@ func resourceIdpBrowserSsoAttribute() *schema.Resource {
 	}
 }
 
-//UrlWhitelistEntry - Url domain and path to be used as whitelist in WS-Federation connection
+// UrlWhitelistEntry - Url domain and path to be used as whitelist in WS-Federation connection
 func resourceUrlWhitelistEntry() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -3461,7 +3461,7 @@ func resourceUrlWhitelistEntry() *schema.Resource {
 	}
 }
 
-//ConnectionCredentials - The certificates and settings for encryption, signing, and signature verification.
+// ConnectionCredentials - The certificates and settings for encryption, signing, and signature verification.
 func resourceConnectionCredentials() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -3527,7 +3527,7 @@ func resourceConnectionCredentials() *schema.Resource {
 	}
 }
 
-//SpSsoServiceEndpoint - The settings that define a service endpoint to a SP SSO service.
+// SpSsoServiceEndpoint - The settings that define a service endpoint to a SP SSO service.
 func resourceSpSsoServiceEndpoint() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -3555,7 +3555,7 @@ func resourceSpSsoServiceEndpoint() *schema.Resource {
 	}
 }
 
-//CrlSettings - CRL settings.
+// CrlSettings - CRL settings.
 func resourceCrlSettings() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -3587,7 +3587,7 @@ func resourceCrlSettings() *schema.Resource {
 	}
 }
 
-//OcspSettings - OCSP settings.
+// OcspSettings - OCSP settings.
 func resourceOcspSettings() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -3655,7 +3655,7 @@ func resourceOcspSettings() *schema.Resource {
 	}
 }
 
-//ProxySettings - Proxy settings.
+// ProxySettings - Proxy settings.
 func resourceProxySettings() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -3673,7 +3673,7 @@ func resourceProxySettings() *schema.Resource {
 	}
 }
 
-//ClientMetadata - The client metadata.
+// ClientMetadata - The client metadata.
 func resourceClientMetadata() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -3696,7 +3696,7 @@ func resourceClientMetadata() *schema.Resource {
 	}
 }
 
-//DynamicClientRegistration - Dynamic client registration settings.
+// DynamicClientRegistration - Dynamic client registration settings.
 func resourceDynamicClientRegistration() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -3889,7 +3889,7 @@ func resourceDynamicClientRegistration() *schema.Resource {
 	}
 }
 
-//ClientRegistrationOIDCPolicy - Client Registration Open ID Connect Policy settings.
+// ClientRegistrationOIDCPolicy - Client Registration Open ID Connect Policy settings.
 func resourceClientRegistrationOIDCPolicy() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{

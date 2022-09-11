@@ -43,7 +43,7 @@ type providerData struct {
 }
 
 func (p *pfprovider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
-	tflog.Debug(ctx, "configuring provider")
+	tflog.Info(ctx, "configuring provider")
 	var data providerData
 	data.Username.Value = "Administrator"
 	data.Password.Value = "2Federate"
@@ -175,15 +175,15 @@ func (p *pfprovider) Configure(ctx context.Context, req provider.ConfigureReques
 
 func (p *pfprovider) GetResources(_ context.Context) (map[string]provider.ResourceType, diag.Diagnostics) {
 	return map[string]provider.ResourceType{
-		//"pingfederate_authentication_policy_contract":               pingfederateAuthenticationPolicyContractType{},
+		"pingfederate_authentication_policy_contract":               pingfederateAuthenticationPolicyContractType{},
 		"pingfederate_oauth_authentication_policy_contract_mapping": pingfederateOauthAuthenticationPolicyContractMappingType{},
+		"pingfederate_oauth_client":                                 pingfederateOAuthClientType{},
+		"pingfederate_redirect_validation_settings":                 pingfederateRedirectValidationSettingsType{},
 	}, nil
 }
 
 func (p *pfprovider) GetDataSources(_ context.Context) (map[string]provider.DataSourceType, diag.Diagnostics) {
-	return map[string]provider.DataSourceType{
-		//"scaffolding_example": exampleDataSourceType{},
-	}, nil
+	return map[string]provider.DataSourceType{}, nil
 }
 
 func (p *pfprovider) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics) {
@@ -194,7 +194,7 @@ func (p *pfprovider) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostic
 				Type:        types.StringType,
 				Description: "The username for pingfederate API.",
 				PlanModifiers: []tfsdk.AttributePlanModifier{
-					stringDefault("Administrator"),
+					Default(types.String{Value: "Administrator"}),
 				},
 			},
 			"password": {
@@ -202,7 +202,7 @@ func (p *pfprovider) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostic
 				Type:        types.StringType,
 				Description: "The password for pingfederate API.",
 				PlanModifiers: []tfsdk.AttributePlanModifier{
-					stringDefault("2FederateM0re"),
+					Default(types.String{Value: "2FederateM0re"}),
 				},
 			},
 			"base_url": {
@@ -210,7 +210,7 @@ func (p *pfprovider) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostic
 				Type:        types.StringType,
 				Description: "The base url of the pingfederate API.",
 				PlanModifiers: []tfsdk.AttributePlanModifier{
-					stringDefault("https://localhost:9999"),
+					Default(types.String{Value: "https://localhost:9999"}),
 				},
 			},
 			"context": {
@@ -218,7 +218,7 @@ func (p *pfprovider) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostic
 				Type:        types.StringType,
 				Description: "The context path of the pingfederate API.",
 				PlanModifiers: []tfsdk.AttributePlanModifier{
-					stringDefault("/pf-admin-api/v1"),
+					Default(types.String{Value: "/pf-admin-api/v1"}),
 				},
 			},
 			"bypass_external_validation": {
@@ -229,8 +229,11 @@ func (p *pfprovider) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostic
 		},
 	}, nil
 }
+
 func New(version string) provider.Provider {
-	return &pfprovider{}
+	return &pfprovider{
+		version: version,
+	}
 }
 
 //func New(version string) func() tfsdk.Provider {

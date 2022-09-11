@@ -79,85 +79,85 @@ func testAccCheckPingFederateOauthAccessTokenManagerDestroy(s *terraform.State) 
 
 func testAccPingFederateOauthAccessTokenManagerConfig(name, configUpdate string) string {
 	return fmt.Sprintf(`
-	resource "pingfederate_oauth_access_token_manager" "my_atm" {
-		instance_id = "%s"
-		name = "acc_test_%s"
-		plugin_descriptor_ref {
-			id = "org.sourceid.oauth20.token.plugin.impl.ReferenceBearerAccessTokenManagementPlugin"
-		}
+resource "pingfederate_oauth_access_token_manager" "my_atm" {
+  instance_id = "%s"
+  name        = "acc_test_%s"
+  plugin_descriptor_ref {
+    id = "org.sourceid.oauth20.token.plugin.impl.ReferenceBearerAccessTokenManagementPlugin"
+  }
 
-		configuration {
-			fields {
-				name  = "Token Length"
-				value = "28"
-			}
+  configuration {
+    fields {
+      name  = "Token Length"
+      value = "28"
+    }
 
-			fields {
-				name  = "Token Lifetime"
-				value = "%s"
-			}
+    fields {
+      name  = "Token Lifetime"
+      value = "%s"
+    }
 
-			fields {
-				name  = "Lifetime Extension Policy"
-				value = "ALL"
-			}
+    fields {
+      name  = "Lifetime Extension Policy"
+      value = "ALL"
+    }
 
-			fields {
-				name  = "Maximum Token Lifetime"
-				value = "3000"
-			}
+    fields {
+      name  = "Maximum Token Lifetime"
+      value = "3000"
+    }
 
-			fields {
-				name  = "Lifetime Extension Threshold Percentage"
-				value = "30"
-			}
+    fields {
+      name  = "Lifetime Extension Threshold Percentage"
+      value = "30"
+    }
 
-			fields {
-				name  = "Mode for Synchronous RPC"
-				value = "3"
-			}
+    fields {
+      name  = "Mode for Synchronous RPC"
+      value = "3"
+    }
 
-			fields {
-				name  = "RPC Timeout"
-				value = "500"
-			}
+    fields {
+      name  = "RPC Timeout"
+      value = "500"
+    }
 
-			fields {
-				name = "Expand Scope Groups"
-				value = "false"
-			}
-		}
+    fields {
+      name  = "Expand Scope Groups"
+      value = "false"
+    }
+  }
 
-		attribute_contract {
-			extended_attributes = ["sub"]
-		}
-	}`, name, name, configUpdate)
+  attribute_contract {
+    extended_attributes = ["sub"]
+  }
+}`, name, name, configUpdate)
 }
 
 func testAccPingFederateOauthAccessTokenManagerConfigWrongPlugin() string {
 	return `
 resource "pingfederate_oauth_access_token_manager" "my_atm" {
-	instance_id = "foo"
-	name = "acc_test_foo"
-	plugin_descriptor_ref {
-		id = "org.sourceid.oauth20.token.plugin.impl.wrong"
-	}
+  instance_id = "foo"
+  name        = "acc_test_foo"
+  plugin_descriptor_ref {
+    id = "org.sourceid.oauth20.token.plugin.impl.wrong"
+  }
 
-	configuration {
-		fields {
-			name  = "Token Length"
-			value = "28"
-		}
+  configuration {
+    fields {
+      name  = "Token Length"
+      value = "28"
+    }
 
-		fields {
-			name  = "Token Lifetime"
-			value = "%s"
-		}
-	}
+    fields {
+      name  = "Token Lifetime"
+      value = "%s"
+    }
+  }
 
-	attribute_contract {
-		extended_attributes = ["sub"]
-	}
+  attribute_contract {
+    extended_attributes = ["sub"]
+  }
 }`
 }
 

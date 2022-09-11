@@ -94,9 +94,9 @@ func testAccPingFederateIdpTokenProcessorConfig(configUpdate string) string {
 	return fmt.Sprintf(`
 resource "pingfederate_idp_token_processor" "demo" {
   processor_id = "test123"
-  name = "acctest_demo"
+  name         = "acctest_demo"
   plugin_descriptor_ref {
-	id = "org.sourceid.wstrust.processor.jwt.JWTTokenProcessor"
+    id = "org.sourceid.wstrust.processor.jwt.JWTTokenProcessor"
   }
   configuration {
     fields {
@@ -107,10 +107,10 @@ resource "pingfederate_idp_token_processor" "demo" {
       name  = "Issuer"
       value = "example"
     }
-	fields {
- 	  name = "Expiry Tolerance"
- 	  value = "0"
-	}
+    fields {
+      name  = "Expiry Tolerance"
+      value = "0"
+    }
   }
 }
 `, configUpdate)

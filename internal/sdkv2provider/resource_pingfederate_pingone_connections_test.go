@@ -77,8 +77,8 @@ func testAccCheckPingFederatePingOneConnectionResourceDestroy(s *terraform.State
 func testAccPingFederatePingOneConnectionResourceConfig(config string) string {
 	return fmt.Sprintf(`
 resource "pingfederate_pingone_connection" "demo" {
-  name 		 = "acctestfoo"
-  active 	 = %s
+  name       = "acctestfoo"
+  active     = %s
   credential = "secret"
 }`, config)
 }

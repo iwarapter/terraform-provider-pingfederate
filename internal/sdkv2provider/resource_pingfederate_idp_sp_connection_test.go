@@ -153,32 +153,32 @@ provider "pingfederate" {
 }
 
 resource "pingfederate_idp_sp_connection" "demo" {
-  name = "acc_test_foo"
-  entity_id = "foo"
-  active = true
+  name         = "acc_test_foo"
+  entity_id    = "foo"
+  active       = true
   logging_mode = "STANDARD"
   contact_info {
   }
   credentials {
-	certs {
-	  x509_file {
-		file_data = file("test_cases/amazon_root_ca1.pem")
-	  }
-	}
+    certs {
+      x509_file {
+        file_data = file("test_cases/amazon_root_ca1.pem")
+      }
+    }
     inbound_back_channel_auth {
-      type = "INBOUND"
-      digital_signature = false
-      require_ssl = false
+      type                    = "INBOUND"
+      digital_signature       = false
+      require_ssl             = false
       verification_subject_dn = "cn=%s"
     }
   }
   attribute_query {
     jdbc_attribute_source {
-      filter = "*"
+      filter      = "*"
       description = "foo"
-      schema = "INFORMATION_SCHEMA"
-      table = "ADMINISTRABLE_ROLE_AUTHORIZATIONS"
-      id = "foo"
+      schema      = "INFORMATION_SCHEMA"
+      table       = "ADMINISTRABLE_ROLE_AUTHORIZATIONS"
+      id          = "foo"
       data_store_ref {
         id = "ProvisionerDS"
       }
@@ -188,18 +188,18 @@ resource "pingfederate_idp_sp_connection" "demo" {
       key_name = "foo"
       source {
         type = "JDBC_DATA_STORE"
-        id = "foo"
+        id   = "foo"
       }
       value = "GRANTEE"
     }
 
     attributes = ["foo"]
     policy {
-      sign_response = false
-      sign_assertion = false
-      encrypt_assertion = false
+      sign_response                  = false
+      sign_assertion                 = false
+      encrypt_assertion              = false
       require_signed_attribute_query = false
-      require_encrypted_name_id = false
+      require_encrypted_name_id      = false
     }
   }
   outbound_provision {
@@ -282,7 +282,7 @@ resource "pingfederate_idp_sp_connection" "demo" {
         }
 
         data_source {
-          id       = pingfederate_ldap_data_store.test.id
+          id = pingfederate_ldap_data_store.test.id
         }
 
         group_membership_detection {
@@ -303,12 +303,12 @@ resource "pingfederate_idp_sp_connection" "demo" {
     sensitive_target_settings {
       inherited = false
       name      = "base64Key"
-      value = "secret1"
+      value     = "secret1"
     }
     sensitive_target_settings {
       inherited = false
       name      = "token"
-      value = "secret2"
+      value     = "secret2"
     }
 
     target_settings {
@@ -436,7 +436,7 @@ resource "pingfederate_idp_sp_connection" "demo" {
         }
       }
       dynamic "attribute_mapping" {
-        for_each = toset( ["email", "fName", "lName", "mfaEmail1", "mfaEmail2", "mfaEmail3", "mfaSms1", "mfaSms2", "mfaSms3", "mfaVoice1", "mfaVoice2", "mfaVoice3"] )
+        for_each = toset(["email", "fName", "lName", "mfaEmail1", "mfaEmail2", "mfaEmail3", "mfaSms1", "mfaSms2", "mfaSms3", "mfaVoice1", "mfaVoice2", "mfaVoice3"])
         content {
           field_name = attribute_mapping.key
           saas_field_info {
@@ -500,57 +500,57 @@ resource "pingfederate_idp_sp_connection" "demo" {
       name      = "Provisioning Options"
     }
 
-	dynamic "target_settings" {
+    dynamic "target_settings" {
       for_each = local.isSupported ? [1] : []
       content {
         name  = "createNewUsers"
         value = "true"
       }
     }
-	dynamic "target_settings" {
+    dynamic "target_settings" {
       for_each = local.isSupported ? [1] : []
       content {
         name  = "updateNewUsers"
         value = "true"
       }
     }
-	dynamic "target_settings" {
+    dynamic "target_settings" {
       for_each = local.isSupported ? [1] : []
       content {
         name  = "disableNewUsers"
         value = "true"
       }
     }
-	dynamic "target_settings" {
+    dynamic "target_settings" {
       for_each = local.isSupported ? [1] : []
       content {
         name  = "disableNewUsers"
         value = "true"
       }
     }
-	dynamic "target_settings" {
+    dynamic "target_settings" {
       for_each = local.isSupported ? [1] : []
       content {
         name  = "provisionDisabledUsers"
         value = "true"
       }
     }
-	dynamic "target_settings" {
+    dynamic "target_settings" {
       for_each = local.isSupported ? [1] : []
       content {
-        name  = "manageDevices"
+        name = "manageDevices"
       }
     }
-	dynamic "target_settings" {
+    dynamic "target_settings" {
       for_each = local.isSupported ? [1] : []
       content {
-        name  = "primaryDevice"
+        name = "primaryDevice"
       }
     }
-	dynamic "target_settings" {
+    dynamic "target_settings" {
       for_each = local.isSupported ? [1] : []
       content {
-        name  = "removeAction"
+        name = "removeAction"
       }
     }
   }
@@ -582,7 +582,7 @@ resource "pingfederate_idp_sp_connection" "demo" {
       signing_key_pair_ref {
         id = pingfederate_keypair_signing.test_generate.id
       }
-	  algorithm = "SHA256withRSA"
+      algorithm = "SHA256withRSA"
     }
   }
 
@@ -611,23 +611,23 @@ resource "pingfederate_idp_sp_connection" "demo" {
   }
 }
 resource "pingfederate_keypair_signing" "test_generate" {
-	city = "Test"
-	common_name = "Test"
-	country = "GB"
-	key_algorithm = "RSA"
-	key_size = 2048
-	organization = "Test"
-	organization_unit = "Test"
-	state = "Test"
-	valid_days = 365
-	subject_alternative_names = ["foo", "bar"]
+  city                      = "Test"
+  common_name               = "Test"
+  country                   = "GB"
+  key_algorithm             = "RSA"
+  key_size                  = 2048
+  organization              = "Test"
+  organization_unit         = "Test"
+  state                     = "Test"
+  valid_days                = 365
+  subject_alternative_names = ["foo", "bar"]
 }
 
 resource "pingfederate_idp_token_processor" "demo" {
   processor_id = "test1234"
-  name = "acctest_issue158"
+  name         = "acctest_issue158"
   plugin_descriptor_ref {
-	id = "org.sourceid.wstrust.processor.jwt.JWTTokenProcessor"
+    id = "org.sourceid.wstrust.processor.jwt.JWTTokenProcessor"
   }
   configuration {
     fields {
@@ -638,10 +638,10 @@ resource "pingfederate_idp_token_processor" "demo" {
       name  = "Issuer"
       value = "example"
     }
-	fields {
- 	  name = "Expiry Tolerance"
- 	  value = "0"
-	}
+    fields {
+      name  = "Expiry Tolerance"
+      value = "0"
+    }
   }
 }
 `, configUpdate)

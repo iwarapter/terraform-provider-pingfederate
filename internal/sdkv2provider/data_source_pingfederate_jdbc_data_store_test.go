@@ -57,25 +57,25 @@ provider "pingfederate" {
 }
 
 resource "pingfederate_jdbc_data_store" "example" {
-  driver_class = "org.hsqldb.jdbcDriver"
-  user_name = "test"
-  password = "example"
-  max_pool_size = 50
+  driver_class   = "org.hsqldb.jdbcDriver"
+  user_name      = "test"
+  password       = "example"
+  max_pool_size  = 50
   connection_url = "jdbc:hsqldb:mem:mymemdb"
   connection_url_tags {
-	connection_url = "jdbc:hsqldb:mem:mymemdb"
-	default_source = true
+    connection_url = "jdbc:hsqldb:mem:mymemdb"
+    default_source = true
   }
 }
 
 data "pingfederate_jdbc_data_store" "test" {
-	name = pingfederate_jdbc_data_store.example.name
+  name = pingfederate_jdbc_data_store.example.name
 }`
 }
 
 func testAccPingFederateJdbcDataStoreDataSourceConfigNonExistent() string {
 	return `
 data "pingfederate_jdbc_data_store" "test" {
-	name = "junk"
+  name = "junk"
 }`
 }

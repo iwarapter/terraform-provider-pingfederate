@@ -82,16 +82,16 @@ provider "pingfederate" {
 }
 
 resource "pingfederate_jdbc_data_store" "demo" {
-  data_store_id = "jdbcexample"
-  name = "terraform"
-  driver_class = "org.hsqldb.jdbcDriver"
-  user_name = "sa"
-  password = "example"
-  max_pool_size = %s
+  data_store_id  = "jdbcexample"
+  name           = "terraform"
+  driver_class   = "org.hsqldb.jdbcDriver"
+  user_name      = "sa"
+  password       = "example"
+  max_pool_size  = %s
   connection_url = "jdbc:hsqldb:mem:mymemdb"
   connection_url_tags {
-	connection_url = "jdbc:hsqldb:mem:mymemdb"
-	default_source = true
+    connection_url = "jdbc:hsqldb:mem:mymemdb"
+    default_source = true
   }
 }`, configUpdate)
 }

@@ -72,44 +72,44 @@ func testAccCheckPingFederateKeypairSslServerSettingsResourceDestroy(s *terrafor
 func testAccPingFederateKeypairSslServerSettingsResourceConfig() string {
 	return `
 resource "pingfederate_keypair_ssl_server" "demo" {
-	city = "Test"
-	common_name = "Settings Test"
-	country = "GB"
-	key_algorithm = "RSA"
-	key_size = 2048
-	organization = "Test"
-	organization_unit = "Test"
-	state = "Test"
-	valid_days = 365
+  city              = "Test"
+  common_name       = "Settings Test"
+  country           = "GB"
+  key_algorithm     = "RSA"
+  key_size          = 2048
+  organization      = "Test"
+  organization_unit = "Test"
+  state             = "Test"
+  valid_days        = 365
 }
 
 resource "pingfederate_keypair_ssl_server_settings" "test" {
-	admin_server_cert = pingfederate_keypair_ssl_server.demo.id
-	runtime_server_cert = pingfederate_keypair_ssl_server.demo.id
-	active_runtime_server_certs = [pingfederate_keypair_ssl_server.demo.id]
-	active_admin_server_certs = [pingfederate_keypair_ssl_server.demo.id]
+  admin_server_cert           = pingfederate_keypair_ssl_server.demo.id
+  runtime_server_cert         = pingfederate_keypair_ssl_server.demo.id
+  active_runtime_server_certs = [pingfederate_keypair_ssl_server.demo.id]
+  active_admin_server_certs   = [pingfederate_keypair_ssl_server.demo.id]
 }`
 }
 
 func testAccPingFederateKeypairSslServerSettingsResourceResetConfig(configUpdate string) string {
 	return fmt.Sprintf(`
 resource "pingfederate_keypair_ssl_server" "demo" {
-	city = "Test"
-	common_name = "Settings Test"
-	country = "GB"
-	key_algorithm = "RSA"
-	key_size = 2048
-	organization = "Test"
-	organization_unit = "Test"
-	state = "Test"
-	valid_days = 365
+  city              = "Test"
+  common_name       = "Settings Test"
+  country           = "GB"
+  key_algorithm     = "RSA"
+  key_size          = 2048
+  organization      = "Test"
+  organization_unit = "Test"
+  state             = "Test"
+  valid_days        = 365
 }
 
 resource "pingfederate_keypair_ssl_server_settings" "test" {
-	admin_server_cert = "%s"
-	runtime_server_cert = "%s"
-	active_runtime_server_certs = ["%s"]
-	active_admin_server_certs = ["%s"]
+  admin_server_cert           = "%s"
+  runtime_server_cert         = "%s"
+  active_runtime_server_certs = ["%s"]
+  active_admin_server_certs   = ["%s"]
 }`, configUpdate, configUpdate, configUpdate, configUpdate)
 }
 

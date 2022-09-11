@@ -74,16 +74,16 @@ func testAccCheckPingFederateAuthenticationPolicyContractResourceDestroy(s *terr
 
 func testAccPingFederateAuthenticationPolicyContractResourceConfig(configUpdate string) string {
 	return fmt.Sprintf(`
-	resource "pingfederate_authentication_policy_contract" "demo" {
-		policy_contract_id = "example"
-		name = "acc_test_one"
-		extended_attributes = ["foo", "%s"]
-	}
+resource "pingfederate_authentication_policy_contract" "demo" {
+  policy_contract_id  = "example"
+  name                = "acc_test_one"
+  extended_attributes = ["foo", "%s"]
+}
 
-	resource "pingfederate_authentication_policy_contract" "demo2" {
-		name = "acc_test_two"
-		extended_attributes = ["one", "two"]
-	}`, configUpdate)
+resource "pingfederate_authentication_policy_contract" "demo2" {
+  name                = "acc_test_two"
+  extended_attributes = ["one", "two"]
+}`, configUpdate)
 }
 
 func testAccCheckPingFederateAuthenticationPolicyContractResourceExists(n string) resource.TestCheckFunc {

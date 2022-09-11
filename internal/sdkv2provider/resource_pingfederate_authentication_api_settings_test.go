@@ -59,15 +59,15 @@ func testAccPingFederateAuthnApiSettingsResourceConfig(configUpdate string) stri
 
 	return fmt.Sprintf(`
 resource "pingfederate_authentication_api_settings" "demo" {
-	api_enabled = true
-	enable_api_descriptions = %s
+  api_enabled             = true
+  enable_api_descriptions = %s
 	%s
 }
 
 resource "pingfederate_authentication_api_application" "demo" {
-	name      				   = "settings"
-	url				 		   = "https://bar"
-	description 			   = "this is words"
+  name        = "settings"
+  url         = "https://bar"
+  description = "this is words"
 }`, configUpdate, ref)
 }
 

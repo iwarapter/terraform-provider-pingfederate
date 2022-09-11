@@ -27,6 +27,9 @@ func main() {
 
 	ctx := context.Background()
 	upgradedSdkProvider, err := tf5to6server.UpgradeServer(ctx, sdkv2provider.Provider().GRPCProvider)
+	if err != nil {
+		log.Fatal(err)
+	}
 	providers := []func() tfprotov6.ProviderServer{
 		func() tfprotov6.ProviderServer {
 			return upgradedSdkProvider

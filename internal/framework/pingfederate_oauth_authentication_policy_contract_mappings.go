@@ -15,17 +15,8 @@ import (
 
 type pingfederateOauthAuthenticationPolicyContractMappingType struct{}
 
-func (p pingfederateOauthAuthenticationPolicyContractMappingType) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	sch := resourceApcToPersistentGrantMapping()
-	attribute := sch.Attributes["id"]
-	attribute.Optional = false
-	attribute.Required = false
-	attribute.Computed = true
-	attribute.PlanModifiers = tfsdk.AttributePlanModifiers{
-		resource.UseStateForUnknown(),
-	}
-	sch.Attributes["id"] = attribute
-	return sch, nil
+func (p pingfederateOauthAuthenticationPolicyContractMappingType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+	return resourceApcToPersistentGrantMapping(), nil
 }
 
 func (p pingfederateOauthAuthenticationPolicyContractMappingType) NewResource(_ context.Context, in provider.Provider) (resource.Resource, diag.Diagnostics) {
