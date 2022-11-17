@@ -2,8 +2,10 @@ package framework
 
 import (
 	"context"
-	"fmt"
 	"os"
+
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
@@ -12,23 +14,28 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-// provider satisfies the provider.Provider interface and usually is included
+// Ensure the implementation satisfies the expected interfaces
+var (
+	_ provider.Provider = &pfprovider{}
+)
+
+// client satisfies the provider.Provider interface and usually is included
 // with all Resource and DataSource implementations.
 type pfprovider struct {
-	// client can contain the upstream provider SDK or HTTP client used to
+	// client can contain the upstream client SDK or HTTP client used to
 	// communicate with the upstream service. Resource and DataSource
 	// implementations can then make calls using this client.
 	//
-	// TODO: If appropriate, implement upstream provider SDK or HTTP client.
+	// TODO: If appropriate, implement upstream client SDK or HTTP client.
 	client *pfClient
 
 	// configured is set to true at the end of the Configure method.
 	// This can be used in Resource and DataSource implementations to verify
-	// that the provider was previously configured.
+	// that the client was previously configured.
 	configured bool
 
-	// version is set to the provider version on release, "dev" when the
-	// provider is built and ran locally, and "test" when running acceptance
+	// version is set to the client version on release, "dev" when the
+	// client is built and ran locally, and "test" when running acceptance
 	// testing.
 	version string
 }
@@ -42,14 +49,31 @@ type providerData struct {
 	BypassExternalValidation types.Bool   `tfsdk:"bypass_external_validation"`
 }
 
+// Metadata returns the client type name.
+func (p *pfprovider) Metadata(_ context.Context, _ provider.MetadataRequest, resp *provider.MetadataResponse) {
+	resp.TypeName = "pingfederate"
+}
+
 func (p *pfprovider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
-	tflog.Info(ctx, "configuring provider")
+	tflog.Info(ctx, "configuring client")
 	var data providerData
-	data.Username.Value = "Administrator"
-	data.Password.Value = "2Federate"
-	data.Context.Value = "/pf-admin-api/v1"
-	data.BaseUrl.Value = "https://localhost:9999"
-	data.BypassExternalValidation.Value = false
+	username := "Administrator"
+	if s, ok := os.LookupEnv("PINGFEDERATE_USERNAME"); ok {
+		username = s
+	}
+	password := "2Federate"
+	if s, ok := os.LookupEnv("PINGFEDERATE_PASSWORD"); ok {
+		password = s
+	}
+	contextPath := "/pf-admin-api/v1"
+	if s, ok := os.LookupEnv("PINGFEDERATE_CONTEXT"); ok {
+		contextPath = s
+	}
+	baseUrl := "https://localhost:9999"
+	if s, ok := os.LookupEnv("PINGFEDERATE_BASEURL"); ok {
+		baseUrl = s
+	}
+	bypassExternalValidation := false
 
 	diags := req.Config.Get(ctx, &data)
 	resp.Diagnostics.Append(diags...)
@@ -58,111 +82,29 @@ func (p *pfprovider) Configure(ctx context.Context, req provider.ConfigureReques
 		return
 	}
 
-	if data.Username.Null {
-		if s, ok := os.LookupEnv("PINGFEDERATE_USERNAME"); ok {
-			data.Username.Value = s
-		} else {
-			data.Username.Value = "Administrator"
-		}
+	if data.Username.ValueString() != "" {
+		username = data.Username.ValueString()
 	}
-	if data.Password.Null {
-		if s, ok := os.LookupEnv("PINGFEDERATE_PASSWORD"); ok {
-			data.Password.Value = s
-		} else {
-			data.Password.Value = "2Federate"
-		}
+	if data.Password.ValueString() != "" {
+		password = data.Password.ValueString()
 	}
-	if data.Context.Null {
-		if s, ok := os.LookupEnv("PINGFEDERATE_CONTEXT"); ok {
-			data.Context.Value = s
-		} else {
-			data.Context.Value = "/pf-admin-api/v1"
-		}
+	if data.Context.ValueString() != "" {
+		contextPath = data.Context.ValueString()
 	}
-	if data.BaseUrl.Null {
-		if s, ok := os.LookupEnv("PINGFEDERATE_BASEURL"); ok {
-			data.BaseUrl.Value = s
-		} else {
-			data.BaseUrl.Value = "https://localhost:9999"
-		}
+	if data.BaseUrl.ValueString() != "" {
+		baseUrl = data.BaseUrl.ValueString()
+	}
+	if !data.BypassExternalValidation.IsUnknown() {
+		bypassExternalValidation = data.BypassExternalValidation.ValueBool()
 	}
 
 	config := &pfConfig{
-		Username:                 data.Username.Value,
-		Password:                 data.Password.Value,
-		BaseURL:                  data.BaseUrl.Value,
-		Context:                  data.Context.Value,
-		BypassExternalValidation: data.BypassExternalValidation.Value,
+		Username:                 username,
+		Password:                 password,
+		BaseURL:                  baseUrl,
+		Context:                  contextPath,
+		BypassExternalValidation: bypassExternalValidation,
 	}
-
-	//var data providerData
-	////data.Username.Value = "Administrator"
-	////data.Password.Value = "2Federate"
-	////data.Context.Value = "/pf-admin-api/v1"
-	////data.BaseUrl.Value = "https://localhost:9999"
-	////data.BypassExternalValidation.Value = false
-	//
-	//diags := req.Config.Get(ctx, &data)
-	//resp.Diagnostics.Append(diags...)
-	//
-	//if resp.Diagnostics.HasError() {
-	//	return
-	//}
-	//
-	//var username string
-	//if data.Username.Null {
-	//	if s, ok := os.LookupEnv("PINGFEDERATE_USERNAME"); ok {
-	//		username = s
-	//	} else {
-	//		username = "Administrator"
-	//	}
-	//} else {
-	//	username = data.Username.Value
-	//}
-	//var password string
-	//if data.Password.Null {
-	//	if s, ok := os.LookupEnv("PINGFEDERATE_PASSWORD"); ok {
-	//		password = s
-	//	} else {
-	//		password = "2Federate"
-	//	}
-	//} else {
-	//	password = data.Password.Value
-	//}
-	//var contextPath string
-	//if data.Context.Null {
-	//	if s, ok := os.LookupEnv("PINGFEDERATE_CONTEXT"); ok {
-	//		contextPath = s
-	//	} else {
-	//		contextPath = "/pf-admin-api/v1"
-	//	}
-	//} else {
-	//	contextPath = data.Context.Value
-	//}
-	//var baseUrl string
-	//if data.BaseUrl.Null {
-	//	if s, ok := os.LookupEnv("PINGFEDERATE_BASEURL"); ok {
-	//		baseUrl = s
-	//	} else {
-	//		baseUrl = "https://localhost:9999"
-	//	}
-	//} else {
-	//	baseUrl = data.BaseUrl.Value
-	//}
-	//var bypassExternalValidation bool
-	//if data.BypassExternalValidation.Null {
-	//	bypassExternalValidation = false
-	//} else {
-	//	bypassExternalValidation = data.BypassExternalValidation.Value
-	//}
-	//
-	//config := &pfConfig{
-	//	Username:                 username,
-	//	Password:                 password,
-	//	BaseURL:                  baseUrl,
-	//	Context:                  contextPath,
-	//	BypassExternalValidation: bypassExternalValidation,
-	//}
 
 	cli, errs := config.Client()
 	if errs.HasError() {
@@ -171,19 +113,27 @@ func (p *pfprovider) Configure(ctx context.Context, req provider.ConfigureReques
 	}
 	p.client = cli
 	p.configured = true
+
+	resp.ResourceData = cli
+	resp.DataSourceData = cli
+
+	tflog.Info(ctx, "Configured PingFederate client", map[string]any{"success": true})
 }
 
-func (p *pfprovider) GetResources(_ context.Context) (map[string]provider.ResourceType, diag.Diagnostics) {
-	return map[string]provider.ResourceType{
-		"pingfederate_authentication_policy_contract":               pingfederateAuthenticationPolicyContractType{},
-		"pingfederate_oauth_authentication_policy_contract_mapping": pingfederateOauthAuthenticationPolicyContractMappingType{},
-		"pingfederate_oauth_client":                                 pingfederateOAuthClientType{},
-		"pingfederate_redirect_validation_settings":                 pingfederateRedirectValidationSettingsType{},
-	}, nil
+func (p *pfprovider) Resources(_ context.Context) []func() resource.Resource {
+	return []func() resource.Resource{
+		NewAuthenticationPolicyContractResource,
+		NewOauthAuthenticationPolicyContractMappingResource,
+		NewOAuthClientResource,
+		NewRedirectValidationResource,
+		//"pingfederate_oauth_authentication_policy_contract_mapping": pingfederateOauthAuthenticationPolicyContractMappingType{},
+		//"pingfederate_oauth_client":                                 pingfederateOAuthClientType{},
+		//"pingfederate_redirect_validation_settings":                 pingfederateRedirectValidationSettingsType{},
+	}
 }
 
-func (p *pfprovider) GetDataSources(_ context.Context) (map[string]provider.DataSourceType, diag.Diagnostics) {
-	return map[string]provider.DataSourceType{}, nil
+func (p *pfprovider) DataSources(_ context.Context) []func() datasource.DataSource {
+	return []func() datasource.DataSource{}
 }
 
 func (p *pfprovider) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics) {
@@ -193,33 +143,21 @@ func (p *pfprovider) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostic
 				Optional:    true,
 				Type:        types.StringType,
 				Description: "The username for pingfederate API.",
-				PlanModifiers: []tfsdk.AttributePlanModifier{
-					Default(types.String{Value: "Administrator"}),
-				},
 			},
 			"password": {
 				Optional:    true,
 				Type:        types.StringType,
 				Description: "The password for pingfederate API.",
-				PlanModifiers: []tfsdk.AttributePlanModifier{
-					Default(types.String{Value: "2FederateM0re"}),
-				},
 			},
 			"base_url": {
 				Optional:    true,
 				Type:        types.StringType,
 				Description: "The base url of the pingfederate API.",
-				PlanModifiers: []tfsdk.AttributePlanModifier{
-					Default(types.String{Value: "https://localhost:9999"}),
-				},
 			},
 			"context": {
 				Optional:    true,
 				Type:        types.StringType,
 				Description: "The context path of the pingfederate API.",
-				PlanModifiers: []tfsdk.AttributePlanModifier{
-					Default(types.String{Value: "/pf-admin-api/v1"}),
-				},
 			},
 			"bypass_external_validation": {
 				Optional:    true,
@@ -234,43 +172,6 @@ func New(version string) provider.Provider {
 	return &pfprovider{
 		version: version,
 	}
-}
-
-//func New(version string) func() tfsdk.Provider {
-//	return func() tfsdk.Provider {
-//		return &provider{
-//			version: version,
-//		}
-//	}
-//}
-
-// convertProviderType is a helper function for NewResource and NewDataSource
-// implementations to associate the concrete provider type. Alternatively,
-// this helper can be skipped and the provider type can be directly type
-// asserted (e.g. provider: in.(*provider)), however using this can prevent
-// potential panics.
-func convertProviderType(in provider.Provider) (pfprovider, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	p, ok := in.(*pfprovider)
-
-	if !ok {
-		diags.AddError(
-			"Unexpected Provider Instance Type",
-			fmt.Sprintf("While creating the data source or resource, an unexpected provider type (%T) was received. This is always a bug in the provider code and should be reported to the provider developers.", p),
-		)
-		return pfprovider{}, diags
-	}
-
-	if p == nil {
-		diags.AddError(
-			"Unexpected Provider Instance Type",
-			"While creating the data source or resource, an unexpected empty provider instance was received. This is always a bug in the provider code and should be reported to the provider developers.",
-		)
-		return pfprovider{}, diags
-	}
-
-	return *p, diags
 }
 
 // Bool is a helper routine that allocates a new bool value

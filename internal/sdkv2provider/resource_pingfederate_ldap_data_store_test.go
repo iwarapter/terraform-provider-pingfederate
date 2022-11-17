@@ -40,8 +40,8 @@ func init() {
 func TestAccPingFederateLdapDataStoreResource(t *testing.T) {
 	resourceName := "pingfederate_ldap_data_store.demo"
 	resource.ParallelTest(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateLdapDataStoreResourceDestroy,
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateLdapDataStoreResourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateLdapDataStoreResourceConfig("1000"),

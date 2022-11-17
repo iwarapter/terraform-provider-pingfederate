@@ -11,9 +11,9 @@ func TestAccPingFederateVersionDataSource(t *testing.T) {
 	resourceName := "data.pingfederate_version.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateVersionDataSourceDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateVersionDataSourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateVersionDataSourceConfig(),

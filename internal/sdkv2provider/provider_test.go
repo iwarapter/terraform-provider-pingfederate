@@ -11,6 +11,12 @@ import (
 	"os"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-framework/providerserver"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
+	"github.com/hashicorp/terraform-plugin-mux/tf5to6server"
+	"github.com/hashicorp/terraform-plugin-mux/tf6muxserver"
+	"github.com/iwarapter/terraform-provider-pingfederate/internal/framework"
+
 	"github.com/iwarapter/pingfederate-sdk-go/services/serverSettings"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/authenticationSelectors"
@@ -22,7 +28,6 @@ import (
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthAccessTokenManagers"
 	"github.com/iwarapter/pingfederate-sdk-go/services/passwordCredentialValidators"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/iwarapter/pingfederate-sdk-go/pingfederate/config"
 	"github.com/iwarapter/pingfederate-sdk-go/services/version"
 )
@@ -58,15 +63,30 @@ func TestMain(m *testing.M) {
 	resource.TestMain(m)
 }
 
-var testAccProviders map[string]*schema.Provider
-var testAccProvider *schema.Provider
+var testAccProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServer, error){
+	"pingfederate": func() (tfprotov6.ProviderServer, error) {
+		ctx := context.Background()
+		upgradedSdkProvider, err := tf5to6server.UpgradeServer(ctx, Provider().GRPCProvider)
+		if err != nil {
+			log.Fatal(err)
+		}
+		providers := []func() tfprotov6.ProviderServer{
+			func() tfprotov6.ProviderServer {
+				return upgradedSdkProvider
+			},
+			providerserver.NewProtocol6(framework.New("test")),
+		}
 
-func init() {
-	testAccProvider = Provider()
-	testAccProviders = map[string]*schema.Provider{
-		"pingfederate": testAccProvider,
-	}
+		muxServer, err := tf6muxserver.NewMuxServer(ctx, providers...)
+
+		if err != nil {
+			return nil, err
+		}
+
+		return muxServer.ProviderServer(), nil
+	},
 }
+var testAccProvider = Provider()
 
 func TestProvider(t *testing.T) {
 	if err := Provider().InternalValidate(); err != nil {

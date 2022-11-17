@@ -42,8 +42,8 @@ func init() {
 func TestAccPingFederateOauthResourceOwnerCredentialsMappings(t *testing.T) {
 	resourceName := "pingfederate_oauth_resource_owner_credentials_mappings.demo"
 	resource.ParallelTest(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateOauthResourceOwnerCredentialsMappingsDestroy,
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateOauthResourceOwnerCredentialsMappingsDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateOauthResourceOwnerCredentialsMappingsConfig("foo"),

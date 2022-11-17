@@ -17,26 +17,25 @@ import (
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
-//func init() {
-//	resource.AddTestSweepers("authentication_policy_contract", &resource.Sweeper{
-//		Name:         "authentication_policy_contract",
-//		Dependencies: []string{},
-//		F: func(r string) error {
-//			svc := authenticationPolicyContracts.New(cfg)
-//			results, _, err := svc.GetAuthenticationPolicyContracts(&authenticationPolicyContracts.GetAuthenticationPolicyContractsInput{Filter: "acc_test"})
-//			if err != nil {
-//				return fmt.Errorf("unable to list authentication policy contracts %s", err)
-//			}
-//			for _, item := range *results.Items {
-//				_, _, err := svc.DeleteAuthenticationPolicyContract(&authenticationPolicyContracts.DeleteAuthenticationPolicyContractInput{Id: *item.Id})
-//				if err != nil {
-//					return fmt.Errorf("unable to sweep authentication policy contract %s because %s", *item.Id, err)
-//				}
-//			}
-//			return nil
-//		},
-//	})
-//}
+func init() {
+	resource.AddTestSweepers("authentication_policy_contract", &resource.Sweeper{
+		Name:         "authentication_policy_contract",
+		Dependencies: []string{},
+		F: func(r string) error {
+			results, _, err := pfc.AuthenticationPolicyContracts.GetAuthenticationPolicyContracts(&authenticationPolicyContracts.GetAuthenticationPolicyContractsInput{Filter: "acc_test"})
+			if err != nil {
+				return fmt.Errorf("unable to list authentication policy contracts %s", err)
+			}
+			for _, item := range *results.Items {
+				_, _, err := pfc.AuthenticationPolicyContracts.DeleteAuthenticationPolicyContract(&authenticationPolicyContracts.DeleteAuthenticationPolicyContractInput{Id: *item.Id})
+				if err != nil {
+					return fmt.Errorf("unable to sweep authentication policy contract %s because %s", *item.Id, err)
+				}
+			}
+			return nil
+		},
+	})
+}
 
 func TestAccPingFederateAuthenticationPolicyContractResource(t *testing.T) {
 	resourceName := "pingfederate_authentication_policy_contract.demo"
@@ -180,7 +179,7 @@ func Test_resourcePingFederateAuthenticationPolicyContractResourceReadData(t *te
 	}
 	for i, tc := range cases {
 		t.Run(fmt.Sprintf("tc:%v", i), func(t *testing.T) {
-			res := &pingfederateAuthenticationPolicyContractType{}
+			res := &pingfederateAuthenticationPolicyContractResource{}
 			ctx := context.Background()
 			resourceSchema, diags := res.GetSchema(ctx)
 			require.False(t, diags.HasError())

@@ -280,7 +280,7 @@ func dataSetup() error {
 //	tests := []struct {
 //		name string
 //		ctx  context.Context
-//		req  provider.ConfigureProviderRequest
+//		req  client.ConfigureProviderRequest
 //		resp tfsdk.ConfigureProviderResponse
 //	}{
 //		{

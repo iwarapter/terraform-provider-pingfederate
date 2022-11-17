@@ -43,8 +43,8 @@ func TestAccPingFederateOauthAccessTokenMappings(t *testing.T) {
 	resourceName := "pingfederate_oauth_access_token_mappings.demo"
 
 	resource.ParallelTest(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateOauthAccessTokenMappingsDestroy,
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateOauthAccessTokenMappingsDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateOauthAccessTokenMappingsConfig("ClientId"),

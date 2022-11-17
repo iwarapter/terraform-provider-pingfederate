@@ -39,9 +39,9 @@ func TestAccPingFederateKeyPairSslServer(t *testing.T) {
 	resourceNameGen := "pingfederate_keypair_ssl_server.demo"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateKeypairSslServerDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateKeypairSslServerDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateKeypairSslServerConfig(),

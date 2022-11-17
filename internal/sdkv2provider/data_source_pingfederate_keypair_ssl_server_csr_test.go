@@ -15,9 +15,9 @@ func TestAccPingFederateKeyPairSslServerCsrDataSource(t *testing.T) {
 	resourceName := "data.pingfederate_keypair_ssl_server_csr.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateKeyPairSslServerCsrDataSourceDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateKeyPairSslServerCsrDataSourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateKeyPairSslServerCsrDataSourceConfig(),
@@ -41,9 +41,9 @@ func TestAccPingFederateKeyPairSslServerCsrDataSource(t *testing.T) {
 
 func TestAccPingFederateKeyPairSslServerCsrDataSource_NotFound(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateKeyPairSslServerCsrDataSourceDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateKeyPairSslServerCsrDataSourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccPingFederateKeyPairSslServerCsrDataSourceConfigNonExistent(),

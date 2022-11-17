@@ -45,9 +45,9 @@ func init() {
 func TestAccPingFederateIdpTokenProcessor(t *testing.T) {
 	resourceName := "pingfederate_idp_token_processor.demo"
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateIdpTokenProcessorDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateIdpTokenProcessorDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateIdpTokenProcessorConfig("foo"),

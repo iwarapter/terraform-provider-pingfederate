@@ -19,8 +19,8 @@ func TestAccPingFederateOauthClientSettings(t *testing.T) {
 	resourceName := "pingfederate_oauth_client_settings.settings"
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateOauthClientSettingsDestroy,
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateOauthClientSettingsDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateOauthClientSettingsConfig("true"),

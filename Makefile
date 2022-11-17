@@ -51,7 +51,7 @@ test-framework:
 	@TF_ACC=1 go test -mod=vendor ./internal/framework/. -v
 
 test-sdkv2:
-	@TF_LOG=INFO TF_ACC=1 go test -mod=vendor ./internal/sdkv2provider/. -v
+	@TF_ACC=1 go test -mod=vendor ./internal/sdkv2provider/. -v
 
 test-and-report:
 	@rm -f pingfederate/terraform.log coverage.out report.json

@@ -27,6 +27,7 @@ type AccessTokenManagerData struct {
 	ParentRef                 types.String                      `tfsdk:"parent_ref"`
 	PluginDescriptorRef       types.String                      `tfsdk:"plugin_descriptor_ref"`
 	SelectionSettings         *AtmSelectionSettingsData         `tfsdk:"selection_settings"`
+	SequenceNumber            types.Number                      `tfsdk:"sequence_number"`
 	SessionValidationSettings *SessionValidationSettingsData    `tfsdk:"session_validation_settings"`
 }
 
@@ -61,6 +62,15 @@ type AccountManagementSettingsData struct {
 	DefaultStatus              types.Bool   `tfsdk:"default_status"`
 	FlagComparisonStatus       types.Bool   `tfsdk:"flag_comparison_status"`
 	FlagComparisonValue        types.String `tfsdk:"flag_comparison_value"`
+}
+
+type ActionDescriptorData struct {
+	Description         types.String            `tfsdk:"description"`
+	Download            types.Bool              `tfsdk:"download"`
+	DownloadContentType types.String            `tfsdk:"download_content_type"`
+	DownloadFileName    types.String            `tfsdk:"download_file_name"`
+	Name                types.String            `tfsdk:"name"`
+	Parameters          *[]*FieldDescriptorData `tfsdk:"parameters"`
 }
 
 type ActionOptionsData struct {
@@ -155,6 +165,9 @@ type ApcToSpAdapterMappingsData struct {
 	Items *[]*ApcToSpAdapterMappingData `tfsdk:"items"`
 }
 
+type ApiResponseData struct {
+}
+
 type ApiResultData struct {
 	DeveloperMessage types.String            `tfsdk:"developer_message"`
 	Message          types.String            `tfsdk:"message"`
@@ -192,6 +205,10 @@ type AtmAccessControlSettingsData struct {
 type AtmSelectionSettingsData struct {
 	Inherited    types.Bool     `tfsdk:"inherited"`
 	ResourceUris []types.String `tfsdk:"resource_uris"`
+}
+
+type AttributeData struct {
+	Name types.String `tfsdk:"name"`
 }
 
 type AttributeFulfillmentValueData struct {
@@ -299,6 +316,7 @@ type AuthenticationPolicyTreeData struct {
 	AuthenticationApiApplicationRef types.String                      `tfsdk:"authentication_api_application_ref"`
 	Description                     types.String                      `tfsdk:"description"`
 	Enabled                         types.Bool                        `tfsdk:"enabled"`
+	HandleFailuresLocally           types.Bool                        `tfsdk:"handle_failures_locally"`
 	Id                              types.String                      `tfsdk:"id"`
 	Name                            types.String                      `tfsdk:"name"`
 	RootNode                        *AuthenticationPolicyTreeNodeData `tfsdk:"root_node"`
@@ -392,44 +410,48 @@ type AuthnSourcePolicyActionData struct {
 }
 
 type AuthorizationServerSettingsData struct {
-	AdminWebServicePcvRef                  types.String                 `tfsdk:"admin_web_service_pcv_ref"`
-	AllowUnidentifiedClientExtensionGrants types.Bool                   `tfsdk:"allow_unidentified_client_extension_grants"`
-	AllowUnidentifiedClientROCreds         types.Bool                   `tfsdk:"allow_unidentified_client_ro_creds"`
-	AllowedOrigins                         []types.String               `tfsdk:"allowed_origins"`
-	ApprovedScopesAttribute                types.String                 `tfsdk:"approved_scopes_attribute"`
-	AtmIdForOAuthGrantManagement           types.String                 `tfsdk:"atm_id_for_o_auth_grant_management"`
-	AuthorizationCodeEntropy               types.Number                 `tfsdk:"authorization_code_entropy"`
-	AuthorizationCodeTimeout               types.Number                 `tfsdk:"authorization_code_timeout"`
-	BypassActivationCodeConfirmation       types.Bool                   `tfsdk:"bypass_activation_code_confirmation"`
-	BypassAuthorizationForApprovedGrants   types.Bool                   `tfsdk:"bypass_authorization_for_approved_grants"`
-	DefaultScopeDescription                types.String                 `tfsdk:"default_scope_description"`
-	DevicePollingInterval                  types.Number                 `tfsdk:"device_polling_interval"`
-	DisallowPlainPKCE                      types.Bool                   `tfsdk:"disallow_plain_pkce"`
-	ExclusiveScopeGroups                   *[]*ScopeGroupEntryData      `tfsdk:"exclusive_scope_groups"`
-	ExclusiveScopes                        *[]*ScopeEntryData           `tfsdk:"exclusive_scopes"`
-	IncludeIssuerInAuthorizationResponse   types.Bool                   `tfsdk:"include_issuer_in_authorization_response"`
-	ParReferenceLength                     types.Number                 `tfsdk:"par_reference_length"`
-	ParReferenceTimeout                    types.Number                 `tfsdk:"par_reference_timeout"`
-	ParStatus                              types.String                 `tfsdk:"par_status"`
-	PendingAuthorizationTimeout            types.Number                 `tfsdk:"pending_authorization_timeout"`
-	PersistentGrantContract                *PersistentGrantContractData `tfsdk:"persistent_grant_contract"`
-	PersistentGrantIdleTimeout             types.Number                 `tfsdk:"persistent_grant_idle_timeout"`
-	PersistentGrantIdleTimeoutTimeUnit     types.String                 `tfsdk:"persistent_grant_idle_timeout_time_unit"`
-	PersistentGrantLifetime                types.Number                 `tfsdk:"persistent_grant_lifetime"`
-	PersistentGrantLifetimeUnit            types.String                 `tfsdk:"persistent_grant_lifetime_unit"`
-	PersistentGrantReuseGrantTypes         []types.String               `tfsdk:"persistent_grant_reuse_grant_types"`
-	RefreshRollingInterval                 types.Number                 `tfsdk:"refresh_rolling_interval"`
-	RefreshTokenLength                     types.Number                 `tfsdk:"refresh_token_length"`
-	RegisteredAuthorizationPath            types.String                 `tfsdk:"registered_authorization_path"`
-	RollRefreshTokenValues                 types.Bool                   `tfsdk:"roll_refresh_token_values"`
-	ScopeForOAuthGrantManagement           types.String                 `tfsdk:"scope_for_o_auth_grant_management"`
-	ScopeGroups                            *[]*ScopeGroupEntryData      `tfsdk:"scope_groups"`
-	Scopes                                 *[]*ScopeEntryData           `tfsdk:"scopes"`
-	TokenEndpointBaseUrl                   types.String                 `tfsdk:"token_endpoint_base_url"`
-	TrackUserSessionsForLogout             types.Bool                   `tfsdk:"track_user_sessions_for_logout"`
-	UserAuthorizationConsentAdapter        types.String                 `tfsdk:"user_authorization_consent_adapter"`
-	UserAuthorizationConsentPageSetting    types.String                 `tfsdk:"user_authorization_consent_page_setting"`
-	UserAuthorizationUrl                   types.String                 `tfsdk:"user_authorization_url"`
+	ActivationCodeCheckMode                     types.String                 `tfsdk:"activation_code_check_mode"`
+	AdminWebServicePcvRef                       types.String                 `tfsdk:"admin_web_service_pcv_ref"`
+	AllowUnidentifiedClientExtensionGrants      types.Bool                   `tfsdk:"allow_unidentified_client_extension_grants"`
+	AllowUnidentifiedClientROCreds              types.Bool                   `tfsdk:"allow_unidentified_client_ro_creds"`
+	AllowedOrigins                              []types.String               `tfsdk:"allowed_origins"`
+	ApprovedScopesAttribute                     types.String                 `tfsdk:"approved_scopes_attribute"`
+	AtmIdForOAuthGrantManagement                types.String                 `tfsdk:"atm_id_for_o_auth_grant_management"`
+	AuthorizationCodeEntropy                    types.Number                 `tfsdk:"authorization_code_entropy"`
+	AuthorizationCodeTimeout                    types.Number                 `tfsdk:"authorization_code_timeout"`
+	BypassActivationCodeConfirmation            types.Bool                   `tfsdk:"bypass_activation_code_confirmation"`
+	BypassAuthorizationForApprovedGrants        types.Bool                   `tfsdk:"bypass_authorization_for_approved_grants"`
+	ClientSecretRetentionPeriod                 types.Number                 `tfsdk:"client_secret_retention_period"`
+	DefaultScopeDescription                     types.String                 `tfsdk:"default_scope_description"`
+	DevicePollingInterval                       types.Number                 `tfsdk:"device_polling_interval"`
+	DisallowPlainPKCE                           types.Bool                   `tfsdk:"disallow_plain_pkce"`
+	ExclusiveScopeGroups                        *[]*ScopeGroupEntryData      `tfsdk:"exclusive_scope_groups"`
+	ExclusiveScopes                             *[]*ScopeEntryData           `tfsdk:"exclusive_scopes"`
+	IncludeIssuerInAuthorizationResponse        types.Bool                   `tfsdk:"include_issuer_in_authorization_response"`
+	JwtSecuredAuthorizationResponseModeLifetime types.Number                 `tfsdk:"jwt_secured_authorization_response_mode_lifetime"`
+	ParReferenceLength                          types.Number                 `tfsdk:"par_reference_length"`
+	ParReferenceTimeout                         types.Number                 `tfsdk:"par_reference_timeout"`
+	ParStatus                                   types.String                 `tfsdk:"par_status"`
+	PendingAuthorizationTimeout                 types.Number                 `tfsdk:"pending_authorization_timeout"`
+	PersistentGrantContract                     *PersistentGrantContractData `tfsdk:"persistent_grant_contract"`
+	PersistentGrantIdleTimeout                  types.Number                 `tfsdk:"persistent_grant_idle_timeout"`
+	PersistentGrantIdleTimeoutTimeUnit          types.String                 `tfsdk:"persistent_grant_idle_timeout_time_unit"`
+	PersistentGrantLifetime                     types.Number                 `tfsdk:"persistent_grant_lifetime"`
+	PersistentGrantLifetimeUnit                 types.String                 `tfsdk:"persistent_grant_lifetime_unit"`
+	PersistentGrantReuseGrantTypes              []types.String               `tfsdk:"persistent_grant_reuse_grant_types"`
+	RefreshRollingInterval                      types.Number                 `tfsdk:"refresh_rolling_interval"`
+	RefreshTokenLength                          types.Number                 `tfsdk:"refresh_token_length"`
+	RefreshTokenRollingGracePeriod              types.Number                 `tfsdk:"refresh_token_rolling_grace_period"`
+	RegisteredAuthorizationPath                 types.String                 `tfsdk:"registered_authorization_path"`
+	RollRefreshTokenValues                      types.Bool                   `tfsdk:"roll_refresh_token_values"`
+	ScopeForOAuthGrantManagement                types.String                 `tfsdk:"scope_for_o_auth_grant_management"`
+	ScopeGroups                                 *[]*ScopeGroupEntryData      `tfsdk:"scope_groups"`
+	Scopes                                      *[]*ScopeEntryData           `tfsdk:"scopes"`
+	TokenEndpointBaseUrl                        types.String                 `tfsdk:"token_endpoint_base_url"`
+	TrackUserSessionsForLogout                  types.Bool                   `tfsdk:"track_user_sessions_for_logout"`
+	UserAuthorizationConsentAdapter             types.String                 `tfsdk:"user_authorization_consent_adapter"`
+	UserAuthorizationConsentPageSetting         types.String                 `tfsdk:"user_authorization_consent_page_setting"`
+	UserAuthorizationUrl                        types.String                 `tfsdk:"user_authorization_url"`
 }
 
 type BackChannelAuthData struct {
@@ -464,6 +486,13 @@ type BaseSelectionLocalIdentityFieldData struct {
 	ProfilePageField      types.Bool            `tfsdk:"profile_page_field"`
 	RegistrationPageField types.Bool            `tfsdk:"registration_page_field"`
 	Type                  types.String          `tfsdk:"type"`
+}
+
+type BaseSigningSettingsData struct {
+	Algorithm                types.String `tfsdk:"algorithm"`
+	IncludeCertInSignature   types.Bool   `tfsdk:"include_cert_in_signature"`
+	IncludeRawKeyInSignature types.Bool   `tfsdk:"include_raw_key_in_signature"`
+	SigningKeyPairRef        types.String `tfsdk:"signing_key_pair_ref"`
 }
 
 type BinaryLdapAttributeSettingsData struct {
@@ -575,55 +604,67 @@ type CibaServerPolicySettingsData struct {
 }
 
 type ClientData struct {
-	AllowAuthenticationApiInit               types.Bool                      `tfsdk:"allow_authentication_api_init"`
-	BypassActivationCodeConfirmationOverride types.Bool                      `tfsdk:"bypass_activation_code_confirmation_override"`
-	BypassApprovalPage                       types.Bool                      `tfsdk:"bypass_approval_page"`
-	CibaDeliveryMode                         types.String                    `tfsdk:"ciba_delivery_mode"`
-	CibaNotificationEndpoint                 types.String                    `tfsdk:"ciba_notification_endpoint"`
-	CibaPollingInterval                      types.Number                    `tfsdk:"ciba_polling_interval"`
-	CibaRequestObjectSigningAlgorithm        types.String                    `tfsdk:"ciba_request_object_signing_algorithm"`
-	CibaRequireSignedRequests                types.Bool                      `tfsdk:"ciba_require_signed_requests"`
-	CibaUserCodeSupported                    types.Bool                      `tfsdk:"ciba_user_code_supported"`
-	ClientAuth                               *ClientAuthData                 `tfsdk:"client_auth"`
-	ClientId                                 types.String                    `tfsdk:"client_id"`
-	DefaultAccessTokenManagerRef             types.String                    `tfsdk:"default_access_token_manager_ref"`
-	Description                              types.String                    `tfsdk:"description"`
-	DeviceFlowSettingType                    types.String                    `tfsdk:"device_flow_setting_type"`
-	DevicePollingIntervalOverride            types.Number                    `tfsdk:"device_polling_interval_override"`
-	Enabled                                  types.Bool                      `tfsdk:"enabled"`
-	ExclusiveScopes                          []types.String                  `tfsdk:"exclusive_scopes"`
-	ExtendedParameters                       map[string]*ParameterValuesData `tfsdk:"extended_parameters"`
-	GrantTypes                               []types.String                  `tfsdk:"grant_types"`
-	Id                                       types.String                    `tfsdk:"id"`
-	JwksSettings                             *JwksSettingsData               `tfsdk:"jwks_settings"`
-	LogoUrl                                  types.String                    `tfsdk:"logo_url"`
-	Name                                     types.String                    `tfsdk:"name"`
-	OidcPolicy                               *ClientOIDCPolicyData           `tfsdk:"oidc_policy"`
-	PendingAuthorizationTimeoutOverride      types.Number                    `tfsdk:"pending_authorization_timeout_override"`
-	PersistentGrantExpirationTime            types.Number                    `tfsdk:"persistent_grant_expiration_time"`
-	PersistentGrantExpirationTimeUnit        types.String                    `tfsdk:"persistent_grant_expiration_time_unit"`
-	PersistentGrantExpirationType            types.String                    `tfsdk:"persistent_grant_expiration_type"`
-	PersistentGrantIdleTimeout               types.Number                    `tfsdk:"persistent_grant_idle_timeout"`
-	PersistentGrantIdleTimeoutTimeUnit       types.String                    `tfsdk:"persistent_grant_idle_timeout_time_unit"`
-	PersistentGrantIdleTimeoutType           types.String                    `tfsdk:"persistent_grant_idle_timeout_type"`
-	PersistentGrantReuseGrantTypes           []types.String                  `tfsdk:"persistent_grant_reuse_grant_types"`
-	PersistentGrantReuseType                 types.String                    `tfsdk:"persistent_grant_reuse_type"`
-	RedirectUris                             []types.String                  `tfsdk:"redirect_uris"`
-	RefreshRolling                           types.String                    `tfsdk:"refresh_rolling"`
-	RefreshTokenRollingInterval              types.Number                    `tfsdk:"refresh_token_rolling_interval"`
-	RefreshTokenRollingIntervalType          types.String                    `tfsdk:"refresh_token_rolling_interval_type"`
-	RequestObjectSigningAlgorithm            types.String                    `tfsdk:"request_object_signing_algorithm"`
-	RequestPolicyRef                         types.String                    `tfsdk:"request_policy_ref"`
-	RequireProofKeyForCodeExchange           types.Bool                      `tfsdk:"require_proof_key_for_code_exchange"`
-	RequirePushedAuthorizationRequests       types.Bool                      `tfsdk:"require_pushed_authorization_requests"`
-	RequireSignedRequests                    types.Bool                      `tfsdk:"require_signed_requests"`
-	RestrictScopes                           types.Bool                      `tfsdk:"restrict_scopes"`
-	RestrictToDefaultAccessTokenManager      types.Bool                      `tfsdk:"restrict_to_default_access_token_manager"`
-	RestrictedResponseTypes                  []types.String                  `tfsdk:"restricted_response_types"`
-	RestrictedScopes                         []types.String                  `tfsdk:"restricted_scopes"`
-	TokenExchangeProcessorPolicyRef          types.String                    `tfsdk:"token_exchange_processor_policy_ref"`
-	UserAuthorizationUrlOverride             types.String                    `tfsdk:"user_authorization_url_override"`
-	ValidateUsingAllEligibleAtms             types.Bool                      `tfsdk:"validate_using_all_eligible_atms"`
+	AllowAuthenticationApiInit                                    types.Bool                      `tfsdk:"allow_authentication_api_init"`
+	BypassActivationCodeConfirmationOverride                      types.Bool                      `tfsdk:"bypass_activation_code_confirmation_override"`
+	BypassApprovalPage                                            types.Bool                      `tfsdk:"bypass_approval_page"`
+	CibaDeliveryMode                                              types.String                    `tfsdk:"ciba_delivery_mode"`
+	CibaNotificationEndpoint                                      types.String                    `tfsdk:"ciba_notification_endpoint"`
+	CibaPollingInterval                                           types.Number                    `tfsdk:"ciba_polling_interval"`
+	CibaRequestObjectSigningAlgorithm                             types.String                    `tfsdk:"ciba_request_object_signing_algorithm"`
+	CibaRequireSignedRequests                                     types.Bool                      `tfsdk:"ciba_require_signed_requests"`
+	CibaUserCodeSupported                                         types.Bool                      `tfsdk:"ciba_user_code_supported"`
+	ClientAuth                                                    *ClientAuthData                 `tfsdk:"client_auth"`
+	ClientId                                                      types.String                    `tfsdk:"client_id"`
+	ClientSecretChangedTime                                       types.String                    `tfsdk:"client_secret_changed_time"`
+	ClientSecretRetentionPeriod                                   types.Number                    `tfsdk:"client_secret_retention_period"`
+	ClientSecretRetentionPeriodType                               types.String                    `tfsdk:"client_secret_retention_period_type"`
+	DefaultAccessTokenManagerRef                                  types.String                    `tfsdk:"default_access_token_manager_ref"`
+	Description                                                   types.String                    `tfsdk:"description"`
+	DeviceFlowSettingType                                         types.String                    `tfsdk:"device_flow_setting_type"`
+	DevicePollingIntervalOverride                                 types.Number                    `tfsdk:"device_polling_interval_override"`
+	Enabled                                                       types.Bool                      `tfsdk:"enabled"`
+	ExclusiveScopes                                               []types.String                  `tfsdk:"exclusive_scopes"`
+	ExtendedParameters                                            map[string]*ParameterValuesData `tfsdk:"extended_parameters"`
+	GrantTypes                                                    []types.String                  `tfsdk:"grant_types"`
+	Id                                                            types.String                    `tfsdk:"id"`
+	JwksSettings                                                  *JwksSettingsData               `tfsdk:"jwks_settings"`
+	JwtSecuredAuthorizationResponseModeContentEncryptionAlgorithm types.String                    `tfsdk:"jwt_secured_authorization_response_mode_content_encryption_algorithm"`
+	JwtSecuredAuthorizationResponseModeEncryptionAlgorithm        types.String                    `tfsdk:"jwt_secured_authorization_response_mode_encryption_algorithm"`
+	JwtSecuredAuthorizationResponseModeSigningAlgorithm           types.String                    `tfsdk:"jwt_secured_authorization_response_mode_signing_algorithm"`
+	LogoUrl                                                       types.String                    `tfsdk:"logo_url"`
+	Name                                                          types.String                    `tfsdk:"name"`
+	OidcPolicy                                                    *ClientOIDCPolicyData           `tfsdk:"oidc_policy"`
+	PendingAuthorizationTimeoutOverride                           types.Number                    `tfsdk:"pending_authorization_timeout_override"`
+	PersistentGrantExpirationTime                                 types.Number                    `tfsdk:"persistent_grant_expiration_time"`
+	PersistentGrantExpirationTimeUnit                             types.String                    `tfsdk:"persistent_grant_expiration_time_unit"`
+	PersistentGrantExpirationType                                 types.String                    `tfsdk:"persistent_grant_expiration_type"`
+	PersistentGrantIdleTimeout                                    types.Number                    `tfsdk:"persistent_grant_idle_timeout"`
+	PersistentGrantIdleTimeoutTimeUnit                            types.String                    `tfsdk:"persistent_grant_idle_timeout_time_unit"`
+	PersistentGrantIdleTimeoutType                                types.String                    `tfsdk:"persistent_grant_idle_timeout_type"`
+	PersistentGrantReuseGrantTypes                                []types.String                  `tfsdk:"persistent_grant_reuse_grant_types"`
+	PersistentGrantReuseType                                      types.String                    `tfsdk:"persistent_grant_reuse_type"`
+	RedirectUris                                                  []types.String                  `tfsdk:"redirect_uris"`
+	RefreshRolling                                                types.String                    `tfsdk:"refresh_rolling"`
+	RefreshTokenRollingGracePeriod                                types.Number                    `tfsdk:"refresh_token_rolling_grace_period"`
+	RefreshTokenRollingGracePeriodType                            types.String                    `tfsdk:"refresh_token_rolling_grace_period_type"`
+	RefreshTokenRollingInterval                                   types.Number                    `tfsdk:"refresh_token_rolling_interval"`
+	RefreshTokenRollingIntervalType                               types.String                    `tfsdk:"refresh_token_rolling_interval_type"`
+	RequestObjectSigningAlgorithm                                 types.String                    `tfsdk:"request_object_signing_algorithm"`
+	RequestPolicyRef                                              types.String                    `tfsdk:"request_policy_ref"`
+	RequireJwtSecuredAuthorizationResponseMode                    types.Bool                      `tfsdk:"require_jwt_secured_authorization_response_mode"`
+	RequireProofKeyForCodeExchange                                types.Bool                      `tfsdk:"require_proof_key_for_code_exchange"`
+	RequirePushedAuthorizationRequests                            types.Bool                      `tfsdk:"require_pushed_authorization_requests"`
+	RequireSignedRequests                                         types.Bool                      `tfsdk:"require_signed_requests"`
+	RestrictScopes                                                types.Bool                      `tfsdk:"restrict_scopes"`
+	RestrictToDefaultAccessTokenManager                           types.Bool                      `tfsdk:"restrict_to_default_access_token_manager"`
+	RestrictedResponseTypes                                       []types.String                  `tfsdk:"restricted_response_types"`
+	RestrictedScopes                                              []types.String                  `tfsdk:"restricted_scopes"`
+	TokenExchangeProcessorPolicyRef                               types.String                    `tfsdk:"token_exchange_processor_policy_ref"`
+	TokenIntrospectionContentEncryptionAlgorithm                  types.String                    `tfsdk:"token_introspection_content_encryption_algorithm"`
+	TokenIntrospectionEncryptionAlgorithm                         types.String                    `tfsdk:"token_introspection_encryption_algorithm"`
+	TokenIntrospectionSigningAlgorithm                            types.String                    `tfsdk:"token_introspection_signing_algorithm"`
+	UserAuthorizationUrlOverride                                  types.String                    `tfsdk:"user_authorization_url_override"`
+	ValidateUsingAllEligibleAtms                                  types.Bool                      `tfsdk:"validate_using_all_eligible_atms"`
 }
 
 type ClientAuthData struct {
@@ -675,8 +716,9 @@ type ClientRegistrationPolicyData struct {
 }
 
 type ClientSecretData struct {
-	EncryptedSecret types.String `tfsdk:"encrypted_secret"`
-	Secret          types.String `tfsdk:"secret"`
+	EncryptedSecret  types.String            `tfsdk:"encrypted_secret"`
+	SecondarySecrets *[]*SecondarySecretData `tfsdk:"secondary_secrets"`
+	Secret           types.String            `tfsdk:"secret"`
 }
 
 type ClientSettingsData struct {
@@ -689,12 +731,14 @@ type ClientsData struct {
 }
 
 type ClusterNodeData struct {
-	Address   types.String `tfsdk:"address"`
-	Index     types.Number `tfsdk:"index"`
-	Mode      types.String `tfsdk:"mode"`
-	NodeGroup types.String `tfsdk:"node_group"`
-	NodeTags  types.String `tfsdk:"node_tags"`
-	Version   types.String `tfsdk:"version"`
+	Address                types.String `tfsdk:"address"`
+	ConfigurationTimestamp types.String `tfsdk:"configuration_timestamp"`
+	Index                  types.Number `tfsdk:"index"`
+	Mode                   types.String `tfsdk:"mode"`
+	NodeGroup              types.String `tfsdk:"node_group"`
+	NodeTags               types.String `tfsdk:"node_tags"`
+	ReplicationStatus      types.String `tfsdk:"replication_status"`
+	Version                types.String `tfsdk:"version"`
 }
 
 type ClusterStatusData struct {
@@ -882,6 +926,12 @@ type DataStoreConfigData struct {
 	Type             types.String                       `tfsdk:"type"`
 }
 
+type DataStoreRepositoryData struct {
+	DataStoreRef                  types.String                              `tfsdk:"data_store_ref"`
+	JitRepositoryAttributeMapping map[string]*AttributeFulfillmentValueData `tfsdk:"jit_repository_attribute_mapping"`
+	Type                          types.String                              `tfsdk:"type"`
+}
+
 type DataStoresData struct {
 	Items *[]*DataStoreData `tfsdk:"items"`
 }
@@ -926,41 +976,47 @@ type DropDownLocalIdentityFieldData struct {
 }
 
 type DynamicClientRegistrationData struct {
-	AllowClientDelete                        types.Bool                        `tfsdk:"allow_client_delete"`
-	AllowedExclusiveScopes                   []types.String                    `tfsdk:"allowed_exclusive_scopes"`
-	BypassActivationCodeConfirmationOverride types.Bool                        `tfsdk:"bypass_activation_code_confirmation_override"`
-	CibaPollingInterval                      types.Number                      `tfsdk:"ciba_polling_interval"`
-	CibaRequireSignedRequests                types.Bool                        `tfsdk:"ciba_require_signed_requests"`
-	ClientCertIssuerRef                      types.String                      `tfsdk:"client_cert_issuer_ref"`
-	ClientCertIssuerType                     types.String                      `tfsdk:"client_cert_issuer_type"`
-	DefaultAccessTokenManagerRef             types.String                      `tfsdk:"default_access_token_manager_ref"`
-	DeviceFlowSettingType                    types.String                      `tfsdk:"device_flow_setting_type"`
-	DevicePollingIntervalOverride            types.Number                      `tfsdk:"device_polling_interval_override"`
-	DisableRegistrationAccessTokens          types.Bool                        `tfsdk:"disable_registration_access_tokens"`
-	EnforceReplayPrevention                  types.Bool                        `tfsdk:"enforce_replay_prevention"`
-	InitialAccessTokenScope                  types.String                      `tfsdk:"initial_access_token_scope"`
-	OidcPolicy                               *ClientRegistrationOIDCPolicyData `tfsdk:"oidc_policy"`
-	PendingAuthorizationTimeoutOverride      types.Number                      `tfsdk:"pending_authorization_timeout_override"`
-	PersistentGrantExpirationTime            types.Number                      `tfsdk:"persistent_grant_expiration_time"`
-	PersistentGrantExpirationTimeUnit        types.String                      `tfsdk:"persistent_grant_expiration_time_unit"`
-	PersistentGrantExpirationType            types.String                      `tfsdk:"persistent_grant_expiration_type"`
-	PersistentGrantIdleTimeout               types.Number                      `tfsdk:"persistent_grant_idle_timeout"`
-	PersistentGrantIdleTimeoutTimeUnit       types.String                      `tfsdk:"persistent_grant_idle_timeout_time_unit"`
-	PersistentGrantIdleTimeoutType           types.String                      `tfsdk:"persistent_grant_idle_timeout_type"`
-	PolicyRefs                               *[]*ResourceLinkData              `tfsdk:"policy_refs"`
-	RefreshRolling                           types.String                      `tfsdk:"refresh_rolling"`
-	RefreshTokenRollingInterval              types.Number                      `tfsdk:"refresh_token_rolling_interval"`
-	RefreshTokenRollingIntervalType          types.String                      `tfsdk:"refresh_token_rolling_interval_type"`
-	RequestPolicyRef                         types.String                      `tfsdk:"request_policy_ref"`
-	RequireProofKeyForCodeExchange           types.Bool                        `tfsdk:"require_proof_key_for_code_exchange"`
-	RequireSignedRequests                    types.Bool                        `tfsdk:"require_signed_requests"`
-	RestrictCommonScopes                     types.Bool                        `tfsdk:"restrict_common_scopes"`
-	RestrictToDefaultAccessTokenManager      types.Bool                        `tfsdk:"restrict_to_default_access_token_manager"`
-	RestrictedCommonScopes                   []types.String                    `tfsdk:"restricted_common_scopes"`
-	RotateClientSecret                       types.Bool                        `tfsdk:"rotate_client_secret"`
-	RotateRegistrationAccessToken            types.Bool                        `tfsdk:"rotate_registration_access_token"`
-	TokenExchangeProcessorPolicyRef          types.String                      `tfsdk:"token_exchange_processor_policy_ref"`
-	UserAuthorizationUrlOverride             types.String                      `tfsdk:"user_authorization_url_override"`
+	AllowClientDelete                          types.Bool                        `tfsdk:"allow_client_delete"`
+	AllowedExclusiveScopes                     []types.String                    `tfsdk:"allowed_exclusive_scopes"`
+	BypassActivationCodeConfirmationOverride   types.Bool                        `tfsdk:"bypass_activation_code_confirmation_override"`
+	CibaPollingInterval                        types.Number                      `tfsdk:"ciba_polling_interval"`
+	CibaRequireSignedRequests                  types.Bool                        `tfsdk:"ciba_require_signed_requests"`
+	ClientCertIssuerRef                        types.String                      `tfsdk:"client_cert_issuer_ref"`
+	ClientCertIssuerType                       types.String                      `tfsdk:"client_cert_issuer_type"`
+	ClientSecretRetentionPeriodOverride        types.Number                      `tfsdk:"client_secret_retention_period_override"`
+	ClientSecretRetentionPeriodType            types.String                      `tfsdk:"client_secret_retention_period_type"`
+	DefaultAccessTokenManagerRef               types.String                      `tfsdk:"default_access_token_manager_ref"`
+	DeviceFlowSettingType                      types.String                      `tfsdk:"device_flow_setting_type"`
+	DevicePollingIntervalOverride              types.Number                      `tfsdk:"device_polling_interval_override"`
+	DisableRegistrationAccessTokens            types.Bool                        `tfsdk:"disable_registration_access_tokens"`
+	EnforceReplayPrevention                    types.Bool                        `tfsdk:"enforce_replay_prevention"`
+	InitialAccessTokenScope                    types.String                      `tfsdk:"initial_access_token_scope"`
+	OidcPolicy                                 *ClientRegistrationOIDCPolicyData `tfsdk:"oidc_policy"`
+	PendingAuthorizationTimeoutOverride        types.Number                      `tfsdk:"pending_authorization_timeout_override"`
+	PersistentGrantExpirationTime              types.Number                      `tfsdk:"persistent_grant_expiration_time"`
+	PersistentGrantExpirationTimeUnit          types.String                      `tfsdk:"persistent_grant_expiration_time_unit"`
+	PersistentGrantExpirationType              types.String                      `tfsdk:"persistent_grant_expiration_type"`
+	PersistentGrantIdleTimeout                 types.Number                      `tfsdk:"persistent_grant_idle_timeout"`
+	PersistentGrantIdleTimeoutTimeUnit         types.String                      `tfsdk:"persistent_grant_idle_timeout_time_unit"`
+	PersistentGrantIdleTimeoutType             types.String                      `tfsdk:"persistent_grant_idle_timeout_type"`
+	PolicyRefs                                 *[]*ResourceLinkData              `tfsdk:"policy_refs"`
+	RefreshRolling                             types.String                      `tfsdk:"refresh_rolling"`
+	RefreshTokenRollingGracePeriod             types.Number                      `tfsdk:"refresh_token_rolling_grace_period"`
+	RefreshTokenRollingGracePeriodType         types.String                      `tfsdk:"refresh_token_rolling_grace_period_type"`
+	RefreshTokenRollingInterval                types.Number                      `tfsdk:"refresh_token_rolling_interval"`
+	RefreshTokenRollingIntervalType            types.String                      `tfsdk:"refresh_token_rolling_interval_type"`
+	RequestPolicyRef                           types.String                      `tfsdk:"request_policy_ref"`
+	RequireJwtSecuredAuthorizationResponseMode types.Bool                        `tfsdk:"require_jwt_secured_authorization_response_mode"`
+	RequireProofKeyForCodeExchange             types.Bool                        `tfsdk:"require_proof_key_for_code_exchange"`
+	RequireSignedRequests                      types.Bool                        `tfsdk:"require_signed_requests"`
+	RestrictCommonScopes                       types.Bool                        `tfsdk:"restrict_common_scopes"`
+	RestrictToDefaultAccessTokenManager        types.Bool                        `tfsdk:"restrict_to_default_access_token_manager"`
+	RestrictedCommonScopes                     []types.String                    `tfsdk:"restricted_common_scopes"`
+	RetainClientSecret                         types.Bool                        `tfsdk:"retain_client_secret"`
+	RotateClientSecret                         types.Bool                        `tfsdk:"rotate_client_secret"`
+	RotateRegistrationAccessToken              types.Bool                        `tfsdk:"rotate_registration_access_token"`
+	TokenExchangeProcessorPolicyRef            types.String                      `tfsdk:"token_exchange_processor_policy_ref"`
+	UserAuthorizationUrlOverride               types.String                      `tfsdk:"user_authorization_url_override"`
 }
 
 type EmailLocalIdentityFieldData struct {
@@ -1023,12 +1079,12 @@ type EntityData struct {
 }
 
 type ExportMetadataRequestData struct {
-	ConnectionId            types.String         `tfsdk:"connection_id"`
-	ConnectionType          types.String         `tfsdk:"connection_type"`
-	SigningSettings         *SigningSettingsData `tfsdk:"signing_settings"`
-	UseSecondaryPortForSoap types.Bool           `tfsdk:"use_secondary_port_for_soap"`
-	VirtualHostName         types.String         `tfsdk:"virtual_host_name"`
-	VirtualServerId         types.String         `tfsdk:"virtual_server_id"`
+	ConnectionId            types.String             `tfsdk:"connection_id"`
+	ConnectionType          types.String             `tfsdk:"connection_type"`
+	SigningSettings         *BaseSigningSettingsData `tfsdk:"signing_settings"`
+	UseSecondaryPortForSoap types.Bool               `tfsdk:"use_secondary_port_for_soap"`
+	VirtualHostName         types.String             `tfsdk:"virtual_host_name"`
+	VirtualServerId         types.String             `tfsdk:"virtual_server_id"`
 }
 
 type ExpressionIssuanceCriteriaEntryData struct {
@@ -1060,6 +1116,16 @@ type FieldConfigData struct {
 	StripSpaceFromUniqueField types.Bool                 `tfsdk:"strip_space_from_unique_field"`
 }
 
+type FieldDescriptorData struct {
+	Advanced     types.Bool   `tfsdk:"advanced"`
+	DefaultValue types.String `tfsdk:"default_value"`
+	Description  types.String `tfsdk:"description"`
+	Label        types.String `tfsdk:"label"`
+	Name         types.String `tfsdk:"name"`
+	Required     types.Bool   `tfsdk:"required"`
+	Type         types.String `tfsdk:"type"`
+}
+
 type FieldEntryData struct {
 	Name  types.String `tfsdk:"name"`
 	Value types.String `tfsdk:"value"`
@@ -1073,6 +1139,14 @@ type FragmentPolicyActionData struct {
 	Type            types.String          `tfsdk:"type"`
 }
 
+type GeneralSettingsData struct {
+	DatastoreValidationIntervalSecs         types.Number `tfsdk:"datastore_validation_interval_secs"`
+	DisableAutomaticConnectionValidation    types.Bool   `tfsdk:"disable_automatic_connection_validation"`
+	IdpConnectionTransactionLoggingOverride types.String `tfsdk:"idp_connection_transaction_logging_override"`
+	RequestHeaderForCorrelationId           types.String `tfsdk:"request_header_for_correlation_id"`
+	SpConnectionTransactionLoggingOverride  types.String `tfsdk:"sp_connection_transaction_logging_override"`
+}
+
 type GlobalAuthenticationSessionPolicyData struct {
 	EnableSessions             types.Bool   `tfsdk:"enable_sessions"`
 	HashUniqueUserKeyAttribute types.Bool   `tfsdk:"hash_unique_user_key_attribute"`
@@ -1083,9 +1157,18 @@ type GlobalAuthenticationSessionPolicyData struct {
 	PersistentSessions         types.Bool   `tfsdk:"persistent_sessions"`
 }
 
+type GroupAttributeData struct {
+	Name types.String `tfsdk:"name"`
+}
+
 type GroupMembershipDetectionData struct {
 	GroupMemberAttributeName   types.String `tfsdk:"group_member_attribute_name"`
 	MemberOfGroupAttributeName types.String `tfsdk:"member_of_group_attribute_name"`
+}
+
+type GroupsData struct {
+	ReadGroups  *ReadGroupsData  `tfsdk:"read_groups"`
+	WriteGroups *WriteGroupsData `tfsdk:"write_groups"`
 }
 
 type HiddenLocalIdentityFieldData struct {
@@ -1104,6 +1187,52 @@ type IdentityHintAttributeData struct {
 type IdentityHintContractData struct {
 	CoreAttributes     *[]*IdentityHintAttributeData `tfsdk:"core_attributes"`
 	ExtendedAttributes *[]*IdentityHintAttributeData `tfsdk:"extended_attributes"`
+}
+
+type IdentityStoreInboundProvisioningUserRepositoryData struct {
+	PluginDescriptorRef types.String `tfsdk:"plugin_descriptor_ref"`
+	Type                types.String `tfsdk:"type"`
+}
+
+type IdentityStoreProvisionerData struct {
+	AttributeContract      *IdentityStoreProvisionerAttributeContractData      `tfsdk:"attribute_contract"`
+	Configuration          *PluginConfigurationData                            `tfsdk:"configuration"`
+	GroupAttributeContract *IdentityStoreProvisionerGroupAttributeContractData `tfsdk:"group_attribute_contract"`
+	Id                     types.String                                        `tfsdk:"id"`
+	Name                   types.String                                        `tfsdk:"name"`
+	ParentRef              types.String                                        `tfsdk:"parent_ref"`
+	PluginDescriptorRef    types.String                                        `tfsdk:"plugin_descriptor_ref"`
+}
+
+type IdentityStoreProvisionerAttributeContractData struct {
+	CoreAttributes     *[]*AttributeData `tfsdk:"core_attributes"`
+	ExtendedAttributes *[]*AttributeData `tfsdk:"extended_attributes"`
+	Inherited          types.Bool        `tfsdk:"inherited"`
+}
+
+type IdentityStoreProvisionerDescriptorData struct {
+	AttributeContract             []types.String              `tfsdk:"attribute_contract"`
+	ClassName                     types.String                `tfsdk:"class_name"`
+	ConfigDescriptor              *PluginConfigDescriptorData `tfsdk:"config_descriptor"`
+	GroupAttributeContract        []types.String              `tfsdk:"group_attribute_contract"`
+	Id                            types.String                `tfsdk:"id"`
+	Name                          types.String                `tfsdk:"name"`
+	SupportsExtendedContract      types.Bool                  `tfsdk:"supports_extended_contract"`
+	SupportsGroupExtendedContract types.Bool                  `tfsdk:"supports_group_extended_contract"`
+}
+
+type IdentityStoreProvisionerDescriptorsData struct {
+	Items *[]*IdentityStoreProvisionerDescriptorData `tfsdk:"items"`
+}
+
+type IdentityStoreProvisionerGroupAttributeContractData struct {
+	CoreAttributes     *[]*GroupAttributeData `tfsdk:"core_attributes"`
+	ExtendedAttributes *[]*GroupAttributeData `tfsdk:"extended_attributes"`
+	Inherited          types.Bool             `tfsdk:"inherited"`
+}
+
+type IdentityStoreProvisionersData struct {
+	Items *[]*IdentityStoreProvisionerData `tfsdk:"items"`
 }
 
 type IdpAdapterData struct {
@@ -1199,6 +1328,7 @@ type IdpBrowserSsoData struct {
 	EnabledProfiles                      []types.String                              `tfsdk:"enabled_profiles"`
 	IdpIdentityMapping                   types.String                                `tfsdk:"idp_identity_mapping"`
 	IncomingBindings                     []types.String                              `tfsdk:"incoming_bindings"`
+	JitProvisioning                      *JitProvisioningData                        `tfsdk:"jit_provisioning"`
 	MessageCustomizations                *[]*ProtocolMessageCustomizationData        `tfsdk:"message_customizations"`
 	OauthAuthenticationPolicyContractRef types.String                                `tfsdk:"oauth_authentication_policy_contract_ref"`
 	OidcProviderSettings                 *OIDCProviderSettingsData                   `tfsdk:"oidc_provider_settings"`
@@ -1234,6 +1364,7 @@ type IdpConnectionData struct {
 	Id                                     types.String                                `tfsdk:"id"`
 	IdpBrowserSso                          *IdpBrowserSsoData                          `tfsdk:"idp_browser_sso"`
 	IdpOAuthGrantAttributeMapping          *IdpOAuthGrantAttributeMappingData          `tfsdk:"idp_o_auth_grant_attribute_mapping"`
+	InboundProvisioning                    *IdpInboundProvisioningData                 `tfsdk:"inbound_provisioning"`
 	LicenseConnectionGroup                 types.String                                `tfsdk:"license_connection_group"`
 	LoggingMode                            types.String                                `tfsdk:"logging_mode"`
 	MetadataReloadSettings                 *ConnectionMetadataUrlData                  `tfsdk:"metadata_reload_settings"`
@@ -1252,6 +1383,25 @@ type IdpDefaultUrlData struct {
 	ConfirmIdpSlo    types.Bool   `tfsdk:"confirm_idp_slo"`
 	IdpErrorMsg      types.String `tfsdk:"idp_error_msg"`
 	IdpSloSuccessUrl types.String `tfsdk:"idp_slo_success_url"`
+}
+
+type IdpInboundProvisioningData struct {
+	ActionOnDelete types.String                           `tfsdk:"action_on_delete"`
+	CustomSchema   *SchemaData                            `tfsdk:"custom_schema"`
+	GroupSupport   types.Bool                             `tfsdk:"group_support"`
+	Groups         *GroupsData                            `tfsdk:"groups"`
+	UserRepository *InboundProvisioningUserRepositoryData `tfsdk:"user_repository"`
+	Users          *UsersData                             `tfsdk:"users"`
+}
+
+type IdpInboundProvisioningAttributeData struct {
+	Masked types.Bool   `tfsdk:"masked"`
+	Name   types.String `tfsdk:"name"`
+}
+
+type IdpInboundProvisioningAttributeContractData struct {
+	CoreAttributes     *[]*IdpInboundProvisioningAttributeData `tfsdk:"core_attributes"`
+	ExtendedAttributes *[]*IdpInboundProvisioningAttributeData `tfsdk:"extended_attributes"`
 }
 
 type IdpOAuthAttributeContractData struct {
@@ -1334,6 +1484,10 @@ type InboundBackChannelAuthData struct {
 	VerificationSubjectDN types.String                     `tfsdk:"verification_subject_dn"`
 }
 
+type InboundProvisioningUserRepositoryData struct {
+	Type types.String `tfsdk:"type"`
+}
+
 type IncomingProxySettingsData struct {
 	ClientCertChainSSLHeaderName  types.String `tfsdk:"client_cert_chain_ssl_header_name"`
 	ClientCertSSLHeaderName       types.String `tfsdk:"client_cert_ssl_header_name"`
@@ -1355,6 +1509,16 @@ type IssuerData struct {
 	Id          types.String `tfsdk:"id"`
 	Name        types.String `tfsdk:"name"`
 	Path        types.String `tfsdk:"path"`
+}
+
+type IssuerCertData struct {
+	Active   types.Bool    `tfsdk:"active"`
+	CertView *CertViewData `tfsdk:"cert_view"`
+	X509File *X509FileData `tfsdk:"x509file"`
+}
+
+type IssuerCertsData struct {
+	Items *[]*IssuerCertData `tfsdk:"items"`
 }
 
 type IssuersData struct {
@@ -1391,10 +1555,29 @@ type JdbcDataStoreData struct {
 	ValidateConnectionSql     types.String          `tfsdk:"validate_connection_sql"`
 }
 
+type JdbcDataStoreRepositoryData struct {
+	DataStoreRef                  types.String                              `tfsdk:"data_store_ref"`
+	JitRepositoryAttributeMapping map[string]*AttributeFulfillmentValueData `tfsdk:"jit_repository_attribute_mapping"`
+	SqlMethod                     *SqlMethodData                            `tfsdk:"sql_method"`
+	Type                          types.String                              `tfsdk:"type"`
+}
+
 type JdbcTagConfigData struct {
 	ConnectionUrl types.String `tfsdk:"connection_url"`
 	DefaultSource types.Bool   `tfsdk:"default_source"`
 	Tags          types.String `tfsdk:"tags"`
+}
+
+type JitProvisioningData struct {
+	ErrorHandling  types.String                       `tfsdk:"error_handling"`
+	EventTrigger   types.String                       `tfsdk:"event_trigger"`
+	UserAttributes *JitProvisioningUserAttributesData `tfsdk:"user_attributes"`
+	UserRepository *DataStoreRepositoryData           `tfsdk:"user_repository"`
+}
+
+type JitProvisioningUserAttributesData struct {
+	AttributeContract *[]*IdpBrowserSsoAttributeData `tfsdk:"attribute_contract"`
+	DoAttributeQuery  types.Bool                     `tfsdk:"do_attribute_query"`
 }
 
 type JwksSettingsData struct {
@@ -1408,6 +1591,7 @@ type KerberosKeySetData struct {
 }
 
 type KerberosRealmData struct {
+	ConnectionType                     types.String           `tfsdk:"connection_type"`
 	Id                                 types.String           `tfsdk:"id"`
 	KerberosEncryptedPassword          types.String           `tfsdk:"kerberos_encrypted_password"`
 	KerberosPassword                   types.String           `tfsdk:"kerberos_password"`
@@ -1415,6 +1599,7 @@ type KerberosRealmData struct {
 	KerberosUsername                   types.String           `tfsdk:"kerberos_username"`
 	KeyDistributionCenters             []types.String         `tfsdk:"key_distribution_centers"`
 	KeySets                            *[]*KerberosKeySetData `tfsdk:"key_sets"`
+	LdapGatewayDataStoreRef            types.String           `tfsdk:"ldap_gateway_data_store_ref"`
 	RetainPreviousKeysOnPasswordChange types.Bool             `tfsdk:"retain_previous_keys_on_password_change"`
 	SuppressDomainNameConcatenation    types.Bool             `tfsdk:"suppress_domain_name_concatenation"`
 }
@@ -1549,6 +1734,22 @@ type LdapDataStoreConfigData struct {
 	Type                   types.String                       `tfsdk:"type"`
 }
 
+type LdapDataStoreRepositoryData struct {
+	BaseDn                        types.String                              `tfsdk:"base_dn"`
+	DataStoreRef                  types.String                              `tfsdk:"data_store_ref"`
+	JitRepositoryAttributeMapping map[string]*AttributeFulfillmentValueData `tfsdk:"jit_repository_attribute_mapping"`
+	Type                          types.String                              `tfsdk:"type"`
+	UniqueUserIdFilter            types.String                              `tfsdk:"unique_user_id_filter"`
+}
+
+type LdapInboundProvisioningUserRepositoryData struct {
+	BaseDn              types.String `tfsdk:"base_dn"`
+	DataStoreRef        types.String `tfsdk:"data_store_ref"`
+	Type                types.String `tfsdk:"type"`
+	UniqueGroupIdFilter types.String `tfsdk:"unique_group_id_filter"`
+	UniqueUserIdFilter  types.String `tfsdk:"unique_user_id_filter"`
+}
+
 type LdapTagConfigData struct {
 	DefaultSource types.Bool     `tfsdk:"default_source"`
 	Hostnames     []types.String `tfsdk:"hostnames"`
@@ -1670,6 +1871,11 @@ type MetadataUrlData struct {
 
 type MetadataUrlsData struct {
 	Items *[]*MetadataUrlData `tfsdk:"items"`
+}
+
+type MoveItemRequestData struct {
+	Location types.String `tfsdk:"location"`
+	MoveToId types.String `tfsdk:"move_to_id"`
 }
 
 type NewKeyPairSettingsData struct {
@@ -1912,9 +2118,6 @@ type PasswordCredentialValidatorsData struct {
 	Items *[]*PasswordCredentialValidatorData `tfsdk:"items"`
 }
 
-type PatternData struct {
-}
-
 type PersistentGrantAttributeData struct {
 	Name types.String `tfsdk:"name"`
 }
@@ -1992,6 +2195,13 @@ type PingOneLdapGatewayDataStoreData struct {
 	UseSsl               types.Bool     `tfsdk:"use_ssl"`
 }
 
+type PluginConfigDescriptorData struct {
+	ActionDescriptors *[]*ActionDescriptorData `tfsdk:"action_descriptors"`
+	Description       types.String             `tfsdk:"description"`
+	Fields            *[]*FieldDescriptorData  `tfsdk:"fields"`
+	Tables            *[]*TableDescriptorData  `tfsdk:"tables"`
+}
+
 type PluginConfigurationData struct {
 	Fields *[]*ConfigFieldData `tfsdk:"fields"`
 	Tables *[]*ConfigTableData `tfsdk:"tables"`
@@ -2039,6 +2249,18 @@ type ProtocolMessageCustomizationData struct {
 type ProxySettingsData struct {
 	Host types.String `tfsdk:"host"`
 	Port types.Number `tfsdk:"port"`
+}
+
+type ReadGroupsData struct {
+	AttributeContract    *IdpInboundProvisioningAttributeContractData `tfsdk:"attribute_contract"`
+	AttributeFulfillment map[string]*AttributeFulfillmentValueData    `tfsdk:"attribute_fulfillment"`
+	Attributes           *[]*AttributeData                            `tfsdk:"attributes"`
+}
+
+type ReadUsersData struct {
+	AttributeContract    *IdpInboundProvisioningAttributeContractData `tfsdk:"attribute_contract"`
+	AttributeFulfillment map[string]*AttributeFulfillmentValueData    `tfsdk:"attribute_fulfillment"`
+	Attributes           *[]*AttributeData                            `tfsdk:"attributes"`
 }
 
 type RedirectValidationLocalSettingsData struct {
@@ -2179,7 +2401,7 @@ type SaasPluginFieldInfoDescriptorData struct {
 	MultiValue           types.Bool                    `tfsdk:"multi_value"`
 	Notes                []types.String                `tfsdk:"notes"`
 	Options              *[]*SaasPluginFieldOptionData `tfsdk:"options"`
-	Pattern              *PatternData                  `tfsdk:"pattern"`
+	Pattern              types.String                  `tfsdk:"pattern"`
 	PersistForMembership types.Bool                    `tfsdk:"persist_for_membership"`
 	Required             types.Bool                    `tfsdk:"required"`
 	Unique               types.Bool                    `tfsdk:"unique"`
@@ -2212,6 +2434,12 @@ type ScopeGroupEntryData struct {
 	Description types.String   `tfsdk:"description"`
 	Name        types.String   `tfsdk:"name"`
 	Scopes      []types.String `tfsdk:"scopes"`
+}
+
+type SecondarySecretData struct {
+	EncryptedSecret types.String `tfsdk:"encrypted_secret"`
+	ExpiryTime      types.String `tfsdk:"expiry_time"`
+	Secret          types.String `tfsdk:"secret"`
 }
 
 type SecretManagerData struct {
@@ -2288,10 +2516,11 @@ type SigningKeysData struct {
 }
 
 type SigningSettingsData struct {
-	Algorithm                types.String `tfsdk:"algorithm"`
-	IncludeCertInSignature   types.Bool   `tfsdk:"include_cert_in_signature"`
-	IncludeRawKeyInSignature types.Bool   `tfsdk:"include_raw_key_in_signature"`
-	SigningKeyPairRef        types.String `tfsdk:"signing_key_pair_ref"`
+	Algorithm                     types.String         `tfsdk:"algorithm"`
+	AlternativeSigningKeyPairRefs *[]*ResourceLinkData `tfsdk:"alternative_signing_key_pair_refs"`
+	IncludeCertInSignature        types.Bool           `tfsdk:"include_cert_in_signature"`
+	IncludeRawKeyInSignature      types.Bool           `tfsdk:"include_raw_key_in_signature"`
+	SigningKeyPairRef             types.String         `tfsdk:"signing_key_pair_ref"`
 }
 
 type SloServiceEndpointData struct {
@@ -2514,6 +2743,11 @@ type SpWsTrustAttributeContractData struct {
 	ExtendedAttributes *[]*SpWsTrustAttributeData `tfsdk:"extended_attributes"`
 }
 
+type SqlMethodData struct {
+	StoredProcedure *StoredProcedureData `tfsdk:"stored_procedure"`
+	Table           *TableData           `tfsdk:"table"`
+}
+
 type SslServerSettingsData struct {
 	ActiveAdminConsoleCerts  *[]*ResourceLinkData `tfsdk:"active_admin_console_certs"`
 	ActiveRuntimeServerCerts *[]*ResourceLinkData `tfsdk:"active_runtime_server_certs"`
@@ -2527,6 +2761,11 @@ type SsoOAuthMappingData struct {
 	LdapAttributeSources         []LdapAttributeSourceData                 `tfsdk:"ldap_attribute_sources"`
 	CustomAttributeSources       []CustomAttributeSourceData               `tfsdk:"custom_attribute_sources"`
 	IssuanceCriteria             *IssuanceCriteriaData                     `tfsdk:"issuance_criteria"`
+}
+
+type StoredProcedureData struct {
+	Schema          types.String `tfsdk:"schema"`
+	StoredProcedure types.String `tfsdk:"stored_procedure"`
 }
 
 type StsRequestParametersContractData struct {
@@ -2549,6 +2788,20 @@ type SystemKeysData struct {
 	Current  *SystemKeyData `tfsdk:"current"`
 	Pending  *SystemKeyData `tfsdk:"pending"`
 	Previous *SystemKeyData `tfsdk:"previous"`
+}
+
+type TableData struct {
+	Schema         types.String `tfsdk:"schema"`
+	TableName      types.String `tfsdk:"table_name"`
+	UniqueIdColumn types.String `tfsdk:"unique_id_column"`
+}
+
+type TableDescriptorData struct {
+	Columns           *[]*FieldDescriptorData `tfsdk:"columns"`
+	Description       types.String            `tfsdk:"description"`
+	Label             types.String            `tfsdk:"label"`
+	Name              types.String            `tfsdk:"name"`
+	RequireDefaultRow types.Bool              `tfsdk:"require_default_row"`
 }
 
 type TextLocalIdentityFieldData struct {
@@ -2702,6 +2955,11 @@ type UsernamePasswordCredentialsData struct {
 	Username          types.String `tfsdk:"username"`
 }
 
+type UsersData struct {
+	ReadUsers  *ReadUsersData  `tfsdk:"read_users"`
+	WriteUsers *WriteUsersData `tfsdk:"write_users"`
+}
+
 type ValidationErrorData struct {
 	DeveloperMessage types.String `tfsdk:"developer_message"`
 	ErrorId          types.String `tfsdk:"error_id"`
@@ -2715,6 +2973,24 @@ type VersionData struct {
 
 type VirtualHostNameSettingsData struct {
 	VirtualHostNames []types.String `tfsdk:"virtual_host_names"`
+}
+
+type WriteGroupsData struct {
+	AttributeFulfillment map[string]*AttributeFulfillmentValueData `tfsdk:"attribute_fulfillment"`
+}
+
+type WriteUsersData struct {
+	AttributeFulfillment map[string]*AttributeFulfillmentValueData `tfsdk:"attribute_fulfillment"`
+}
+
+type WsTrustStsSettingsData struct {
+	BasicAuthnEnabled      types.Bool                          `tfsdk:"basic_authn_enabled"`
+	ClientCertAuthnEnabled types.Bool                          `tfsdk:"client_cert_authn_enabled"`
+	IssuerCerts            *[]*ResourceLinkData                `tfsdk:"issuer_certs"`
+	RestrictByIssuerCert   types.Bool                          `tfsdk:"restrict_by_issuer_cert"`
+	RestrictBySubjectDn    types.Bool                          `tfsdk:"restrict_by_subject_dn"`
+	SubjectDns             []types.String                      `tfsdk:"subject_dns"`
+	Users                  *[]*UsernamePasswordCredentialsData `tfsdk:"users"`
 }
 
 type X509FileData struct {

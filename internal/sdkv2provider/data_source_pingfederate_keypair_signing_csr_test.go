@@ -15,9 +15,9 @@ func TestAccPingFederateKeyPairSigningCsrDataSource(t *testing.T) {
 	resourceName := "data.pingfederate_keypair_signing_csr.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateKeyPairSigningCsrDataSourceDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateKeyPairSigningCsrDataSourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateKeyPairSigningCsrDataSourceConfig(),
@@ -41,9 +41,9 @@ func TestAccPingFederateKeyPairSigningCsrDataSource(t *testing.T) {
 
 func TestAccPingFederateKeyPairSigningCsrDataSource_NotFound(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateKeyPairSigningCsrDataSourceDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateKeyPairSigningCsrDataSourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccPingFederateKeyPairSigningCsrDataSourceConfigNonExistent(),

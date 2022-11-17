@@ -40,9 +40,9 @@ func init() {
 func TestAccPingFederateIdpSpConnection(t *testing.T) {
 	resourceName := "pingfederate_idp_sp_connection.demo"
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateIdpSpConnectionDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateIdpSpConnectionDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateIdpSpConnectionConfig("foo"),
@@ -98,9 +98,9 @@ func TestAccPingFederateIdpSpConnection(t *testing.T) {
 func TestAccPingFederateIdpSpConnectionIssue159(t *testing.T) {
 	resourceName := "pingfederate_idp_sp_connection.demo"
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateIdpSpConnectionDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateIdpSpConnectionDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateIdpSpConnectionConfigIssue158("foo"),

@@ -155,7 +155,7 @@ func Test_resourcePingFederateRedirectValidationSettingsResourceReadData(t *test
 	}
 	for i, tc := range cases {
 		t.Run(fmt.Sprintf("tc:%v", i), func(t *testing.T) {
-			res := &pingfederateRedirectValidationSettingsType{}
+			res := &pingfederateRedirectValidationSettingsResource{}
 			ctx := context.Background()
 			resourceSchema, diags := res.GetSchema(ctx)
 			require.False(t, diags.HasError())

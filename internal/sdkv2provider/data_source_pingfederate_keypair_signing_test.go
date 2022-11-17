@@ -11,9 +11,9 @@ func TestAccPingFederateKeyPairSigningDataSource(t *testing.T) {
 	resourceName := "data.pingfederate_keypair_signing.test"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateKeyPairSigningDataSourceDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateKeyPairSigningDataSourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateKeyPairSigningDataSourceConfig(),

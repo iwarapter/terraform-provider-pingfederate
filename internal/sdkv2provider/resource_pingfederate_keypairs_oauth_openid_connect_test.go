@@ -17,8 +17,8 @@ import (
 func TestAccPingFederateKeypairsOauthOpenIdConnectResource(t *testing.T) {
 	resourceName := "pingfederate_keypairs_oauth_openid_connect.settings"
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateKeypairsOauthOpenIdConnectResourceDestroy,
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateKeypairsOauthOpenIdConnectResourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateKeypairsOauthOpenIdConnectResourceConfig("true"),

@@ -12,9 +12,9 @@ func TestAccPingFederateLdapDataStoreDataSource(t *testing.T) {
 
 	resourceName := "data.pingfederate_ldap_data_store.test"
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateLdapDataStoreDataSourceDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateLdapDataStoreDataSourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateLdapDataStoreDataSourceConfig(),
@@ -35,9 +35,9 @@ func TestAccPingFederateLdapDataStoreDataSource(t *testing.T) {
 
 func TestAccPingFederateLdapDataStoreDataSource_NotFound(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateLdapDataStoreDataSourceDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateLdapDataStoreDataSourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccPingFederateLdapDataStoreDataSourceConfigNonExistent(),

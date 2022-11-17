@@ -6,38 +6,51 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
-	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/iwarapter/pingfederate-sdk-go/services/redirectValidation"
 )
 
-type pingfederateRedirectValidationSettingsType struct{}
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ resource.Resource                = &pingfederateRedirectValidationSettingsResource{}
+	_ resource.ResourceWithConfigure   = &pingfederateRedirectValidationSettingsResource{}
+	_ resource.ResourceWithImportState = &pingfederateRedirectValidationSettingsResource{}
+)
 
-func (p pingfederateRedirectValidationSettingsType) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics) {
+type pingfederateRedirectValidationSettingsResource struct {
+	client *pfClient
+}
+
+func NewRedirectValidationResource() resource.Resource {
+	return &pingfederateRedirectValidationSettingsResource{}
+}
+
+func (r *pingfederateRedirectValidationSettingsResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return resourceRedirectValidationSettings(), nil
 }
 
-func (p pingfederateRedirectValidationSettingsType) NewResource(_ context.Context, in provider.Provider) (resource.Resource, diag.Diagnostics) {
-	pf, diags := convertProviderType(in)
+// Configure adds the client configured client to the resource.
+func (r *pingfederateRedirectValidationSettingsResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
 
-	return pingfederateRedirectValidationResource{
-		provider: pf,
-	}, diags
+	r.client = req.ProviderData.(*pfClient)
 }
 
-type pingfederateRedirectValidationResource struct {
-	provider pfprovider
+// Metadata returns the resource type name.
+func (r *pingfederateRedirectValidationSettingsResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_redirect_validation_settings"
 }
-
-func (r pingfederateRedirectValidationResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+func (r *pingfederateRedirectValidationSettingsResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data RedirectValidationSettingsData
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	body, _, err := r.provider.client.RedirectValidation.UpdateRedirectValidationSettingsWithContext(ctx, &redirectValidation.UpdateRedirectValidationSettingsInput{
+	body, _, err := r.client.RedirectValidation.UpdateRedirectValidationSettingsWithContext(ctx, &redirectValidation.UpdateRedirectValidationSettingsInput{
 		Body: *expandRedirectValidationSettings(data),
 	})
 	if err != nil {
@@ -47,7 +60,7 @@ func (r pingfederateRedirectValidationResource) Create(ctx context.Context, req 
 	resp.Diagnostics.Append(resp.State.Set(ctx, *flattenRedirectValidationSettings(body))...)
 }
 
-func (r pingfederateRedirectValidationResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+func (r *pingfederateRedirectValidationSettingsResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data RedirectValidationSettingsData
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -55,7 +68,7 @@ func (r pingfederateRedirectValidationResource) Read(ctx context.Context, req re
 		return
 	}
 
-	body, _, err := r.provider.client.RedirectValidation.GetRedirectValidationSettingsWithContext(ctx)
+	body, _, err := r.client.RedirectValidation.GetRedirectValidationSettingsWithContext(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to get RedirectValidation, got error: %s", err))
 		return
@@ -63,7 +76,7 @@ func (r pingfederateRedirectValidationResource) Read(ctx context.Context, req re
 	resp.Diagnostics.Append(resp.State.Set(ctx, *flattenRedirectValidationSettings(body))...)
 }
 
-func (r pingfederateRedirectValidationResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+func (r *pingfederateRedirectValidationSettingsResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data RedirectValidationSettingsData
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -71,7 +84,7 @@ func (r pingfederateRedirectValidationResource) Update(ctx context.Context, req 
 		return
 	}
 
-	body, _, err := r.provider.client.RedirectValidation.UpdateRedirectValidationSettingsWithContext(ctx, &redirectValidation.UpdateRedirectValidationSettingsInput{
+	body, _, err := r.client.RedirectValidation.UpdateRedirectValidationSettingsWithContext(ctx, &redirectValidation.UpdateRedirectValidationSettingsInput{
 		Body: *expandRedirectValidationSettings(data),
 	})
 	if err != nil {
@@ -81,10 +94,10 @@ func (r pingfederateRedirectValidationResource) Update(ctx context.Context, req 
 	resp.Diagnostics.Append(resp.State.Set(ctx, *flattenRedirectValidationSettings(body))...)
 }
 
-func (r pingfederateRedirectValidationResource) Delete(ctx context.Context, _ resource.DeleteRequest, resp *resource.DeleteResponse) {
+func (r *pingfederateRedirectValidationSettingsResource) Delete(ctx context.Context, _ resource.DeleteRequest, resp *resource.DeleteResponse) {
 	resp.State.RemoveResource(ctx)
 }
 
-func (r pingfederateRedirectValidationResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (r *pingfederateRedirectValidationSettingsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

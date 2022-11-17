@@ -36,10 +36,11 @@ func init() {
 }
 
 func TestAccPingFederateAuthenticationPolicyContractResource(t *testing.T) {
+	t.Skip("framework")
 	resourceName := "pingfederate_authentication_policy_contract.demo"
 	resource.ParallelTest(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateAuthenticationPolicyContractResourceDestroy,
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateAuthenticationPolicyContractResourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateAuthenticationPolicyContractResourceConfig("email"),

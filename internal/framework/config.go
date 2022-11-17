@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"os"
 	"regexp"
+	"strconv"
 	"syscall"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -89,6 +90,7 @@ type pfConfig struct {
 
 type pfClient struct {
 	apiVersion                                string
+	major, minor                              int
 	BypassExternalValidation                  bool
 	AdministrativeAccounts                    administrativeAccounts.AdministrativeAccountsAPI
 	AuthenticationApi                         authenticationApi.AuthenticationApiAPI
@@ -252,8 +254,31 @@ func (c *pfConfig) Client() (*pfClient, diag.Diagnostics) {
 	}
 
 	client.apiVersion = *v.Version
+	client.major, client.minor, err = parseVersion(*v.Version)
+	if err != nil {
+		diags = append(diags, diag.NewErrorDiagnostic("Connection Error", fmt.Sprintf("Unable to determine PingFederate version: %s", err)))
+		return nil, diags
+	}
 
 	return client, nil
+}
+
+func parseVersion(version string) (int, int, error) {
+	re := regexp.MustCompile(`^(\d+)\.(\d+)`)
+	parts := re.FindStringSubmatch(version)
+	if len(parts) != 3 {
+		return 0, 0, fmt.Errorf("unexpected number of parts, got: %d want: 2, value: %v", len(parts), parts)
+	}
+	major, err := strconv.Atoi(parts[1])
+	if err != nil {
+		return 0, 0, fmt.Errorf("unable to parse version major componenent: '%s'", parts[1])
+	}
+	minor, err := strconv.Atoi(parts[2])
+	if err != nil {
+		return 0, 0, fmt.Errorf("unable to parse version minor componenent: '%s'", parts[2])
+	}
+
+	return major, minor, nil
 }
 
 // Returns PingFederate version
@@ -261,22 +286,31 @@ func (c pfClient) PfVersion() string {
 	return c.apiVersion
 }
 
-// Checks whether we are running against PingFederate 10.x
-func (c pfClient) IsPF10() bool {
-	re := regexp.MustCompile(`^(10|11|12)\.[0-9]`)
-	return re.MatchString(c.apiVersion)
+// IsVersion Checks whether we are running against PingFederate a version greater than specified
+func (c pfClient) IsVersion(major, minor int) bool {
+	return c.major == major && c.minor == minor
 }
 
-// Checks whether we are running against PingFederate 10.1+
-func (c pfClient) IsPF10_1orGreater() bool {
-	re := regexp.MustCompile(`^(10\.0)`)
-	return c.IsPF10() && !re.MatchString(c.apiVersion)
+// IsVersionLessEqThan Checks whether we are running against PingFederate a version less or equal than specified
+func (c pfClient) IsVersionLessEqThan(major, minor int) bool {
+	if c.major <= major {
+		if c.major == major && minor < c.minor {
+			return false
+		}
+		return true
+	}
+	return false
 }
 
-// Checks whether we are running against PingFederate 10.2+
-func (c pfClient) IsPF10_2orGreater() bool {
-	re := regexp.MustCompile(`^(10\.[0-1])`)
-	return c.IsPF10() && !re.MatchString(c.apiVersion)
+// IsVersionGreaterEqThan Checks whether we are running against PingFederate a version greater or equal than specified
+func (c pfClient) IsVersionGreaterEqThan(major, minor int) bool {
+	if c.major >= major {
+		if c.major == major && minor > c.minor {
+			return false
+		}
+		return true
+	}
+	return false
 }
 
 func checkErr(err error) string {

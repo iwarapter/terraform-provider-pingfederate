@@ -49,20 +49,27 @@ func BlockValidate(ctx context.Context, b fwschema.Block, req tfsdk.ValidateAttr
 	nm := b.GetNestingMode()
 	switch nm {
 	case fwschema.BlockNestingModeList:
-		l, ok := req.AttributeConfig.(types.List)
+		listVal, ok := req.AttributeConfig.(types.ListValuable)
 
 		if !ok {
-			err := fmt.Errorf("unknown block value type (%s) for nesting mode (%T) at path: %s", req.AttributeConfig.Type(ctx), nm, req.AttributePath)
+			err := fmt.Errorf("unknown block value type (%T) for nesting mode (%T) at path: %s", req.AttributeConfig, nm, req.AttributePath)
 			resp.Diagnostics.AddAttributeError(
 				req.AttributePath,
-				"Block Validation Error",
-				"Block validation cannot walk schema. Report this to the provider developer:\n\n"+err.Error(),
+				"Block Validation Error Invalid Value Type",
+				"A type that implements types.ListValuable is expected here. Report this to the provider developer:\n\n"+err.Error(),
 			)
 
 			return
 		}
 
-		for idx := range l.Elems {
+		l, diags := listVal.ToListValue(ctx)
+
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		for idx := range l.Elements() {
 			for name, attr := range b.GetAttributes() {
 				nestedAttrReq := tfsdk.ValidateAttributeRequest{
 					AttributePath:           req.AttributePath.AtListIndex(idx).AtName(name),
@@ -100,8 +107,8 @@ func BlockValidate(ctx context.Context, b fwschema.Block, req tfsdk.ValidateAttr
 		// Terraform 0.15.2 and later implements MaxItems validation during
 		// configuration decoding, so if this framework drops Terraform support
 		// for earlier versions, this validation can be removed.
-		if b.GetMaxItems() > 0 && int64(len(l.Elems)) > b.GetMaxItems() {
-			resp.Diagnostics.Append(blockMaxItemsDiagnostic(req.AttributePath, b.GetMaxItems(), len(l.Elems)))
+		if b.GetMaxItems() > 0 && int64(len(l.Elements())) > b.GetMaxItems() {
+			resp.Diagnostics.Append(blockMaxItemsDiagnostic(req.AttributePath, b.GetMaxItems(), len(l.Elements())))
 		}
 
 		// Terraform 0.12 through 0.15.1 implement conservative block MinItems
@@ -113,24 +120,31 @@ func BlockValidate(ctx context.Context, b fwschema.Block, req tfsdk.ValidateAttr
 		// Terraform 0.15.2 and later implements proper MinItems validation
 		// during configuration decoding, so if this framework drops Terraform
 		// support for earlier versions, this validation can be removed.
-		if b.GetMinItems() > 0 && int64(len(l.Elems)) < b.GetMinItems() && !l.IsUnknown() {
-			resp.Diagnostics.Append(blockMinItemsDiagnostic(req.AttributePath, b.GetMinItems(), len(l.Elems)))
+		if b.GetMinItems() > 0 && int64(len(l.Elements())) < b.GetMinItems() && !l.IsUnknown() {
+			resp.Diagnostics.Append(blockMinItemsDiagnostic(req.AttributePath, b.GetMinItems(), len(l.Elements())))
 		}
 	case fwschema.BlockNestingModeSet:
-		s, ok := req.AttributeConfig.(types.Set)
+		setVal, ok := req.AttributeConfig.(types.SetValuable)
 
 		if !ok {
-			err := fmt.Errorf("unknown block value type (%s) for nesting mode (%T) at path: %s", req.AttributeConfig.Type(ctx), nm, req.AttributePath)
+			err := fmt.Errorf("unknown block value type (%T) for nesting mode (%T) at path: %s", req.AttributeConfig, nm, req.AttributePath)
 			resp.Diagnostics.AddAttributeError(
 				req.AttributePath,
-				"Block Validation Error",
-				"Block validation cannot walk schema. Report this to the provider developer:\n\n"+err.Error(),
+				"Block Validation Error Invalid Value Type",
+				"A type that implements types.SetValuable is expected here. Report this to the provider developer:\n\n"+err.Error(),
 			)
 
 			return
 		}
 
-		for _, value := range s.Elems {
+		s, diags := setVal.ToSetValue(ctx)
+
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		for _, value := range s.Elements() {
 			for name, attr := range b.GetAttributes() {
 				nestedAttrReq := tfsdk.ValidateAttributeRequest{
 					AttributePath:           req.AttributePath.AtSetValue(value).AtName(name),
@@ -168,8 +182,8 @@ func BlockValidate(ctx context.Context, b fwschema.Block, req tfsdk.ValidateAttr
 		// Terraform 0.15.2 and later implements MaxItems validation during
 		// configuration decoding, so if this framework drops Terraform support
 		// for earlier versions, this validation can be removed.
-		if b.GetMaxItems() > 0 && int64(len(s.Elems)) > b.GetMaxItems() {
-			resp.Diagnostics.Append(blockMaxItemsDiagnostic(req.AttributePath, b.GetMaxItems(), len(s.Elems)))
+		if b.GetMaxItems() > 0 && int64(len(s.Elements())) > b.GetMaxItems() {
+			resp.Diagnostics.Append(blockMaxItemsDiagnostic(req.AttributePath, b.GetMaxItems(), len(s.Elements())))
 		}
 
 		// Terraform 0.12 through 0.15.1 implement conservative block MinItems
@@ -181,8 +195,62 @@ func BlockValidate(ctx context.Context, b fwschema.Block, req tfsdk.ValidateAttr
 		// Terraform 0.15.2 and later implements proper MinItems validation
 		// during configuration decoding, so if this framework drops Terraform
 		// support for earlier versions, this validation can be removed.
-		if b.GetMinItems() > 0 && int64(len(s.Elems)) < b.GetMinItems() && !s.IsUnknown() {
-			resp.Diagnostics.Append(blockMinItemsDiagnostic(req.AttributePath, b.GetMinItems(), len(s.Elems)))
+		if b.GetMinItems() > 0 && int64(len(s.Elements())) < b.GetMinItems() && !s.IsUnknown() {
+			resp.Diagnostics.Append(blockMinItemsDiagnostic(req.AttributePath, b.GetMinItems(), len(s.Elements())))
+		}
+	case fwschema.BlockNestingModeSingle:
+		objectVal, ok := req.AttributeConfig.(types.ObjectValuable)
+
+		if !ok {
+			err := fmt.Errorf("unknown block value type (%T) for nesting mode (%T) at path: %s", req.AttributeConfig, nm, req.AttributePath)
+			resp.Diagnostics.AddAttributeError(
+				req.AttributePath,
+				"Block Validation Error Invalid Value Type",
+				"A type that implements types.ObjectValuable is expected here. Report this to the provider developer:\n\n"+err.Error(),
+			)
+
+			return
+		}
+
+		o, diags := objectVal.ToObjectValue(ctx)
+
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		for name, attr := range b.GetAttributes() {
+			nestedAttrReq := tfsdk.ValidateAttributeRequest{
+				AttributePath:           req.AttributePath.AtName(name),
+				AttributePathExpression: req.AttributePathExpression.AtName(name),
+				Config:                  req.Config,
+			}
+			nestedAttrResp := &tfsdk.ValidateAttributeResponse{
+				Diagnostics: resp.Diagnostics,
+			}
+
+			AttributeValidate(ctx, attr, nestedAttrReq, nestedAttrResp)
+
+			resp.Diagnostics = nestedAttrResp.Diagnostics
+		}
+
+		for name, block := range b.GetBlocks() {
+			nestedAttrReq := tfsdk.ValidateAttributeRequest{
+				AttributePath:           req.AttributePath.AtName(name),
+				AttributePathExpression: req.AttributePathExpression.AtName(name),
+				Config:                  req.Config,
+			}
+			nestedAttrResp := &tfsdk.ValidateAttributeResponse{
+				Diagnostics: resp.Diagnostics,
+			}
+
+			BlockValidate(ctx, block, nestedAttrReq, nestedAttrResp)
+
+			resp.Diagnostics = nestedAttrResp.Diagnostics
+		}
+
+		if b.GetMinItems() == 1 && o.IsNull() {
+			resp.Diagnostics.Append(blockMinItemsDiagnostic(req.AttributePath, b.GetMinItems(), 0))
 		}
 	default:
 		err := fmt.Errorf("unknown block validation nesting mode (%T: %v) at path: %s", nm, nm, req.AttributePath)

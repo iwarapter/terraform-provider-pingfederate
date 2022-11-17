@@ -43,8 +43,8 @@ func init() {
 func TestAccPingFederateCustomDataStoreResource(t *testing.T) {
 	resourceName := "pingfederate_custom_data_store.demo"
 	resource.ParallelTest(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateCustomDataStoreResourceDestroy,
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateCustomDataStoreResourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateCustomDataStoreResourceConfig("https://example.foo"),

@@ -25,9 +25,9 @@ import (
 
 func TestAccPingFederateKeyPairSslServerCsr(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateKeyPairSslServerCsrDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateKeyPairSslServerCsrDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateKeyPairSslServerCsrConfigGenerateWithCSR(generateSslKeyAndCsrResponse(t)),

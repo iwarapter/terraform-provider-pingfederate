@@ -8,6 +8,8 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/stretchr/testify/assert"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -70,11 +72,41 @@ func TestConfig_Client(t *testing.T) {
 	}
 }
 
-func TestIsPF10(t *testing.T) {
+func TestIsVersion(t *testing.T) {
 	cli := pfClient{}
 	tests := []struct {
-		version string
-		expect  bool
+		version  string
+		expected bool
+	}{
+		{"10.0", false},
+		{"10.1", true},
+		{"10.2", false},
+		{"10.3", false},
+		{"11.0", false},
+		{"11.1", false},
+		{"11.2", false},
+		{"11.3", false},
+		{"12.0", false},
+		{"12.1", false},
+		{"12.2", false},
+		{"12.3", false},
+	}
+	for _, tt := range tests {
+		t.Run(fmt.Sprintf("we handle %s", tt.version), func(t *testing.T) {
+			cli.apiVersion = tt.version
+			var err error
+			cli.major, cli.minor, err = parseVersion(tt.version)
+			require.NoError(t, err)
+			assert.Equal(t, tt.expected, cli.IsVersion(10, 1))
+		})
+	}
+}
+
+func TestIsVersionLessThan(t *testing.T) {
+	cli := pfClient{}
+	tests := []struct {
+		version  string
+		expected bool
 	}{
 		{"10.0", true},
 		{"10.1", true},
@@ -82,59 +114,35 @@ func TestIsPF10(t *testing.T) {
 		{"10.3", true},
 		{"11.0", true},
 		{"11.1", true},
-		{"11.2", true},
-		{"11.3", true},
-		{"12.0", true},
-		{"12.1", true},
-		{"12.2", true},
-		{"12.3", true},
+		{"11.2", false},
+		{"11.3", false},
+		{"12.0", false},
+		{"12.1", false},
+		{"12.2", false},
+		{"12.3", false},
 	}
 	for _, tt := range tests {
 		t.Run(fmt.Sprintf("we handle %s", tt.version), func(t *testing.T) {
 			cli.apiVersion = tt.version
-			assert.Equal(t, tt.expect, cli.IsPF10())
+			var err error
+			cli.major, cli.minor, err = parseVersion(tt.version)
+			require.NoError(t, err)
+			assert.Equal(t, tt.expected, cli.IsVersionLessEqThan(11, 1))
 		})
 	}
 }
 
-func TestIsPF10_1orGreater(t *testing.T) {
+func TestIsVersionGreaterThan(t *testing.T) {
 	cli := pfClient{}
 	tests := []struct {
-		version string
-		expect  bool
-	}{
-		{"10.0", false},
-		{"10.1", true},
-		{"10.2", true},
-		{"10.3", true},
-		{"11.0", true},
-		{"11.1", true},
-		{"11.2", true},
-		{"11.3", true},
-		{"12.0", true},
-		{"12.1", true},
-		{"12.2", true},
-		{"12.3", true},
-	}
-	for _, tt := range tests {
-		t.Run(fmt.Sprintf("we handle %s", tt.version), func(t *testing.T) {
-			cli.apiVersion = tt.version
-			assert.Equal(t, tt.expect, cli.IsPF10_1orGreater())
-		})
-	}
-}
-
-func TestIsPF10_2orGreater(t *testing.T) {
-	cli := pfClient{}
-	tests := []struct {
-		version string
-		expect  bool
+		version  string
+		expected bool
 	}{
 		{"10.0", false},
 		{"10.1", false},
-		{"10.2", true},
-		{"10.3", true},
-		{"11.0", true},
+		{"10.2", false},
+		{"10.3", false},
+		{"11.0", false},
 		{"11.1", true},
 		{"11.2", true},
 		{"11.3", true},
@@ -146,7 +154,13 @@ func TestIsPF10_2orGreater(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(fmt.Sprintf("we handle %s", tt.version), func(t *testing.T) {
 			cli.apiVersion = tt.version
-			assert.Equal(t, tt.expect, cli.IsPF10_2orGreater())
+			var err error
+			cli.major, cli.minor, err = parseVersion(tt.version)
+			require.NoError(t, err)
+			assert.Equal(t, tt.expected, cli.IsVersionGreaterEqThan(11, 1))
 		})
 	}
 }
+
+//assert.Equal(t, tt.isVersionLessThan, cli.IsVersionLessThan(10, 1), "expect %d.%d to be less than 10.1", cli.major, cli.minor)
+//assert.Equal(t, tt.isVersionGreaterThan, cli.IsVersionGreaterThan(10, 1), "expect %d.%d to greater than 10.1", cli.major, cli.minor)

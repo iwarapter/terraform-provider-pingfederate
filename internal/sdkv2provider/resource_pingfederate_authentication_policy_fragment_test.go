@@ -42,8 +42,9 @@ func TestAccPingFederateAuthenticationPolicyFragmentResource(t *testing.T) {
 	}
 	resourceName := "pingfederate_authentication_policy_fragment.demo"
 	resource.ParallelTest(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateAuthenticationPolicyFragmentResourceDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateAuthenticationPolicyFragmentResourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateAuthenticationPolicyFragmentResourceConfig("example"),
@@ -75,8 +76,8 @@ func TestAccPingFederateAuthenticationPolicyFragmentResource(t *testing.T) {
 
 func TestAccPingFederateAuthenticationPolicyFragementResourceIssue213(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateAuthenticationPolicyFragmentResourceDestroy,
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateAuthenticationPolicyFragmentResourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: `

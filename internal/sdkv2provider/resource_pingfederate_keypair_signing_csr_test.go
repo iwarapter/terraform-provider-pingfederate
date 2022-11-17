@@ -25,9 +25,9 @@ import (
 
 func TestAccPingFederateKeyPairSigningCsr(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateKeyPairSigningCsrDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateKeyPairSigningCsrDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateKeyPairSigningCsrConfigGenerateWithCSR(generateAndSignCSR(t)),

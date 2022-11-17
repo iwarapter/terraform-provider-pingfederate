@@ -48,9 +48,9 @@ func init() {
 func TestAccPingFederateSpAuthenticationPolicyContractMapping(t *testing.T) {
 	resourceName := "pingfederate_sp_authentication_policy_contract_mapping.demo"
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateSpAuthenticationPolicyContractMappingDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateSpAuthenticationPolicyContractMappingDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateSpAuthenticationPolicyContractMappingConfig("foo"),

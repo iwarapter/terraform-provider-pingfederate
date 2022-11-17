@@ -32,7 +32,7 @@ func (v enumValidator) Validate(ctx context.Context, request tfsdk.ValidateAttri
 		return
 	}
 	for _, enum := range v.enums {
-		if request.AttributeConfig.Equal(types.String{Value: enum}) {
+		if request.AttributeConfig.Equal(types.StringValue(enum)) {
 			return
 		}
 	}

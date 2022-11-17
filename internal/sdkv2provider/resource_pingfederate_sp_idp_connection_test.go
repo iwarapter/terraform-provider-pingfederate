@@ -49,9 +49,9 @@ func TestAccPingFederateSpIdpConnection(t *testing.T) {
 	resourceName := "pingfederate_sp_idp_connection.demo"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateSpIdpConnectionDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateSpIdpConnectionDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateSpIdpConnectionConfig("https://foo"),

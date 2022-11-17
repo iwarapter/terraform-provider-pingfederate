@@ -16,8 +16,8 @@ import (
 func TestAccPingFederateCertificatesRevocationSettingsResource(t *testing.T) {
 	resourceName := "pingfederate_certificates_revocation_settings.demo"
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateCertificatesRevocationSettingsResourceDestroy,
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateCertificatesRevocationSettingsResourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateCertificatesRevocationSettingsResourceConfig(true),

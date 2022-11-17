@@ -45,8 +45,8 @@ func init() {
 func TestAccPingFederatePasswordCredentialValidatorResource(t *testing.T) {
 	resourceName := "pingfederate_password_credential_validator.demo"
 	resource.ParallelTest(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederatePasswordCredentialValidatorResourceDestroy,
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederatePasswordCredentialValidatorResourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederatePasswordCredentialValidatorResourceConfig("demo1"),

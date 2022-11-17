@@ -22,14 +22,14 @@ func flattenApcToPersistentGrantMapping(in *pf.ApcToPersistentGrantMapping) *Apc
 		result.CustomAttributeSources = append(result.CustomAttributeSources, flattenCustomAttributeSources(in.AttributeSources)...)
 	}
 	if in.AuthenticationPolicyContractRef != nil && in.AuthenticationPolicyContractRef.Id != nil && *in.AuthenticationPolicyContractRef.Id != "" {
-		result.AuthenticationPolicyContractRef = types.String{Value: *in.AuthenticationPolicyContractRef.Id}
+		result.AuthenticationPolicyContractRef = types.StringValue(*in.AuthenticationPolicyContractRef.Id)
 	} else {
-		result.AuthenticationPolicyContractRef = types.String{Null: true}
+		result.AuthenticationPolicyContractRef = types.StringNull()
 	}
 	if in.Id != nil {
-		result.Id = types.String{Value: *in.Id}
+		result.Id = types.StringValue(*in.Id)
 	} else {
-		result.Id = types.String{Null: true}
+		result.Id = types.StringNull()
 	}
 	if in.IssuanceCriteria != nil && issuanceCriteriaShouldFlatten(in.IssuanceCriteria) {
 		result.IssuanceCriteria = flattenIssuanceCriteria(in.IssuanceCriteria)
@@ -43,24 +43,24 @@ func flattenAuthenticationPolicyContract(in *pf.AuthenticationPolicyContract) *A
 	if in.CoreAttributes != nil {
 		attrs := []types.String{}
 		for _, attribute := range *in.CoreAttributes {
-			attrs = append(attrs, types.String{Value: *attribute.Name})
+			attrs = append(attrs, types.StringValue(*attribute.Name))
 		}
 		result.CoreAttributes = attrs
 	}
 	if in.ExtendedAttributes != nil {
 		attrs := []types.String{}
 		for _, attribute := range *in.ExtendedAttributes {
-			attrs = append(attrs, types.String{Value: *attribute.Name})
+			attrs = append(attrs, types.StringValue(*attribute.Name))
 		}
 		result.ExtendedAttributes = attrs
 	}
 	if in.Id != nil {
-		result.Id = types.String{Value: *in.Id}
+		result.Id = types.StringValue(*in.Id)
 	} else {
-		result.Id = types.String{Null: true}
+		result.Id = types.StringNull()
 	}
 	if in.Name != nil {
-		result.Name = types.String{Value: *in.Name}
+		result.Name = types.StringValue(*in.Name)
 	}
 
 	return &result
@@ -69,80 +69,95 @@ func flattenAuthenticationPolicyContract(in *pf.AuthenticationPolicyContract) *A
 func flattenClient(in *pf.Client) *ClientData {
 	result := ClientData{}
 	if in.AllowAuthenticationApiInit != nil {
-		result.AllowAuthenticationApiInit = types.Bool{Value: *in.AllowAuthenticationApiInit}
+		result.AllowAuthenticationApiInit = types.BoolValue(*in.AllowAuthenticationApiInit)
 	} else {
-		result.AllowAuthenticationApiInit = types.Bool{Null: true}
+		result.AllowAuthenticationApiInit = types.BoolNull()
 	}
 	if in.BypassActivationCodeConfirmationOverride != nil {
-		result.BypassActivationCodeConfirmationOverride = types.Bool{Value: *in.BypassActivationCodeConfirmationOverride}
+		result.BypassActivationCodeConfirmationOverride = types.BoolValue(*in.BypassActivationCodeConfirmationOverride)
 	} else {
-		result.BypassActivationCodeConfirmationOverride = types.Bool{Null: true}
+		result.BypassActivationCodeConfirmationOverride = types.BoolNull()
 	}
 	if in.BypassApprovalPage != nil {
-		result.BypassApprovalPage = types.Bool{Value: *in.BypassApprovalPage}
+		result.BypassApprovalPage = types.BoolValue(*in.BypassApprovalPage)
 	} else {
-		result.BypassApprovalPage = types.Bool{Null: true}
+		result.BypassApprovalPage = types.BoolNull()
 	}
 	if in.CibaDeliveryMode != nil {
-		result.CibaDeliveryMode = types.String{Value: *in.CibaDeliveryMode}
+		result.CibaDeliveryMode = types.StringValue(*in.CibaDeliveryMode)
 	} else {
-		result.CibaDeliveryMode = types.String{Null: true}
+		result.CibaDeliveryMode = types.StringNull()
 	}
 	if in.CibaNotificationEndpoint != nil {
-		result.CibaNotificationEndpoint = types.String{Value: *in.CibaNotificationEndpoint}
+		result.CibaNotificationEndpoint = types.StringValue(*in.CibaNotificationEndpoint)
 	} else {
-		result.CibaNotificationEndpoint = types.String{Null: true}
+		result.CibaNotificationEndpoint = types.StringNull()
 	}
 	if in.CibaPollingInterval != nil {
-		result.CibaPollingInterval = types.Number{Value: big.NewFloat(float64(*in.CibaPollingInterval))}
+		result.CibaPollingInterval = types.NumberValue(big.NewFloat(float64(*in.CibaPollingInterval)))
 	} else {
-		result.CibaPollingInterval = types.Number{Null: true}
+		result.CibaPollingInterval = types.NumberNull()
 	}
 	if in.CibaRequestObjectSigningAlgorithm != nil {
-		result.CibaRequestObjectSigningAlgorithm = types.String{Value: *in.CibaRequestObjectSigningAlgorithm}
+		result.CibaRequestObjectSigningAlgorithm = types.StringValue(*in.CibaRequestObjectSigningAlgorithm)
 	} else {
-		result.CibaRequestObjectSigningAlgorithm = types.String{Null: true}
+		result.CibaRequestObjectSigningAlgorithm = types.StringNull()
 	}
 	if in.CibaRequireSignedRequests != nil {
-		result.CibaRequireSignedRequests = types.Bool{Value: *in.CibaRequireSignedRequests}
+		result.CibaRequireSignedRequests = types.BoolValue(*in.CibaRequireSignedRequests)
 	} else {
-		result.CibaRequireSignedRequests = types.Bool{Null: true}
+		result.CibaRequireSignedRequests = types.BoolNull()
 	}
 	if in.CibaUserCodeSupported != nil {
-		result.CibaUserCodeSupported = types.Bool{Value: *in.CibaUserCodeSupported}
+		result.CibaUserCodeSupported = types.BoolValue(*in.CibaUserCodeSupported)
 	} else {
-		result.CibaUserCodeSupported = types.Bool{Null: true}
+		result.CibaUserCodeSupported = types.BoolNull()
 	}
 	if in.ClientAuth != nil && *in.ClientAuth.Type != "NONE" {
 		result.ClientAuth = flattenClientAuth(in.ClientAuth)
 	}
 	if in.ClientId != nil {
-		result.ClientId = types.String{Value: *in.ClientId}
+		result.ClientId = types.StringValue(*in.ClientId)
+	}
+	if in.ClientSecretChangedTime != nil {
+		result.ClientSecretChangedTime = types.StringValue(*in.ClientSecretChangedTime)
+	} else {
+		result.ClientSecretChangedTime = types.StringNull()
+	}
+	if in.ClientSecretRetentionPeriod != nil {
+		result.ClientSecretRetentionPeriod = types.NumberValue(big.NewFloat(float64(*in.ClientSecretRetentionPeriod)))
+	} else {
+		result.ClientSecretRetentionPeriod = types.NumberNull()
+	}
+	if in.ClientSecretRetentionPeriodType != nil {
+		result.ClientSecretRetentionPeriodType = types.StringValue(*in.ClientSecretRetentionPeriodType)
+	} else {
+		result.ClientSecretRetentionPeriodType = types.StringNull()
 	}
 	if in.DefaultAccessTokenManagerRef != nil && in.DefaultAccessTokenManagerRef.Id != nil && *in.DefaultAccessTokenManagerRef.Id != "" {
-		result.DefaultAccessTokenManagerRef = types.String{Value: *in.DefaultAccessTokenManagerRef.Id}
+		result.DefaultAccessTokenManagerRef = types.StringValue(*in.DefaultAccessTokenManagerRef.Id)
 	} else {
-		result.DefaultAccessTokenManagerRef = types.String{Null: true}
+		result.DefaultAccessTokenManagerRef = types.StringNull()
 	}
 	if in.Description != nil {
-		result.Description = types.String{Value: *in.Description}
+		result.Description = types.StringValue(*in.Description)
 	} else {
-		result.Description = types.String{Null: true}
+		result.Description = types.StringNull()
 	}
 	if in.DeviceFlowSettingType != nil {
-		result.DeviceFlowSettingType = types.String{Value: *in.DeviceFlowSettingType}
+		result.DeviceFlowSettingType = types.StringValue(*in.DeviceFlowSettingType)
 	} else {
-		result.DeviceFlowSettingType = types.String{Null: true}
+		result.DeviceFlowSettingType = types.StringNull()
 	}
 	if in.DevicePollingIntervalOverride != nil {
-		result.DevicePollingIntervalOverride = types.Number{Value: big.NewFloat(float64(*in.DevicePollingIntervalOverride))}
+		result.DevicePollingIntervalOverride = types.NumberValue(big.NewFloat(float64(*in.DevicePollingIntervalOverride)))
 	} else {
-		result.DevicePollingIntervalOverride = types.Number{Null: true}
+		result.DevicePollingIntervalOverride = types.NumberNull()
 	}
 	if in.Enabled != nil {
-		result.Enabled = types.Bool{Value: *in.Enabled}
+		result.Enabled = types.BoolValue(*in.Enabled)
 	} else {
-		result.Enabled = types.Bool{Null: true}
+		result.Enabled = types.BoolNull()
 	}
 	if in.ExclusiveScopes != nil {
 		result.ExclusiveScopes = flattenStringList(*in.ExclusiveScopes)
@@ -154,117 +169,147 @@ func flattenClient(in *pf.Client) *ClientData {
 		result.GrantTypes = flattenStringList(*in.GrantTypes)
 	}
 	if in.ClientId != nil {
-		result.Id = types.String{Value: *in.ClientId}
+		result.Id = types.StringValue(*in.ClientId)
 	}
 	if in.JwksSettings != nil {
 		result.JwksSettings = flattenJwksSettings(in.JwksSettings)
 	}
-	if in.LogoUrl != nil {
-		result.LogoUrl = types.String{Value: *in.LogoUrl}
+	if in.JwtSecuredAuthorizationResponseModeContentEncryptionAlgorithm != nil {
+		result.JwtSecuredAuthorizationResponseModeContentEncryptionAlgorithm = types.StringValue(*in.JwtSecuredAuthorizationResponseModeContentEncryptionAlgorithm)
 	} else {
-		result.LogoUrl = types.String{Null: true}
+		result.JwtSecuredAuthorizationResponseModeContentEncryptionAlgorithm = types.StringNull()
+	}
+	if in.JwtSecuredAuthorizationResponseModeEncryptionAlgorithm != nil {
+		result.JwtSecuredAuthorizationResponseModeEncryptionAlgorithm = types.StringValue(*in.JwtSecuredAuthorizationResponseModeEncryptionAlgorithm)
+	} else {
+		result.JwtSecuredAuthorizationResponseModeEncryptionAlgorithm = types.StringNull()
+	}
+	if in.JwtSecuredAuthorizationResponseModeSigningAlgorithm != nil {
+		result.JwtSecuredAuthorizationResponseModeSigningAlgorithm = types.StringValue(*in.JwtSecuredAuthorizationResponseModeSigningAlgorithm)
+	} else {
+		result.JwtSecuredAuthorizationResponseModeSigningAlgorithm = types.StringNull()
+	}
+	if in.LogoUrl != nil {
+		result.LogoUrl = types.StringValue(*in.LogoUrl)
+	} else {
+		result.LogoUrl = types.StringNull()
 	}
 	if in.Name != nil {
-		result.Name = types.String{Value: *in.Name}
+		result.Name = types.StringValue(*in.Name)
 	}
 	if in.OidcPolicy != nil {
 		result.OidcPolicy = flattenClientOIDCPolicy(in.OidcPolicy)
 	}
 	if in.PendingAuthorizationTimeoutOverride != nil {
-		result.PendingAuthorizationTimeoutOverride = types.Number{Value: big.NewFloat(float64(*in.PendingAuthorizationTimeoutOverride))}
+		result.PendingAuthorizationTimeoutOverride = types.NumberValue(big.NewFloat(float64(*in.PendingAuthorizationTimeoutOverride)))
 	} else {
-		result.PendingAuthorizationTimeoutOverride = types.Number{Null: true}
+		result.PendingAuthorizationTimeoutOverride = types.NumberNull()
 	}
 	if in.PersistentGrantExpirationTime != nil {
-		result.PersistentGrantExpirationTime = types.Number{Value: big.NewFloat(float64(*in.PersistentGrantExpirationTime))}
+		result.PersistentGrantExpirationTime = types.NumberValue(big.NewFloat(float64(*in.PersistentGrantExpirationTime)))
 	} else {
-		result.PersistentGrantExpirationTime = types.Number{Null: true}
+		result.PersistentGrantExpirationTime = types.NumberNull()
 	}
 	if in.PersistentGrantExpirationTimeUnit != nil {
-		result.PersistentGrantExpirationTimeUnit = types.String{Value: *in.PersistentGrantExpirationTimeUnit}
+		result.PersistentGrantExpirationTimeUnit = types.StringValue(*in.PersistentGrantExpirationTimeUnit)
 	} else {
-		result.PersistentGrantExpirationTimeUnit = types.String{Value: "DAYS"}
+		result.PersistentGrantExpirationTimeUnit = types.StringValue("DAYS")
 	}
 	if in.PersistentGrantExpirationType != nil {
-		result.PersistentGrantExpirationType = types.String{Value: *in.PersistentGrantExpirationType}
+		result.PersistentGrantExpirationType = types.StringValue(*in.PersistentGrantExpirationType)
 	} else {
-		result.PersistentGrantExpirationType = types.String{Null: true}
+		result.PersistentGrantExpirationType = types.StringNull()
 	}
 	if in.PersistentGrantIdleTimeout != nil {
-		result.PersistentGrantIdleTimeout = types.Number{Value: big.NewFloat(float64(*in.PersistentGrantIdleTimeout))}
+		result.PersistentGrantIdleTimeout = types.NumberValue(big.NewFloat(float64(*in.PersistentGrantIdleTimeout)))
 	} else {
-		result.PersistentGrantIdleTimeout = types.Number{Null: true}
+		result.PersistentGrantIdleTimeout = types.NumberNull()
 	}
 	if in.PersistentGrantIdleTimeoutTimeUnit != nil {
-		result.PersistentGrantIdleTimeoutTimeUnit = types.String{Value: *in.PersistentGrantIdleTimeoutTimeUnit}
+		result.PersistentGrantIdleTimeoutTimeUnit = types.StringValue(*in.PersistentGrantIdleTimeoutTimeUnit)
 	} else {
-		result.PersistentGrantIdleTimeoutTimeUnit = types.String{Null: true}
+		result.PersistentGrantIdleTimeoutTimeUnit = types.StringNull()
 	}
 	if in.PersistentGrantIdleTimeoutType != nil {
-		result.PersistentGrantIdleTimeoutType = types.String{Value: *in.PersistentGrantIdleTimeoutType}
+		result.PersistentGrantIdleTimeoutType = types.StringValue(*in.PersistentGrantIdleTimeoutType)
 	} else {
-		result.PersistentGrantIdleTimeoutType = types.String{Null: true}
+		result.PersistentGrantIdleTimeoutType = types.StringNull()
 	}
 	if in.PersistentGrantReuseGrantTypes != nil {
 		result.PersistentGrantReuseGrantTypes = flattenStringList(*in.PersistentGrantReuseGrantTypes)
 	}
 	if in.PersistentGrantReuseType != nil {
-		result.PersistentGrantReuseType = types.String{Value: *in.PersistentGrantReuseType}
+		result.PersistentGrantReuseType = types.StringValue(*in.PersistentGrantReuseType)
 	} else {
-		result.PersistentGrantReuseType = types.String{Null: true}
+		result.PersistentGrantReuseType = types.StringNull()
 	}
 	if in.RedirectUris != nil {
 		result.RedirectUris = flattenStringList(*in.RedirectUris)
 	}
 	if in.RefreshRolling != nil {
-		result.RefreshRolling = types.String{Value: *in.RefreshRolling}
+		result.RefreshRolling = types.StringValue(*in.RefreshRolling)
 	} else {
-		result.RefreshRolling = types.String{Null: true}
+		result.RefreshRolling = types.StringNull()
+	}
+	if in.RefreshTokenRollingGracePeriod != nil {
+		result.RefreshTokenRollingGracePeriod = types.NumberValue(big.NewFloat(float64(*in.RefreshTokenRollingGracePeriod)))
+	} else {
+		result.RefreshTokenRollingGracePeriod = types.NumberNull()
+	}
+	if in.RefreshTokenRollingGracePeriodType != nil {
+		result.RefreshTokenRollingGracePeriodType = types.StringValue(*in.RefreshTokenRollingGracePeriodType)
+	} else {
+		result.RefreshTokenRollingGracePeriodType = types.StringNull()
 	}
 	if in.RefreshTokenRollingInterval != nil {
-		result.RefreshTokenRollingInterval = types.Number{Value: big.NewFloat(float64(*in.RefreshTokenRollingInterval))}
+		result.RefreshTokenRollingInterval = types.NumberValue(big.NewFloat(float64(*in.RefreshTokenRollingInterval)))
 	} else {
-		result.RefreshTokenRollingInterval = types.Number{Null: true}
+		result.RefreshTokenRollingInterval = types.NumberNull()
 	}
 	if in.RefreshTokenRollingIntervalType != nil {
-		result.RefreshTokenRollingIntervalType = types.String{Value: *in.RefreshTokenRollingIntervalType}
+		result.RefreshTokenRollingIntervalType = types.StringValue(*in.RefreshTokenRollingIntervalType)
 	} else {
-		result.RefreshTokenRollingIntervalType = types.String{Null: true}
+		result.RefreshTokenRollingIntervalType = types.StringNull()
 	}
 	if in.RequestObjectSigningAlgorithm != nil {
-		result.RequestObjectSigningAlgorithm = types.String{Value: *in.RequestObjectSigningAlgorithm}
+		result.RequestObjectSigningAlgorithm = types.StringValue(*in.RequestObjectSigningAlgorithm)
 	} else {
-		result.RequestObjectSigningAlgorithm = types.String{Null: true}
+		result.RequestObjectSigningAlgorithm = types.StringNull()
 	}
 	if in.RequestPolicyRef != nil && in.RequestPolicyRef.Id != nil && *in.RequestPolicyRef.Id != "" {
-		result.RequestPolicyRef = types.String{Value: *in.RequestPolicyRef.Id}
+		result.RequestPolicyRef = types.StringValue(*in.RequestPolicyRef.Id)
 	} else {
-		result.RequestPolicyRef = types.String{Null: true}
+		result.RequestPolicyRef = types.StringNull()
+	}
+	if in.RequireJwtSecuredAuthorizationResponseMode != nil {
+		result.RequireJwtSecuredAuthorizationResponseMode = types.BoolValue(*in.RequireJwtSecuredAuthorizationResponseMode)
+	} else {
+		result.RequireJwtSecuredAuthorizationResponseMode = types.BoolNull()
 	}
 	if in.RequireProofKeyForCodeExchange != nil {
-		result.RequireProofKeyForCodeExchange = types.Bool{Value: *in.RequireProofKeyForCodeExchange}
+		result.RequireProofKeyForCodeExchange = types.BoolValue(*in.RequireProofKeyForCodeExchange)
 	} else {
-		result.RequireProofKeyForCodeExchange = types.Bool{Null: true}
+		result.RequireProofKeyForCodeExchange = types.BoolNull()
 	}
 	if in.RequirePushedAuthorizationRequests != nil {
-		result.RequirePushedAuthorizationRequests = types.Bool{Value: *in.RequirePushedAuthorizationRequests}
+		result.RequirePushedAuthorizationRequests = types.BoolValue(*in.RequirePushedAuthorizationRequests)
 	} else {
-		result.RequirePushedAuthorizationRequests = types.Bool{Null: true}
+		result.RequirePushedAuthorizationRequests = types.BoolNull()
 	}
 	if in.RequireSignedRequests != nil {
-		result.RequireSignedRequests = types.Bool{Value: *in.RequireSignedRequests}
+		result.RequireSignedRequests = types.BoolValue(*in.RequireSignedRequests)
 	} else {
-		result.RequireSignedRequests = types.Bool{Null: true}
+		result.RequireSignedRequests = types.BoolNull()
 	}
 	if in.RestrictScopes != nil {
-		result.RestrictScopes = types.Bool{Value: *in.RestrictScopes}
+		result.RestrictScopes = types.BoolValue(*in.RestrictScopes)
 	} else {
-		result.RestrictScopes = types.Bool{Null: true}
+		result.RestrictScopes = types.BoolNull()
 	}
 	if in.RestrictToDefaultAccessTokenManager != nil {
-		result.RestrictToDefaultAccessTokenManager = types.Bool{Value: *in.RestrictToDefaultAccessTokenManager}
+		result.RestrictToDefaultAccessTokenManager = types.BoolValue(*in.RestrictToDefaultAccessTokenManager)
 	} else {
-		result.RestrictToDefaultAccessTokenManager = types.Bool{Null: true}
+		result.RestrictToDefaultAccessTokenManager = types.BoolNull()
 	}
 	if in.RestrictedResponseTypes != nil {
 		result.RestrictedResponseTypes = flattenStringList(*in.RestrictedResponseTypes)
@@ -273,19 +318,34 @@ func flattenClient(in *pf.Client) *ClientData {
 		result.RestrictedScopes = flattenStringList(*in.RestrictedScopes)
 	}
 	if in.TokenExchangeProcessorPolicyRef != nil && in.TokenExchangeProcessorPolicyRef.Id != nil && *in.TokenExchangeProcessorPolicyRef.Id != "" {
-		result.TokenExchangeProcessorPolicyRef = types.String{Value: *in.TokenExchangeProcessorPolicyRef.Id}
+		result.TokenExchangeProcessorPolicyRef = types.StringValue(*in.TokenExchangeProcessorPolicyRef.Id)
 	} else {
-		result.TokenExchangeProcessorPolicyRef = types.String{Null: true}
+		result.TokenExchangeProcessorPolicyRef = types.StringNull()
+	}
+	if in.TokenIntrospectionContentEncryptionAlgorithm != nil {
+		result.TokenIntrospectionContentEncryptionAlgorithm = types.StringValue(*in.TokenIntrospectionContentEncryptionAlgorithm)
+	} else {
+		result.TokenIntrospectionContentEncryptionAlgorithm = types.StringNull()
+	}
+	if in.TokenIntrospectionEncryptionAlgorithm != nil {
+		result.TokenIntrospectionEncryptionAlgorithm = types.StringValue(*in.TokenIntrospectionEncryptionAlgorithm)
+	} else {
+		result.TokenIntrospectionEncryptionAlgorithm = types.StringNull()
+	}
+	if in.TokenIntrospectionSigningAlgorithm != nil {
+		result.TokenIntrospectionSigningAlgorithm = types.StringValue(*in.TokenIntrospectionSigningAlgorithm)
+	} else {
+		result.TokenIntrospectionSigningAlgorithm = types.StringNull()
 	}
 	if in.UserAuthorizationUrlOverride != nil {
-		result.UserAuthorizationUrlOverride = types.String{Value: *in.UserAuthorizationUrlOverride}
+		result.UserAuthorizationUrlOverride = types.StringValue(*in.UserAuthorizationUrlOverride)
 	} else {
-		result.UserAuthorizationUrlOverride = types.String{Null: true}
+		result.UserAuthorizationUrlOverride = types.StringNull()
 	}
 	if in.ValidateUsingAllEligibleAtms != nil {
-		result.ValidateUsingAllEligibleAtms = types.Bool{Value: *in.ValidateUsingAllEligibleAtms}
+		result.ValidateUsingAllEligibleAtms = types.BoolValue(*in.ValidateUsingAllEligibleAtms)
 	} else {
-		result.ValidateUsingAllEligibleAtms = types.Bool{Null: true}
+		result.ValidateUsingAllEligibleAtms = types.BoolNull()
 	}
 
 	return &result
@@ -293,7 +353,7 @@ func flattenClient(in *pf.Client) *ClientData {
 
 func flattenRedirectValidationSettings(in *pf.RedirectValidationSettings) *RedirectValidationSettingsData {
 	result := RedirectValidationSettingsData{}
-	result.Id = types.String{Value: "settings"}
+	result.Id = types.StringValue("settings")
 	if in.RedirectValidationLocalSettings != nil {
 		result.RedirectValidationLocalSettings = flattenRedirectValidationLocalSettings(in.RedirectValidationLocalSettings)
 	}
@@ -317,7 +377,7 @@ func flattenAttributeFulfillmentValue(in *pf.AttributeFulfillmentValue) *Attribu
 		result.Source = flattenSourceTypeIdKey(in.Source)
 	}
 	if in.Value != nil {
-		result.Value = types.String{Value: *in.Value}
+		result.Value = types.StringValue(*in.Value)
 	}
 
 	return &result
@@ -333,9 +393,9 @@ func flattenMapBinaryLdapAttributeSettingss(in map[string]*pf.BinaryLdapAttribut
 func flattenBinaryLdapAttributeSettings(in *pf.BinaryLdapAttributeSettings) *BinaryLdapAttributeSettingsData {
 	result := BinaryLdapAttributeSettingsData{}
 	if in.BinaryEncoding != nil {
-		result.BinaryEncoding = types.String{Value: *in.BinaryEncoding}
+		result.BinaryEncoding = types.StringValue(*in.BinaryEncoding)
 	} else {
-		result.BinaryEncoding = types.String{Null: true}
+		result.BinaryEncoding = types.StringNull()
 	}
 
 	return &result
@@ -344,39 +404,39 @@ func flattenBinaryLdapAttributeSettings(in *pf.BinaryLdapAttributeSettings) *Bin
 func flattenClientAuth(in *pf.ClientAuth) *ClientAuthData {
 	result := ClientAuthData{}
 	if in.ClientCertIssuerDn != nil {
-		result.ClientCertIssuerDn = types.String{Value: *in.ClientCertIssuerDn}
+		result.ClientCertIssuerDn = types.StringValue(*in.ClientCertIssuerDn)
 	} else {
-		result.ClientCertIssuerDn = types.String{Null: true}
+		result.ClientCertIssuerDn = types.StringNull()
 	}
 	if in.ClientCertSubjectDn != nil {
-		result.ClientCertSubjectDn = types.String{Value: *in.ClientCertSubjectDn}
+		result.ClientCertSubjectDn = types.StringValue(*in.ClientCertSubjectDn)
 	} else {
-		result.ClientCertSubjectDn = types.String{Null: true}
+		result.ClientCertSubjectDn = types.StringNull()
 	}
 	if in.EncryptedSecret != nil {
-		result.EncryptedSecret = types.String{Value: *in.EncryptedSecret}
+		result.EncryptedSecret = types.StringValue(*in.EncryptedSecret)
 	} else {
-		result.EncryptedSecret = types.String{Null: true}
+		result.EncryptedSecret = types.StringNull()
 	}
 	if in.EnforceReplayPrevention != nil {
-		result.EnforceReplayPrevention = types.Bool{Value: *in.EnforceReplayPrevention}
+		result.EnforceReplayPrevention = types.BoolValue(*in.EnforceReplayPrevention)
 	} else {
-		result.EnforceReplayPrevention = types.Bool{Null: true}
+		result.EnforceReplayPrevention = types.BoolNull()
 	}
 	if in.Secret != nil {
-		result.Secret = types.String{Value: *in.Secret}
+		result.Secret = types.StringValue(*in.Secret)
 	} else {
-		result.Secret = types.String{Null: true}
+		result.Secret = types.StringNull()
 	}
 	if in.TokenEndpointAuthSigningAlgorithm != nil {
-		result.TokenEndpointAuthSigningAlgorithm = types.String{Value: *in.TokenEndpointAuthSigningAlgorithm}
+		result.TokenEndpointAuthSigningAlgorithm = types.StringValue(*in.TokenEndpointAuthSigningAlgorithm)
 	} else {
-		result.TokenEndpointAuthSigningAlgorithm = types.String{Null: true}
+		result.TokenEndpointAuthSigningAlgorithm = types.StringNull()
 	}
 	if in.Type != nil {
-		result.Type = types.String{Value: *in.Type}
+		result.Type = types.StringValue(*in.Type)
 	} else {
-		result.Type = types.String{Null: true}
+		result.Type = types.StringNull()
 	}
 
 	return &result
@@ -385,52 +445,52 @@ func flattenClientAuth(in *pf.ClientAuth) *ClientAuthData {
 func flattenClientOIDCPolicy(in *pf.ClientOIDCPolicy) *ClientOIDCPolicyData {
 	result := ClientOIDCPolicyData{}
 	if in.GrantAccessSessionRevocationApi != nil {
-		result.GrantAccessSessionRevocationApi = types.Bool{Value: *in.GrantAccessSessionRevocationApi}
+		result.GrantAccessSessionRevocationApi = types.BoolValue(*in.GrantAccessSessionRevocationApi)
 	} else {
-		result.GrantAccessSessionRevocationApi = types.Bool{Null: true}
+		result.GrantAccessSessionRevocationApi = types.BoolNull()
 	}
 	if in.GrantAccessSessionSessionManagementApi != nil {
-		result.GrantAccessSessionSessionManagementApi = types.Bool{Value: *in.GrantAccessSessionSessionManagementApi}
+		result.GrantAccessSessionSessionManagementApi = types.BoolValue(*in.GrantAccessSessionSessionManagementApi)
 	} else {
-		result.GrantAccessSessionSessionManagementApi = types.Bool{Null: true}
+		result.GrantAccessSessionSessionManagementApi = types.BoolNull()
 	}
 	if in.IdTokenContentEncryptionAlgorithm != nil {
-		result.IdTokenContentEncryptionAlgorithm = types.String{Value: *in.IdTokenContentEncryptionAlgorithm}
+		result.IdTokenContentEncryptionAlgorithm = types.StringValue(*in.IdTokenContentEncryptionAlgorithm)
 	} else {
-		result.IdTokenContentEncryptionAlgorithm = types.String{Null: true}
+		result.IdTokenContentEncryptionAlgorithm = types.StringNull()
 	}
 	if in.IdTokenEncryptionAlgorithm != nil {
-		result.IdTokenEncryptionAlgorithm = types.String{Value: *in.IdTokenEncryptionAlgorithm}
+		result.IdTokenEncryptionAlgorithm = types.StringValue(*in.IdTokenEncryptionAlgorithm)
 	} else {
-		result.IdTokenEncryptionAlgorithm = types.String{Null: true}
+		result.IdTokenEncryptionAlgorithm = types.StringNull()
 	}
 	if in.IdTokenSigningAlgorithm != nil {
-		result.IdTokenSigningAlgorithm = types.String{Value: *in.IdTokenSigningAlgorithm}
+		result.IdTokenSigningAlgorithm = types.StringValue(*in.IdTokenSigningAlgorithm)
 	} else {
-		result.IdTokenSigningAlgorithm = types.String{Null: true}
+		result.IdTokenSigningAlgorithm = types.StringNull()
 	}
 	if in.LogoutUris != nil {
 		result.LogoutUris = flattenStringList(*in.LogoutUris)
 	}
 	if in.PairwiseIdentifierUserType != nil {
-		result.PairwiseIdentifierUserType = types.Bool{Value: *in.PairwiseIdentifierUserType}
+		result.PairwiseIdentifierUserType = types.BoolValue(*in.PairwiseIdentifierUserType)
 	} else {
-		result.PairwiseIdentifierUserType = types.Bool{Null: true}
+		result.PairwiseIdentifierUserType = types.BoolNull()
 	}
 	if in.PingAccessLogoutCapable != nil {
-		result.PingAccessLogoutCapable = types.Bool{Value: *in.PingAccessLogoutCapable}
+		result.PingAccessLogoutCapable = types.BoolValue(*in.PingAccessLogoutCapable)
 	} else {
-		result.PingAccessLogoutCapable = types.Bool{Null: true}
+		result.PingAccessLogoutCapable = types.BoolNull()
 	}
 	if in.PolicyGroup != nil && in.PolicyGroup.Id != nil && *in.PolicyGroup.Id != "" {
-		result.PolicyGroup = types.String{Value: *in.PolicyGroup.Id}
+		result.PolicyGroup = types.StringValue(*in.PolicyGroup.Id)
 	} else {
-		result.PolicyGroup = types.String{Null: true}
+		result.PolicyGroup = types.StringNull()
 	}
 	if in.SectorIdentifierUri != nil {
-		result.SectorIdentifierUri = types.String{Value: *in.SectorIdentifierUri}
+		result.SectorIdentifierUri = types.StringValue(*in.SectorIdentifierUri)
 	} else {
-		result.SectorIdentifierUri = types.String{Null: true}
+		result.SectorIdentifierUri = types.StringNull()
 	}
 
 	return &result
@@ -446,21 +506,21 @@ func flattenConditionalIssuanceCriteriaEntrys(in *[]*pf.ConditionalIssuanceCrite
 func flattenConditionalIssuanceCriteriaEntry(in *pf.ConditionalIssuanceCriteriaEntry) *ConditionalIssuanceCriteriaEntryData {
 	result := ConditionalIssuanceCriteriaEntryData{}
 	if in.AttributeName != nil {
-		result.AttributeName = types.String{Value: *in.AttributeName}
+		result.AttributeName = types.StringValue(*in.AttributeName)
 	}
 	if in.Condition != nil {
-		result.Condition = types.String{Value: *in.Condition}
+		result.Condition = types.StringValue(*in.Condition)
 	}
 	if in.ErrorResult != nil {
-		result.ErrorResult = types.String{Value: *in.ErrorResult}
+		result.ErrorResult = types.StringValue(*in.ErrorResult)
 	} else {
-		result.ErrorResult = types.String{Null: true}
+		result.ErrorResult = types.StringNull()
 	}
 	if in.Source != nil {
 		result.Source = flattenSourceTypeIdKey(in.Source)
 	}
 	if in.Value != nil {
-		result.Value = types.String{Value: *in.Value}
+		result.Value = types.StringValue(*in.Value)
 	}
 
 	return &result
@@ -472,22 +532,22 @@ func flattenCustomAttributeSource(in *pf.CustomAttributeSource) *CustomAttribute
 		result.AttributeContractFulfillment = flattenMapAttributeFulfillmentValues(in.AttributeContractFulfillment)
 	}
 	if in.DataStoreRef != nil && in.DataStoreRef.Id != nil && *in.DataStoreRef.Id != "" {
-		result.DataStoreRef = types.String{Value: *in.DataStoreRef.Id}
+		result.DataStoreRef = types.StringValue(*in.DataStoreRef.Id)
 	} else {
-		result.DataStoreRef = types.String{Null: true}
+		result.DataStoreRef = types.StringNull()
 	}
 	if in.Description != nil {
-		result.Description = types.String{Value: *in.Description}
+		result.Description = types.StringValue(*in.Description)
 	} else {
-		result.Description = types.String{Null: true}
+		result.Description = types.StringNull()
 	}
 	if in.FilterFields != nil {
 		result.FilterFields = flattenFieldEntrys(in.FilterFields)
 	}
 	if in.Id != nil {
-		result.Id = types.String{Value: *in.Id}
+		result.Id = types.StringValue(*in.Id)
 	} else {
-		result.Id = types.String{Null: true}
+		result.Id = types.StringNull()
 	}
 
 	return &result
@@ -503,12 +563,12 @@ func flattenExpressionIssuanceCriteriaEntrys(in *[]*pf.ExpressionIssuanceCriteri
 func flattenExpressionIssuanceCriteriaEntry(in *pf.ExpressionIssuanceCriteriaEntry) *ExpressionIssuanceCriteriaEntryData {
 	result := ExpressionIssuanceCriteriaEntryData{}
 	if in.ErrorResult != nil {
-		result.ErrorResult = types.String{Value: *in.ErrorResult}
+		result.ErrorResult = types.StringValue(*in.ErrorResult)
 	} else {
-		result.ErrorResult = types.String{Null: true}
+		result.ErrorResult = types.StringNull()
 	}
 	if in.Expression != nil {
-		result.Expression = types.String{Value: *in.Expression}
+		result.Expression = types.StringValue(*in.Expression)
 	}
 
 	return &result
@@ -524,12 +584,12 @@ func flattenFieldEntrys(in *[]*pf.FieldEntry) *[]*FieldEntryData {
 func flattenFieldEntry(in *pf.FieldEntry) *FieldEntryData {
 	result := FieldEntryData{}
 	if in.Name != nil {
-		result.Name = types.String{Value: *in.Name}
+		result.Name = types.StringValue(*in.Name)
 	}
 	if in.Value != nil {
-		result.Value = types.String{Value: *in.Value}
+		result.Value = types.StringValue(*in.Value)
 	} else {
-		result.Value = types.String{Null: true}
+		result.Value = types.StringNull()
 	}
 
 	return &result
@@ -556,34 +616,34 @@ func flattenJdbcAttributeSource(in *pf.JdbcAttributeSource) *JdbcAttributeSource
 		result.ColumnNames = flattenStringList(*in.ColumnNames)
 	}
 	if in.DataStoreRef != nil && in.DataStoreRef.Id != nil && *in.DataStoreRef.Id != "" {
-		result.DataStoreRef = types.String{Value: *in.DataStoreRef.Id}
+		result.DataStoreRef = types.StringValue(*in.DataStoreRef.Id)
 	} else {
-		result.DataStoreRef = types.String{Null: true}
+		result.DataStoreRef = types.StringNull()
 	}
 	if in.Description != nil {
-		result.Description = types.String{Value: *in.Description}
+		result.Description = types.StringValue(*in.Description)
 	} else {
-		result.Description = types.String{Null: true}
+		result.Description = types.StringNull()
 	}
 	if in.Filter != nil {
-		result.Filter = types.String{Value: *in.Filter}
+		result.Filter = types.StringValue(*in.Filter)
 	} else {
-		result.Filter = types.String{Null: true}
+		result.Filter = types.StringNull()
 	}
 	if in.Id != nil {
-		result.Id = types.String{Value: *in.Id}
+		result.Id = types.StringValue(*in.Id)
 	} else {
-		result.Id = types.String{Null: true}
+		result.Id = types.StringNull()
 	}
 	if in.Schema != nil {
-		result.Schema = types.String{Value: *in.Schema}
+		result.Schema = types.StringValue(*in.Schema)
 	} else {
-		result.Schema = types.String{Null: true}
+		result.Schema = types.StringNull()
 	}
 	if in.Table != nil {
-		result.Table = types.String{Value: *in.Table}
+		result.Table = types.StringValue(*in.Table)
 	} else {
-		result.Table = types.String{Null: true}
+		result.Table = types.StringNull()
 	}
 
 	return &result
@@ -592,14 +652,14 @@ func flattenJdbcAttributeSource(in *pf.JdbcAttributeSource) *JdbcAttributeSource
 func flattenJwksSettings(in *pf.JwksSettings) *JwksSettingsData {
 	result := JwksSettingsData{}
 	if in.Jwks != nil {
-		result.Jwks = types.String{Value: *in.Jwks}
+		result.Jwks = types.StringValue(*in.Jwks)
 	} else {
-		result.Jwks = types.String{Null: true}
+		result.Jwks = types.StringNull()
 	}
 	if in.JwksUrl != nil {
-		result.JwksUrl = types.String{Value: *in.JwksUrl}
+		result.JwksUrl = types.StringValue(*in.JwksUrl)
 	} else {
-		result.JwksUrl = types.String{Null: true}
+		result.JwksUrl = types.StringNull()
 	}
 
 	return &result
@@ -611,45 +671,45 @@ func flattenLdapAttributeSource(in *pf.LdapAttributeSource) *LdapAttributeSource
 		result.AttributeContractFulfillment = flattenMapAttributeFulfillmentValues(in.AttributeContractFulfillment)
 	}
 	if in.BaseDn != nil {
-		result.BaseDn = types.String{Value: *in.BaseDn}
+		result.BaseDn = types.StringValue(*in.BaseDn)
 	} else {
-		result.BaseDn = types.String{Null: true}
+		result.BaseDn = types.StringNull()
 	}
 	if in.BinaryAttributeSettings != nil {
 		result.BinaryAttributeSettings = flattenMapBinaryLdapAttributeSettingss(in.BinaryAttributeSettings)
 	}
 	if in.DataStoreRef != nil && in.DataStoreRef.Id != nil && *in.DataStoreRef.Id != "" {
-		result.DataStoreRef = types.String{Value: *in.DataStoreRef.Id}
+		result.DataStoreRef = types.StringValue(*in.DataStoreRef.Id)
 	} else {
-		result.DataStoreRef = types.String{Null: true}
+		result.DataStoreRef = types.StringNull()
 	}
 	if in.Description != nil {
-		result.Description = types.String{Value: *in.Description}
+		result.Description = types.StringValue(*in.Description)
 	} else {
-		result.Description = types.String{Null: true}
+		result.Description = types.StringNull()
 	}
 	if in.Id != nil {
-		result.Id = types.String{Value: *in.Id}
+		result.Id = types.StringValue(*in.Id)
 	} else {
-		result.Id = types.String{Null: true}
+		result.Id = types.StringNull()
 	}
 	if in.MemberOfNestedGroup != nil {
-		result.MemberOfNestedGroup = types.Bool{Value: *in.MemberOfNestedGroup}
+		result.MemberOfNestedGroup = types.BoolValue(*in.MemberOfNestedGroup)
 	} else {
-		result.MemberOfNestedGroup = types.Bool{Null: true}
+		result.MemberOfNestedGroup = types.BoolNull()
 	}
 	if in.SearchAttributes != nil {
 		result.SearchAttributes = flattenStringList(*in.SearchAttributes)
 	}
 	if in.SearchFilter != nil {
-		result.SearchFilter = types.String{Value: *in.SearchFilter}
+		result.SearchFilter = types.StringValue(*in.SearchFilter)
 	} else {
-		result.SearchFilter = types.String{Null: true}
+		result.SearchFilter = types.StringNull()
 	}
 	if in.SearchScope != nil {
-		result.SearchScope = types.String{Value: *in.SearchScope}
+		result.SearchScope = types.StringValue(*in.SearchScope)
 	} else {
-		result.SearchScope = types.String{Null: true}
+		result.SearchScope = types.StringNull()
 	}
 
 	return &result
@@ -674,24 +734,24 @@ func flattenParameterValues(in *pf.ParameterValues) *ParameterValuesData {
 func flattenRedirectValidationLocalSettings(in *pf.RedirectValidationLocalSettings) *RedirectValidationLocalSettingsData {
 	result := RedirectValidationLocalSettingsData{}
 	if in.EnableInErrorResourceValidation != nil {
-		result.EnableInErrorResourceValidation = types.Bool{Value: *in.EnableInErrorResourceValidation}
+		result.EnableInErrorResourceValidation = types.BoolValue(*in.EnableInErrorResourceValidation)
 	} else {
-		result.EnableInErrorResourceValidation = types.Bool{Null: true}
+		result.EnableInErrorResourceValidation = types.BoolNull()
 	}
 	if in.EnableTargetResourceValidationForIdpDiscovery != nil {
-		result.EnableTargetResourceValidationForIdpDiscovery = types.Bool{Value: *in.EnableTargetResourceValidationForIdpDiscovery}
+		result.EnableTargetResourceValidationForIdpDiscovery = types.BoolValue(*in.EnableTargetResourceValidationForIdpDiscovery)
 	} else {
-		result.EnableTargetResourceValidationForIdpDiscovery = types.Bool{Null: true}
+		result.EnableTargetResourceValidationForIdpDiscovery = types.BoolNull()
 	}
 	if in.EnableTargetResourceValidationForSLO != nil {
-		result.EnableTargetResourceValidationForSLO = types.Bool{Value: *in.EnableTargetResourceValidationForSLO}
+		result.EnableTargetResourceValidationForSLO = types.BoolValue(*in.EnableTargetResourceValidationForSLO)
 	} else {
-		result.EnableTargetResourceValidationForSLO = types.Bool{Null: true}
+		result.EnableTargetResourceValidationForSLO = types.BoolNull()
 	}
 	if in.EnableTargetResourceValidationForSSO != nil {
-		result.EnableTargetResourceValidationForSSO = types.Bool{Value: *in.EnableTargetResourceValidationForSSO}
+		result.EnableTargetResourceValidationForSSO = types.BoolValue(*in.EnableTargetResourceValidationForSSO)
 	} else {
-		result.EnableTargetResourceValidationForSSO = types.Bool{Null: true}
+		result.EnableTargetResourceValidationForSSO = types.BoolNull()
 	}
 	if in.WhiteList != nil {
 		result.WhiteList = flattenRedirectValidationSettingsWhitelistEntrys(in.WhiteList)
@@ -703,9 +763,9 @@ func flattenRedirectValidationLocalSettings(in *pf.RedirectValidationLocalSettin
 func flattenRedirectValidationPartnerSettings(in *pf.RedirectValidationPartnerSettings) *RedirectValidationPartnerSettingsData {
 	result := RedirectValidationPartnerSettingsData{}
 	if in.EnableWreplyValidationSLO != nil {
-		result.EnableWreplyValidationSLO = types.Bool{Value: *in.EnableWreplyValidationSLO}
+		result.EnableWreplyValidationSLO = types.BoolValue(*in.EnableWreplyValidationSLO)
 	} else {
-		result.EnableWreplyValidationSLO = types.Bool{Null: true}
+		result.EnableWreplyValidationSLO = types.BoolNull()
 	}
 
 	return &result
@@ -721,42 +781,42 @@ func flattenRedirectValidationSettingsWhitelistEntrys(in *[]*pf.RedirectValidati
 func flattenRedirectValidationSettingsWhitelistEntry(in *pf.RedirectValidationSettingsWhitelistEntry) *RedirectValidationSettingsWhitelistEntryData {
 	result := RedirectValidationSettingsWhitelistEntryData{}
 	if in.AllowQueryAndFragment != nil {
-		result.AllowQueryAndFragment = types.Bool{Value: *in.AllowQueryAndFragment}
+		result.AllowQueryAndFragment = types.BoolValue(*in.AllowQueryAndFragment)
 	} else {
-		result.AllowQueryAndFragment = types.Bool{Null: true}
+		result.AllowQueryAndFragment = types.BoolNull()
 	}
 	if in.IdpDiscovery != nil {
-		result.IdpDiscovery = types.Bool{Value: *in.IdpDiscovery}
+		result.IdpDiscovery = types.BoolValue(*in.IdpDiscovery)
 	} else {
-		result.IdpDiscovery = types.Bool{Null: true}
+		result.IdpDiscovery = types.BoolNull()
 	}
 	if in.InErrorResource != nil {
-		result.InErrorResource = types.Bool{Value: *in.InErrorResource}
+		result.InErrorResource = types.BoolValue(*in.InErrorResource)
 	} else {
-		result.InErrorResource = types.Bool{Null: true}
+		result.InErrorResource = types.BoolNull()
 	}
 	if in.RequireHttps != nil {
-		result.RequireHttps = types.Bool{Value: *in.RequireHttps}
+		result.RequireHttps = types.BoolValue(*in.RequireHttps)
 	} else {
-		result.RequireHttps = types.Bool{Null: true}
+		result.RequireHttps = types.BoolNull()
 	}
 	if in.TargetResourceSLO != nil {
-		result.TargetResourceSLO = types.Bool{Value: *in.TargetResourceSLO}
+		result.TargetResourceSLO = types.BoolValue(*in.TargetResourceSLO)
 	} else {
-		result.TargetResourceSLO = types.Bool{Null: true}
+		result.TargetResourceSLO = types.BoolNull()
 	}
 	if in.TargetResourceSSO != nil {
-		result.TargetResourceSSO = types.Bool{Value: *in.TargetResourceSSO}
+		result.TargetResourceSSO = types.BoolValue(*in.TargetResourceSSO)
 	} else {
-		result.TargetResourceSSO = types.Bool{Null: true}
+		result.TargetResourceSSO = types.BoolNull()
 	}
 	if in.ValidDomain != nil {
-		result.ValidDomain = types.String{Value: *in.ValidDomain}
+		result.ValidDomain = types.StringValue(*in.ValidDomain)
 	}
 	if in.ValidPath != nil {
-		result.ValidPath = types.String{Value: *in.ValidPath}
+		result.ValidPath = types.StringValue(*in.ValidPath)
 	} else {
-		result.ValidPath = types.String{Null: true}
+		result.ValidPath = types.StringNull()
 	}
 
 	return &result
@@ -765,12 +825,12 @@ func flattenRedirectValidationSettingsWhitelistEntry(in *pf.RedirectValidationSe
 func flattenSourceTypeIdKey(in *pf.SourceTypeIdKey) *SourceTypeIdKeyData {
 	result := SourceTypeIdKeyData{}
 	if in.Id != nil {
-		result.Id = types.String{Value: *in.Id}
+		result.Id = types.StringValue(*in.Id)
 	} else {
-		result.Id = types.String{Null: true}
+		result.Id = types.StringNull()
 	}
 	if in.Type != nil {
-		result.Type = types.String{Value: *in.Type}
+		result.Type = types.StringValue(*in.Type)
 	}
 
 	return &result
@@ -813,7 +873,7 @@ func flattenCustomAttributeSources(in *[]*pf.AttributeSource) []CustomAttributeS
 func flattenStringList(in []*string) []types.String {
 	results := []types.String{}
 	for _, s := range in {
-		results = append(results, types.String{Value: *s})
+		results = append(results, types.StringValue(*s))
 	}
 	return results
 }

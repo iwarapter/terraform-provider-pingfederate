@@ -2,11 +2,11 @@ package sdkv2provider
 
 import (
 	"context"
-
-	"github.com/iwarapter/terraform-provider-pingfederate/internal/mutexkv"
+	"os"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/iwarapter/terraform-provider-pingfederate/internal/mutexkv"
 )
 
 // Provider does stuff
@@ -116,15 +116,38 @@ func init() {
 }
 
 func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	config := &pfConfig{
-		Username:                 d.Get("username").(string),
-		Password:                 d.Get("password").(string),
-		BaseURL:                  d.Get("base_url").(string),
-		Context:                  d.Get("context").(string),
-		BypassExternalValidation: d.Get("bypass_external_validation").(bool),
+	cfg := &pfConfig{
+		Username:                 "Administrator",
+		Password:                 "2Federate",
+		Context:                  "/pf-admin-api/v1",
+		BaseURL:                  "https://localhost:9999",
+		BypassExternalValidation: false,
+	}
+	if v, ok := d.GetOk("username"); ok {
+		cfg.Username = v.(string)
+	} else if s, ok := os.LookupEnv("PINGFEDERATE_USERNAME"); ok {
+		cfg.Username = s
+	}
+	if v, ok := d.GetOk("password"); ok {
+		cfg.Password = v.(string)
+	} else if s, ok := os.LookupEnv("PINGFEDERATE_PASSWORD"); ok {
+		cfg.Password = s
+	}
+	if v, ok := d.GetOk("base_url"); ok {
+		cfg.BaseURL = v.(string)
+	} else if s, ok := os.LookupEnv("PINGFEDERATE_CONTEXT"); ok {
+		cfg.BaseURL = s
+	}
+	if v, ok := d.GetOk("context"); ok {
+		cfg.Context = v.(string)
+	} else if s, ok := os.LookupEnv("PINGFEDERATE_BASEURL"); ok {
+		cfg.Context = s
+	}
+	if v, ok := d.GetOk("bypass_external_validation"); ok {
+		cfg.BypassExternalValidation, _ = v.(bool)
 	}
 
-	return config.Client()
+	return cfg.Client()
 }
 
 // Takes the result of flatmap.Expand for an array of strings

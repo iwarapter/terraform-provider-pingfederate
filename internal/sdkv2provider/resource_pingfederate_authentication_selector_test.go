@@ -40,8 +40,8 @@ func init() {
 func TestAccPingFederateAuthenticationSelectorResource(t *testing.T) {
 	resourceName := "pingfederate_authentication_selector.demo"
 	resource.ParallelTest(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateAuthenticationSelectorResourceDestroy,
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateAuthenticationSelectorResourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateAuthenticationSelectorResourceConfig("0.0.0.0/0"),

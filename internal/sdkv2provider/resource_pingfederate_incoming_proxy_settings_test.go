@@ -14,8 +14,8 @@ func TestAccPingFederateIncomingProxySettings(t *testing.T) {
 	}
 	resourceName := "pingfederate_incoming_proxy_settings.settings"
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateIncomingProxySettingsDestroy,
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateIncomingProxySettingsDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateIncomingProxySettingsConfig("foo"),

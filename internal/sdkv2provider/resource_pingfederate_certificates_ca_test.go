@@ -34,9 +34,9 @@ func init() {
 func TestAccPingFederateCertificatesCa(t *testing.T) {
 	resourceName := "pingfederate_certificates_ca.demo"
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateCertificatesCaDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateCertificatesCaDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateCertificatesCaConfig("3"),

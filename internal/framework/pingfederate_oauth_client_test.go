@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-framework/types"
+
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthClients"
 	"github.com/stretchr/testify/require"
@@ -274,7 +276,7 @@ func Test_resourcePingFederateOAuthClientResourceReadData(t *testing.T) {
 	}
 	for i, tc := range cases {
 		t.Run(fmt.Sprintf("tc:%v", i), func(t *testing.T) {
-			res := &pingfederateOAuthClientType{}
+			res := &pingfederateOAuthClientResource{}
 			ctx := context.Background()
 			resourceSchema, diags := res.GetSchema(ctx)
 			require.False(t, diags.HasError())
@@ -287,6 +289,46 @@ func Test_resourcePingFederateOAuthClientResourceReadData(t *testing.T) {
 
 			resp := *expandClient(check)
 			assert.Equal(t, tc.Resource, resp)
+		})
+	}
+}
+
+func Test_resourcePingFederateOAuthClientResourceVersionModifications(t *testing.T) {
+	cli := pfClient{}
+	res := &pingfederateOAuthClientResource{client: &cli}
+
+	defaults := ClientData{
+		ClientSecretRetentionPeriodType:            types.StringValue("SERVER_DEFAULT"),
+		PersistentGrantReuseType:                   types.StringValue("SERVER_DEFAULT"),
+		RequireJwtSecuredAuthorizationResponseMode: types.BoolValue(false),
+		RefreshTokenRollingGracePeriodType:         types.StringValue("SERVER_DEFAULT"),
+		RefreshTokenRollingIntervalType:            types.StringValue("SERVER_DEFAULT"),
+	}
+	tests := []struct {
+		version string
+		after   ClientData
+	}{
+		{"9.3", ClientData{}},
+		{"10.0", ClientData{}},
+		{"10.1", ClientData{}},
+		{"10.2", ClientData{}},
+		{"10.3", ClientData{RefreshTokenRollingIntervalType: types.StringValue("SERVER_DEFAULT")}},
+		{"11.0", ClientData{PersistentGrantReuseType: types.StringValue("SERVER_DEFAULT"), RefreshTokenRollingGracePeriodType: types.StringValue("SERVER_DEFAULT"), RefreshTokenRollingIntervalType: types.StringValue("SERVER_DEFAULT")}},
+		{"11.1", ClientData{ClientSecretRetentionPeriodType: types.StringValue("SERVER_DEFAULT"), PersistentGrantReuseType: types.StringValue("SERVER_DEFAULT"), RequireJwtSecuredAuthorizationResponseMode: types.BoolValue(false), RefreshTokenRollingGracePeriodType: types.StringValue("SERVER_DEFAULT"), RefreshTokenRollingIntervalType: types.StringValue("SERVER_DEFAULT")}},
+		{"11.2", ClientData{ClientSecretRetentionPeriodType: types.StringValue("SERVER_DEFAULT"), PersistentGrantReuseType: types.StringValue("SERVER_DEFAULT"), RequireJwtSecuredAuthorizationResponseMode: types.BoolValue(false), RefreshTokenRollingGracePeriodType: types.StringValue("SERVER_DEFAULT"), RefreshTokenRollingIntervalType: types.StringValue("SERVER_DEFAULT")}},
+		{"11.3", ClientData{ClientSecretRetentionPeriodType: types.StringValue("SERVER_DEFAULT"), PersistentGrantReuseType: types.StringValue("SERVER_DEFAULT"), RequireJwtSecuredAuthorizationResponseMode: types.BoolValue(false), RefreshTokenRollingGracePeriodType: types.StringValue("SERVER_DEFAULT"), RefreshTokenRollingIntervalType: types.StringValue("SERVER_DEFAULT")}},
+	}
+	for _, tt := range tests {
+		t.Run(fmt.Sprintf("we handle %s", tt.version), func(t *testing.T) {
+			cli.apiVersion = tt.version
+			var err error
+			cli.major, cli.minor, err = parseVersion(tt.version)
+			require.NoError(t, err)
+			before := defaults
+			res.versionRequestModifier(&before)
+			assert.Equal(t, tt.after, before)
+
+			assert.Equal(t, defaults, *res.versionResponseModifier(&before))
 		})
 	}
 }

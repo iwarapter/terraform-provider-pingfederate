@@ -12,8 +12,8 @@ import (
 func TestAccPingFederateAuthenticationPoliciesSettingsResource(t *testing.T) {
 	resourceName := "pingfederate_authentication_policies_settings.demo"
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateAuthenticationPoliciesSettingsResourceDestroy,
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateAuthenticationPoliciesSettingsResourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateAuthenticationPoliciesSettingsResourceConfig("false", "false"),

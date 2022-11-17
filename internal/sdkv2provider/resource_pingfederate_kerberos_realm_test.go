@@ -40,8 +40,8 @@ func TestAccPingFederateKerberosRealmResource(t *testing.T) {
 	resourceName := "pingfederate_kerberos_realm.demo"
 
 	resource.ParallelTest(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateKerberosRealmResourceDestroy,
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateKerberosRealmResourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateKerberosRealmResourceConfig("bar.foo"),

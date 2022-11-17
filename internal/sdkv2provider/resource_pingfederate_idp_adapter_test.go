@@ -42,9 +42,9 @@ func TestAccPingFederateIdpAdapter(t *testing.T) {
 	resourceName := "pingfederate_idp_adapter.demo"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateIdpAdapterDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateIdpAdapterDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateIdpAdapterConfig("3"),

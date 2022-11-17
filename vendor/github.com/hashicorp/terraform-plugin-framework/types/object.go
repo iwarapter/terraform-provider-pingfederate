@@ -9,13 +9,33 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/internal/reflect"
+	"github.com/hashicorp/terraform-plugin-framework/path"
+
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
 )
 
 var (
-	_ attr.Type  = ObjectType{}
-	_ attr.Value = &Object{}
+	_ ObjectTypable  = ObjectType{}
+	_ ObjectValuable = &Object{}
 )
+
+// ObjectTypable extends attr.Type for object types.
+// Implement this interface to create a custom ObjectType type.
+type ObjectTypable interface {
+	attr.Type
+
+	// ValueFromObject should convert the Object to an ObjectValuable type.
+	ValueFromObject(context.Context, Object) (ObjectValuable, diag.Diagnostics)
+}
+
+// ObjectValuable extends attr.Value for object value types.
+// Implement this interface to create a custom Object value type.
+type ObjectValuable interface {
+	attr.Value
+
+	// ToObjectValue should convert the value type to an Object.
+	ToObjectValue(ctx context.Context) (Object, diag.Diagnostics)
+}
 
 // ObjectType is an AttributeType representing an object.
 type ObjectType struct {
@@ -54,23 +74,17 @@ func (o ObjectType) TerraformType(ctx context.Context) tftypes.Type {
 // This is meant to convert the tftypes.Value into a more convenient Go
 // type for the provider to consume the data with.
 func (o ObjectType) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
-	object := Object{
-		AttrTypes: o.AttrTypes,
-	}
 	if in.Type() == nil {
-		object.Null = true
-		return object, nil
+		return ObjectNull(o.AttrTypes), nil
 	}
 	if !in.Type().Equal(o.TerraformType(ctx)) {
 		return nil, fmt.Errorf("expected %s, got %s", o.TerraformType(ctx), in.Type())
 	}
 	if !in.IsKnown() {
-		object.Unknown = true
-		return object, nil
+		return ObjectUnknown(o.AttrTypes), nil
 	}
 	if in.IsNull() {
-		object.Null = true
-		return object, nil
+		return ObjectNull(o.AttrTypes), nil
 	}
 	attributes := map[string]attr.Value{}
 
@@ -81,14 +95,15 @@ func (o ObjectType) ValueFromTerraform(ctx context.Context, in tftypes.Value) (a
 	}
 
 	for k, v := range val {
-		a, err := object.AttrTypes[k].ValueFromTerraform(ctx, v)
+		a, err := o.AttrTypes[k].ValueFromTerraform(ctx, v)
 		if err != nil {
 			return nil, err
 		}
 		attributes[k] = a
 	}
-	object.Attrs = attributes
-	return object, nil
+	// ValueFromTerraform above on each attribute should make this safe.
+	// Otherwise, this will need to do some Diagnostics to error conversion.
+	return ObjectValueMust(o.AttrTypes, attributes), nil
 }
 
 // Equal returns true if `candidate` is also an ObjectType and has the same
@@ -143,24 +158,165 @@ func (o ObjectType) String() string {
 	return res.String()
 }
 
+// ValueType returns the Value type.
+func (o ObjectType) ValueType(_ context.Context) attr.Value {
+	return Object{
+		attributeTypes: o.AttrTypes,
+	}
+}
+
+// ValueFromObject returns an ObjectValuable type given an Object.
+func (o ObjectType) ValueFromObject(_ context.Context, obj Object) (ObjectValuable, diag.Diagnostics) {
+	return obj, nil
+}
+
+// ObjectNull creates a Object with a null value. Determine whether the value is
+// null via the Object type IsNull method.
+func ObjectNull(attributeTypes map[string]attr.Type) Object {
+	return Object{
+		attributeTypes: attributeTypes,
+		state:          attr.ValueStateNull,
+	}
+}
+
+// ObjectUnknown creates a Object with an unknown value. Determine whether the
+// value is unknown via the Object type IsUnknown method.
+func ObjectUnknown(attributeTypes map[string]attr.Type) Object {
+	return Object{
+		attributeTypes: attributeTypes,
+		state:          attr.ValueStateUnknown,
+	}
+}
+
+// ObjectValue creates a Object with a known value. Access the value via the Object
+// type ElementsAs method.
+func ObjectValue(attributeTypes map[string]attr.Type, attributes map[string]attr.Value) (Object, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	// Reference: https://github.com/hashicorp/terraform-plugin-framework/issues/521
+	ctx := context.Background()
+
+	for name, attributeType := range attributeTypes {
+		attribute, ok := attributes[name]
+
+		if !ok {
+			diags.AddError(
+				"Missing Object Attribute Value",
+				"While creating a Object value, a missing attribute value was detected. "+
+					"A Object must contain values for all attributes, even if null or unknown. "+
+					"This is always an issue with the provider and should be reported to the provider developers.\n\n"+
+					fmt.Sprintf("Object Attribute Name (%s) Expected Type: %s", name, attributeType.String()),
+			)
+
+			continue
+		}
+
+		if !attributeType.Equal(attribute.Type(ctx)) {
+			diags.AddError(
+				"Invalid Object Attribute Type",
+				"While creating a Object value, an invalid attribute value was detected. "+
+					"A Object must use a matching attribute type for the value. "+
+					"This is always an issue with the provider and should be reported to the provider developers.\n\n"+
+					fmt.Sprintf("Object Attribute Name (%s) Expected Type: %s\n", name, attributeType.String())+
+					fmt.Sprintf("Object Attribute Name (%s) Given Type: %s", name, attribute.Type(ctx)),
+			)
+		}
+	}
+
+	for name := range attributes {
+		_, ok := attributeTypes[name]
+
+		if !ok {
+			diags.AddError(
+				"Extra Object Attribute Value",
+				"While creating a Object value, an extra attribute value was detected. "+
+					"A Object must not contain values beyond the expected attribute types. "+
+					"This is always an issue with the provider and should be reported to the provider developers.\n\n"+
+					fmt.Sprintf("Extra Object Attribute Name: %s", name),
+			)
+		}
+	}
+
+	if diags.HasError() {
+		return ObjectUnknown(attributeTypes), diags
+	}
+
+	return Object{
+		attributeTypes: attributeTypes,
+		attributes:     attributes,
+		state:          attr.ValueStateKnown,
+	}, nil
+}
+
+// ObjectValueFrom creates a Object with a known value, using reflection rules.
+// The attributes must be a map of string attribute names to attribute values
+// which can convert into the given attribute type or a struct with tfsdk field
+// tags. Access the value via the Object type Elements or ElementsAs methods.
+func ObjectValueFrom(ctx context.Context, attributeTypes map[string]attr.Type, attributes any) (Object, diag.Diagnostics) {
+	attrValue, diags := reflect.FromValue(
+		ctx,
+		ObjectType{AttrTypes: attributeTypes},
+		attributes,
+		path.Empty(),
+	)
+
+	if diags.HasError() {
+		return ObjectUnknown(attributeTypes), diags
+	}
+
+	m, ok := attrValue.(Object)
+
+	// This should not happen, but ensure there is an error if it does.
+	if !ok {
+		diags.AddError(
+			"Unable to Convert Object Value",
+			"An unexpected result occurred when creating a Object using ObjectValueFrom. "+
+				"This is an issue with terraform-plugin-framework and should be reported to the provider developers.",
+		)
+	}
+
+	return m, diags
+}
+
+// ObjectValueMust creates a Object with a known value, converting any diagnostics
+// into a panic at runtime. Access the value via the Object
+// type Elements or ElementsAs methods.
+//
+// This creation function is only recommended to create Object values which will
+// not potentially effect practitioners, such as testing, or exhaustively
+// tested provider logic.
+func ObjectValueMust(attributeTypes map[string]attr.Type, attributes map[string]attr.Value) Object {
+	object, diags := ObjectValue(attributeTypes, attributes)
+
+	if diags.HasError() {
+		// This could potentially be added to the diag package.
+		diagsStrings := make([]string, 0, len(diags))
+
+		for _, diagnostic := range diags {
+			diagsStrings = append(diagsStrings, fmt.Sprintf(
+				"%s | %s | %s",
+				diagnostic.Severity(),
+				diagnostic.Summary(),
+				diagnostic.Detail()))
+		}
+
+		panic("ObjectValueMust received error(s): " + strings.Join(diagsStrings, "\n"))
+	}
+
+	return object
+}
+
 // Object represents an object
 type Object struct {
-	// Unknown will be set to true if the entire object is an unknown value.
-	// If only some of the elements in the object are unknown, their known or
-	// unknown status will be represented however that attr.Value
-	// surfaces that information. The Object's Unknown property only tracks
-	// if the number of elements in a Object is known, not whether the
-	// elements that are in the object are known.
-	Unknown bool
+	// attributes is the mapping of known attribute values in the Object.
+	attributes map[string]attr.Value
 
-	// Null will be set to true if the object is null, either because it was
-	// omitted from the configuration, state, or plan, or because it was
-	// explicitly set to null.
-	Null bool
+	// attributeTypes is the type of the attributes in the Object.
+	attributeTypes map[string]attr.Type
 
-	Attrs map[string]attr.Value
-
-	AttrTypes map[string]attr.Type
+	// state represents whether the value is null, unknown, or known. The
+	// zero-value is null.
+	state attr.ValueState
 }
 
 // ObjectAsOptions is a collection of toggles to control the behavior of
@@ -184,7 +340,7 @@ type ObjectAsOptions struct {
 func (o Object) As(ctx context.Context, target interface{}, opts ObjectAsOptions) diag.Diagnostics {
 	// we need a tftypes.Value for this Object to be able to use it with
 	// our reflection code
-	obj := ObjectType{AttrTypes: o.AttrTypes}
+	obj := ObjectType{AttrTypes: o.attributeTypes}
 	val, err := o.ToTerraformValue(ctx)
 	if err != nil {
 		return diag.Diagnostics{
@@ -197,80 +353,107 @@ func (o Object) As(ctx context.Context, target interface{}, opts ObjectAsOptions
 	return reflect.Into(ctx, obj, val, target, reflect.Options{
 		UnhandledNullAsEmpty:    opts.UnhandledNullAsEmpty,
 		UnhandledUnknownAsEmpty: opts.UnhandledUnknownAsEmpty,
-	})
+	}, path.Empty())
+}
+
+// Attributes returns the mapping of known attribute values for the Object.
+// Returns nil if the Object is null or unknown.
+func (o Object) Attributes() map[string]attr.Value {
+	return o.attributes
+}
+
+// AttributeTypes returns the mapping of attribute types for the Object.
+func (o Object) AttributeTypes(_ context.Context) map[string]attr.Type {
+	return o.attributeTypes
 }
 
 // Type returns an ObjectType with the same attribute types as `o`.
-func (o Object) Type(_ context.Context) attr.Type {
-	return ObjectType{AttrTypes: o.AttrTypes}
+func (o Object) Type(ctx context.Context) attr.Type {
+	return ObjectType{AttrTypes: o.AttributeTypes(ctx)}
 }
 
 // ToTerraformValue returns the data contained in the attr.Value as
 // a tftypes.Value.
 func (o Object) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
-	if o.AttrTypes == nil {
-		return tftypes.Value{}, fmt.Errorf("cannot convert Object to tftypes.Value if AttrTypes field is not set")
-	}
 	attrTypes := map[string]tftypes.Type{}
-	for attr, typ := range o.AttrTypes {
+	for attr, typ := range o.AttributeTypes(ctx) {
 		attrTypes[attr] = typ.TerraformType(ctx)
 	}
 	objectType := tftypes.Object{AttributeTypes: attrTypes}
-	if o.Unknown {
-		return tftypes.NewValue(objectType, tftypes.UnknownValue), nil
-	}
-	if o.Null {
-		return tftypes.NewValue(objectType, nil), nil
-	}
-	vals := map[string]tftypes.Value{}
 
-	for k, v := range o.Attrs {
-		val, err := v.ToTerraformValue(ctx)
-		if err != nil {
+	switch o.state {
+	case attr.ValueStateKnown:
+		vals := make(map[string]tftypes.Value, len(o.attributes))
+
+		for name, v := range o.attributes {
+			val, err := v.ToTerraformValue(ctx)
+
+			if err != nil {
+				return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+			}
+
+			vals[name] = val
+		}
+
+		if err := tftypes.ValidateValue(objectType, vals); err != nil {
 			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
 		}
-		vals[k] = val
+
+		return tftypes.NewValue(objectType, vals), nil
+	case attr.ValueStateNull:
+		return tftypes.NewValue(objectType, nil), nil
+	case attr.ValueStateUnknown:
+		return tftypes.NewValue(objectType, tftypes.UnknownValue), nil
+	default:
+		panic(fmt.Sprintf("unhandled Object state in ToTerraformValue: %s", o.state))
 	}
-	if err := tftypes.ValidateValue(objectType, vals); err != nil {
-		return tftypes.NewValue(objectType, tftypes.UnknownValue), err
-	}
-	return tftypes.NewValue(objectType, vals), nil
 }
 
 // Equal returns true if the Object is considered semantically equal
 // (same type and same value) to the attr.Value passed as an argument.
 func (o Object) Equal(c attr.Value) bool {
 	other, ok := c.(Object)
+
 	if !ok {
 		return false
 	}
-	if o.Unknown != other.Unknown {
+
+	if o.state != other.state {
 		return false
 	}
-	if o.Null != other.Null {
+
+	if o.state != attr.ValueStateKnown {
+		return true
+	}
+
+	if len(o.attributeTypes) != len(other.attributeTypes) {
 		return false
 	}
-	if len(o.AttrTypes) != len(other.AttrTypes) {
-		return false
-	}
-	for k, v := range o.AttrTypes {
-		attr, ok := other.AttrTypes[k]
+
+	for name, oAttributeType := range o.attributeTypes {
+		otherAttributeType, ok := other.attributeTypes[name]
+
 		if !ok {
 			return false
 		}
-		if !v.Equal(attr) {
+
+		if !oAttributeType.Equal(otherAttributeType) {
 			return false
 		}
 	}
-	if len(o.Attrs) != len(other.Attrs) {
+
+	if len(o.attributes) != len(other.attributes) {
 		return false
 	}
-	for k, v := range o.Attrs {
-		attr, ok := other.Attrs[k]
+
+	for name, oAttribute := range o.attributes {
+		otherAttribute, ok := other.attributes[name]
+
 		if !ok {
 			return false
 		}
-		if !v.Equal(attr) {
+
+		if !oAttribute.Equal(otherAttribute) {
 			return false
 		}
 	}
@@ -280,29 +463,29 @@ func (o Object) Equal(c attr.Value) bool {
 
 // IsNull returns true if the Object represents a null value.
 func (o Object) IsNull() bool {
-	return o.Null
+	return o.state == attr.ValueStateNull
 }
 
 // IsUnknown returns true if the Object represents a currently unknown value.
 func (o Object) IsUnknown() bool {
-	return o.Unknown
+	return o.state == attr.ValueStateUnknown
 }
 
 // String returns a human-readable representation of the Object value.
 // The string returned here is not protected by any compatibility guarantees,
 // and is intended for logging and error reporting.
 func (o Object) String() string {
-	if o.Unknown {
+	if o.IsUnknown() {
 		return attr.UnknownValueString
 	}
 
-	if o.Null {
+	if o.IsNull() {
 		return attr.NullValueString
 	}
 
 	// We want the output to be consistent, so we sort the output by key
-	keys := make([]string, 0, len(o.Attrs))
-	for k := range o.Attrs {
+	keys := make([]string, 0, len(o.Attributes()))
+	for k := range o.Attributes() {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
@@ -314,9 +497,14 @@ func (o Object) String() string {
 		if i != 0 {
 			res.WriteString(",")
 		}
-		res.WriteString(fmt.Sprintf(`"%s":%s`, k, o.Attrs[k].String()))
+		res.WriteString(fmt.Sprintf(`"%s":%s`, k, o.Attributes()[k].String()))
 	}
 	res.WriteString("}")
 
 	return res.String()
+}
+
+// ToObjectValue returns the Object.
+func (o Object) ToObjectValue(context.Context) (Object, diag.Diagnostics) {
+	return o, nil
 }

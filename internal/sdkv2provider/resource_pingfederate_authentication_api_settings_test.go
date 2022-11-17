@@ -13,8 +13,8 @@ func TestAccPingFederateAuthnApiSettingsResource(t *testing.T) {
 	resourceName := "pingfederate_authentication_api_settings.demo"
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateAuthnApiSettingsResourceDestroy,
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateAuthnApiSettingsResourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateAuthnApiSettingsResourceConfig("true"),

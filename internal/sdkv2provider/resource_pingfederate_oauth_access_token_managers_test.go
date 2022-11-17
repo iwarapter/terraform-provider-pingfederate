@@ -45,8 +45,8 @@ func TestAccPingFederateOauthAccessTokenManager(t *testing.T) {
 	resourceName := "pingfederate_oauth_access_token_manager.my_atm"
 
 	resource.ParallelTest(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateOauthAccessTokenManagerDestroy,
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateOauthAccessTokenManagerDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateOauthAccessTokenManagerConfig("acc", "120"),

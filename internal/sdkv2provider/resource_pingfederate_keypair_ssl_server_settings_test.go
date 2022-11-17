@@ -33,8 +33,8 @@ func TestAccPingFederateKeypairSslServerSettingsResource(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateKeypairSslServerSettingsResourceDestroy,
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateKeypairSslServerSettingsResourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateKeypairSslServerSettingsResourceConfig(),

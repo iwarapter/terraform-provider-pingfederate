@@ -6,16 +6,37 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/hashicorp/terraform-plugin-go/tftypes"
+
 	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/attr/xattr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/internal/reflect"
-	"github.com/hashicorp/terraform-plugin-go/tftypes"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 )
 
 var (
-	_ attr.Type  = MapType{}
-	_ attr.Value = &Map{}
+	_ MapTypable  = MapType{}
+	_ MapValuable = &Map{}
 )
+
+// MapTypable extends attr.Type for map types.
+// Implement this interface to create a custom MapType type.
+type MapTypable interface {
+	attr.Type
+
+	// ValueFromMap should convert the Map to a MapValuable type.
+	ValueFromMap(context.Context, Map) (MapValuable, diag.Diagnostics)
+}
+
+// MapValuable extends attr.Value for map value types.
+// Implement this interface to create a custom Map value type.
+type MapValuable interface {
+	attr.Value
+
+	// ToMapValue should convert the value type to a Map.
+	ToMapValue(ctx context.Context) (Map, diag.Diagnostics)
+}
 
 // MapType is an AttributeType representing a map of values. All values must
 // be of the same type, which the provider must specify as the ElemType
@@ -50,12 +71,8 @@ func (m MapType) TerraformType(ctx context.Context) tftypes.Type {
 // meant to convert the tftypes.Value into a more convenient Go type for the
 // provider to consume the data with.
 func (m MapType) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
-	ma := Map{
-		ElemType: m.ElemType,
-	}
 	if in.Type() == nil {
-		ma.Null = true
-		return ma, nil
+		return MapNull(m.ElemType), nil
 	}
 	if !in.Type().Is(tftypes.Map{}) {
 		return nil, fmt.Errorf("can't use %s as value of Map, can only use tftypes.Map values", in.String())
@@ -64,12 +81,10 @@ func (m MapType) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr
 		return nil, fmt.Errorf("can't use %s as value of Map with ElementType %T, can only use %s values", in.String(), m.ElemType, m.ElemType.TerraformType(ctx).String())
 	}
 	if !in.IsKnown() {
-		ma.Unknown = true
-		return ma, nil
+		return MapUnknown(m.ElemType), nil
 	}
 	if in.IsNull() {
-		ma.Null = true
-		return ma, nil
+		return MapNull(m.ElemType), nil
 	}
 	val := map[string]tftypes.Value{}
 	err := in.As(&val)
@@ -84,8 +99,9 @@ func (m MapType) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr
 		}
 		elems[key] = av
 	}
-	ma.Elems = elems
-	return ma, nil
+	// ValueFromTerraform above on each element should make this safe.
+	// Otherwise, this will need to do some Diagnostics to error conversion.
+	return MapValueMust(m.ElemType, elems), nil
 }
 
 // Equal returns true if `o` is also a MapType and has the same ElemType.
@@ -115,28 +131,193 @@ func (m MapType) String() string {
 	return "types.MapType[" + m.ElemType.String() + "]"
 }
 
-// Map represents a map of attr.Values, all of the same type, indicated by
-// ElemType. Keys for the map will always be strings.
+// Validate validates all elements of the map that are of type
+// xattr.TypeWithValidate.
+func (m MapType) Validate(ctx context.Context, in tftypes.Value, path path.Path) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if in.Type() == nil {
+		return diags
+	}
+
+	if !in.Type().Is(tftypes.Map{}) {
+		err := fmt.Errorf("expected Map value, received %T with value: %v", in, in)
+		diags.AddAttributeError(
+			path,
+			"Map Type Validation Error",
+			"An unexpected error was encountered trying to validate an attribute value. This is always an error in the provider. Please report the following to the provider developer:\n\n"+err.Error(),
+		)
+		return diags
+	}
+
+	if !in.IsKnown() || in.IsNull() {
+		return diags
+	}
+
+	var elems map[string]tftypes.Value
+
+	if err := in.As(&elems); err != nil {
+		diags.AddAttributeError(
+			path,
+			"Map Type Validation Error",
+			"An unexpected error was encountered trying to validate an attribute value. This is always an error in the provider. Please report the following to the provider developer:\n\n"+err.Error(),
+		)
+		return diags
+	}
+
+	validatableType, isValidatable := m.ElemType.(xattr.TypeWithValidate)
+	if !isValidatable {
+		return diags
+	}
+
+	for index, elem := range elems {
+		if !elem.IsFullyKnown() {
+			continue
+		}
+		diags = append(diags, validatableType.Validate(ctx, elem, path.AtMapKey(index))...)
+	}
+
+	return diags
+}
+
+// ValueType returns the Value type.
+func (m MapType) ValueType(_ context.Context) attr.Value {
+	return Map{
+		elementType: m.ElemType,
+	}
+}
+
+// ValueFromMap returns a MapValuable type given a Map.
+func (m MapType) ValueFromMap(_ context.Context, ma Map) (MapValuable, diag.Diagnostics) {
+	return ma, nil
+}
+
+// MapNull creates a Map with a null value. Determine whether the value is
+// null via the Map type IsNull method.
+func MapNull(elementType attr.Type) Map {
+	return Map{
+		elementType: elementType,
+		state:       attr.ValueStateNull,
+	}
+}
+
+// MapUnknown creates a Map with an unknown value. Determine whether the
+// value is unknown via the Map type IsUnknown method.
+func MapUnknown(elementType attr.Type) Map {
+	return Map{
+		elementType: elementType,
+		state:       attr.ValueStateUnknown,
+	}
+}
+
+// MapValue creates a Map with a known value. Access the value via the Map
+// type Elements or ElementsAs methods.
+func MapValue(elementType attr.Type, elements map[string]attr.Value) (Map, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	// Reference: https://github.com/hashicorp/terraform-plugin-framework/issues/521
+	ctx := context.Background()
+
+	for key, element := range elements {
+		if !elementType.Equal(element.Type(ctx)) {
+			diags.AddError(
+				"Invalid Map Element Type",
+				"While creating a Map value, an invalid element was detected. "+
+					"A Map must use the single, given element type. "+
+					"This is always an issue with the provider and should be reported to the provider developers.\n\n"+
+					fmt.Sprintf("Map Element Type: %s\n", elementType.String())+
+					fmt.Sprintf("Map Key (%s) Element Type: %s", key, element.Type(ctx)),
+			)
+		}
+	}
+
+	if diags.HasError() {
+		return MapUnknown(elementType), diags
+	}
+
+	return Map{
+		elementType: elementType,
+		elements:    elements,
+		state:       attr.ValueStateKnown,
+	}, nil
+}
+
+// MapValueFrom creates a Map with a known value, using reflection rules.
+// The elements must be a map of string keys to values which can convert into
+// the given element type. Access the value via the Map type Elements or
+// ElementsAs methods.
+func MapValueFrom(ctx context.Context, elementType attr.Type, elements any) (Map, diag.Diagnostics) {
+	attrValue, diags := reflect.FromValue(
+		ctx,
+		MapType{ElemType: elementType},
+		elements,
+		path.Empty(),
+	)
+
+	if diags.HasError() {
+		return MapUnknown(elementType), diags
+	}
+
+	m, ok := attrValue.(Map)
+
+	// This should not happen, but ensure there is an error if it does.
+	if !ok {
+		diags.AddError(
+			"Unable to Convert Map Value",
+			"An unexpected result occurred when creating a Map using MapValueFrom. "+
+				"This is an issue with terraform-plugin-framework and should be reported to the provider developers.",
+		)
+	}
+
+	return m, diags
+}
+
+// MapValueMust creates a Map with a known value, converting any diagnostics
+// into a panic at runtime. Access the value via the Map
+// type Elements or ElementsAs methods.
+//
+// This creation function is only recommended to create Map values which will
+// not potentially effect practitioners, such as testing, or exhaustively
+// tested provider logic.
+func MapValueMust(elementType attr.Type, elements map[string]attr.Value) Map {
+	m, diags := MapValue(elementType, elements)
+
+	if diags.HasError() {
+		// This could potentially be added to the diag package.
+		diagsStrings := make([]string, 0, len(diags))
+
+		for _, diagnostic := range diags {
+			diagsStrings = append(diagsStrings, fmt.Sprintf(
+				"%s | %s | %s",
+				diagnostic.Severity(),
+				diagnostic.Summary(),
+				diagnostic.Detail()))
+		}
+
+		panic("MapValueMust received error(s): " + strings.Join(diagsStrings, "\n"))
+	}
+
+	return m
+}
+
+// Map represents a mapping of string keys to attr.Value values of a single
+// type.
 type Map struct {
-	// Unknown will be set to true if the entire map is an unknown value.
-	// If only some of the elements in the map are unknown, their known or
-	// unknown status will be represented however that attr.Value
-	// surfaces that information. The Map's Unknown property only tracks if
-	// the number of elements in a Map is known, not whether the elements
-	// that are in the map are known.
-	Unknown bool
+	// elements is the mapping of known values in the Map.
+	elements map[string]attr.Value
 
-	// Null will be set to true if the map is null, either because it was
-	// omitted from the configuration, state, or plan, or because it was
-	// explicitly set to null.
-	Null bool
+	// elementType is the type of the elements in the Map.
+	elementType attr.Type
 
-	// Elems are the elements in the map.
-	Elems map[string]attr.Value
+	// state represents whether the value is null, unknown, or known. The
+	// zero-value is null.
+	state attr.ValueState
+}
 
-	// ElemType is the AttributeType of the elements in the map. All
-	// elements in the map must be of this type.
-	ElemType attr.Type
+// Elements returns the mapping of elements for the Map. Returns nil if the
+// Map is null or unknown.
+func (m Map) Elements() map[string]attr.Value {
+	return m.elements
 }
 
 // ElementsAs populates `target` with the elements of the Map, throwing an
@@ -154,99 +335,118 @@ func (m Map) ElementsAs(ctx context.Context, target interface{}, allowUnhandled 
 			),
 		}
 	}
-	return reflect.Into(ctx, MapType{ElemType: m.ElemType}, val, target, reflect.Options{
+
+	return reflect.Into(ctx, MapType{ElemType: m.elementType}, val, target, reflect.Options{
 		UnhandledNullAsEmpty:    allowUnhandled,
 		UnhandledUnknownAsEmpty: allowUnhandled,
-	})
+	}, path.Empty())
+}
+
+// ElementType returns the element type for the Map.
+func (m Map) ElementType(_ context.Context) attr.Type {
+	return m.elementType
 }
 
 // Type returns a MapType with the same element type as `m`.
 func (m Map) Type(ctx context.Context) attr.Type {
-	return MapType{ElemType: m.ElemType}
+	return MapType{ElemType: m.ElementType(ctx)}
 }
 
-// ToTerraformValue returns the data contained in the List as a tftypes.Value.
+// ToTerraformValue returns the data contained in the Map as a tftypes.Value.
 func (m Map) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
-	if m.ElemType == nil {
-		return tftypes.Value{}, fmt.Errorf("cannot convert Map to tftypes.Value if ElemType field is not set")
-	}
-	mapType := tftypes.Map{ElementType: m.ElemType.TerraformType(ctx)}
-	if m.Unknown {
-		return tftypes.NewValue(mapType, tftypes.UnknownValue), nil
-	}
-	if m.Null {
-		return tftypes.NewValue(mapType, nil), nil
-	}
-	vals := make(map[string]tftypes.Value, len(m.Elems))
-	for key, elem := range m.Elems {
-		val, err := elem.ToTerraformValue(ctx)
-		if err != nil {
+	mapType := tftypes.Map{ElementType: m.ElementType(ctx).TerraformType(ctx)}
+
+	switch m.state {
+	case attr.ValueStateKnown:
+		vals := make(map[string]tftypes.Value, len(m.elements))
+
+		for key, elem := range m.elements {
+			val, err := elem.ToTerraformValue(ctx)
+
+			if err != nil {
+				return tftypes.NewValue(mapType, tftypes.UnknownValue), err
+			}
+
+			vals[key] = val
+		}
+
+		if err := tftypes.ValidateValue(mapType, vals); err != nil {
 			return tftypes.NewValue(mapType, tftypes.UnknownValue), err
 		}
-		vals[key] = val
+
+		return tftypes.NewValue(mapType, vals), nil
+	case attr.ValueStateNull:
+		return tftypes.NewValue(mapType, nil), nil
+	case attr.ValueStateUnknown:
+		return tftypes.NewValue(mapType, tftypes.UnknownValue), nil
+	default:
+		panic(fmt.Sprintf("unhandled Map state in ToTerraformValue: %s", m.state))
 	}
-	if err := tftypes.ValidateValue(mapType, vals); err != nil {
-		return tftypes.NewValue(mapType, tftypes.UnknownValue), err
-	}
-	return tftypes.NewValue(mapType, vals), nil
 }
 
 // Equal returns true if the Map is considered semantically equal
 // (same type and same value) to the attr.Value passed as an argument.
 func (m Map) Equal(o attr.Value) bool {
 	other, ok := o.(Map)
+
 	if !ok {
 		return false
 	}
-	if m.Unknown != other.Unknown {
+
+	if !m.elementType.Equal(other.elementType) {
 		return false
 	}
-	if m.Null != other.Null {
+
+	if m.state != other.state {
 		return false
 	}
-	if !m.ElemType.Equal(other.ElemType) {
+
+	if m.state != attr.ValueStateKnown {
+		return true
+	}
+
+	if len(m.elements) != len(other.elements) {
 		return false
 	}
-	if len(m.Elems) != len(other.Elems) {
-		return false
-	}
-	for key, mElem := range m.Elems {
-		oElem, ok := other.Elems[key]
-		if !ok {
+
+	for key, mElem := range m.elements {
+		otherElem := other.elements[key]
+
+		if !mElem.Equal(otherElem) {
 			return false
 		}
-		if !mElem.Equal(oElem) {
-			return false
-		}
 	}
+
 	return true
 }
 
 // IsNull returns true if the Map represents a null value.
 func (m Map) IsNull() bool {
-	return m.Null
+	return m.state == attr.ValueStateNull
 }
 
 // IsUnknown returns true if the Map represents a currently unknown value.
+// Returns false if the Map has a known number of elements, even if all are
+// unknown values.
 func (m Map) IsUnknown() bool {
-	return m.Unknown
+	return m.state == attr.ValueStateUnknown
 }
 
 // String returns a human-readable representation of the Map value.
 // The string returned here is not protected by any compatibility guarantees,
 // and is intended for logging and error reporting.
 func (m Map) String() string {
-	if m.Unknown {
+	if m.IsUnknown() {
 		return attr.UnknownValueString
 	}
 
-	if m.Null {
+	if m.IsNull() {
 		return attr.NullValueString
 	}
 
 	// We want the output to be consistent, so we sort the output by key
-	keys := make([]string, 0, len(m.Elems))
-	for k := range m.Elems {
+	keys := make([]string, 0, len(m.Elements()))
+	for k := range m.Elements() {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
@@ -258,9 +458,14 @@ func (m Map) String() string {
 		if i != 0 {
 			res.WriteString(",")
 		}
-		res.WriteString(fmt.Sprintf("%q:%s", k, m.Elems[k].String()))
+		res.WriteString(fmt.Sprintf("%q:%s", k, m.Elements()[k].String()))
 	}
 	res.WriteString("}")
 
 	return res.String()
+}
+
+// ToMapValue returns the Map.
+func (m Map) ToMapValue(context.Context) (Map, diag.Diagnostics) {
+	return m, nil
 }

@@ -14,8 +14,8 @@ func TestAccPingFederateOAuthAccessTokenManagerSettingsResource(t *testing.T) {
 	resourceName := "pingfederate_oauth_access_token_manager_settings.demo"
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateOAuthAccessTokenManagerSettingsResourceDestroy,
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateOAuthAccessTokenManagerSettingsResourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateOAuthAccessTokenManagerSettingsResourceConfig("pingfederate_oauth_access_token_manager.example.id"),

@@ -39,8 +39,8 @@ func init() {
 func TestAccPingFederateOAuthClientRegistrationPolicyResource(t *testing.T) {
 	resourceName := "pingfederate_oauth_client_registration_policy.demo"
 	resource.ParallelTest(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateOAuthClientRegistrationPolicyResourceDestroy,
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateOAuthClientRegistrationPolicyResourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateOAuthClientRegistrationPolicyResourceConfig("false"),

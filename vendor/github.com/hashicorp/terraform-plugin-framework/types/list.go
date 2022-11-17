@@ -5,16 +5,37 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/hashicorp/terraform-plugin-go/tftypes"
+
 	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/attr/xattr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/internal/reflect"
-	"github.com/hashicorp/terraform-plugin-go/tftypes"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 )
 
 var (
-	_ attr.Type  = ListType{}
-	_ attr.Value = &List{}
+	_ ListTypable  = ListType{}
+	_ ListValuable = &List{}
 )
+
+// ListTypable extends attr.Type for list types.
+// Implement this interface to create a custom ListType type.
+type ListTypable interface {
+	attr.Type
+
+	// ValueFromList should convert the List to a ListValuable type.
+	ValueFromList(context.Context, List) (ListValuable, diag.Diagnostics)
+}
+
+// ListValuable extends attr.Value for list value types.
+// Implement this interface to create a custom List value type.
+type ListValuable interface {
+	attr.Value
+
+	// ToListValue should convert the value type to a List.
+	ToListValue(ctx context.Context) (List, diag.Diagnostics)
+}
 
 // ListType is an AttributeType representing a list of values. All values must
 // be of the same type, which the provider must specify as the ElemType
@@ -49,23 +70,17 @@ func (l ListType) TerraformType(ctx context.Context) tftypes.Type {
 // This is meant to convert the tftypes.Value into a more convenient Go
 // type for the provider to consume the data with.
 func (l ListType) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
-	list := List{
-		ElemType: l.ElemType,
-	}
 	if in.Type() == nil {
-		list.Null = true
-		return list, nil
+		return ListNull(l.ElemType), nil
 	}
 	if !in.Type().Equal(l.TerraformType(ctx)) {
 		return nil, fmt.Errorf("can't use %s as value of List with ElementType %T, can only use %s values", in.String(), l.ElemType, l.ElemType.TerraformType(ctx).String())
 	}
 	if !in.IsKnown() {
-		list.Unknown = true
-		return list, nil
+		return ListUnknown(l.ElemType), nil
 	}
 	if in.IsNull() {
-		list.Null = true
-		return list, nil
+		return ListNull(l.ElemType), nil
 	}
 	val := []tftypes.Value{}
 	err := in.As(&val)
@@ -80,8 +95,9 @@ func (l ListType) ValueFromTerraform(ctx context.Context, in tftypes.Value) (att
 		}
 		elems = append(elems, av)
 	}
-	list.Elems = elems
-	return list, nil
+	// ValueFromTerraform above on each element should make this safe.
+	// Otherwise, this will need to do some Diagnostics to error conversion.
+	return ListValueMust(l.ElemType, elems), nil
 }
 
 // Equal returns true if `o` is also a ListType and has the same ElemType.
@@ -111,28 +127,192 @@ func (l ListType) String() string {
 	return "types.ListType[" + l.ElemType.String() + "]"
 }
 
+// Validate validates all elements of the list that are of type
+// xattr.TypeWithValidate.
+func (l ListType) Validate(ctx context.Context, in tftypes.Value, path path.Path) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if in.Type() == nil {
+		return diags
+	}
+
+	if !in.Type().Is(tftypes.List{}) {
+		err := fmt.Errorf("expected List value, received %T with value: %v", in, in)
+		diags.AddAttributeError(
+			path,
+			"List Type Validation Error",
+			"An unexpected error was encountered trying to validate an attribute value. This is always an error in the provider. Please report the following to the provider developer:\n\n"+err.Error(),
+		)
+		return diags
+	}
+
+	if !in.IsKnown() || in.IsNull() {
+		return diags
+	}
+
+	var elems []tftypes.Value
+
+	if err := in.As(&elems); err != nil {
+		diags.AddAttributeError(
+			path,
+			"List Type Validation Error",
+			"An unexpected error was encountered trying to validate an attribute value. This is always an error in the provider. Please report the following to the provider developer:\n\n"+err.Error(),
+		)
+		return diags
+	}
+
+	validatableType, isValidatable := l.ElemType.(xattr.TypeWithValidate)
+	if !isValidatable {
+		return diags
+	}
+
+	for index, elem := range elems {
+		if !elem.IsFullyKnown() {
+			continue
+		}
+		diags = append(diags, validatableType.Validate(ctx, elem, path.AtListIndex(index))...)
+	}
+
+	return diags
+}
+
+// ValueType returns the Value type.
+func (l ListType) ValueType(_ context.Context) attr.Value {
+	return List{
+		elementType: l.ElemType,
+	}
+}
+
+// ValueFromList returns a ListValuable type given a List.
+func (l ListType) ValueFromList(_ context.Context, list List) (ListValuable, diag.Diagnostics) {
+	return list, nil
+}
+
+// ListNull creates a List with a null value. Determine whether the value is
+// null via the List type IsNull method.
+func ListNull(elementType attr.Type) List {
+	return List{
+		elementType: elementType,
+		state:       attr.ValueStateNull,
+	}
+}
+
+// ListUnknown creates a List with an unknown value. Determine whether the
+// value is unknown via the List type IsUnknown method.
+func ListUnknown(elementType attr.Type) List {
+	return List{
+		elementType: elementType,
+		state:       attr.ValueStateUnknown,
+	}
+}
+
+// ListValue creates a List with a known value. Access the value via the List
+// type Elements or ElementsAs methods.
+func ListValue(elementType attr.Type, elements []attr.Value) (List, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	// Reference: https://github.com/hashicorp/terraform-plugin-framework/issues/521
+	ctx := context.Background()
+
+	for idx, element := range elements {
+		if !elementType.Equal(element.Type(ctx)) {
+			diags.AddError(
+				"Invalid List Element Type",
+				"While creating a List value, an invalid element was detected. "+
+					"A List must use the single, given element type. "+
+					"This is always an issue with the provider and should be reported to the provider developers.\n\n"+
+					fmt.Sprintf("List Element Type: %s\n", elementType.String())+
+					fmt.Sprintf("List Index (%d) Element Type: %s", idx, element.Type(ctx)),
+			)
+		}
+	}
+
+	if diags.HasError() {
+		return ListUnknown(elementType), diags
+	}
+
+	return List{
+		elementType: elementType,
+		elements:    elements,
+		state:       attr.ValueStateKnown,
+	}, nil
+}
+
+// ListValueFrom creates a List with a known value, using reflection rules.
+// The elements must be a slice which can convert into the given element type.
+// Access the value via the List type Elements or ElementsAs methods.
+func ListValueFrom(ctx context.Context, elementType attr.Type, elements any) (List, diag.Diagnostics) {
+	attrValue, diags := reflect.FromValue(
+		ctx,
+		ListType{ElemType: elementType},
+		elements,
+		path.Empty(),
+	)
+
+	if diags.HasError() {
+		return ListUnknown(elementType), diags
+	}
+
+	list, ok := attrValue.(List)
+
+	// This should not happen, but ensure there is an error if it does.
+	if !ok {
+		diags.AddError(
+			"Unable to Convert List Value",
+			"An unexpected result occurred when creating a List using ListValueFrom. "+
+				"This is an issue with terraform-plugin-framework and should be reported to the provider developers.",
+		)
+	}
+
+	return list, diags
+}
+
+// ListValueMust creates a List with a known value, converting any diagnostics
+// into a panic at runtime. Access the value via the List
+// type Elements or ElementsAs methods.
+//
+// This creation function is only recommended to create List values which will
+// not potentially affect practitioners, such as testing, or exhaustively
+// tested provider logic.
+func ListValueMust(elementType attr.Type, elements []attr.Value) List {
+	list, diags := ListValue(elementType, elements)
+
+	if diags.HasError() {
+		// This could potentially be added to the diag package.
+		diagsStrings := make([]string, 0, len(diags))
+
+		for _, diagnostic := range diags {
+			diagsStrings = append(diagsStrings, fmt.Sprintf(
+				"%s | %s | %s",
+				diagnostic.Severity(),
+				diagnostic.Summary(),
+				diagnostic.Detail()))
+		}
+
+		panic("ListValueMust received error(s): " + strings.Join(diagsStrings, "\n"))
+	}
+
+	return list
+}
+
 // List represents a list of attr.Values, all of the same type, indicated
 // by ElemType.
 type List struct {
-	// Unknown will be set to true if the entire list is an unknown value.
-	// If only some of the elements in the list are unknown, their known or
-	// unknown status will be represented however that attr.Value
-	// surfaces that information. The List's Unknown property only tracks
-	// if the number of elements in a List is known, not whether the
-	// elements that are in the list are known.
-	Unknown bool
+	// elements is the collection of known values in the List.
+	elements []attr.Value
 
-	// Null will be set to true if the list is null, either because it was
-	// omitted from the configuration, state, or plan, or because it was
-	// explicitly set to null.
-	Null bool
+	// elementType is the type of the elements in the List.
+	elementType attr.Type
 
-	// Elems are the elements in the list.
-	Elems []attr.Value
+	// state represents whether the value is null, unknown, or known. The
+	// zero-value is null.
+	state attr.ValueState
+}
 
-	// ElemType is the tftypes.Type of the elements in the list. All
-	// elements in the list must be of this type.
-	ElemType attr.Type
+// Elements returns the collection of elements for the List. Returns nil if the
+// List is null or unknown.
+func (l List) Elements() []attr.Value {
+	return l.elements
 }
 
 // ElementsAs populates `target` with the elements of the List, throwing an
@@ -149,100 +329,118 @@ func (l List) ElementsAs(ctx context.Context, target interface{}, allowUnhandled
 			),
 		}
 	}
-	return reflect.Into(ctx, ListType{ElemType: l.ElemType}, values, target, reflect.Options{
+	return reflect.Into(ctx, ListType{ElemType: l.elementType}, values, target, reflect.Options{
 		UnhandledNullAsEmpty:    allowUnhandled,
 		UnhandledUnknownAsEmpty: allowUnhandled,
-	})
+	}, path.Empty())
+}
+
+// ElementType returns the element type for the List.
+func (l List) ElementType(_ context.Context) attr.Type {
+	return l.elementType
 }
 
 // Type returns a ListType with the same element type as `l`.
 func (l List) Type(ctx context.Context) attr.Type {
-	return ListType{ElemType: l.ElemType}
+	return ListType{ElemType: l.ElementType(ctx)}
 }
 
 // ToTerraformValue returns the data contained in the List as a tftypes.Value.
 func (l List) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
-	if l.ElemType == nil {
-		return tftypes.Value{}, fmt.Errorf("cannot convert List to tftypes.Value if ElemType field is not set")
-	}
-	listType := tftypes.List{ElementType: l.ElemType.TerraformType(ctx)}
-	if l.Unknown {
-		return tftypes.NewValue(listType, tftypes.UnknownValue), nil
-	}
-	if l.Null {
-		return tftypes.NewValue(listType, nil), nil
-	}
-	vals := make([]tftypes.Value, 0, len(l.Elems))
-	for _, elem := range l.Elems {
-		val, err := elem.ToTerraformValue(ctx)
-		if err != nil {
+	listType := tftypes.List{ElementType: l.ElementType(ctx).TerraformType(ctx)}
+
+	switch l.state {
+	case attr.ValueStateKnown:
+		vals := make([]tftypes.Value, 0, len(l.elements))
+
+		for _, elem := range l.elements {
+			val, err := elem.ToTerraformValue(ctx)
+
+			if err != nil {
+				return tftypes.NewValue(listType, tftypes.UnknownValue), err
+			}
+
+			vals = append(vals, val)
+		}
+
+		if err := tftypes.ValidateValue(listType, vals); err != nil {
 			return tftypes.NewValue(listType, tftypes.UnknownValue), err
 		}
-		vals = append(vals, val)
+
+		return tftypes.NewValue(listType, vals), nil
+	case attr.ValueStateNull:
+		return tftypes.NewValue(listType, nil), nil
+	case attr.ValueStateUnknown:
+		return tftypes.NewValue(listType, tftypes.UnknownValue), nil
+	default:
+		panic(fmt.Sprintf("unhandled List state in ToTerraformValue: %s", l.state))
 	}
-	if err := tftypes.ValidateValue(listType, vals); err != nil {
-		return tftypes.NewValue(listType, tftypes.UnknownValue), err
-	}
-	return tftypes.NewValue(listType, vals), nil
 }
 
 // Equal returns true if the List is considered semantically equal
 // (same type and same value) to the attr.Value passed as an argument.
 func (l List) Equal(o attr.Value) bool {
 	other, ok := o.(List)
+
 	if !ok {
 		return false
 	}
-	if l.Unknown != other.Unknown {
+
+	if !l.elementType.Equal(other.elementType) {
 		return false
 	}
-	if l.Null != other.Null {
+
+	if l.state != other.state {
 		return false
 	}
-	if l.ElemType == nil && other.ElemType != nil {
+
+	if l.state != attr.ValueStateKnown {
+		return true
+	}
+
+	if len(l.elements) != len(other.elements) {
 		return false
 	}
-	if l.ElemType != nil && !l.ElemType.Equal(other.ElemType) {
-		return false
-	}
-	if len(l.Elems) != len(other.Elems) {
-		return false
-	}
-	for pos, lElem := range l.Elems {
-		oElem := other.Elems[pos]
-		if !lElem.Equal(oElem) {
+
+	for idx, lElem := range l.elements {
+		otherElem := other.elements[idx]
+
+		if !lElem.Equal(otherElem) {
 			return false
 		}
 	}
+
 	return true
 }
 
 // IsNull returns true if the List represents a null value.
 func (l List) IsNull() bool {
-	return l.Null
+	return l.state == attr.ValueStateNull
 }
 
 // IsUnknown returns true if the List represents a currently unknown value.
+// Returns false if the List has a known number of elements, even if all are
+// unknown values.
 func (l List) IsUnknown() bool {
-	return l.Unknown
+	return l.state == attr.ValueStateUnknown
 }
 
 // String returns a human-readable representation of the List value.
 // The string returned here is not protected by any compatibility guarantees,
 // and is intended for logging and error reporting.
 func (l List) String() string {
-	if l.Unknown {
+	if l.IsUnknown() {
 		return attr.UnknownValueString
 	}
 
-	if l.Null {
+	if l.IsNull() {
 		return attr.NullValueString
 	}
 
 	var res strings.Builder
 
 	res.WriteString("[")
-	for i, e := range l.Elems {
+	for i, e := range l.Elements() {
 		if i != 0 {
 			res.WriteString(",")
 		}
@@ -251,4 +449,9 @@ func (l List) String() string {
 	res.WriteString("]")
 
 	return res.String()
+}
+
+// ToListValue returns the List.
+func (l List) ToListValue(context.Context) (List, diag.Diagnostics) {
+	return l, nil
 }

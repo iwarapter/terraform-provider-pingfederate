@@ -42,8 +42,8 @@ func init() {
 func TestAccPingFederateJdbcDataStoreResource(t *testing.T) {
 	resourceName := "pingfederate_jdbc_data_store.demo"
 	resource.ParallelTest(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateJdbcDataStoreResourceDestroy,
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateJdbcDataStoreResourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateJdbcDataStoreResourceConfig("1000"),

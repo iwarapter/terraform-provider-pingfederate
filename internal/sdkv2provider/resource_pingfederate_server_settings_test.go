@@ -17,8 +17,8 @@ import (
 func TestAccPingFederateServerSettingsResource(t *testing.T) {
 	resourceName := "pingfederate_server_settings.demo"
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateServerSettingsResourceDestroy,
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateServerSettingsResourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateServerSettingsResourceConfig("testing1"),

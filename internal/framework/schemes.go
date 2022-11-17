@@ -16,22 +16,22 @@ func resourceApcToPersistentGrantMapping() tfsdk.Schema {
 			"attribute_contract_fulfillment": {
 				Description: `A list of mappings from attribute names to their fulfillment values.`,
 				Required:    true,
-				Attributes:  mapAttributeFulfillmentValue(),
+				Attributes:  tfsdk.MapNestedAttributes(mapAttributeFulfillmentValue()),
 			},
 			"jdbc_attribute_sources": {
 				Description: `The configured settings used to look up attributes from a JDBC data store.`,
 				Optional:    true,
-				Attributes:  listJdbcAttributeSource(),
+				Attributes:  tfsdk.ListNestedAttributes(listJdbcAttributeSource()),
 			},
 			"ldap_attribute_sources": {
 				Description: `The configured settings used to look up attributes from a LDAP data store.`,
 				Optional:    true,
-				Attributes:  listLdapAttributeSource(),
+				Attributes:  tfsdk.ListNestedAttributes(listLdapAttributeSource()),
 			},
 			"custom_attribute_sources": {
 				Description: `The configured settings used to look up attributes from a custom data store.`,
 				Optional:    true,
-				Attributes:  listCustomAttributeSource(),
+				Attributes:  tfsdk.ListNestedAttributes(listCustomAttributeSource()),
 			},
 			"authentication_policy_contract_ref": {
 				Description: `Reference to the associated authentication policy contract. The reference cannot be changed after the mapping has been created.`,
@@ -50,7 +50,7 @@ func resourceApcToPersistentGrantMapping() tfsdk.Schema {
 			"issuance_criteria": {
 				Description: `The issuance criteria that this transaction must meet before the corresponding attribute contract is fulfilled.`,
 				Optional:    true,
-				Attributes:  singleIssuanceCriteria(),
+				Attributes:  tfsdk.SingleNestedAttributes(singleIssuanceCriteria()),
 			},
 		},
 	}
@@ -68,18 +68,14 @@ func resourceAuthenticationPolicyContract() tfsdk.Schema {
 					ElemType: types.StringType,
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.Set{ElemType: types.StringType, Elems: []attr.Value{types.String{Value: "subject"}}}),
+					Default(types.SetValueMust(types.StringType, []attr.Value{types.StringValue("subject")})),
 				},
 			},
 			"extended_attributes": {
 				Description: `A list of additional attributes as needed.`,
 				Optional:    true,
-				Computed:    true,
 				Type: types.SetType{
 					ElemType: types.StringType,
-				},
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.Set{ElemType: types.StringType, Elems: []attr.Value{}}),
 				},
 			},
 			"id": {
@@ -110,7 +106,7 @@ func resourceClient() tfsdk.Schema {
 				Computed:    true,
 				Type:        types.BoolType,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.Bool{Value: false}),
+					Default(types.BoolValue(false)),
 				},
 			},
 			"bypass_activation_code_confirmation_override": {
@@ -124,7 +120,7 @@ func resourceClient() tfsdk.Schema {
 				Computed:    true,
 				Type:        types.BoolType,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.Bool{Value: false}),
+					Default(types.BoolValue(false)),
 				},
 			},
 			"ciba_delivery_mode": {
@@ -160,7 +156,7 @@ func resourceClient() tfsdk.Schema {
 			"client_auth": {
 				Description: `Client authentication settings.  If this model is null, it indicates that no client authentication will be used.`,
 				Optional:    true,
-				Attributes:  singleClientAuth(),
+				Attributes:  tfsdk.SingleNestedAttributes(singleClientAuth()),
 			},
 			"client_id": {
 				Description: `A unique identifier the client provides to the Resource Server to identify itself. This identifier is included with every request the client makes. For PUT requests, this field is optional and it will be overridden by the 'id' parameter of the PUT request.`,
@@ -168,6 +164,26 @@ func resourceClient() tfsdk.Schema {
 				Type:        types.StringType,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
 					resource.RequiresReplace(),
+				},
+			},
+			"client_secret_changed_time": {
+				Description: `The time at which the client secret was last changed. This property is read only and is ignored on PUT and POST requests.`,
+				Optional:    true,
+				Computed:    true,
+				Type:        types.StringType,
+			},
+			"client_secret_retention_period": {
+				Description: `The length of time in minutes that client secrets will be retained as secondary secrets after secret change. The default value is 0, which will disable secondary client secret retention. This value will override the Client Secret Retention Period value on the Authorization Server Settings.`,
+				Optional:    true,
+				Type:        types.NumberType,
+			},
+			"client_secret_retention_period_type": {
+				Description: `Use OVERRIDE_SERVER_DEFAULT to override the Client Secret Retention Period value on the Authorization Server Settings. SERVER_DEFAULT will default to the Client Secret Retention Period value on the Authorization Server Setting. Defaults to SERVER_DEFAULT.`,
+				Optional:    true,
+				Computed:    true,
+				Type:        types.StringType,
+				PlanModifiers: tfsdk.AttributePlanModifiers{
+					Default(types.StringValue("SERVER_DEFAULT")),
 				},
 			},
 			"default_access_token_manager_ref": {
@@ -186,7 +202,7 @@ func resourceClient() tfsdk.Schema {
 				Computed:    true,
 				Type:        types.StringType,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.String{Value: "SERVER_DEFAULT"}),
+					Default(types.StringValue("SERVER_DEFAULT")),
 				},
 			},
 			"device_polling_interval_override": {
@@ -200,7 +216,7 @@ func resourceClient() tfsdk.Schema {
 				Computed:    true,
 				Type:        types.BoolType,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.Bool{Value: true}),
+					Default(types.BoolValue(true)),
 				},
 			},
 			"exclusive_scopes": {
@@ -211,13 +227,13 @@ func resourceClient() tfsdk.Schema {
 					ElemType: types.StringType,
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.List{ElemType: types.StringType, Elems: []attr.Value{}}),
+					Default(types.ListValueMust(types.StringType, []attr.Value{})),
 				},
 			},
 			"extended_parameters": {
 				Description: `OAuth Client Metadata can be extended to use custom Client Metadata Parameters. The names of these custom parameters should be defined in /extendedProperties.`,
 				Optional:    true,
-				Attributes:  mapParameterValues(),
+				Attributes:  tfsdk.MapNestedAttributes(mapParameterValues()),
 			},
 			"grant_types": {
 				Description: `The grant types allowed for this client. The EXTENSION grant type applies to SAML/JWT assertion grants.`,
@@ -238,7 +254,22 @@ func resourceClient() tfsdk.Schema {
 			"jwks_settings": {
 				Description: `JSON Web Key Set Settings of the OAuth client. Required if private key JWT client authentication or signed requests is enabled.`,
 				Optional:    true,
-				Attributes:  singleJwksSettings(),
+				Attributes:  tfsdk.SingleNestedAttributes(singleJwksSettings()),
+			},
+			"jwt_secured_authorization_response_mode_content_encryption_algorithm": {
+				Description: `The JSON Web Encryption [JWE] content-encryption algorithm for the JWT Secured Authorization Response.<br>AES_128_CBC_HMAC_SHA_256 - Composite AES-CBC-128 HMAC-SHA-256<br>AES_192_CBC_HMAC_SHA_384 - Composite AES-CBC-192 HMAC-SHA-384<br>AES_256_CBC_HMAC_SHA_512 - Composite AES-CBC-256 HMAC-SHA-512<br>AES_128_GCM - AES-GCM-128<br>AES_192_GCM - AES-GCM-192<br>AES_256_GCM - AES-GCM-256`,
+				Optional:    true,
+				Type:        types.StringType,
+			},
+			"jwt_secured_authorization_response_mode_encryption_algorithm": {
+				Description: `The JSON Web Encryption [JWE] encryption algorithm used to encrypt the content-encryption key of the JWT Secured Authorization Response.<br>DIR - Direct Encryption with symmetric key<br>A128KW - AES-128 Key Wrap<br>A192KW - AES-192 Key Wrap<br>A256KW - AES-256 Key Wrap<br>A128GCMKW - AES-GCM-128 key encryption<br>A192GCMKW - AES-GCM-192 key encryption<br>A256GCMKW - AES-GCM-256 key encryption<br>ECDH_ES - ECDH-ES<br>ECDH_ES_A128KW - ECDH-ES with AES-128 Key Wrap<br>ECDH_ES_A192KW - ECDH-ES with AES-192 Key Wrap<br>ECDH_ES_A256KW - ECDH-ES with AES-256 Key Wrap<br>RSA_OAEP - RSAES OAEP<br>RSA_OAEP_256 - RSAES OAEP using SHA-256 and MGF1 with SHA-256`,
+				Optional:    true,
+				Type:        types.StringType,
+			},
+			"jwt_secured_authorization_response_mode_signing_algorithm": {
+				Description: `The JSON Web Signature [JWS] algorithm required to sign the JWT Secured Authorization Response.<br>HS256 - HMAC using SHA-256<br>HS384 - HMAC using SHA-384<br>HS512 - HMAC using SHA-512<br>RS256 - RSA using SHA-256<br>RS384 - RSA using SHA-384<br>RS512 - RSA using SHA-512<br>ES256 - ECDSA using P256 Curve and SHA-256<br>ES384 - ECDSA using P384 Curve and SHA-384<br>ES512 - ECDSA using P521 Curve and SHA-512<br>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256<br>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384<br>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512<br>A null value will represent the default algorithm which is RS256.<br>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11`,
+				Optional:    true,
+				Type:        types.StringType,
 			},
 			"logo_url": {
 				Description: `The location of the logo used on user-facing OAuth grant authorization and revocation pages.`,
@@ -253,7 +284,7 @@ func resourceClient() tfsdk.Schema {
 			"oidc_policy": {
 				Description: `Open ID Connect Policy settings.  This is included in the message only when OIDC is enabled.`,
 				Optional:    true,
-				Attributes:  singleClientOIDCPolicy(),
+				Attributes:  tfsdk.SingleNestedAttributes(singleClientOIDCPolicy()),
 			},
 			"pending_authorization_timeout_override": {
 				Description: `The 'device_code' and 'user_code' timeout, in seconds. This overrides the 'pendingAuthorizationTimeout' value present in Authorization Server Settings.`,
@@ -266,7 +297,7 @@ func resourceClient() tfsdk.Schema {
 				Computed:    true,
 				Type:        types.NumberType,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.Number{Value: big.NewFloat(0)}),
+					Default(types.NumberValue(big.NewFloat(0))),
 				},
 			},
 			"persistent_grant_expiration_time_unit": {
@@ -275,7 +306,7 @@ func resourceClient() tfsdk.Schema {
 				Computed:    true,
 				Type:        types.StringType,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.String{Value: "DAYS"}),
+					Default(types.StringValue("DAYS")),
 				},
 			},
 			"persistent_grant_expiration_type": {
@@ -284,7 +315,7 @@ func resourceClient() tfsdk.Schema {
 				Computed:    true,
 				Type:        types.StringType,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.String{Value: "SERVER_DEFAULT"}),
+					Default(types.StringValue("SERVER_DEFAULT")),
 				},
 			},
 			"persistent_grant_idle_timeout": {
@@ -293,7 +324,7 @@ func resourceClient() tfsdk.Schema {
 				Computed:    true,
 				Type:        types.NumberType,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.Number{Value: big.NewFloat(0)}),
+					Default(types.NumberValue(big.NewFloat(0))),
 				},
 			},
 			"persistent_grant_idle_timeout_time_unit": {
@@ -302,7 +333,7 @@ func resourceClient() tfsdk.Schema {
 				Computed:    true,
 				Type:        types.StringType,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.String{Value: "DAYS"}),
+					Default(types.StringValue("DAYS")),
 				},
 			},
 			"persistent_grant_idle_timeout_type": {
@@ -311,7 +342,7 @@ func resourceClient() tfsdk.Schema {
 				Computed:    true,
 				Type:        types.StringType,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.String{Value: "SERVER_DEFAULT"}),
+					Default(types.StringValue("SERVER_DEFAULT")),
 				},
 			},
 			"persistent_grant_reuse_grant_types": {
@@ -327,7 +358,7 @@ func resourceClient() tfsdk.Schema {
 				Computed:    true,
 				Type:        types.StringType,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.String{Value: "SERVER_DEFAULT"}),
+					Default(types.StringValue("SERVER_DEFAULT")),
 				},
 			},
 			"redirect_uris": {
@@ -338,7 +369,7 @@ func resourceClient() tfsdk.Schema {
 					ElemType: types.StringType,
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.List{ElemType: types.StringType, Elems: []attr.Value{}}),
+					Default(types.ListValueMust(types.StringType, []attr.Value{})),
 				},
 			},
 			"refresh_rolling": {
@@ -347,7 +378,21 @@ func resourceClient() tfsdk.Schema {
 				Computed:    true,
 				Type:        types.StringType,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.String{Value: "SERVER_DEFAULT"}),
+					Default(types.StringValue("SERVER_DEFAULT")),
+				},
+			},
+			"refresh_token_rolling_grace_period": {
+				Description: `The grace period that a rolled refresh token remains valid in seconds.`,
+				Optional:    true,
+				Type:        types.NumberType,
+			},
+			"refresh_token_rolling_grace_period_type": {
+				Description: `When specified, it overrides the global Refresh Token Grace Period defined in the Authorization Server Settings. The default value is SERVER_DEFAULT`,
+				Optional:    true,
+				Computed:    true,
+				Type:        types.StringType,
+				PlanModifiers: tfsdk.AttributePlanModifiers{
+					Default(types.StringValue("SERVER_DEFAULT")),
 				},
 			},
 			"refresh_token_rolling_interval": {
@@ -361,7 +406,7 @@ func resourceClient() tfsdk.Schema {
 				Computed:    true,
 				Type:        types.StringType,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.String{Value: "SERVER_DEFAULT"}),
+					Default(types.StringValue("SERVER_DEFAULT")),
 				},
 			},
 			"request_object_signing_algorithm": {
@@ -374,13 +419,22 @@ func resourceClient() tfsdk.Schema {
 				Optional:    true,
 				Type:        types.StringType,
 			},
+			"require_jwt_secured_authorization_response_mode": {
+				Description: `Determines whether JWT Secured authorization response mode is required when initiating an authorization request. The default is false.`,
+				Optional:    true,
+				Computed:    true,
+				Type:        types.BoolType,
+				PlanModifiers: tfsdk.AttributePlanModifiers{
+					Default(types.BoolValue(false)),
+				},
+			},
 			"require_proof_key_for_code_exchange": {
 				Description: `Determines whether Proof Key for Code Exchange (PKCE) is required for this client.`,
 				Optional:    true,
 				Computed:    true,
 				Type:        types.BoolType,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.Bool{Value: false}),
+					Default(types.BoolValue(false)),
 				},
 			},
 			"require_pushed_authorization_requests": {
@@ -389,7 +443,7 @@ func resourceClient() tfsdk.Schema {
 				Computed:    true,
 				Type:        types.BoolType,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.Bool{Value: false}),
+					Default(types.BoolValue(false)),
 				},
 			},
 			"require_signed_requests": {
@@ -398,7 +452,7 @@ func resourceClient() tfsdk.Schema {
 				Computed:    true,
 				Type:        types.BoolType,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.Bool{Value: false}),
+					Default(types.BoolValue(false)),
 				},
 			},
 			"restrict_scopes": {
@@ -407,7 +461,7 @@ func resourceClient() tfsdk.Schema {
 				Computed:    true,
 				Type:        types.BoolType,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.Bool{Value: false}),
+					Default(types.BoolValue(false)),
 				},
 			},
 			"restrict_to_default_access_token_manager": {
@@ -416,7 +470,7 @@ func resourceClient() tfsdk.Schema {
 				Computed:    true,
 				Type:        types.BoolType,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.Bool{Value: false}),
+					Default(types.BoolValue(false)),
 				},
 			},
 			"restricted_response_types": {
@@ -427,7 +481,7 @@ func resourceClient() tfsdk.Schema {
 					ElemType: types.StringType,
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.List{ElemType: types.StringType, Elems: []attr.Value{}}),
+					Default(types.ListValueMust(types.StringType, []attr.Value{})),
 				},
 			},
 			"restricted_scopes": {
@@ -438,11 +492,26 @@ func resourceClient() tfsdk.Schema {
 					ElemType: types.StringType,
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.List{ElemType: types.StringType, Elems: []attr.Value{}}),
+					Default(types.ListValueMust(types.StringType, []attr.Value{})),
 				},
 			},
 			"token_exchange_processor_policy_ref": {
 				Description: `The Token Exchange Processor policy.`,
+				Optional:    true,
+				Type:        types.StringType,
+			},
+			"token_introspection_content_encryption_algorithm": {
+				Description: `The JSON Web Encryption [JWE] content-encryption algorithm for the Token Introspection Response.<br>AES_128_CBC_HMAC_SHA_256 - Composite AES-CBC-128 HMAC-SHA-256<br>AES_192_CBC_HMAC_SHA_384 - Composite AES-CBC-192 HMAC-SHA-384<br>AES_256_CBC_HMAC_SHA_512 - Composite AES-CBC-256 HMAC-SHA-512<br>AES_128_GCM - AES-GCM-128<br>AES_192_GCM - AES-GCM-192<br>AES_256_GCM - AES-GCM-256`,
+				Optional:    true,
+				Type:        types.StringType,
+			},
+			"token_introspection_encryption_algorithm": {
+				Description: `The JSON Web Encryption [JWE] encryption algorithm used to encrypt the content-encryption key of the Token Introspection Response.<br>DIR - Direct Encryption with symmetric key<br>A128KW - AES-128 Key Wrap<br>A192KW - AES-192 Key Wrap<br>A256KW - AES-256 Key Wrap<br>A128GCMKW - AES-GCM-128 key encryption<br>A192GCMKW - AES-GCM-192 key encryption<br>A256GCMKW - AES-GCM-256 key encryption<br>ECDH_ES - ECDH-ES<br>ECDH_ES_A128KW - ECDH-ES with AES-128 Key Wrap<br>ECDH_ES_A192KW - ECDH-ES with AES-192 Key Wrap<br>ECDH_ES_A256KW - ECDH-ES with AES-256 Key Wrap<br>RSA_OAEP - RSAES OAEP<br>RSA_OAEP_256 - RSAES OAEP using SHA-256 and MGF1 with SHA-256`,
+				Optional:    true,
+				Type:        types.StringType,
+			},
+			"token_introspection_signing_algorithm": {
+				Description: `The JSON Web Signature [JWS] algorithm required to sign the Token Introspection Response.<br>HS256 - HMAC using SHA-256<br>HS384 - HMAC using SHA-384<br>HS512 - HMAC using SHA-512<br>RS256 - RSA using SHA-256<br>RS384 - RSA using SHA-384<br>RS512 - RSA using SHA-512<br>ES256 - ECDSA using P256 Curve and SHA-256<br>ES384 - ECDSA using P384 Curve and SHA-384<br>ES512 - ECDSA using P521 Curve and SHA-512<br>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256<br>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384<br>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512<br>A null value will represent the default algorithm which is RS256.<br>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11`,
 				Optional:    true,
 				Type:        types.StringType,
 			},
@@ -457,7 +526,7 @@ func resourceClient() tfsdk.Schema {
 				Computed:    true,
 				Type:        types.BoolType,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.Bool{Value: false}),
+					Default(types.BoolValue(false)),
 				},
 			},
 		},
@@ -480,23 +549,23 @@ func resourceRedirectValidationSettings() tfsdk.Schema {
 			"redirect_validation_local_settings": {
 				Description: `Settings for local redirect validation.`,
 				Optional:    true,
-				Attributes:  singleRedirectValidationLocalSettings(),
+				Attributes:  tfsdk.SingleNestedAttributes(singleRedirectValidationLocalSettings()),
 			},
 			"redirect_validation_partner_settings": {
 				Description: `Settings for redirection at a partner site.`,
 				Optional:    true,
-				Attributes:  singleRedirectValidationPartnerSettings(),
+				Attributes:  tfsdk.SingleNestedAttributes(singleRedirectValidationPartnerSettings()),
 			},
 		},
 	}
 }
 
-func listJdbcAttributeSource() tfsdk.NestedAttributes {
-	return tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+func listJdbcAttributeSource() map[string]tfsdk.Attribute {
+	return map[string]tfsdk.Attribute{
 		"attribute_contract_fulfillment": {
 			Description: `A list of mappings from attribute names to their fulfillment values. This field is only valid for the SP Connection's Browser SSO mappings`,
 			Optional:    true,
-			Attributes:  mapAttributeFulfillmentValue(),
+			Attributes:  tfsdk.MapNestedAttributes(mapAttributeFulfillmentValue()),
 		},
 		"column_names": {
 			Description: `A list of column names used to construct the SQL query to retrieve data from the specified table in the datastore.`,
@@ -516,7 +585,7 @@ func listJdbcAttributeSource() tfsdk.NestedAttributes {
 			Computed:    true,
 			Type:        types.StringType,
 			PlanModifiers: tfsdk.AttributePlanModifiers{
-				Default(types.String{Value: "JDBC"}),
+				Default(types.StringValue("JDBC")),
 			},
 		},
 		"filter": {
@@ -539,15 +608,15 @@ func listJdbcAttributeSource() tfsdk.NestedAttributes {
 			Optional:    true,
 			Type:        types.StringType,
 		},
-	})
+	}
 }
 
-func listLdapAttributeSource() tfsdk.NestedAttributes {
-	return tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+func listLdapAttributeSource() map[string]tfsdk.Attribute {
+	return map[string]tfsdk.Attribute{
 		"attribute_contract_fulfillment": {
 			Description: `A list of mappings from attribute names to their fulfillment values. This field is only valid for the SP Connection's Browser SSO mappings`,
 			Optional:    true,
-			Attributes:  mapAttributeFulfillmentValue(),
+			Attributes:  tfsdk.MapNestedAttributes(mapAttributeFulfillmentValue()),
 		},
 		"base_dn": {
 			Description: `The base DN to search from. If not specified, the search will start at the LDAP's root.`,
@@ -557,7 +626,7 @@ func listLdapAttributeSource() tfsdk.NestedAttributes {
 		"binary_attribute_settings": {
 			Description: `The advanced settings for binary LDAP attributes.`,
 			Optional:    true,
-			Attributes:  mapBinaryLdapAttributeSettings(),
+			Attributes:  tfsdk.MapNestedAttributes(mapBinaryLdapAttributeSettings()),
 		},
 		"data_store_ref": {
 			Description: `Reference to the associated data store.`,
@@ -570,8 +639,8 @@ func listLdapAttributeSource() tfsdk.NestedAttributes {
 			Computed:    true,
 			Type:        types.StringType,
 			PlanModifiers: tfsdk.AttributePlanModifiers{
-				Default(types.String{Value: "JDBC"}),
-				Default(types.String{Value: "JDBC"}),
+				Default(types.StringValue("JDBC")),
+				Default(types.StringValue("JDBC")),
 			},
 		},
 		"id": {
@@ -601,15 +670,15 @@ func listLdapAttributeSource() tfsdk.NestedAttributes {
 			Optional:    true,
 			Type:        types.StringType,
 		},
-	})
+	}
 }
 
-func listCustomAttributeSource() tfsdk.NestedAttributes {
-	return tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+func listCustomAttributeSource() map[string]tfsdk.Attribute {
+	return map[string]tfsdk.Attribute{
 		"attribute_contract_fulfillment": {
 			Description: `A list of mappings from attribute names to their fulfillment values. This field is only valid for the SP Connection's Browser SSO mappings`,
 			Optional:    true,
-			Attributes:  mapAttributeFulfillmentValue(),
+			Attributes:  tfsdk.MapNestedAttributes(mapAttributeFulfillmentValue()),
 		},
 		"data_store_ref": {
 			Description: `Reference to the associated data store.`,
@@ -622,93 +691,71 @@ func listCustomAttributeSource() tfsdk.NestedAttributes {
 			Computed:    true,
 			Type:        types.StringType,
 			PlanModifiers: tfsdk.AttributePlanModifiers{
-				Default(types.String{Value: "JDBC"}),
-				Default(types.String{Value: "JDBC"}),
-				Default(types.String{Value: "JDBC"}),
+				Default(types.StringValue("JDBC")),
+				Default(types.StringValue("JDBC")),
+				Default(types.StringValue("JDBC")),
 			},
 		},
 		"filter_fields": {
 			Description: `The list of fields that can be used to filter a request to the custom data store.`,
 			Optional:    true,
-			Attributes:  listFieldEntry(),
+			Attributes:  tfsdk.ListNestedAttributes(listFieldEntry()),
 		},
 		"id": {
 			Description: `The ID that defines this attribute source. Only alphanumeric characters allowed.<br>Note: Required for OpenID Connect policy attribute sources, OAuth IdP adapter mappings, OAuth access token mappings and APC-to-SP Adapter Mappings. IdP Connections will ignore this property since it only allows one attribute source to be defined per mapping. IdP-to-SP Adapter Mappings can contain multiple attribute sources.`,
 			Optional:    true,
 			Type:        types.StringType,
 		},
-	})
+	}
 }
 
-func mapAttributeFulfillmentValue() tfsdk.NestedAttributes {
-	return tfsdk.MapNestedAttributes(map[string]tfsdk.Attribute{
+func mapAttributeFulfillmentValue() map[string]tfsdk.Attribute {
+	return map[string]tfsdk.Attribute{
 		"source": {
 			Description: `The attribute value source.`,
 			Required:    true,
-			Attributes:  singleSourceTypeIdKey(),
+			Attributes:  tfsdk.SingleNestedAttributes(singleSourceTypeIdKey()),
 		},
 		"value": {
 			Description: `The value for this attribute.`,
 			Required:    true,
 			Type:        types.StringType,
 		},
-	})
+	}
 }
 
-func mapBinaryLdapAttributeSettings() tfsdk.NestedAttributes {
-	return tfsdk.MapNestedAttributes(map[string]tfsdk.Attribute{
-		"binary_encoding": {
-			Description: `Get the encoding type for this attribute. If not specified, the default is BASE64.`,
-			Optional:    true,
+func listConditionalIssuanceCriteriaEntry() map[string]tfsdk.Attribute {
+	return map[string]tfsdk.Attribute{
+		"attribute_name": {
+			Description: `The name of the attribute to use in this issuance criterion.`,
+			Required:    true,
 			Type:        types.StringType,
 		},
-	})
-}
-
-func listExpressionIssuanceCriteriaEntry() tfsdk.NestedAttributes {
-	return tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+		"condition": {
+			Description: `The condition that will be applied to the source attribute's value and the expected value.`,
+			Required:    true,
+			Type:        types.StringType,
+		},
 		"error_result": {
 			Description: `The error result to return if this issuance criterion fails. This error result will show up in the PingFederate server logs.`,
 			Optional:    true,
 			Type:        types.StringType,
 		},
-		"expression": {
-			Description: `The OGNL expression to evaluate.`,
+		"source": {
+			Description: `The source of the attribute.`,
+			Required:    true,
+			Attributes:  tfsdk.SingleNestedAttributes(singleSourceTypeIdKey()),
+		},
+		"value": {
+			Description: `The expected value of this issuance criterion.`,
 			Required:    true,
 			Type:        types.StringType,
 		},
-	})
+	}
 }
 
-func mapParameterValues() tfsdk.NestedAttributes {
-	return tfsdk.MapNestedAttributes(map[string]tfsdk.Attribute{
-		"values": {
-			Description: `A List of values`,
-			Optional:    true,
-			Type: types.ListType{
-				ElemType: types.StringType,
-			},
-		},
-	})
-}
-
-func singleIssuanceCriteria() tfsdk.NestedAttributes {
-	return tfsdk.SingleNestedAttributes(map[string]tfsdk.Attribute{
-		"conditional_criteria": {
-			Description: `A list of conditional issuance criteria where existing attributes must satisfy their conditions against expected values in order for the transaction to continue.`,
-			Optional:    true,
-			Attributes:  listConditionalIssuanceCriteriaEntry(),
-		},
-		"expression_criteria": {
-			Description: `A list of expression issuance criteria where the OGNL expressions must evaluate to true in order for the transaction to continue.`,
-			Optional:    true,
-			Attributes:  listExpressionIssuanceCriteriaEntry(),
-		},
-	})
-}
-
-func singleClientAuth() tfsdk.NestedAttributes {
-	return tfsdk.SingleNestedAttributes(map[string]tfsdk.Attribute{
+func singleClientAuth() map[string]tfsdk.Attribute {
+	return map[string]tfsdk.Attribute{
 		"client_cert_issuer_dn": {
 			Description: `Client TLS Certificate Issuer DN.`,
 			Optional:    true,
@@ -748,151 +795,11 @@ func singleClientAuth() tfsdk.NestedAttributes {
 			Optional:    true,
 			Type:        types.StringType,
 		},
-	})
+	}
 }
 
-func singleSourceTypeIdKey() tfsdk.NestedAttributes {
-	return tfsdk.SingleNestedAttributes(map[string]tfsdk.Attribute{
-		"id": {
-			Description: `The attribute source ID that refers to the attribute source that this key references. In some resources, the ID is optional and will be ignored. In these cases the ID should be omitted. If the source type is not an attribute source then the ID can be omitted.`,
-			Optional:    true,
-			Type:        types.StringType,
-		},
-		"type": {
-			Description: `The source type of this key.`,
-			Required:    true,
-			Type:        types.StringType,
-		},
-	})
-}
-
-func listFieldEntry() tfsdk.NestedAttributes {
-	return tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-		"name": {
-			Description: `The name of this field.`,
-			Required:    true,
-			Type:        types.StringType,
-		},
-		"value": {
-			Description: `The value of this field. Whether or not the value is required will be determined by plugin validation checks.`,
-			Optional:    true,
-			Type:        types.StringType,
-		},
-	})
-}
-
-func listConditionalIssuanceCriteriaEntry() tfsdk.NestedAttributes {
-	return tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-		"attribute_name": {
-			Description: `The name of the attribute to use in this issuance criterion.`,
-			Required:    true,
-			Type:        types.StringType,
-		},
-		"condition": {
-			Description: `The condition that will be applied to the source attribute's value and the expected value.`,
-			Required:    true,
-			Type:        types.StringType,
-		},
-		"error_result": {
-			Description: `The error result to return if this issuance criterion fails. This error result will show up in the PingFederate server logs.`,
-			Optional:    true,
-			Type:        types.StringType,
-		},
-		"source": {
-			Description: `The source of the attribute.`,
-			Required:    true,
-			Attributes:  singleSourceTypeIdKey(),
-		},
-		"value": {
-			Description: `The expected value of this issuance criterion.`,
-			Required:    true,
-			Type:        types.StringType,
-		},
-	})
-}
-
-func singleJwksSettings() tfsdk.NestedAttributes {
-	return tfsdk.SingleNestedAttributes(map[string]tfsdk.Attribute{
-		"jwks": {
-			Description: `JSON Web Key Set (JWKS) document of the OAuth client. Either 'jwks' or 'jwksUrl' must be provided if private key JWT client authentication or signed requests is enabled.  If the client signs its JWTs using an RSASSA-PSS signing algorithm, PingFederate must either use Java 11 or be integrated with a hardware security module (HSM) to process the digital signatures.`,
-			Optional:    true,
-			Type:        types.StringType,
-		},
-		"jwks_url": {
-			Description: `JSON Web Key Set (JWKS) URL of the OAuth client. Either 'jwks' or 'jwksUrl' must be provided if private key JWT client authentication or signed requests is enabled.  If the client signs its JWTs using an RSASSA-PSS signing algorithm, PingFederate must either use Java 11 or be integrated with a hardware security module (HSM) to process the digital signatures.`,
-			Optional:    true,
-			Type:        types.StringType,
-		},
-	})
-}
-
-func singleClientOIDCPolicy() tfsdk.NestedAttributes {
-	return tfsdk.SingleNestedAttributes(map[string]tfsdk.Attribute{
-		"grant_access_session_revocation_api": {
-			Description: `Determines whether this client is allowed to access the Session Revocation API.`,
-			Optional:    true,
-			Type:        types.BoolType,
-		},
-		"grant_access_session_session_management_api": {
-			Description: `Determines whether this client is allowed to access the Session Management API.`,
-			Optional:    true,
-			Computed:    true,
-			Type:        types.BoolType,
-			PlanModifiers: tfsdk.AttributePlanModifiers{
-				Default(types.Bool{Value: false}),
-			},
-		},
-		"id_token_content_encryption_algorithm": {
-			Description: `The JSON Web Encryption [JWE] content encryption algorithm for the ID Token.<br>AES_128_CBC_HMAC_SHA_256 - Composite AES-CBC-128 HMAC-SHA-256<br>AES_192_CBC_HMAC_SHA_384 - Composite AES-CBC-192 HMAC-SHA-384<br>AES_256_CBC_HMAC_SHA_512 - Composite AES-CBC-256 HMAC-SHA-512<br>AES_128_GCM - AES-GCM-128<br>AES_192_GCM - AES-GCM-192<br>AES_256_GCM - AES-GCM-256`,
-			Optional:    true,
-			Type:        types.StringType,
-		},
-		"id_token_encryption_algorithm": {
-			Description: `The JSON Web Encryption [JWE] encryption algorithm used to encrypt the content encryption key for the ID Token.<br>DIR - Direct Encryption with symmetric key<br>A128KW - AES-128 Key Wrap<br>A192KW - AES-192 Key Wrap<br>A256KW - AES-256 Key Wrap<br>A128GCMKW - AES-GCM-128 key encryption<br>A192GCMKW - AES-GCM-192 key encryption<br>A256GCMKW - AES-GCM-256 key encryption<br>ECDH_ES - ECDH-ES<br>ECDH_ES_A128KW - ECDH-ES with AES-128 Key Wrap<br>ECDH_ES_A192KW - ECDH-ES with AES-192 Key Wrap<br>ECDH_ES_A256KW - ECDH-ES with AES-256 Key Wrap<br>RSA_OAEP - RSAES OAEP<br>RSA_OAEP_256 - RSAES OAEP using SHA-256 and MGF1 with SHA-256`,
-			Optional:    true,
-			Type:        types.StringType,
-		},
-		"id_token_signing_algorithm": {
-			Description: `The JSON Web Signature [JWS] algorithm required for the ID Token.<br>NONE - No signing algorithm<br>HS256 - HMAC using SHA-256<br>HS384 - HMAC using SHA-384<br>HS512 - HMAC using SHA-512<br>RS256 - RSA using SHA-256<br>RS384 - RSA using SHA-384<br>RS512 - RSA using SHA-512<br>ES256 - ECDSA using P256 Curve and SHA-256<br>ES384 - ECDSA using P384 Curve and SHA-384<br>ES512 - ECDSA using P521 Curve and SHA-512<br>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256<br>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384<br>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512<br>A null value will represent the default algorithm which is RS256.<br>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11`,
-			Optional:    true,
-			Type:        types.StringType,
-		},
-		"logout_uris": {
-			Description: `A list of client logout URI's which will be invoked when a user logs out through one of PingFederate's SLO endpoints.`,
-			Optional:    true,
-			Type: types.ListType{
-				ElemType: types.StringType,
-			},
-		},
-		"pairwise_identifier_user_type": {
-			Description: `Determines whether the subject identifier type is pairwise.`,
-			Optional:    true,
-			Computed:    true,
-			Type:        types.BoolType,
-			PlanModifiers: tfsdk.AttributePlanModifiers{
-				Default(types.Bool{Value: false}),
-			},
-		},
-		"ping_access_logout_capable": {
-			Description: `Set this value to true if you wish to enable client application logout, and the client is PingAccess, or its logout endpoints follow the PingAccess path convention.`,
-			Optional:    true,
-			Type:        types.BoolType,
-		},
-		"policy_group": {
-			Description: `The Open ID Connect policy. A null value will represent the default policy group.`,
-			Optional:    true,
-			Type:        types.StringType,
-		},
-		"sector_identifier_uri": {
-			Description: `The URI references a file with a single JSON array of Redirect URI and JWKS URL values.`,
-			Optional:    true,
-			Type:        types.StringType,
-		},
-	})
-}
-
-func singleRedirectValidationLocalSettings() tfsdk.NestedAttributes {
-	return tfsdk.SingleNestedAttributes(map[string]tfsdk.Attribute{
+func singleRedirectValidationLocalSettings() map[string]tfsdk.Attribute {
+	return map[string]tfsdk.Attribute{
 		"enable_in_error_resource_validation": {
 			Description: `Enable validation for error resource.`,
 			Optional:    true,
@@ -916,13 +823,38 @@ func singleRedirectValidationLocalSettings() tfsdk.NestedAttributes {
 		"white_list": {
 			Description: `List of URLs that are designated as valid target resources.`,
 			Optional:    true,
-			Attributes:  listRedirectValidationSettingsWhitelistEntry(),
+			Attributes:  tfsdk.ListNestedAttributes(listRedirectValidationSettingsWhitelistEntry()),
 		},
-	})
+	}
 }
 
-func listRedirectValidationSettingsWhitelistEntry() tfsdk.NestedAttributes {
-	return tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+func mapBinaryLdapAttributeSettings() map[string]tfsdk.Attribute {
+	return map[string]tfsdk.Attribute{
+		"binary_encoding": {
+			Description: `Get the encoding type for this attribute. If not specified, the default is BASE64.`,
+			Optional:    true,
+			Type:        types.StringType,
+		},
+	}
+}
+
+func listExpressionIssuanceCriteriaEntry() map[string]tfsdk.Attribute {
+	return map[string]tfsdk.Attribute{
+		"error_result": {
+			Description: `The error result to return if this issuance criterion fails. This error result will show up in the PingFederate server logs.`,
+			Optional:    true,
+			Type:        types.StringType,
+		},
+		"expression": {
+			Description: `The OGNL expression to evaluate.`,
+			Required:    true,
+			Type:        types.StringType,
+		},
+	}
+}
+
+func listRedirectValidationSettingsWhitelistEntry() map[string]tfsdk.Attribute {
+	return map[string]tfsdk.Attribute{
 		"allow_query_and_fragment": {
 			Description: `Allow any query parameters and fragment in the resource.`,
 			Optional:    true,
@@ -963,15 +895,152 @@ func listRedirectValidationSettingsWhitelistEntry() tfsdk.NestedAttributes {
 			Optional:    true,
 			Type:        types.StringType,
 		},
-	})
+	}
 }
 
-func singleRedirectValidationPartnerSettings() tfsdk.NestedAttributes {
-	return tfsdk.SingleNestedAttributes(map[string]tfsdk.Attribute{
+func singleRedirectValidationPartnerSettings() map[string]tfsdk.Attribute {
+	return map[string]tfsdk.Attribute{
 		"enable_wreply_validation_slo": {
 			Description: `Enable wreply validation for SLO.`,
 			Optional:    true,
 			Type:        types.BoolType,
 		},
-	})
+	}
+}
+
+func singleIssuanceCriteria() map[string]tfsdk.Attribute {
+	return map[string]tfsdk.Attribute{
+		"conditional_criteria": {
+			Description: `A list of conditional issuance criteria where existing attributes must satisfy their conditions against expected values in order for the transaction to continue.`,
+			Optional:    true,
+			Attributes:  tfsdk.ListNestedAttributes(listConditionalIssuanceCriteriaEntry()),
+		},
+		"expression_criteria": {
+			Description: `A list of expression issuance criteria where the OGNL expressions must evaluate to true in order for the transaction to continue.`,
+			Optional:    true,
+			Attributes:  tfsdk.ListNestedAttributes(listExpressionIssuanceCriteriaEntry()),
+		},
+	}
+}
+
+func singleClientOIDCPolicy() map[string]tfsdk.Attribute {
+	return map[string]tfsdk.Attribute{
+		"grant_access_session_revocation_api": {
+			Description: `Determines whether this client is allowed to access the Session Revocation API.`,
+			Optional:    true,
+			Type:        types.BoolType,
+		},
+		"grant_access_session_session_management_api": {
+			Description: `Determines whether this client is allowed to access the Session Management API.`,
+			Optional:    true,
+			Computed:    true,
+			Type:        types.BoolType,
+			PlanModifiers: tfsdk.AttributePlanModifiers{
+				Default(types.BoolValue(false)),
+			},
+		},
+		"id_token_content_encryption_algorithm": {
+			Description: `The JSON Web Encryption [JWE] content encryption algorithm for the ID Token.<br>AES_128_CBC_HMAC_SHA_256 - Composite AES-CBC-128 HMAC-SHA-256<br>AES_192_CBC_HMAC_SHA_384 - Composite AES-CBC-192 HMAC-SHA-384<br>AES_256_CBC_HMAC_SHA_512 - Composite AES-CBC-256 HMAC-SHA-512<br>AES_128_GCM - AES-GCM-128<br>AES_192_GCM - AES-GCM-192<br>AES_256_GCM - AES-GCM-256`,
+			Optional:    true,
+			Type:        types.StringType,
+		},
+		"id_token_encryption_algorithm": {
+			Description: `The JSON Web Encryption [JWE] encryption algorithm used to encrypt the content encryption key for the ID Token.<br>DIR - Direct Encryption with symmetric key<br>A128KW - AES-128 Key Wrap<br>A192KW - AES-192 Key Wrap<br>A256KW - AES-256 Key Wrap<br>A128GCMKW - AES-GCM-128 key encryption<br>A192GCMKW - AES-GCM-192 key encryption<br>A256GCMKW - AES-GCM-256 key encryption<br>ECDH_ES - ECDH-ES<br>ECDH_ES_A128KW - ECDH-ES with AES-128 Key Wrap<br>ECDH_ES_A192KW - ECDH-ES with AES-192 Key Wrap<br>ECDH_ES_A256KW - ECDH-ES with AES-256 Key Wrap<br>RSA_OAEP - RSAES OAEP<br>RSA_OAEP_256 - RSAES OAEP using SHA-256 and MGF1 with SHA-256`,
+			Optional:    true,
+			Type:        types.StringType,
+		},
+		"id_token_signing_algorithm": {
+			Description: `The JSON Web Signature [JWS] algorithm required for the ID Token.<br>NONE - No signing algorithm<br>HS256 - HMAC using SHA-256<br>HS384 - HMAC using SHA-384<br>HS512 - HMAC using SHA-512<br>RS256 - RSA using SHA-256<br>RS384 - RSA using SHA-384<br>RS512 - RSA using SHA-512<br>ES256 - ECDSA using P256 Curve and SHA-256<br>ES384 - ECDSA using P384 Curve and SHA-384<br>ES512 - ECDSA using P521 Curve and SHA-512<br>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256<br>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384<br>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512<br>A null value will represent the default algorithm which is RS256.<br>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11`,
+			Optional:    true,
+			Type:        types.StringType,
+		},
+		"logout_uris": {
+			Description: `A list of client logout URI's which will be invoked when a user logs out through one of PingFederate's SLO endpoints.`,
+			Optional:    true,
+			Type: types.ListType{
+				ElemType: types.StringType,
+			},
+		},
+		"pairwise_identifier_user_type": {
+			Description: `Determines whether the subject identifier type is pairwise.`,
+			Optional:    true,
+			Computed:    true,
+			Type:        types.BoolType,
+			PlanModifiers: tfsdk.AttributePlanModifiers{
+				Default(types.BoolValue(false)),
+			},
+		},
+		"ping_access_logout_capable": {
+			Description: `Set this value to true if you wish to enable client application logout, and the client is PingAccess, or its logout endpoints follow the PingAccess path convention.`,
+			Optional:    true,
+			Type:        types.BoolType,
+		},
+		"policy_group": {
+			Description: `The Open ID Connect policy. A null value will represent the default policy group.`,
+			Optional:    true,
+			Type:        types.StringType,
+		},
+		"sector_identifier_uri": {
+			Description: `The URI references a file with a single JSON array of Redirect URI and JWKS URL values.`,
+			Optional:    true,
+			Type:        types.StringType,
+		},
+	}
+}
+
+func mapParameterValues() map[string]tfsdk.Attribute {
+	return map[string]tfsdk.Attribute{
+		"values": {
+			Description: `A List of values`,
+			Optional:    true,
+			Type: types.ListType{
+				ElemType: types.StringType,
+			},
+		},
+	}
+}
+
+func singleSourceTypeIdKey() map[string]tfsdk.Attribute {
+	return map[string]tfsdk.Attribute{
+		"id": {
+			Description: `The attribute source ID that refers to the attribute source that this key references. In some resources, the ID is optional and will be ignored. In these cases the ID should be omitted. If the source type is not an attribute source then the ID can be omitted.`,
+			Optional:    true,
+			Type:        types.StringType,
+		},
+		"type": {
+			Description: `The source type of this key.`,
+			Required:    true,
+			Type:        types.StringType,
+		},
+	}
+}
+
+func listFieldEntry() map[string]tfsdk.Attribute {
+	return map[string]tfsdk.Attribute{
+		"name": {
+			Description: `The name of this field.`,
+			Required:    true,
+			Type:        types.StringType,
+		},
+		"value": {
+			Description: `The value of this field. Whether or not the value is required will be determined by plugin validation checks.`,
+			Optional:    true,
+			Type:        types.StringType,
+		},
+	}
+}
+
+func singleJwksSettings() map[string]tfsdk.Attribute {
+	return map[string]tfsdk.Attribute{
+		"jwks": {
+			Description: `JSON Web Key Set (JWKS) document of the OAuth client. Either 'jwks' or 'jwksUrl' must be provided if private key JWT client authentication or signed requests is enabled.  If the client signs its JWTs using an RSASSA-PSS signing algorithm, PingFederate must either use Java 11 or be integrated with a hardware security module (HSM) to process the digital signatures.`,
+			Optional:    true,
+			Type:        types.StringType,
+		},
+		"jwks_url": {
+			Description: `JSON Web Key Set (JWKS) URL of the OAuth client. Either 'jwks' or 'jwksUrl' must be provided if private key JWT client authentication or signed requests is enabled.  If the client signs its JWTs using an RSASSA-PSS signing algorithm, PingFederate must either use Java 11 or be integrated with a hardware security module (HSM) to process the digital signatures.`,
+			Optional:    true,
+			Type:        types.StringType,
+		},
+	}
 }

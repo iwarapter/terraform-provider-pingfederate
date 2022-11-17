@@ -51,9 +51,9 @@ func TestAccPingFederateSpAdapter(t *testing.T) {
 	resourceName := "pingfederate_sp_adapter.demo"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateSpAdapterDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateSpAdapterDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateSpAdapterConfig("foo"),

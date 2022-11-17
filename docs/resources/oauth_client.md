@@ -3,12 +3,12 @@
 page_title: "pingfederate_oauth_client Resource - terraform-provider-pingfederate"
 subcategory: ""
 description: |-
-  Provides configuration for OAuth Clients within PingFederate.
+  OAuth client.
 ---
 
 # pingfederate_oauth_client (Resource)
 
-Provides configuration for OAuth Clients within PingFederate.
+OAuth client.
 
 ## Example Usage
 
@@ -40,31 +40,39 @@ resource "pingfederate_oauth_client" "example" {
 
 ### Required
 
-- `client_id` (String) A unique identifier the client provides to the Resource Server to identify itself. This identifier is included with every request the client makes.
-- `grant_types` (Set of String) The grant types allowed for this client. The EXTENSION grant type applies to SAML/JWT assertion grants.
+- `client_id` (String) A unique identifier the client provides to the Resource Server to identify itself. This identifier is included with every request the client makes. For PUT requests, this field is optional and it will be overridden by the 'id' parameter of the PUT request.
+- `grant_types` (List of String) The grant types allowed for this client. The EXTENSION grant type applies to SAML/JWT assertion grants.
 - `name` (String) A descriptive name for the client instance. This name appears when the user is prompted for authorization.
 
 ### Optional
 
+- `allow_authentication_api_init` (Boolean) Set to true to allow this client to initiate the authentication API redirectless flow.
 - `bypass_activation_code_confirmation_override` (Boolean) Indicates if the Activation Code Confirmation page should be bypassed if 'verification_url_complete' is used by the end user to authorize a device. This overrides the 'bypassUseCodeConfirmation' value present in Authorization Server Settings.
 - `bypass_approval_page` (Boolean) Use this setting, for example, when you want to deploy a trusted application and authenticate end users via an IdP adapter or IdP connection.
 - `ciba_delivery_mode` (String) The token delivery mode for the client.  The default value is 'POLL'.
 - `ciba_notification_endpoint` (String) The endpoint the OP will call after a successful or failed end-user authentication.
 - `ciba_polling_interval` (Number) The minimum amount of time in seconds that the Client must wait between polling requests to the token endpoint. The default is 3 seconds.
-- `ciba_request_object_signing_algorithm` (String) The JSON Web Signature [JWS] algorithm that must be used to sign the CIBA Request Object. All signing algorithms are allowed if value is not present.
+- `ciba_request_object_signing_algorithm` (String) The JSON Web Signature [JWS] algorithm that must be used to sign the CIBA Request Object. All signing algorithms are allowed if value is not present <br>RS256 - RSA using SHA-256<br>RS384 - RSA using SHA-384<br>RS512 - RSA using SHA-512<br>ES256 - ECDSA using P256 Curve and SHA-256<br>ES384 - ECDSA using P384 Curve and SHA-384<br>ES512 - ECDSA using P521 Curve and SHA-512<br>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256<br>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384<br>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512<br>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11.
 - `ciba_require_signed_requests` (Boolean) Determines whether CIBA signed requests are required for this client.
 - `ciba_user_code_supported` (Boolean) Determines whether CIBA user code is supported for this client.
-- `client_auth` (Block List, Max: 1) Client authentication settings.  If this model is null, it indicates that no client authentication will be used. (see [below for nested schema](#nestedblock--client_auth))
-- `default_access_token_manager_ref` (Block List, Max: 1) The default access token manager for this client. (see [below for nested schema](#nestedblock--default_access_token_manager_ref))
+- `client_auth` (Attributes) Client authentication settings.  If this model is null, it indicates that no client authentication will be used. (see [below for nested schema](#nestedatt--client_auth))
+- `client_secret_changed_time` (String) The time at which the client secret was last changed. This property is read only and is ignored on PUT and POST requests.
+- `client_secret_retention_period` (Number) The length of time in minutes that client secrets will be retained as secondary secrets after secret change. The default value is 0, which will disable secondary client secret retention. This value will override the Client Secret Retention Period value on the Authorization Server Settings.
+- `client_secret_retention_period_type` (String) Use OVERRIDE_SERVER_DEFAULT to override the Client Secret Retention Period value on the Authorization Server Settings. SERVER_DEFAULT will default to the Client Secret Retention Period value on the Authorization Server Setting. Defaults to SERVER_DEFAULT.
+- `default_access_token_manager_ref` (String) The default access token manager for this client.
 - `description` (String) A description of what the client application does. This description appears when the user is prompted for authorization.
 - `device_flow_setting_type` (String) Allows an administrator to override the Device Authorization Settings set globally for the OAuth AS. Defaults to SERVER_DEFAULT.
 - `device_polling_interval_override` (Number) The amount of time client should wait between polling requests, in seconds. This overrides the 'devicePollingInterval' value present in Authorization Server Settings.
 - `enabled` (Boolean) Specifies whether the client is enabled. The default value is true.
-- `exclusive_scopes` (Set of String) The exclusive scopes available for this client.
-- `extended_properties` (Block Set) OAuth Client Metadata can be extended to use custom Client Metadata Parameters. The names of these custom parameters should be defined in /extendedProperties. (see [below for nested schema](#nestedblock--extended_properties))
-- `jwks_settings` (Block List, Max: 1) JSON Web Key Set Settings of the OAuth client. Required if private key JWT client authentication or signed requests is enabled. (see [below for nested schema](#nestedblock--jwks_settings))
+- `exclusive_scopes` (List of String) The exclusive scopes available for this client.
+- `extended_parameters` (Attributes Map) OAuth Client Metadata can be extended to use custom Client Metadata Parameters. The names of these custom parameters should be defined in /extendedProperties. (see [below for nested schema](#nestedatt--extended_parameters))
+- `id` (String) The client_id of the oauth client.
+- `jwks_settings` (Attributes) JSON Web Key Set Settings of the OAuth client. Required if private key JWT client authentication or signed requests is enabled. (see [below for nested schema](#nestedatt--jwks_settings))
+- `jwt_secured_authorization_response_mode_content_encryption_algorithm` (String) The JSON Web Encryption [JWE] content-encryption algorithm for the JWT Secured Authorization Response.<br>AES_128_CBC_HMAC_SHA_256 - Composite AES-CBC-128 HMAC-SHA-256<br>AES_192_CBC_HMAC_SHA_384 - Composite AES-CBC-192 HMAC-SHA-384<br>AES_256_CBC_HMAC_SHA_512 - Composite AES-CBC-256 HMAC-SHA-512<br>AES_128_GCM - AES-GCM-128<br>AES_192_GCM - AES-GCM-192<br>AES_256_GCM - AES-GCM-256
+- `jwt_secured_authorization_response_mode_encryption_algorithm` (String) The JSON Web Encryption [JWE] encryption algorithm used to encrypt the content-encryption key of the JWT Secured Authorization Response.<br>DIR - Direct Encryption with symmetric key<br>A128KW - AES-128 Key Wrap<br>A192KW - AES-192 Key Wrap<br>A256KW - AES-256 Key Wrap<br>A128GCMKW - AES-GCM-128 key encryption<br>A192GCMKW - AES-GCM-192 key encryption<br>A256GCMKW - AES-GCM-256 key encryption<br>ECDH_ES - ECDH-ES<br>ECDH_ES_A128KW - ECDH-ES with AES-128 Key Wrap<br>ECDH_ES_A192KW - ECDH-ES with AES-192 Key Wrap<br>ECDH_ES_A256KW - ECDH-ES with AES-256 Key Wrap<br>RSA_OAEP - RSAES OAEP<br>RSA_OAEP_256 - RSAES OAEP using SHA-256 and MGF1 with SHA-256
+- `jwt_secured_authorization_response_mode_signing_algorithm` (String) The JSON Web Signature [JWS] algorithm required to sign the JWT Secured Authorization Response.<br>HS256 - HMAC using SHA-256<br>HS384 - HMAC using SHA-384<br>HS512 - HMAC using SHA-512<br>RS256 - RSA using SHA-256<br>RS384 - RSA using SHA-384<br>RS512 - RSA using SHA-512<br>ES256 - ECDSA using P256 Curve and SHA-256<br>ES384 - ECDSA using P384 Curve and SHA-384<br>ES512 - ECDSA using P521 Curve and SHA-512<br>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256<br>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384<br>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512<br>A null value will represent the default algorithm which is RS256.<br>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11
 - `logo_url` (String) The location of the logo used on user-facing OAuth grant authorization and revocation pages.
-- `oidc_policy` (Block List, Max: 1) Open ID Connect Policy settings.  This is included in the message only when OIDC is enabled. (see [below for nested schema](#nestedblock--oidc_policy))
+- `oidc_policy` (Attributes) Open ID Connect Policy settings.  This is included in the message only when OIDC is enabled. (see [below for nested schema](#nestedatt--oidc_policy))
 - `pending_authorization_timeout_override` (Number) The 'device_code' and 'user_code' timeout, in seconds. This overrides the 'pendingAuthorizationTimeout' value present in Authorization Server Settings.
 - `persistent_grant_expiration_time` (Number) The persistent grant expiration time. -1 indicates an indefinite amount of time.
 - `persistent_grant_expiration_time_unit` (String) The persistent grant expiration time unit.
@@ -72,124 +80,77 @@ resource "pingfederate_oauth_client" "example" {
 - `persistent_grant_idle_timeout` (Number) The persistent grant idle timeout.
 - `persistent_grant_idle_timeout_time_unit` (String) The persistent grant idle timeout time unit.
 - `persistent_grant_idle_timeout_type` (String) Allows an administrator to override the Persistent Grant Idle Timeout set globally for the OAuth AS. Defaults to SERVER_DEFAULT.
-- `redirect_uris` (Set of String) URIs to which the OAuth AS may redirect the resource owner's user agent after authorization is obtained. A redirection URI is used with the Authorization Code and Implicit grant types. Wildcards are allowed. However, for security reasons, make the URL as restrictive as possible.For example: https://*.company.com/* Important: If more than one URI is added or if a single URI uses wildcards, then Authorization Code grant and token requests must contain a specific matching redirect uri parameter.
+- `persistent_grant_reuse_grant_types` (List of String) The grant types that the OAuth AS can reuse rather than creating a new grant for each request. This value will override the Reuse Existing Persistent Access Grants for Grant Types on the Authorization Server Settings. Only 'IMPLICIT' or 'AUTHORIZATION_CODE' or 'RESOURCE_OWNER_CREDENTIALS' are valid grant types.
+- `persistent_grant_reuse_type` (String) Allows and administrator to override the Reuse Existing Persistent Access Grants for Grant Types set globally for OAuth AS. Defaults to SERVER_DEFAULT.
+- `redirect_uris` (List of String) URIs to which the OAuth AS may redirect the resource owner's user agent after authorization is obtained. A redirection URI is used with the Authorization Code and Implicit grant types. Wildcards are allowed. However, for security reasons, make the URL as restrictive as possible.For example: https://*.company.com/* Important: If more than one URI is added or if a single URI uses wildcards, then Authorization Code grant and token requests must contain a specific matching redirect uri parameter.
 - `refresh_rolling` (String) Use ROLL or DONT_ROLL to override the Roll Refresh Token Values setting on the Authorization Server Settings. SERVER_DEFAULT will default to the Roll Refresh Token Values setting on the Authorization Server Setting screen. Defaults to SERVER_DEFAULT.
-- `request_object_signing_algorithm` (String) The JSON Web Signature [JWS] algorithm that must be used to sign the Request Object. All signing algorithms are allowed if value is not present.
-- `request_policy_ref` (Block List, Max: 1) The CIBA request policy. (see [below for nested schema](#nestedblock--request_policy_ref))
+- `refresh_token_rolling_grace_period` (Number) The grace period that a rolled refresh token remains valid in seconds.
+- `refresh_token_rolling_grace_period_type` (String) When specified, it overrides the global Refresh Token Grace Period defined in the Authorization Server Settings. The default value is SERVER_DEFAULT
+- `refresh_token_rolling_interval` (Number) The minimum interval to roll refresh tokens, in hours. This value will override the Refresh Token Rolling Interval Value on the Authorization Server Settings.
+- `refresh_token_rolling_interval_type` (String) Use OVERRIDE_SERVER_DEFAULT to override the Refresh Token Rolling Interval value on the Authorization Server Settings. SERVER_DEFAULT will default to the Refresh Token Rolling Interval value on the Authorization Server Setting. Defaults to SERVER_DEFAULT.
+- `request_object_signing_algorithm` (String) The JSON Web Signature [JWS] algorithm that must be used to sign the Request Object. All signing algorithms are allowed if value is not present <br>RS256 - RSA using SHA-256<br>RS384 - RSA using SHA-384<br>RS512 - RSA using SHA-512<br>ES256 - ECDSA using P256 Curve and SHA-256<br>ES384 - ECDSA using P384 Curve and SHA-384<br>ES512 - ECDSA using P521 Curve and SHA-512<br>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256<br>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384<br>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512<br>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11.
+- `request_policy_ref` (String) The CIBA request policy.
+- `require_jwt_secured_authorization_response_mode` (Boolean) Determines whether JWT Secured authorization response mode is required when initiating an authorization request. The default is false.
 - `require_proof_key_for_code_exchange` (Boolean) Determines whether Proof Key for Code Exchange (PKCE) is required for this client.
 - `require_pushed_authorization_requests` (Boolean) Determines whether pushed authorization requests are required when initiating an authorization request. The default is false.
 - `require_signed_requests` (Boolean) Determines whether signed requests are required for this client
 - `restrict_scopes` (Boolean) Restricts this client's access to specific scopes.
 - `restrict_to_default_access_token_manager` (Boolean) Determines whether the client is restricted to using only its default access token manager. The default is false.
-- `restricted_response_types` (Set of String) The response types allowed for this client. If omitted all response types are available to the client.
-- `restricted_scopes` (Set of String) The scopes available for this client.
-- `token_exchange_processor_policy_ref` (Block List, Max: 1) The Token Exchange Processor policy. (see [below for nested schema](#nestedblock--token_exchange_processor_policy_ref))
+- `restricted_response_types` (List of String) The response types allowed for this client. If omitted all response types are available to the client.
+- `restricted_scopes` (List of String) The scopes available for this client.
+- `token_exchange_processor_policy_ref` (String) The Token Exchange Processor policy.
+- `token_introspection_content_encryption_algorithm` (String) The JSON Web Encryption [JWE] content-encryption algorithm for the Token Introspection Response.<br>AES_128_CBC_HMAC_SHA_256 - Composite AES-CBC-128 HMAC-SHA-256<br>AES_192_CBC_HMAC_SHA_384 - Composite AES-CBC-192 HMAC-SHA-384<br>AES_256_CBC_HMAC_SHA_512 - Composite AES-CBC-256 HMAC-SHA-512<br>AES_128_GCM - AES-GCM-128<br>AES_192_GCM - AES-GCM-192<br>AES_256_GCM - AES-GCM-256
+- `token_introspection_encryption_algorithm` (String) The JSON Web Encryption [JWE] encryption algorithm used to encrypt the content-encryption key of the Token Introspection Response.<br>DIR - Direct Encryption with symmetric key<br>A128KW - AES-128 Key Wrap<br>A192KW - AES-192 Key Wrap<br>A256KW - AES-256 Key Wrap<br>A128GCMKW - AES-GCM-128 key encryption<br>A192GCMKW - AES-GCM-192 key encryption<br>A256GCMKW - AES-GCM-256 key encryption<br>ECDH_ES - ECDH-ES<br>ECDH_ES_A128KW - ECDH-ES with AES-128 Key Wrap<br>ECDH_ES_A192KW - ECDH-ES with AES-192 Key Wrap<br>ECDH_ES_A256KW - ECDH-ES with AES-256 Key Wrap<br>RSA_OAEP - RSAES OAEP<br>RSA_OAEP_256 - RSAES OAEP using SHA-256 and MGF1 with SHA-256
+- `token_introspection_signing_algorithm` (String) The JSON Web Signature [JWS] algorithm required to sign the Token Introspection Response.<br>HS256 - HMAC using SHA-256<br>HS384 - HMAC using SHA-384<br>HS512 - HMAC using SHA-512<br>RS256 - RSA using SHA-256<br>RS384 - RSA using SHA-384<br>RS512 - RSA using SHA-512<br>ES256 - ECDSA using P256 Curve and SHA-256<br>ES384 - ECDSA using P384 Curve and SHA-384<br>ES512 - ECDSA using P521 Curve and SHA-512<br>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256<br>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384<br>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512<br>A null value will represent the default algorithm which is RS256.<br>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11
 - `user_authorization_url_override` (String) The URL used as 'verification_url' and 'verification_url_complete' values in a Device Authorization request. This property overrides the 'userAuthorizationUrl' value present in Authorization Server Settings.
-- `validate_using_all_eligible_atms` (Boolean) Validates token using all eligible access token managers for the client. This setting is ignored if 'restrict_to_default_access_token_manager' is set to true.
+- `validate_using_all_eligible_atms` (Boolean) Validates token using all eligible access token managers for the client. This setting is ignored if 'restrictToDefaultAccessTokenManager' is set to true.
 
-### Read-Only
-
-- `id` (String) The ID of this resource.
-
-<a id="nestedblock--client_auth"></a>
+<a id="nestedatt--client_auth"></a>
 ### Nested Schema for `client_auth`
-
-Required:
-
-- `type` (String) Client authentication type.
 
 Optional:
 
 - `client_cert_issuer_dn` (String) Client TLS Certificate Issuer DN.
 - `client_cert_subject_dn` (String) Client TLS Certificate Subject DN.
+- `encrypted_secret` (String) For GET requests, this field contains the encrypted client secret, if one exists.  For POST and PUT requests, if you wish to reuse the existing secret, this field should be passed back unchanged.
 - `enforce_replay_prevention` (Boolean) Enforce replay prevention on JSON Web Tokens. This field is applicable only for Private Key JWT Client Authentication.
-- `secret` (String, Sensitive) Client secret for Basic Authentication. To update the client secret, specify the plaintext value in this field. This field will not be populated for GET requests.
-- `token_endpoint_auth_signing_algorithm` (String) The JSON Web Signature [JWS] algorithm that must be used to sign the JSON Web Tokens. This field is applicable only for Private Key JWT Client Authentication. All signing algorithms are allowed if value is not present.
+- `secret` (String) Client secret for Basic Authentication.  To update the client secret, specify the plaintext value in this field.  This field will not be populated for GET requests.
+- `token_endpoint_auth_signing_algorithm` (String) The JSON Web Signature [JWS] algorithm that must be used to sign the JSON Web Tokens. This field is applicable only for Private Key JWT Client Authentication. All signing algorithms are allowed if value is not present <br>RS256 - RSA using SHA-256<br>RS384 - RSA using SHA-384<br>RS512 - RSA using SHA-512<br>ES256 - ECDSA using P256 Curve and SHA-256<br>ES384 - ECDSA using P384 Curve and SHA-384<br>ES512 - ECDSA using P521 Curve and SHA-512<br>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256<br>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384<br>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512<br>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11.
+- `type` (String) Client authentication type.<br>The required field for type SECRET is secret.<br>The required fields for type CERTIFICATE are clientCertIssuerDn and clientCertSubjectDn.<br>The required field for type PRIVATE_KEY_JWT is: either jwks or jwksUrl.
 
 
-<a id="nestedblock--default_access_token_manager_ref"></a>
-### Nested Schema for `default_access_token_manager_ref`
-
-Required:
-
-- `id` (String) The ID of the resource.
-
-Read-Only:
-
-- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
-
-
-<a id="nestedblock--extended_properties"></a>
-### Nested Schema for `extended_properties`
-
-Required:
-
-- `key_name` (String) The extended property name.
+<a id="nestedatt--extended_parameters"></a>
+### Nested Schema for `extended_parameters`
 
 Optional:
 
-- `values` (Set of String) A List of parameter values.
+- `values` (List of String) A List of values
 
 
-<a id="nestedblock--jwks_settings"></a>
+<a id="nestedatt--jwks_settings"></a>
 ### Nested Schema for `jwks_settings`
 
 Optional:
 
-- `jwks` (String) JSON Web Key Set (JWKS) document of the OAuth client. Either 'jwks' or 'jwks_url' must be provided if private key JWT client authentication or signed requests is enabled. If the client signs its JWTs using an RSASSA-PSS signing algorithm, PingFederate must either use Java 11 or be integrated with a hardware security module (HSM) to process the digital signatures.
-- `jwks_url` (String) JSON Web Key Set (JWKS) URL of the OAuth client. Either 'jwks' or 'jwks_url' must be provided if private key JWT client authentication or signed requests is enabled. If the client signs its JWTs using an RSASSA-PSS signing algorithm, PingFederate must either use Java 11 or be integrated with a hardware security module (HSM) to process the digital signatures.
+- `jwks` (String) JSON Web Key Set (JWKS) document of the OAuth client. Either 'jwks' or 'jwksUrl' must be provided if private key JWT client authentication or signed requests is enabled.  If the client signs its JWTs using an RSASSA-PSS signing algorithm, PingFederate must either use Java 11 or be integrated with a hardware security module (HSM) to process the digital signatures.
+- `jwks_url` (String) JSON Web Key Set (JWKS) URL of the OAuth client. Either 'jwks' or 'jwksUrl' must be provided if private key JWT client authentication or signed requests is enabled.  If the client signs its JWTs using an RSASSA-PSS signing algorithm, PingFederate must either use Java 11 or be integrated with a hardware security module (HSM) to process the digital signatures.
 
 
-<a id="nestedblock--oidc_policy"></a>
+<a id="nestedatt--oidc_policy"></a>
 ### Nested Schema for `oidc_policy`
 
 Optional:
 
 - `grant_access_session_revocation_api` (Boolean) Determines whether this client is allowed to access the Session Revocation API.
-- `id_token_content_encryption_algorithm` (String) The JSON Web Encryption [JWE] content encryption algorithm for the ID Token.
-- `id_token_encryption_algorithm` (String) The JSON Web Encryption [JWE] encryption algorithm used to encrypt the content encryption key for the ID Token.
-- `id_token_signing_algorithm` (String) The JSON Web Signature [JWS] algorithm required for the ID Token.
+- `grant_access_session_session_management_api` (Boolean) Determines whether this client is allowed to access the Session Management API.
+- `id_token_content_encryption_algorithm` (String) The JSON Web Encryption [JWE] content encryption algorithm for the ID Token.<br>AES_128_CBC_HMAC_SHA_256 - Composite AES-CBC-128 HMAC-SHA-256<br>AES_192_CBC_HMAC_SHA_384 - Composite AES-CBC-192 HMAC-SHA-384<br>AES_256_CBC_HMAC_SHA_512 - Composite AES-CBC-256 HMAC-SHA-512<br>AES_128_GCM - AES-GCM-128<br>AES_192_GCM - AES-GCM-192<br>AES_256_GCM - AES-GCM-256
+- `id_token_encryption_algorithm` (String) The JSON Web Encryption [JWE] encryption algorithm used to encrypt the content encryption key for the ID Token.<br>DIR - Direct Encryption with symmetric key<br>A128KW - AES-128 Key Wrap<br>A192KW - AES-192 Key Wrap<br>A256KW - AES-256 Key Wrap<br>A128GCMKW - AES-GCM-128 key encryption<br>A192GCMKW - AES-GCM-192 key encryption<br>A256GCMKW - AES-GCM-256 key encryption<br>ECDH_ES - ECDH-ES<br>ECDH_ES_A128KW - ECDH-ES with AES-128 Key Wrap<br>ECDH_ES_A192KW - ECDH-ES with AES-192 Key Wrap<br>ECDH_ES_A256KW - ECDH-ES with AES-256 Key Wrap<br>RSA_OAEP - RSAES OAEP<br>RSA_OAEP_256 - RSAES OAEP using SHA-256 and MGF1 with SHA-256
+- `id_token_signing_algorithm` (String) The JSON Web Signature [JWS] algorithm required for the ID Token.<br>NONE - No signing algorithm<br>HS256 - HMAC using SHA-256<br>HS384 - HMAC using SHA-384<br>HS512 - HMAC using SHA-512<br>RS256 - RSA using SHA-256<br>RS384 - RSA using SHA-384<br>RS512 - RSA using SHA-512<br>ES256 - ECDSA using P256 Curve and SHA-256<br>ES384 - ECDSA using P384 Curve and SHA-384<br>ES512 - ECDSA using P521 Curve and SHA-512<br>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256<br>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384<br>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512<br>A null value will represent the default algorithm which is RS256.<br>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11
 - `logout_uris` (List of String) A list of client logout URI's which will be invoked when a user logs out through one of PingFederate's SLO endpoints.
 - `pairwise_identifier_user_type` (Boolean) Determines whether the subject identifier type is pairwise.
 - `ping_access_logout_capable` (Boolean) Set this value to true if you wish to enable client application logout, and the client is PingAccess, or its logout endpoints follow the PingAccess path convention.
-- `policy_group` (Block List, Max: 1) The Open ID Connect policy. A null value will represent the default policy group. (see [below for nested schema](#nestedblock--oidc_policy--policy_group))
+- `policy_group` (String) The Open ID Connect policy. A null value will represent the default policy group.
 - `sector_identifier_uri` (String) The URI references a file with a single JSON array of Redirect URI and JWKS URL values.
-
-<a id="nestedblock--oidc_policy--policy_group"></a>
-### Nested Schema for `oidc_policy.policy_group`
-
-Required:
-
-- `id` (String) The ID of the resource.
-
-Read-Only:
-
-- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
-
-
-
-<a id="nestedblock--request_policy_ref"></a>
-### Nested Schema for `request_policy_ref`
-
-Required:
-
-- `id` (String) The ID of the resource.
-
-Read-Only:
-
-- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
-
-
-<a id="nestedblock--token_exchange_processor_policy_ref"></a>
-### Nested Schema for `token_exchange_processor_policy_ref`
-
-Required:
-
-- `id` (String) The ID of the resource.
-
-Read-Only:
-
-- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 ## Import
 

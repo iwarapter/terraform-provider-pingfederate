@@ -42,9 +42,9 @@ func TestAccPingFederateNotificationPublisher(t *testing.T) {
 	resourceName := "pingfederate_notification_publisher.demo"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateNotificationPublisherDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateNotificationPublisherDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateNotificationPublisherConfig("foo"),

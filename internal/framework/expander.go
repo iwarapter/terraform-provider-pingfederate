@@ -22,11 +22,11 @@ func expandApcToPersistentGrantMapping(in ApcToPersistentGrantMappingData) *pf.A
 	if in.CustomAttributeSources != nil {
 		*result.AttributeSources = append(*result.AttributeSources, *expandCustomAttributeSources(in.CustomAttributeSources)...)
 	}
-	if !in.AuthenticationPolicyContractRef.Unknown && !in.AuthenticationPolicyContractRef.Null {
-		result.AuthenticationPolicyContractRef = &pf.ResourceLink{Id: String(in.AuthenticationPolicyContractRef.Value)}
+	if !in.AuthenticationPolicyContractRef.IsUnknown() && !in.AuthenticationPolicyContractRef.IsNull() {
+		result.AuthenticationPolicyContractRef = &pf.ResourceLink{Id: String(in.AuthenticationPolicyContractRef.ValueString())}
 	}
-	if !in.Id.Unknown && !in.Id.Null {
-		result.Id = String(in.Id.Value)
+	if !in.Id.IsUnknown() && !in.Id.IsNull() {
+		result.Id = String(in.Id.ValueString())
 	}
 	if in.IssuanceCriteria != nil {
 		result.IssuanceCriteria = expandIssuanceCriteria(*in.IssuanceCriteria)
@@ -45,15 +45,15 @@ func expandAuthenticationPolicyContract(in AuthenticationPolicyContractData) *pf
 	if in.ExtendedAttributes != nil && len(in.ExtendedAttributes) > 0 {
 		attrs := []*pf.AuthenticationPolicyContractAttribute{}
 		for _, data := range in.ExtendedAttributes {
-			attrs = append(attrs, &pf.AuthenticationPolicyContractAttribute{Name: String(data.Value)})
+			attrs = append(attrs, &pf.AuthenticationPolicyContractAttribute{Name: String(data.ValueString())})
 		}
 		result.ExtendedAttributes = &attrs
 	}
-	if !in.Id.Unknown && !in.Id.Null {
-		result.Id = String(in.Id.Value)
+	if !in.Id.IsUnknown() && !in.Id.IsNull() {
+		result.Id = String(in.Id.ValueString())
 	}
-	if !in.Name.Unknown && !in.Name.Null {
-		result.Name = String(in.Name.Value)
+	if !in.Name.IsUnknown() && !in.Name.IsNull() {
+		result.Name = String(in.Name.ValueString())
 	}
 
 	return &result
@@ -61,55 +61,65 @@ func expandAuthenticationPolicyContract(in AuthenticationPolicyContractData) *pf
 
 func expandClient(in ClientData) *pf.Client {
 	var result pf.Client
-	if !in.AllowAuthenticationApiInit.Unknown && !in.AllowAuthenticationApiInit.Null {
-		result.AllowAuthenticationApiInit = Bool(in.AllowAuthenticationApiInit.Value)
+	if !in.AllowAuthenticationApiInit.IsUnknown() && !in.AllowAuthenticationApiInit.IsNull() {
+		result.AllowAuthenticationApiInit = Bool(in.AllowAuthenticationApiInit.ValueBool())
 	}
-	if !in.BypassActivationCodeConfirmationOverride.Unknown && !in.BypassActivationCodeConfirmationOverride.Null {
-		result.BypassActivationCodeConfirmationOverride = Bool(in.BypassActivationCodeConfirmationOverride.Value)
+	if !in.BypassActivationCodeConfirmationOverride.IsUnknown() && !in.BypassActivationCodeConfirmationOverride.IsNull() {
+		result.BypassActivationCodeConfirmationOverride = Bool(in.BypassActivationCodeConfirmationOverride.ValueBool())
 	}
-	if !in.BypassApprovalPage.Unknown && !in.BypassApprovalPage.Null {
-		result.BypassApprovalPage = Bool(in.BypassApprovalPage.Value)
+	if !in.BypassApprovalPage.IsUnknown() && !in.BypassApprovalPage.IsNull() {
+		result.BypassApprovalPage = Bool(in.BypassApprovalPage.ValueBool())
 	}
-	if !in.CibaDeliveryMode.Unknown && !in.CibaDeliveryMode.Null {
-		result.CibaDeliveryMode = String(in.CibaDeliveryMode.Value)
+	if !in.CibaDeliveryMode.IsUnknown() && !in.CibaDeliveryMode.IsNull() {
+		result.CibaDeliveryMode = String(in.CibaDeliveryMode.ValueString())
 	}
-	if !in.CibaNotificationEndpoint.Unknown && !in.CibaNotificationEndpoint.Null {
-		result.CibaNotificationEndpoint = String(in.CibaNotificationEndpoint.Value)
+	if !in.CibaNotificationEndpoint.IsUnknown() && !in.CibaNotificationEndpoint.IsNull() {
+		result.CibaNotificationEndpoint = String(in.CibaNotificationEndpoint.ValueString())
 	}
-	if !in.CibaPollingInterval.Unknown && !in.CibaPollingInterval.Null {
-		i64, _ := in.CibaPollingInterval.Value.Int64()
+	if !in.CibaPollingInterval.IsUnknown() && !in.CibaPollingInterval.IsNull() {
+		i64, _ := in.CibaPollingInterval.ValueBigFloat().Int64()
 		result.CibaPollingInterval = Int(int(i64))
 	}
-	if !in.CibaRequestObjectSigningAlgorithm.Unknown && !in.CibaRequestObjectSigningAlgorithm.Null {
-		result.CibaRequestObjectSigningAlgorithm = String(in.CibaRequestObjectSigningAlgorithm.Value)
+	if !in.CibaRequestObjectSigningAlgorithm.IsUnknown() && !in.CibaRequestObjectSigningAlgorithm.IsNull() {
+		result.CibaRequestObjectSigningAlgorithm = String(in.CibaRequestObjectSigningAlgorithm.ValueString())
 	}
-	if !in.CibaRequireSignedRequests.Unknown && !in.CibaRequireSignedRequests.Null {
-		result.CibaRequireSignedRequests = Bool(in.CibaRequireSignedRequests.Value)
+	if !in.CibaRequireSignedRequests.IsUnknown() && !in.CibaRequireSignedRequests.IsNull() {
+		result.CibaRequireSignedRequests = Bool(in.CibaRequireSignedRequests.ValueBool())
 	}
-	if !in.CibaUserCodeSupported.Unknown && !in.CibaUserCodeSupported.Null {
-		result.CibaUserCodeSupported = Bool(in.CibaUserCodeSupported.Value)
+	if !in.CibaUserCodeSupported.IsUnknown() && !in.CibaUserCodeSupported.IsNull() {
+		result.CibaUserCodeSupported = Bool(in.CibaUserCodeSupported.ValueBool())
 	}
 	if in.ClientAuth != nil {
 		result.ClientAuth = expandClientAuth(*in.ClientAuth)
 	}
-	if !in.ClientId.Unknown && !in.ClientId.Null {
-		result.ClientId = String(in.ClientId.Value)
+	if !in.ClientId.IsUnknown() && !in.ClientId.IsNull() {
+		result.ClientId = String(in.ClientId.ValueString())
 	}
-	if !in.DefaultAccessTokenManagerRef.Unknown && !in.DefaultAccessTokenManagerRef.Null {
-		result.DefaultAccessTokenManagerRef = &pf.ResourceLink{Id: String(in.DefaultAccessTokenManagerRef.Value)}
+	if !in.ClientSecretChangedTime.IsUnknown() && !in.ClientSecretChangedTime.IsNull() {
+		result.ClientSecretChangedTime = String(in.ClientSecretChangedTime.ValueString())
 	}
-	if !in.Description.Unknown && !in.Description.Null {
-		result.Description = String(in.Description.Value)
+	if !in.ClientSecretRetentionPeriod.IsUnknown() && !in.ClientSecretRetentionPeriod.IsNull() {
+		i64, _ := in.ClientSecretRetentionPeriod.ValueBigFloat().Int64()
+		result.ClientSecretRetentionPeriod = Int(int(i64))
 	}
-	if !in.DeviceFlowSettingType.Unknown && !in.DeviceFlowSettingType.Null {
-		result.DeviceFlowSettingType = String(in.DeviceFlowSettingType.Value)
+	if !in.ClientSecretRetentionPeriodType.IsUnknown() && !in.ClientSecretRetentionPeriodType.IsNull() {
+		result.ClientSecretRetentionPeriodType = String(in.ClientSecretRetentionPeriodType.ValueString())
 	}
-	if !in.DevicePollingIntervalOverride.Unknown && !in.DevicePollingIntervalOverride.Null {
-		i64, _ := in.DevicePollingIntervalOverride.Value.Int64()
+	if !in.DefaultAccessTokenManagerRef.IsUnknown() && !in.DefaultAccessTokenManagerRef.IsNull() {
+		result.DefaultAccessTokenManagerRef = &pf.ResourceLink{Id: String(in.DefaultAccessTokenManagerRef.ValueString())}
+	}
+	if !in.Description.IsUnknown() && !in.Description.IsNull() {
+		result.Description = String(in.Description.ValueString())
+	}
+	if !in.DeviceFlowSettingType.IsUnknown() && !in.DeviceFlowSettingType.IsNull() {
+		result.DeviceFlowSettingType = String(in.DeviceFlowSettingType.ValueString())
+	}
+	if !in.DevicePollingIntervalOverride.IsUnknown() && !in.DevicePollingIntervalOverride.IsNull() {
+		i64, _ := in.DevicePollingIntervalOverride.ValueBigFloat().Int64()
 		result.DevicePollingIntervalOverride = Int(int(i64))
 	}
-	if !in.Enabled.Unknown && !in.Enabled.Null {
-		result.Enabled = Bool(in.Enabled.Value)
+	if !in.Enabled.IsUnknown() && !in.Enabled.IsNull() {
+		result.Enabled = Bool(in.Enabled.ValueBool())
 	}
 	if in.ExclusiveScopes != nil {
 		result.ExclusiveScopes = expandStringList(in.ExclusiveScopes)
@@ -123,78 +133,97 @@ func expandClient(in ClientData) *pf.Client {
 	if in.JwksSettings != nil {
 		result.JwksSettings = expandJwksSettings(*in.JwksSettings)
 	}
-	if !in.LogoUrl.Unknown && !in.LogoUrl.Null {
-		result.LogoUrl = String(in.LogoUrl.Value)
+	if !in.JwtSecuredAuthorizationResponseModeContentEncryptionAlgorithm.IsUnknown() && !in.JwtSecuredAuthorizationResponseModeContentEncryptionAlgorithm.IsNull() {
+		result.JwtSecuredAuthorizationResponseModeContentEncryptionAlgorithm = String(in.JwtSecuredAuthorizationResponseModeContentEncryptionAlgorithm.ValueString())
 	}
-	if !in.Name.Unknown && !in.Name.Null {
-		result.Name = String(in.Name.Value)
+	if !in.JwtSecuredAuthorizationResponseModeEncryptionAlgorithm.IsUnknown() && !in.JwtSecuredAuthorizationResponseModeEncryptionAlgorithm.IsNull() {
+		result.JwtSecuredAuthorizationResponseModeEncryptionAlgorithm = String(in.JwtSecuredAuthorizationResponseModeEncryptionAlgorithm.ValueString())
+	}
+	if !in.JwtSecuredAuthorizationResponseModeSigningAlgorithm.IsUnknown() && !in.JwtSecuredAuthorizationResponseModeSigningAlgorithm.IsNull() {
+		result.JwtSecuredAuthorizationResponseModeSigningAlgorithm = String(in.JwtSecuredAuthorizationResponseModeSigningAlgorithm.ValueString())
+	}
+	if !in.LogoUrl.IsUnknown() && !in.LogoUrl.IsNull() {
+		result.LogoUrl = String(in.LogoUrl.ValueString())
+	}
+	if !in.Name.IsUnknown() && !in.Name.IsNull() {
+		result.Name = String(in.Name.ValueString())
 	}
 	if in.OidcPolicy != nil {
 		result.OidcPolicy = expandClientOIDCPolicy(*in.OidcPolicy)
 	}
-	if !in.PendingAuthorizationTimeoutOverride.Unknown && !in.PendingAuthorizationTimeoutOverride.Null {
-		i64, _ := in.PendingAuthorizationTimeoutOverride.Value.Int64()
+	if !in.PendingAuthorizationTimeoutOverride.IsUnknown() && !in.PendingAuthorizationTimeoutOverride.IsNull() {
+		i64, _ := in.PendingAuthorizationTimeoutOverride.ValueBigFloat().Int64()
 		result.PendingAuthorizationTimeoutOverride = Int(int(i64))
 	}
-	if !in.PersistentGrantExpirationTime.Unknown && !in.PersistentGrantExpirationTime.Null {
-		i64, _ := in.PersistentGrantExpirationTime.Value.Int64()
+	if !in.PersistentGrantExpirationTime.IsUnknown() && !in.PersistentGrantExpirationTime.IsNull() {
+		i64, _ := in.PersistentGrantExpirationTime.ValueBigFloat().Int64()
 		result.PersistentGrantExpirationTime = Int(int(i64))
 	}
-	if !in.PersistentGrantExpirationTimeUnit.Unknown && !in.PersistentGrantExpirationTimeUnit.Null {
-		result.PersistentGrantExpirationTimeUnit = String(in.PersistentGrantExpirationTimeUnit.Value)
+	if !in.PersistentGrantExpirationTimeUnit.IsUnknown() && !in.PersistentGrantExpirationTimeUnit.IsNull() {
+		result.PersistentGrantExpirationTimeUnit = String(in.PersistentGrantExpirationTimeUnit.ValueString())
 	}
-	if !in.PersistentGrantExpirationType.Unknown && !in.PersistentGrantExpirationType.Null {
-		result.PersistentGrantExpirationType = String(in.PersistentGrantExpirationType.Value)
+	if !in.PersistentGrantExpirationType.IsUnknown() && !in.PersistentGrantExpirationType.IsNull() {
+		result.PersistentGrantExpirationType = String(in.PersistentGrantExpirationType.ValueString())
 	}
-	if !in.PersistentGrantIdleTimeout.Unknown && !in.PersistentGrantIdleTimeout.Null {
-		i64, _ := in.PersistentGrantIdleTimeout.Value.Int64()
+	if !in.PersistentGrantIdleTimeout.IsUnknown() && !in.PersistentGrantIdleTimeout.IsNull() {
+		i64, _ := in.PersistentGrantIdleTimeout.ValueBigFloat().Int64()
 		result.PersistentGrantIdleTimeout = Int(int(i64))
 	}
-	if !in.PersistentGrantIdleTimeoutTimeUnit.Unknown && !in.PersistentGrantIdleTimeoutTimeUnit.Null {
-		result.PersistentGrantIdleTimeoutTimeUnit = String(in.PersistentGrantIdleTimeoutTimeUnit.Value)
+	if !in.PersistentGrantIdleTimeoutTimeUnit.IsUnknown() && !in.PersistentGrantIdleTimeoutTimeUnit.IsNull() {
+		result.PersistentGrantIdleTimeoutTimeUnit = String(in.PersistentGrantIdleTimeoutTimeUnit.ValueString())
 	}
-	if !in.PersistentGrantIdleTimeoutType.Unknown && !in.PersistentGrantIdleTimeoutType.Null {
-		result.PersistentGrantIdleTimeoutType = String(in.PersistentGrantIdleTimeoutType.Value)
+	if !in.PersistentGrantIdleTimeoutType.IsUnknown() && !in.PersistentGrantIdleTimeoutType.IsNull() {
+		result.PersistentGrantIdleTimeoutType = String(in.PersistentGrantIdleTimeoutType.ValueString())
 	}
 	if in.PersistentGrantReuseGrantTypes != nil {
 		result.PersistentGrantReuseGrantTypes = expandStringList(in.PersistentGrantReuseGrantTypes)
 	}
-	if !in.PersistentGrantReuseType.Unknown && !in.PersistentGrantReuseType.Null {
-		result.PersistentGrantReuseType = String(in.PersistentGrantReuseType.Value)
+	if !in.PersistentGrantReuseType.IsUnknown() && !in.PersistentGrantReuseType.IsNull() {
+		result.PersistentGrantReuseType = String(in.PersistentGrantReuseType.ValueString())
 	}
 	if in.RedirectUris != nil {
 		result.RedirectUris = expandStringList(in.RedirectUris)
 	}
-	if !in.RefreshRolling.Unknown && !in.RefreshRolling.Null {
-		result.RefreshRolling = String(in.RefreshRolling.Value)
+	if !in.RefreshRolling.IsUnknown() && !in.RefreshRolling.IsNull() {
+		result.RefreshRolling = String(in.RefreshRolling.ValueString())
 	}
-	if !in.RefreshTokenRollingInterval.Unknown && !in.RefreshTokenRollingInterval.Null {
-		i64, _ := in.RefreshTokenRollingInterval.Value.Int64()
+	if !in.RefreshTokenRollingGracePeriod.IsUnknown() && !in.RefreshTokenRollingGracePeriod.IsNull() {
+		i64, _ := in.RefreshTokenRollingGracePeriod.ValueBigFloat().Int64()
+		result.RefreshTokenRollingGracePeriod = Int(int(i64))
+	}
+	if !in.RefreshTokenRollingGracePeriodType.IsUnknown() && !in.RefreshTokenRollingGracePeriodType.IsNull() {
+		result.RefreshTokenRollingGracePeriodType = String(in.RefreshTokenRollingGracePeriodType.ValueString())
+	}
+	if !in.RefreshTokenRollingInterval.IsUnknown() && !in.RefreshTokenRollingInterval.IsNull() {
+		i64, _ := in.RefreshTokenRollingInterval.ValueBigFloat().Int64()
 		result.RefreshTokenRollingInterval = Int(int(i64))
 	}
-	if !in.RefreshTokenRollingIntervalType.Unknown && !in.RefreshTokenRollingIntervalType.Null {
-		result.RefreshTokenRollingIntervalType = String(in.RefreshTokenRollingIntervalType.Value)
+	if !in.RefreshTokenRollingIntervalType.IsUnknown() && !in.RefreshTokenRollingIntervalType.IsNull() {
+		result.RefreshTokenRollingIntervalType = String(in.RefreshTokenRollingIntervalType.ValueString())
 	}
-	if !in.RequestObjectSigningAlgorithm.Unknown && !in.RequestObjectSigningAlgorithm.Null {
-		result.RequestObjectSigningAlgorithm = String(in.RequestObjectSigningAlgorithm.Value)
+	if !in.RequestObjectSigningAlgorithm.IsUnknown() && !in.RequestObjectSigningAlgorithm.IsNull() {
+		result.RequestObjectSigningAlgorithm = String(in.RequestObjectSigningAlgorithm.ValueString())
 	}
-	if !in.RequestPolicyRef.Unknown && !in.RequestPolicyRef.Null {
-		result.RequestPolicyRef = &pf.ResourceLink{Id: String(in.RequestPolicyRef.Value)}
+	if !in.RequestPolicyRef.IsUnknown() && !in.RequestPolicyRef.IsNull() {
+		result.RequestPolicyRef = &pf.ResourceLink{Id: String(in.RequestPolicyRef.ValueString())}
 	}
-	if !in.RequireProofKeyForCodeExchange.Unknown && !in.RequireProofKeyForCodeExchange.Null {
-		result.RequireProofKeyForCodeExchange = Bool(in.RequireProofKeyForCodeExchange.Value)
+	if !in.RequireJwtSecuredAuthorizationResponseMode.IsUnknown() && !in.RequireJwtSecuredAuthorizationResponseMode.IsNull() {
+		result.RequireJwtSecuredAuthorizationResponseMode = Bool(in.RequireJwtSecuredAuthorizationResponseMode.ValueBool())
 	}
-	if !in.RequirePushedAuthorizationRequests.Unknown && !in.RequirePushedAuthorizationRequests.Null {
-		result.RequirePushedAuthorizationRequests = Bool(in.RequirePushedAuthorizationRequests.Value)
+	if !in.RequireProofKeyForCodeExchange.IsUnknown() && !in.RequireProofKeyForCodeExchange.IsNull() {
+		result.RequireProofKeyForCodeExchange = Bool(in.RequireProofKeyForCodeExchange.ValueBool())
 	}
-	if !in.RequireSignedRequests.Unknown && !in.RequireSignedRequests.Null {
-		result.RequireSignedRequests = Bool(in.RequireSignedRequests.Value)
+	if !in.RequirePushedAuthorizationRequests.IsUnknown() && !in.RequirePushedAuthorizationRequests.IsNull() {
+		result.RequirePushedAuthorizationRequests = Bool(in.RequirePushedAuthorizationRequests.ValueBool())
 	}
-	if !in.RestrictScopes.Unknown && !in.RestrictScopes.Null {
-		result.RestrictScopes = Bool(in.RestrictScopes.Value)
+	if !in.RequireSignedRequests.IsUnknown() && !in.RequireSignedRequests.IsNull() {
+		result.RequireSignedRequests = Bool(in.RequireSignedRequests.ValueBool())
 	}
-	if !in.RestrictToDefaultAccessTokenManager.Unknown && !in.RestrictToDefaultAccessTokenManager.Null {
-		result.RestrictToDefaultAccessTokenManager = Bool(in.RestrictToDefaultAccessTokenManager.Value)
+	if !in.RestrictScopes.IsUnknown() && !in.RestrictScopes.IsNull() {
+		result.RestrictScopes = Bool(in.RestrictScopes.ValueBool())
+	}
+	if !in.RestrictToDefaultAccessTokenManager.IsUnknown() && !in.RestrictToDefaultAccessTokenManager.IsNull() {
+		result.RestrictToDefaultAccessTokenManager = Bool(in.RestrictToDefaultAccessTokenManager.ValueBool())
 	}
 	if in.RestrictedResponseTypes != nil {
 		result.RestrictedResponseTypes = expandStringList(in.RestrictedResponseTypes)
@@ -202,14 +231,23 @@ func expandClient(in ClientData) *pf.Client {
 	if in.RestrictedScopes != nil {
 		result.RestrictedScopes = expandStringList(in.RestrictedScopes)
 	}
-	if !in.TokenExchangeProcessorPolicyRef.Unknown && !in.TokenExchangeProcessorPolicyRef.Null {
-		result.TokenExchangeProcessorPolicyRef = &pf.ResourceLink{Id: String(in.TokenExchangeProcessorPolicyRef.Value)}
+	if !in.TokenExchangeProcessorPolicyRef.IsUnknown() && !in.TokenExchangeProcessorPolicyRef.IsNull() {
+		result.TokenExchangeProcessorPolicyRef = &pf.ResourceLink{Id: String(in.TokenExchangeProcessorPolicyRef.ValueString())}
 	}
-	if !in.UserAuthorizationUrlOverride.Unknown && !in.UserAuthorizationUrlOverride.Null {
-		result.UserAuthorizationUrlOverride = String(in.UserAuthorizationUrlOverride.Value)
+	if !in.TokenIntrospectionContentEncryptionAlgorithm.IsUnknown() && !in.TokenIntrospectionContentEncryptionAlgorithm.IsNull() {
+		result.TokenIntrospectionContentEncryptionAlgorithm = String(in.TokenIntrospectionContentEncryptionAlgorithm.ValueString())
 	}
-	if !in.ValidateUsingAllEligibleAtms.Unknown && !in.ValidateUsingAllEligibleAtms.Null {
-		result.ValidateUsingAllEligibleAtms = Bool(in.ValidateUsingAllEligibleAtms.Value)
+	if !in.TokenIntrospectionEncryptionAlgorithm.IsUnknown() && !in.TokenIntrospectionEncryptionAlgorithm.IsNull() {
+		result.TokenIntrospectionEncryptionAlgorithm = String(in.TokenIntrospectionEncryptionAlgorithm.ValueString())
+	}
+	if !in.TokenIntrospectionSigningAlgorithm.IsUnknown() && !in.TokenIntrospectionSigningAlgorithm.IsNull() {
+		result.TokenIntrospectionSigningAlgorithm = String(in.TokenIntrospectionSigningAlgorithm.ValueString())
+	}
+	if !in.UserAuthorizationUrlOverride.IsUnknown() && !in.UserAuthorizationUrlOverride.IsNull() {
+		result.UserAuthorizationUrlOverride = String(in.UserAuthorizationUrlOverride.ValueString())
+	}
+	if !in.ValidateUsingAllEligibleAtms.IsUnknown() && !in.ValidateUsingAllEligibleAtms.IsNull() {
+		result.ValidateUsingAllEligibleAtms = Bool(in.ValidateUsingAllEligibleAtms.ValueBool())
 	}
 
 	return &result
@@ -239,8 +277,8 @@ func expandAttributeFulfillmentValue(in AttributeFulfillmentValueData) *pf.Attri
 	if in.Source != nil {
 		result.Source = expandSourceTypeIdKey(*in.Source)
 	}
-	if !in.Value.Unknown && !in.Value.Null {
-		result.Value = String(in.Value.Value)
+	if !in.Value.IsUnknown() && !in.Value.IsNull() {
+		result.Value = String(in.Value.ValueString())
 	}
 
 	return &result
@@ -255,8 +293,8 @@ func expandMapBinaryLdapAttributeSettingss(in map[string]*BinaryLdapAttributeSet
 }
 func expandBinaryLdapAttributeSettings(in BinaryLdapAttributeSettingsData) *pf.BinaryLdapAttributeSettings {
 	var result pf.BinaryLdapAttributeSettings
-	if !in.BinaryEncoding.Unknown && !in.BinaryEncoding.Null {
-		result.BinaryEncoding = String(in.BinaryEncoding.Value)
+	if !in.BinaryEncoding.IsUnknown() && !in.BinaryEncoding.IsNull() {
+		result.BinaryEncoding = String(in.BinaryEncoding.ValueString())
 	}
 
 	return &result
@@ -264,26 +302,26 @@ func expandBinaryLdapAttributeSettings(in BinaryLdapAttributeSettingsData) *pf.B
 
 func expandClientAuth(in ClientAuthData) *pf.ClientAuth {
 	var result pf.ClientAuth
-	if !in.ClientCertIssuerDn.Unknown && !in.ClientCertIssuerDn.Null {
-		result.ClientCertIssuerDn = String(in.ClientCertIssuerDn.Value)
+	if !in.ClientCertIssuerDn.IsUnknown() && !in.ClientCertIssuerDn.IsNull() {
+		result.ClientCertIssuerDn = String(in.ClientCertIssuerDn.ValueString())
 	}
-	if !in.ClientCertSubjectDn.Unknown && !in.ClientCertSubjectDn.Null {
-		result.ClientCertSubjectDn = String(in.ClientCertSubjectDn.Value)
+	if !in.ClientCertSubjectDn.IsUnknown() && !in.ClientCertSubjectDn.IsNull() {
+		result.ClientCertSubjectDn = String(in.ClientCertSubjectDn.ValueString())
 	}
-	if !in.EncryptedSecret.Unknown && !in.EncryptedSecret.Null {
-		result.EncryptedSecret = String(in.EncryptedSecret.Value)
+	if !in.EncryptedSecret.IsUnknown() && !in.EncryptedSecret.IsNull() {
+		result.EncryptedSecret = String(in.EncryptedSecret.ValueString())
 	}
-	if !in.EnforceReplayPrevention.Unknown && !in.EnforceReplayPrevention.Null {
-		result.EnforceReplayPrevention = Bool(in.EnforceReplayPrevention.Value)
+	if !in.EnforceReplayPrevention.IsUnknown() && !in.EnforceReplayPrevention.IsNull() {
+		result.EnforceReplayPrevention = Bool(in.EnforceReplayPrevention.ValueBool())
 	}
-	if !in.Secret.Unknown && !in.Secret.Null {
-		result.Secret = String(in.Secret.Value)
+	if !in.Secret.IsUnknown() && !in.Secret.IsNull() {
+		result.Secret = String(in.Secret.ValueString())
 	}
-	if !in.TokenEndpointAuthSigningAlgorithm.Unknown && !in.TokenEndpointAuthSigningAlgorithm.Null {
-		result.TokenEndpointAuthSigningAlgorithm = String(in.TokenEndpointAuthSigningAlgorithm.Value)
+	if !in.TokenEndpointAuthSigningAlgorithm.IsUnknown() && !in.TokenEndpointAuthSigningAlgorithm.IsNull() {
+		result.TokenEndpointAuthSigningAlgorithm = String(in.TokenEndpointAuthSigningAlgorithm.ValueString())
 	}
-	if !in.Type.Unknown && !in.Type.Null {
-		result.Type = String(in.Type.Value)
+	if !in.Type.IsUnknown() && !in.Type.IsNull() {
+		result.Type = String(in.Type.ValueString())
 	}
 
 	return &result
@@ -291,35 +329,35 @@ func expandClientAuth(in ClientAuthData) *pf.ClientAuth {
 
 func expandClientOIDCPolicy(in ClientOIDCPolicyData) *pf.ClientOIDCPolicy {
 	var result pf.ClientOIDCPolicy
-	if !in.GrantAccessSessionRevocationApi.Unknown && !in.GrantAccessSessionRevocationApi.Null {
-		result.GrantAccessSessionRevocationApi = Bool(in.GrantAccessSessionRevocationApi.Value)
+	if !in.GrantAccessSessionRevocationApi.IsUnknown() && !in.GrantAccessSessionRevocationApi.IsNull() {
+		result.GrantAccessSessionRevocationApi = Bool(in.GrantAccessSessionRevocationApi.ValueBool())
 	}
-	if !in.GrantAccessSessionSessionManagementApi.Unknown && !in.GrantAccessSessionSessionManagementApi.Null {
-		result.GrantAccessSessionSessionManagementApi = Bool(in.GrantAccessSessionSessionManagementApi.Value)
+	if !in.GrantAccessSessionSessionManagementApi.IsUnknown() && !in.GrantAccessSessionSessionManagementApi.IsNull() {
+		result.GrantAccessSessionSessionManagementApi = Bool(in.GrantAccessSessionSessionManagementApi.ValueBool())
 	}
-	if !in.IdTokenContentEncryptionAlgorithm.Unknown && !in.IdTokenContentEncryptionAlgorithm.Null {
-		result.IdTokenContentEncryptionAlgorithm = String(in.IdTokenContentEncryptionAlgorithm.Value)
+	if !in.IdTokenContentEncryptionAlgorithm.IsUnknown() && !in.IdTokenContentEncryptionAlgorithm.IsNull() {
+		result.IdTokenContentEncryptionAlgorithm = String(in.IdTokenContentEncryptionAlgorithm.ValueString())
 	}
-	if !in.IdTokenEncryptionAlgorithm.Unknown && !in.IdTokenEncryptionAlgorithm.Null {
-		result.IdTokenEncryptionAlgorithm = String(in.IdTokenEncryptionAlgorithm.Value)
+	if !in.IdTokenEncryptionAlgorithm.IsUnknown() && !in.IdTokenEncryptionAlgorithm.IsNull() {
+		result.IdTokenEncryptionAlgorithm = String(in.IdTokenEncryptionAlgorithm.ValueString())
 	}
-	if !in.IdTokenSigningAlgorithm.Unknown && !in.IdTokenSigningAlgorithm.Null {
-		result.IdTokenSigningAlgorithm = String(in.IdTokenSigningAlgorithm.Value)
+	if !in.IdTokenSigningAlgorithm.IsUnknown() && !in.IdTokenSigningAlgorithm.IsNull() {
+		result.IdTokenSigningAlgorithm = String(in.IdTokenSigningAlgorithm.ValueString())
 	}
 	if in.LogoutUris != nil {
 		result.LogoutUris = expandStringList(in.LogoutUris)
 	}
-	if !in.PairwiseIdentifierUserType.Unknown && !in.PairwiseIdentifierUserType.Null {
-		result.PairwiseIdentifierUserType = Bool(in.PairwiseIdentifierUserType.Value)
+	if !in.PairwiseIdentifierUserType.IsUnknown() && !in.PairwiseIdentifierUserType.IsNull() {
+		result.PairwiseIdentifierUserType = Bool(in.PairwiseIdentifierUserType.ValueBool())
 	}
-	if !in.PingAccessLogoutCapable.Unknown && !in.PingAccessLogoutCapable.Null {
-		result.PingAccessLogoutCapable = Bool(in.PingAccessLogoutCapable.Value)
+	if !in.PingAccessLogoutCapable.IsUnknown() && !in.PingAccessLogoutCapable.IsNull() {
+		result.PingAccessLogoutCapable = Bool(in.PingAccessLogoutCapable.ValueBool())
 	}
-	if !in.PolicyGroup.Unknown && !in.PolicyGroup.Null {
-		result.PolicyGroup = &pf.ResourceLink{Id: String(in.PolicyGroup.Value)}
+	if !in.PolicyGroup.IsUnknown() && !in.PolicyGroup.IsNull() {
+		result.PolicyGroup = &pf.ResourceLink{Id: String(in.PolicyGroup.ValueString())}
 	}
-	if !in.SectorIdentifierUri.Unknown && !in.SectorIdentifierUri.Null {
-		result.SectorIdentifierUri = String(in.SectorIdentifierUri.Value)
+	if !in.SectorIdentifierUri.IsUnknown() && !in.SectorIdentifierUri.IsNull() {
+		result.SectorIdentifierUri = String(in.SectorIdentifierUri.ValueString())
 	}
 
 	return &result
@@ -334,20 +372,20 @@ func expandConditionalIssuanceCriteriaEntrys(in *[]*ConditionalIssuanceCriteriaE
 }
 func expandConditionalIssuanceCriteriaEntry(in ConditionalIssuanceCriteriaEntryData) *pf.ConditionalIssuanceCriteriaEntry {
 	var result pf.ConditionalIssuanceCriteriaEntry
-	if !in.AttributeName.Unknown && !in.AttributeName.Null {
-		result.AttributeName = String(in.AttributeName.Value)
+	if !in.AttributeName.IsUnknown() && !in.AttributeName.IsNull() {
+		result.AttributeName = String(in.AttributeName.ValueString())
 	}
-	if !in.Condition.Unknown && !in.Condition.Null {
-		result.Condition = String(in.Condition.Value)
+	if !in.Condition.IsUnknown() && !in.Condition.IsNull() {
+		result.Condition = String(in.Condition.ValueString())
 	}
-	if !in.ErrorResult.Unknown && !in.ErrorResult.Null {
-		result.ErrorResult = String(in.ErrorResult.Value)
+	if !in.ErrorResult.IsUnknown() && !in.ErrorResult.IsNull() {
+		result.ErrorResult = String(in.ErrorResult.ValueString())
 	}
 	if in.Source != nil {
 		result.Source = expandSourceTypeIdKey(*in.Source)
 	}
-	if !in.Value.Unknown && !in.Value.Null {
-		result.Value = String(in.Value.Value)
+	if !in.Value.IsUnknown() && !in.Value.IsNull() {
+		result.Value = String(in.Value.ValueString())
 	}
 
 	return &result
@@ -358,17 +396,17 @@ func expandCustomAttributeSource(in CustomAttributeSourceData) *pf.CustomAttribu
 	if in.AttributeContractFulfillment != nil {
 		result.AttributeContractFulfillment = expandMapAttributeFulfillmentValues(in.AttributeContractFulfillment)
 	}
-	if !in.DataStoreRef.Unknown && !in.DataStoreRef.Null {
-		result.DataStoreRef = &pf.ResourceLink{Id: String(in.DataStoreRef.Value)}
+	if !in.DataStoreRef.IsUnknown() && !in.DataStoreRef.IsNull() {
+		result.DataStoreRef = &pf.ResourceLink{Id: String(in.DataStoreRef.ValueString())}
 	}
-	if !in.Description.Unknown && !in.Description.Null {
-		result.Description = String(in.Description.Value)
+	if !in.Description.IsUnknown() && !in.Description.IsNull() {
+		result.Description = String(in.Description.ValueString())
 	}
 	if in.FilterFields != nil {
 		result.FilterFields = expandFieldEntrys(in.FilterFields)
 	}
-	if !in.Id.Unknown && !in.Id.Null {
-		result.Id = String(in.Id.Value)
+	if !in.Id.IsUnknown() && !in.Id.IsNull() {
+		result.Id = String(in.Id.ValueString())
 	}
 
 	return &result
@@ -383,11 +421,11 @@ func expandExpressionIssuanceCriteriaEntrys(in *[]*ExpressionIssuanceCriteriaEnt
 }
 func expandExpressionIssuanceCriteriaEntry(in ExpressionIssuanceCriteriaEntryData) *pf.ExpressionIssuanceCriteriaEntry {
 	var result pf.ExpressionIssuanceCriteriaEntry
-	if !in.ErrorResult.Unknown && !in.ErrorResult.Null {
-		result.ErrorResult = String(in.ErrorResult.Value)
+	if !in.ErrorResult.IsUnknown() && !in.ErrorResult.IsNull() {
+		result.ErrorResult = String(in.ErrorResult.ValueString())
 	}
-	if !in.Expression.Unknown && !in.Expression.Null {
-		result.Expression = String(in.Expression.Value)
+	if !in.Expression.IsUnknown() && !in.Expression.IsNull() {
+		result.Expression = String(in.Expression.ValueString())
 	}
 
 	return &result
@@ -402,11 +440,11 @@ func expandFieldEntrys(in *[]*FieldEntryData) *[]*pf.FieldEntry {
 }
 func expandFieldEntry(in FieldEntryData) *pf.FieldEntry {
 	var result pf.FieldEntry
-	if !in.Name.Unknown && !in.Name.Null {
-		result.Name = String(in.Name.Value)
+	if !in.Name.IsUnknown() && !in.Name.IsNull() {
+		result.Name = String(in.Name.ValueString())
 	}
-	if !in.Value.Unknown && !in.Value.Null {
-		result.Value = String(in.Value.Value)
+	if !in.Value.IsUnknown() && !in.Value.IsNull() {
+		result.Value = String(in.Value.ValueString())
 	}
 
 	return &result
@@ -432,23 +470,23 @@ func expandJdbcAttributeSource(in JdbcAttributeSourceData) *pf.JdbcAttributeSour
 	if in.ColumnNames != nil {
 		result.ColumnNames = expandStringList(in.ColumnNames)
 	}
-	if !in.DataStoreRef.Unknown && !in.DataStoreRef.Null {
-		result.DataStoreRef = &pf.ResourceLink{Id: String(in.DataStoreRef.Value)}
+	if !in.DataStoreRef.IsUnknown() && !in.DataStoreRef.IsNull() {
+		result.DataStoreRef = &pf.ResourceLink{Id: String(in.DataStoreRef.ValueString())}
 	}
-	if !in.Description.Unknown && !in.Description.Null {
-		result.Description = String(in.Description.Value)
+	if !in.Description.IsUnknown() && !in.Description.IsNull() {
+		result.Description = String(in.Description.ValueString())
 	}
-	if !in.Filter.Unknown && !in.Filter.Null {
-		result.Filter = String(in.Filter.Value)
+	if !in.Filter.IsUnknown() && !in.Filter.IsNull() {
+		result.Filter = String(in.Filter.ValueString())
 	}
-	if !in.Id.Unknown && !in.Id.Null {
-		result.Id = String(in.Id.Value)
+	if !in.Id.IsUnknown() && !in.Id.IsNull() {
+		result.Id = String(in.Id.ValueString())
 	}
-	if !in.Schema.Unknown && !in.Schema.Null {
-		result.Schema = String(in.Schema.Value)
+	if !in.Schema.IsUnknown() && !in.Schema.IsNull() {
+		result.Schema = String(in.Schema.ValueString())
 	}
-	if !in.Table.Unknown && !in.Table.Null {
-		result.Table = String(in.Table.Value)
+	if !in.Table.IsUnknown() && !in.Table.IsNull() {
+		result.Table = String(in.Table.ValueString())
 	}
 
 	return &result
@@ -456,11 +494,11 @@ func expandJdbcAttributeSource(in JdbcAttributeSourceData) *pf.JdbcAttributeSour
 
 func expandJwksSettings(in JwksSettingsData) *pf.JwksSettings {
 	var result pf.JwksSettings
-	if !in.Jwks.Unknown && !in.Jwks.Null {
-		result.Jwks = String(in.Jwks.Value)
+	if !in.Jwks.IsUnknown() && !in.Jwks.IsNull() {
+		result.Jwks = String(in.Jwks.ValueString())
 	}
-	if !in.JwksUrl.Unknown && !in.JwksUrl.Null {
-		result.JwksUrl = String(in.JwksUrl.Value)
+	if !in.JwksUrl.IsUnknown() && !in.JwksUrl.IsNull() {
+		result.JwksUrl = String(in.JwksUrl.ValueString())
 	}
 
 	return &result
@@ -471,32 +509,32 @@ func expandLdapAttributeSource(in LdapAttributeSourceData) *pf.LdapAttributeSour
 	if in.AttributeContractFulfillment != nil {
 		result.AttributeContractFulfillment = expandMapAttributeFulfillmentValues(in.AttributeContractFulfillment)
 	}
-	if !in.BaseDn.Unknown && !in.BaseDn.Null {
-		result.BaseDn = String(in.BaseDn.Value)
+	if !in.BaseDn.IsUnknown() && !in.BaseDn.IsNull() {
+		result.BaseDn = String(in.BaseDn.ValueString())
 	}
 	if in.BinaryAttributeSettings != nil {
 		result.BinaryAttributeSettings = expandMapBinaryLdapAttributeSettingss(in.BinaryAttributeSettings)
 	}
-	if !in.DataStoreRef.Unknown && !in.DataStoreRef.Null {
-		result.DataStoreRef = &pf.ResourceLink{Id: String(in.DataStoreRef.Value)}
+	if !in.DataStoreRef.IsUnknown() && !in.DataStoreRef.IsNull() {
+		result.DataStoreRef = &pf.ResourceLink{Id: String(in.DataStoreRef.ValueString())}
 	}
-	if !in.Description.Unknown && !in.Description.Null {
-		result.Description = String(in.Description.Value)
+	if !in.Description.IsUnknown() && !in.Description.IsNull() {
+		result.Description = String(in.Description.ValueString())
 	}
-	if !in.Id.Unknown && !in.Id.Null {
-		result.Id = String(in.Id.Value)
+	if !in.Id.IsUnknown() && !in.Id.IsNull() {
+		result.Id = String(in.Id.ValueString())
 	}
-	if !in.MemberOfNestedGroup.Unknown && !in.MemberOfNestedGroup.Null {
-		result.MemberOfNestedGroup = Bool(in.MemberOfNestedGroup.Value)
+	if !in.MemberOfNestedGroup.IsUnknown() && !in.MemberOfNestedGroup.IsNull() {
+		result.MemberOfNestedGroup = Bool(in.MemberOfNestedGroup.ValueBool())
 	}
 	if in.SearchAttributes != nil {
 		result.SearchAttributes = expandStringList(in.SearchAttributes)
 	}
-	if !in.SearchFilter.Unknown && !in.SearchFilter.Null {
-		result.SearchFilter = String(in.SearchFilter.Value)
+	if !in.SearchFilter.IsUnknown() && !in.SearchFilter.IsNull() {
+		result.SearchFilter = String(in.SearchFilter.ValueString())
 	}
-	if !in.SearchScope.Unknown && !in.SearchScope.Null {
-		result.SearchScope = String(in.SearchScope.Value)
+	if !in.SearchScope.IsUnknown() && !in.SearchScope.IsNull() {
+		result.SearchScope = String(in.SearchScope.ValueString())
 	}
 
 	return &result
@@ -520,17 +558,17 @@ func expandParameterValues(in ParameterValuesData) *pf.ParameterValues {
 
 func expandRedirectValidationLocalSettings(in RedirectValidationLocalSettingsData) *pf.RedirectValidationLocalSettings {
 	var result pf.RedirectValidationLocalSettings
-	if !in.EnableInErrorResourceValidation.Unknown && !in.EnableInErrorResourceValidation.Null {
-		result.EnableInErrorResourceValidation = Bool(in.EnableInErrorResourceValidation.Value)
+	if !in.EnableInErrorResourceValidation.IsUnknown() && !in.EnableInErrorResourceValidation.IsNull() {
+		result.EnableInErrorResourceValidation = Bool(in.EnableInErrorResourceValidation.ValueBool())
 	}
-	if !in.EnableTargetResourceValidationForIdpDiscovery.Unknown && !in.EnableTargetResourceValidationForIdpDiscovery.Null {
-		result.EnableTargetResourceValidationForIdpDiscovery = Bool(in.EnableTargetResourceValidationForIdpDiscovery.Value)
+	if !in.EnableTargetResourceValidationForIdpDiscovery.IsUnknown() && !in.EnableTargetResourceValidationForIdpDiscovery.IsNull() {
+		result.EnableTargetResourceValidationForIdpDiscovery = Bool(in.EnableTargetResourceValidationForIdpDiscovery.ValueBool())
 	}
-	if !in.EnableTargetResourceValidationForSLO.Unknown && !in.EnableTargetResourceValidationForSLO.Null {
-		result.EnableTargetResourceValidationForSLO = Bool(in.EnableTargetResourceValidationForSLO.Value)
+	if !in.EnableTargetResourceValidationForSLO.IsUnknown() && !in.EnableTargetResourceValidationForSLO.IsNull() {
+		result.EnableTargetResourceValidationForSLO = Bool(in.EnableTargetResourceValidationForSLO.ValueBool())
 	}
-	if !in.EnableTargetResourceValidationForSSO.Unknown && !in.EnableTargetResourceValidationForSSO.Null {
-		result.EnableTargetResourceValidationForSSO = Bool(in.EnableTargetResourceValidationForSSO.Value)
+	if !in.EnableTargetResourceValidationForSSO.IsUnknown() && !in.EnableTargetResourceValidationForSSO.IsNull() {
+		result.EnableTargetResourceValidationForSSO = Bool(in.EnableTargetResourceValidationForSSO.ValueBool())
 	}
 	if in.WhiteList != nil {
 		result.WhiteList = expandRedirectValidationSettingsWhitelistEntrys(in.WhiteList)
@@ -541,8 +579,8 @@ func expandRedirectValidationLocalSettings(in RedirectValidationLocalSettingsDat
 
 func expandRedirectValidationPartnerSettings(in RedirectValidationPartnerSettingsData) *pf.RedirectValidationPartnerSettings {
 	var result pf.RedirectValidationPartnerSettings
-	if !in.EnableWreplyValidationSLO.Unknown && !in.EnableWreplyValidationSLO.Null {
-		result.EnableWreplyValidationSLO = Bool(in.EnableWreplyValidationSLO.Value)
+	if !in.EnableWreplyValidationSLO.IsUnknown() && !in.EnableWreplyValidationSLO.IsNull() {
+		result.EnableWreplyValidationSLO = Bool(in.EnableWreplyValidationSLO.ValueBool())
 	}
 
 	return &result
@@ -557,29 +595,29 @@ func expandRedirectValidationSettingsWhitelistEntrys(in *[]*RedirectValidationSe
 }
 func expandRedirectValidationSettingsWhitelistEntry(in RedirectValidationSettingsWhitelistEntryData) *pf.RedirectValidationSettingsWhitelistEntry {
 	var result pf.RedirectValidationSettingsWhitelistEntry
-	if !in.AllowQueryAndFragment.Unknown && !in.AllowQueryAndFragment.Null {
-		result.AllowQueryAndFragment = Bool(in.AllowQueryAndFragment.Value)
+	if !in.AllowQueryAndFragment.IsUnknown() && !in.AllowQueryAndFragment.IsNull() {
+		result.AllowQueryAndFragment = Bool(in.AllowQueryAndFragment.ValueBool())
 	}
-	if !in.IdpDiscovery.Unknown && !in.IdpDiscovery.Null {
-		result.IdpDiscovery = Bool(in.IdpDiscovery.Value)
+	if !in.IdpDiscovery.IsUnknown() && !in.IdpDiscovery.IsNull() {
+		result.IdpDiscovery = Bool(in.IdpDiscovery.ValueBool())
 	}
-	if !in.InErrorResource.Unknown && !in.InErrorResource.Null {
-		result.InErrorResource = Bool(in.InErrorResource.Value)
+	if !in.InErrorResource.IsUnknown() && !in.InErrorResource.IsNull() {
+		result.InErrorResource = Bool(in.InErrorResource.ValueBool())
 	}
-	if !in.RequireHttps.Unknown && !in.RequireHttps.Null {
-		result.RequireHttps = Bool(in.RequireHttps.Value)
+	if !in.RequireHttps.IsUnknown() && !in.RequireHttps.IsNull() {
+		result.RequireHttps = Bool(in.RequireHttps.ValueBool())
 	}
-	if !in.TargetResourceSLO.Unknown && !in.TargetResourceSLO.Null {
-		result.TargetResourceSLO = Bool(in.TargetResourceSLO.Value)
+	if !in.TargetResourceSLO.IsUnknown() && !in.TargetResourceSLO.IsNull() {
+		result.TargetResourceSLO = Bool(in.TargetResourceSLO.ValueBool())
 	}
-	if !in.TargetResourceSSO.Unknown && !in.TargetResourceSSO.Null {
-		result.TargetResourceSSO = Bool(in.TargetResourceSSO.Value)
+	if !in.TargetResourceSSO.IsUnknown() && !in.TargetResourceSSO.IsNull() {
+		result.TargetResourceSSO = Bool(in.TargetResourceSSO.ValueBool())
 	}
-	if !in.ValidDomain.Unknown && !in.ValidDomain.Null {
-		result.ValidDomain = String(in.ValidDomain.Value)
+	if !in.ValidDomain.IsUnknown() && !in.ValidDomain.IsNull() {
+		result.ValidDomain = String(in.ValidDomain.ValueString())
 	}
-	if !in.ValidPath.Unknown && !in.ValidPath.Null {
-		result.ValidPath = String(in.ValidPath.Value)
+	if !in.ValidPath.IsUnknown() && !in.ValidPath.IsNull() {
+		result.ValidPath = String(in.ValidPath.ValueString())
 	}
 
 	return &result
@@ -587,11 +625,11 @@ func expandRedirectValidationSettingsWhitelistEntry(in RedirectValidationSetting
 
 func expandSourceTypeIdKey(in SourceTypeIdKeyData) *pf.SourceTypeIdKey {
 	var result pf.SourceTypeIdKey
-	if !in.Id.Unknown && !in.Id.Null {
-		result.Id = String(in.Id.Value)
+	if !in.Id.IsUnknown() && !in.Id.IsNull() {
+		result.Id = String(in.Id.ValueString())
 	}
-	if !in.Type.Unknown && !in.Type.Null {
-		result.Type = String(in.Type.Value)
+	if !in.Type.IsUnknown() && !in.Type.IsNull() {
+		result.Type = String(in.Type.ValueString())
 	}
 
 	return &result
@@ -652,7 +690,7 @@ func expandCustomAttributeSources(in []CustomAttributeSourceData) *[]*pf.Attribu
 func expandStringList(in []types.String) *[]*string {
 	results := []*string{}
 	for _, s := range in {
-		results = append(results, String(s.Value))
+		results = append(results, String(s.ValueString()))
 	}
 	return &results
 }

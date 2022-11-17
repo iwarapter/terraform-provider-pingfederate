@@ -11,8 +11,8 @@ import (
 func TestAccPingFederateExtendedPropertiesResource(t *testing.T) {
 	resourceName := "pingfederate_extended_properties.demo"
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederateExtendedPropertiesResourceDestroy,
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateExtendedPropertiesResourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateExtendedPropertiesResourceConfig("testing1"),

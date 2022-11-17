@@ -4,11 +4,13 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/internal/fwschema"
 	"github.com/hashicorp/terraform-plugin-framework/internal/fwschema/fwxschema"
 	"github.com/hashicorp/terraform-plugin-framework/internal/fwschemadata"
 	"github.com/hashicorp/terraform-plugin-framework/internal/privatestate"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // BlockModifyPlan performs all Block plan modification.
@@ -54,10 +56,15 @@ func BlockModifyPlan(ctx context.Context, b fwschema.Block, req tfsdk.ModifyAttr
 		resp.RequiresReplace = append(resp.RequiresReplace, req.AttributePath)
 	}
 
+	// Null and unknown values should not have nested schema to modify.
+	if req.AttributePlan.IsNull() || req.AttributePlan.IsUnknown() {
+		return
+	}
+
 	nm := b.GetNestingMode()
 	switch nm {
 	case fwschema.BlockNestingModeList:
-		configList, diags := coerceListValue(req.AttributePath, req.AttributeConfig)
+		configList, diags := coerceListValue(ctx, req.AttributePath, req.AttributeConfig)
 
 		resp.Diagnostics.Append(diags...)
 
@@ -65,7 +72,7 @@ func BlockModifyPlan(ctx context.Context, b fwschema.Block, req tfsdk.ModifyAttr
 			return
 		}
 
-		planList, diags := coerceListValue(req.AttributePath, req.AttributePlan)
+		planList, diags := coerceListValue(ctx, req.AttributePath, req.AttributePlan)
 
 		resp.Diagnostics.Append(diags...)
 
@@ -73,7 +80,7 @@ func BlockModifyPlan(ctx context.Context, b fwschema.Block, req tfsdk.ModifyAttr
 			return
 		}
 
-		stateList, diags := coerceListValue(req.AttributePath, req.AttributeState)
+		stateList, diags := coerceListValue(ctx, req.AttributePath, req.AttributeState)
 
 		resp.Diagnostics.Append(diags...)
 
@@ -81,7 +88,9 @@ func BlockModifyPlan(ctx context.Context, b fwschema.Block, req tfsdk.ModifyAttr
 			return
 		}
 
-		for idx, planElem := range planList.Elems {
+		planElements := planList.Elements()
+
+		for idx, planElem := range planElements {
 			attrPath := req.AttributePath.AtListIndex(idx)
 
 			configObject, diags := listElemObject(ctx, attrPath, configList, idx, fwschemadata.DataDescriptionConfiguration)
@@ -92,7 +101,7 @@ func BlockModifyPlan(ctx context.Context, b fwschema.Block, req tfsdk.ModifyAttr
 				return
 			}
 
-			planObject, diags := coerceObjectValue(attrPath, planElem)
+			planObject, diags := coerceObjectValue(ctx, attrPath, planElem)
 
 			resp.Diagnostics.Append(diags...)
 
@@ -108,6 +117,8 @@ func BlockModifyPlan(ctx context.Context, b fwschema.Block, req tfsdk.ModifyAttr
 				return
 			}
 
+			planAttributes := planObject.Attributes()
+
 			for name, attr := range b.GetAttributes() {
 				attrConfig, diags := objectAttributeValue(ctx, configObject, name, fwschemadata.DataDescriptionConfiguration)
 
@@ -152,20 +163,47 @@ func BlockModifyPlan(ctx context.Context, b fwschema.Block, req tfsdk.ModifyAttr
 
 				AttributeModifyPlan(ctx, attr, attrReq, &attrResp)
 
-				planObject.Attrs[name] = attrResp.AttributePlan
+				planAttributes[name] = attrResp.AttributePlan
 				resp.Diagnostics.Append(attrResp.Diagnostics...)
 				resp.RequiresReplace = attrResp.RequiresReplace
 				resp.Private = attrResp.Private
 			}
 
 			for name, block := range b.GetBlocks() {
+				attrConfig, diags := objectAttributeValue(ctx, configObject, name, fwschemadata.DataDescriptionConfiguration)
+
+				resp.Diagnostics.Append(diags...)
+
+				if resp.Diagnostics.HasError() {
+					return
+				}
+
+				attrPlan, diags := objectAttributeValue(ctx, planObject, name, fwschemadata.DataDescriptionPlan)
+
+				resp.Diagnostics.Append(diags...)
+
+				if resp.Diagnostics.HasError() {
+					return
+				}
+
+				attrState, diags := objectAttributeValue(ctx, stateObject, name, fwschemadata.DataDescriptionState)
+
+				resp.Diagnostics.Append(diags...)
+
+				if resp.Diagnostics.HasError() {
+					return
+				}
+
 				blockReq := tfsdk.ModifyAttributePlanRequest{
-					AttributePath: req.AttributePath.AtListIndex(idx).AtName(name),
-					Config:        req.Config,
-					Plan:          req.Plan,
-					ProviderMeta:  req.ProviderMeta,
-					State:         req.State,
-					Private:       resp.Private,
+					AttributeConfig: attrConfig,
+					AttributePath:   req.AttributePath.AtListIndex(idx).AtName(name),
+					AttributePlan:   attrPlan,
+					AttributeState:  attrState,
+					Config:          req.Config,
+					Plan:            req.Plan,
+					ProviderMeta:    req.ProviderMeta,
+					State:           req.State,
+					Private:         resp.Private,
 				}
 				blockResp := ModifyAttributePlanResponse{
 					AttributePlan:   blockReq.AttributePlan,
@@ -175,18 +213,30 @@ func BlockModifyPlan(ctx context.Context, b fwschema.Block, req tfsdk.ModifyAttr
 
 				BlockModifyPlan(ctx, block, blockReq, &blockResp)
 
-				planObject.Attrs[name] = blockResp.AttributePlan
+				planAttributes[name] = blockResp.AttributePlan
 				resp.Diagnostics.Append(blockResp.Diagnostics...)
 				resp.RequiresReplace = blockResp.RequiresReplace
 				resp.Private = blockResp.Private
 			}
 
-			planList.Elems[idx] = planObject
+			planElements[idx], diags = types.ObjectValue(planObject.AttributeTypes(ctx), planAttributes)
+
+			resp.Diagnostics.Append(diags...)
+
+			if resp.Diagnostics.HasError() {
+				return
+			}
 		}
 
-		resp.AttributePlan = planList
+		resp.AttributePlan, diags = types.ListValue(planList.ElementType(ctx), planElements)
+
+		resp.Diagnostics.Append(diags...)
+
+		if resp.Diagnostics.HasError() {
+			return
+		}
 	case fwschema.BlockNestingModeSet:
-		configSet, diags := coerceSetValue(req.AttributePath, req.AttributeConfig)
+		configSet, diags := coerceSetValue(ctx, req.AttributePath, req.AttributeConfig)
 
 		resp.Diagnostics.Append(diags...)
 
@@ -194,7 +244,7 @@ func BlockModifyPlan(ctx context.Context, b fwschema.Block, req tfsdk.ModifyAttr
 			return
 		}
 
-		planSet, diags := coerceSetValue(req.AttributePath, req.AttributePlan)
+		planSet, diags := coerceSetValue(ctx, req.AttributePath, req.AttributePlan)
 
 		resp.Diagnostics.Append(diags...)
 
@@ -202,7 +252,7 @@ func BlockModifyPlan(ctx context.Context, b fwschema.Block, req tfsdk.ModifyAttr
 			return
 		}
 
-		stateSet, diags := coerceSetValue(req.AttributePath, req.AttributeState)
+		stateSet, diags := coerceSetValue(ctx, req.AttributePath, req.AttributeState)
 
 		resp.Diagnostics.Append(diags...)
 
@@ -210,7 +260,9 @@ func BlockModifyPlan(ctx context.Context, b fwschema.Block, req tfsdk.ModifyAttr
 			return
 		}
 
-		for idx, planElem := range planSet.Elems {
+		planElements := planSet.Elements()
+
+		for idx, planElem := range planElements {
 			attrPath := req.AttributePath.AtSetValue(planElem)
 
 			configObject, diags := setElemObject(ctx, attrPath, configSet, idx, fwschemadata.DataDescriptionConfiguration)
@@ -221,7 +273,7 @@ func BlockModifyPlan(ctx context.Context, b fwschema.Block, req tfsdk.ModifyAttr
 				return
 			}
 
-			planObject, diags := coerceObjectValue(attrPath, planElem)
+			planObject, diags := coerceObjectValue(ctx, attrPath, planElem)
 
 			resp.Diagnostics.Append(diags...)
 
@@ -237,6 +289,8 @@ func BlockModifyPlan(ctx context.Context, b fwschema.Block, req tfsdk.ModifyAttr
 				return
 			}
 
+			planAttributes := planObject.Attributes()
+
 			for name, attr := range b.GetAttributes() {
 				attrConfig, diags := objectAttributeValue(ctx, configObject, name, fwschemadata.DataDescriptionConfiguration)
 
@@ -281,7 +335,7 @@ func BlockModifyPlan(ctx context.Context, b fwschema.Block, req tfsdk.ModifyAttr
 
 				AttributeModifyPlan(ctx, attr, attrReq, &attrResp)
 
-				planObject.Attrs[name] = attrResp.AttributePlan
+				planAttributes[name] = attrResp.AttributePlan
 				resp.Diagnostics.Append(attrResp.Diagnostics...)
 				resp.RequiresReplace = attrResp.RequiresReplace
 				resp.Private = attrResp.Private
@@ -331,16 +385,166 @@ func BlockModifyPlan(ctx context.Context, b fwschema.Block, req tfsdk.ModifyAttr
 
 				BlockModifyPlan(ctx, block, blockReq, &blockResp)
 
-				planObject.Attrs[name] = blockResp.AttributePlan
+				planAttributes[name] = blockResp.AttributePlan
 				resp.Diagnostics.Append(blockResp.Diagnostics...)
 				resp.RequiresReplace = blockResp.RequiresReplace
 				resp.Private = blockResp.Private
 			}
 
-			planSet.Elems[idx] = planObject
+			planElements[idx], diags = types.ObjectValue(planObject.AttributeTypes(ctx), planAttributes)
+
+			resp.Diagnostics.Append(diags...)
+
+			if resp.Diagnostics.HasError() {
+				return
+			}
 		}
 
-		resp.AttributePlan = planSet
+		resp.AttributePlan, diags = types.SetValue(planSet.ElementType(ctx), planElements)
+
+		resp.Diagnostics.Append(diags...)
+
+		if resp.Diagnostics.HasError() {
+			return
+		}
+	case fwschema.BlockNestingModeSingle:
+		configObject, diags := coerceObjectValue(ctx, req.AttributePath, req.AttributeConfig)
+
+		resp.Diagnostics.Append(diags...)
+
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		planObject, diags := coerceObjectValue(ctx, req.AttributePath, req.AttributePlan)
+
+		resp.Diagnostics.Append(diags...)
+
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		stateObject, diags := coerceObjectValue(ctx, req.AttributePath, req.AttributeState)
+
+		resp.Diagnostics.Append(diags...)
+
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		planAttributes := planObject.Attributes()
+
+		if planAttributes == nil {
+			planAttributes = make(map[string]attr.Value)
+		}
+
+		for name, attr := range b.GetAttributes() {
+			attrConfig, diags := objectAttributeValue(ctx, configObject, name, fwschemadata.DataDescriptionConfiguration)
+
+			resp.Diagnostics.Append(diags...)
+
+			if resp.Diagnostics.HasError() {
+				return
+			}
+
+			attrPlan, diags := objectAttributeValue(ctx, planObject, name, fwschemadata.DataDescriptionPlan)
+
+			resp.Diagnostics.Append(diags...)
+
+			if resp.Diagnostics.HasError() {
+				return
+			}
+
+			attrState, diags := objectAttributeValue(ctx, stateObject, name, fwschemadata.DataDescriptionState)
+
+			resp.Diagnostics.Append(diags...)
+
+			if resp.Diagnostics.HasError() {
+				return
+			}
+
+			attrReq := tfsdk.ModifyAttributePlanRequest{
+				AttributeConfig: attrConfig,
+				AttributePath:   req.AttributePath.AtName(name),
+				AttributePlan:   attrPlan,
+				AttributeState:  attrState,
+				Config:          req.Config,
+				Plan:            req.Plan,
+				ProviderMeta:    req.ProviderMeta,
+				State:           req.State,
+				Private:         resp.Private,
+			}
+			attrResp := ModifyAttributePlanResponse{
+				AttributePlan:   attrReq.AttributePlan,
+				RequiresReplace: resp.RequiresReplace,
+				Private:         attrReq.Private,
+			}
+
+			AttributeModifyPlan(ctx, attr, attrReq, &attrResp)
+
+			planAttributes[name] = attrResp.AttributePlan
+			resp.Diagnostics.Append(attrResp.Diagnostics...)
+			resp.RequiresReplace = attrResp.RequiresReplace
+			resp.Private = attrResp.Private
+		}
+
+		for name, block := range b.GetBlocks() {
+			attrConfig, diags := objectAttributeValue(ctx, configObject, name, fwschemadata.DataDescriptionConfiguration)
+
+			resp.Diagnostics.Append(diags...)
+
+			if resp.Diagnostics.HasError() {
+				return
+			}
+
+			attrPlan, diags := objectAttributeValue(ctx, planObject, name, fwschemadata.DataDescriptionPlan)
+
+			resp.Diagnostics.Append(diags...)
+
+			if resp.Diagnostics.HasError() {
+				return
+			}
+
+			attrState, diags := objectAttributeValue(ctx, stateObject, name, fwschemadata.DataDescriptionState)
+
+			resp.Diagnostics.Append(diags...)
+
+			if resp.Diagnostics.HasError() {
+				return
+			}
+
+			blockReq := tfsdk.ModifyAttributePlanRequest{
+				AttributeConfig: attrConfig,
+				AttributePath:   req.AttributePath.AtName(name),
+				AttributePlan:   attrPlan,
+				AttributeState:  attrState,
+				Config:          req.Config,
+				Plan:            req.Plan,
+				ProviderMeta:    req.ProviderMeta,
+				State:           req.State,
+				Private:         resp.Private,
+			}
+			blockResp := ModifyAttributePlanResponse{
+				AttributePlan:   blockReq.AttributePlan,
+				RequiresReplace: resp.RequiresReplace,
+				Private:         blockReq.Private,
+			}
+
+			BlockModifyPlan(ctx, block, blockReq, &blockResp)
+
+			planAttributes[name] = blockResp.AttributePlan
+			resp.Diagnostics.Append(blockResp.Diagnostics...)
+			resp.RequiresReplace = blockResp.RequiresReplace
+			resp.Private = blockResp.Private
+		}
+
+		resp.AttributePlan, diags = types.ObjectValue(planObject.AttributeTypes(ctx), planAttributes)
+
+		resp.Diagnostics.Append(diags...)
+
+		if resp.Diagnostics.HasError() {
+			return
+		}
 	default:
 		err := fmt.Errorf("unknown block plan modification nesting mode (%T: %v) at path: %s", nm, nm, req.AttributePath)
 		resp.Diagnostics.AddAttributeError(

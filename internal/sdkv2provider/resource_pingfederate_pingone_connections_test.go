@@ -44,8 +44,8 @@ func TestAccPingFederatePingOneConnectionResource(t *testing.T) {
 	t.Skipf("unable to create without valid pingone credential")
 	resourceName := "pingfederate_pingone_connection.demo"
 	resource.ParallelTest(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingFederatePingOneConnectionResourceDestroy,
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederatePingOneConnectionResourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederatePingOneConnectionResourceConfig("true"),

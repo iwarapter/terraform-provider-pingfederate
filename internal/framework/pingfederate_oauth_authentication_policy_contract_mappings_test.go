@@ -52,11 +52,10 @@ func TestAccPingFederateOauthAuthenticationPolicyContractMapping(t *testing.T) {
 				Config: testAccPingFederateOauthAuthenticationPolicyContractMappingConfig(`jdbc_attribute_sources = [
   	{
 	  data_store_ref = "ProvisionerDS"
-	  column_names = ["GRANTEE"]
-	  filter       = "*"
-	  description  = "JDBC"
-	  schema       = "INFORMATION_SCHEMA"
-	  table        = "ADMINISTRABLE_ROLE_AUTHORIZATIONS"
+	  filter       	 = "*"
+	  description  	 = "JDBC"
+	  schema       	 = "INFORMATION_SCHEMA"
+	  table        	 = "ADMINISTRABLE_ROLE_AUTHORIZATIONS"
 	}
   ]`),
 				Check: resource.ComposeTestCheckFunc(
@@ -322,7 +321,7 @@ func Test_resourcePingFederateOauthAuthenticationPolicyContractMappingResourceRe
 	}
 	for i, tc := range cases {
 		t.Run(fmt.Sprintf("tc:%v", i), func(t *testing.T) {
-			res := &pingfederateOauthAuthenticationPolicyContractMappingType{}
+			res := &pingfederateOauthAuthenticationPolicyContractMappingResource{}
 			ctx := context.Background()
 			resourceSchema, diags := res.GetSchema(ctx)
 			require.False(t, diags.HasError())
@@ -340,7 +339,7 @@ func Test_resourcePingFederateOauthAuthenticationPolicyContractMappingResourceRe
 }
 
 func Test_resourceWithExtraReturnedDataDoesntError(t *testing.T) {
-	p := pfprovider{client: &pfClient{OauthAuthenticationPolicyContractMappings: oauthAuthenticationPolicyContractMappingsMock{}}}
+	p := &pfClient{OauthAuthenticationPolicyContractMappings: oauthAuthenticationPolicyContractMappingsMock{}}
 
 	model := &pf.ApcToPersistentGrantMapping{
 		Id: String("foo"),
@@ -365,7 +364,7 @@ func Test_resourceWithExtraReturnedDataDoesntError(t *testing.T) {
 		},
 	}
 
-	resType := &pingfederateOauthAuthenticationPolicyContractMappingType{}
+	resType := &pingfederateOauthAuthenticationPolicyContractMappingResource{}
 	ctx := context.Background()
 	resourceSchema, diags := resType.GetSchema(ctx)
 	require.False(t, diags.HasError())

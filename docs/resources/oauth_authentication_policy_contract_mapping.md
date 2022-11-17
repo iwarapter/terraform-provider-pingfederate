@@ -57,13 +57,10 @@ resource "pingfederate_authentication_policy_contract" "example" {
 ### Optional
 
 - `custom_attribute_sources` (Attributes List) The configured settings used to look up attributes from a custom data store. (see [below for nested schema](#nestedatt--custom_attribute_sources))
+- `id` (String) The ID of the authentication policy contract to persistent grant mapping.
 - `issuance_criteria` (Attributes) The issuance criteria that this transaction must meet before the corresponding attribute contract is fulfilled. (see [below for nested schema](#nestedatt--issuance_criteria))
 - `jdbc_attribute_sources` (Attributes List) The configured settings used to look up attributes from a JDBC data store. (see [below for nested schema](#nestedatt--jdbc_attribute_sources))
 - `ldap_attribute_sources` (Attributes List) The configured settings used to look up attributes from a LDAP data store. (see [below for nested schema](#nestedatt--ldap_attribute_sources))
-
-### Read-Only
-
-- `id` (String) The ID of the authentication policy contract to persistent grant mapping.
 
 <a id="nestedatt--attribute_contract_fulfillment"></a>
 ### Nested Schema for `attribute_contract_fulfillment`
