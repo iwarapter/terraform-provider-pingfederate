@@ -1,0 +1,38 @@
+version: "2.4"
+services:
+  ldap:
+    image: osixia/openldap:1.5.0
+    ports:
+      - 389:389
+    networks:
+      - pfnet
+
+  pingfederate:
+    image: pingidentity/pingfederate:11.0.0-edge
+    depends_on:
+      - ldap
+    environment:
+      - OPERATIONAL_MODE=CLUSTERED_CONSOLE
+      - CLUSTER_BIND_ADDRESS=LINK_LOCAL
+      - CLUSTER_NAME=COMPOSE_PF_CLUSTER
+      - DNS_QUERY_LOCATION=pingfederate-admin
+      - DNS_RECORD_TYPE=A
+      - PF_LOG_LEVEL=DEBUG
+      - TAIL_LOG_PARALLEL="y"
+      - TAIL_LOG_FILES="/opt/out/instance/log/server.log /opt/out/instance/log/admin-api.log"
+      - SERVER_PROFILE_URL=https://github.com/pingidentity/pingidentity-server-profiles.git
+      - SERVER_PROFILE_PATH=getting-started/pingfederate
+      - IMAGE_VERSION=pingfederate-alpine-az11-11.0.0-221215-d9b5
+      - PING_IDENTITY_DEVOPS_KEY=$PING_IDENTITY_DEVOPS_KEY
+      - PING_IDENTITY_DEVOPS_USER=$PING_IDENTITY_DEVOPS_USER
+      - PING_IDENTITY_ACCEPT_EULA=YES
+    ports:
+      - "9031:9031"
+      - "9999:9999"
+    networks:
+      - pfnet
+
+networks:
+  pfnet:
+volumes:
+  db-data:

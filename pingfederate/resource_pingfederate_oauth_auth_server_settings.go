@@ -395,7 +395,8 @@ func resourcePingFederateOauthAuthServerSettingsResourceReadData(d *schema.Resou
 	}
 
 	if v, ok := d.GetOk("persistent_grant_reuse_grant_types"); ok {
-		authSettings.PersistentGrantReuseGrantTypes = expandStringList(v.(*schema.Set).List())
+		strs := expandStringList(v.(*schema.Set).List())
+		authSettings.PersistentGrantReuseGrantTypes = &strs
 	}
 
 	if v, ok := d.GetOk("scopes"); ok {
@@ -558,7 +559,7 @@ func resourcePingFederateOauthAuthServerSettingsResourceReadResult(d *schema.Res
 		}
 	}
 
-	if rv.PersistentGrantReuseGrantTypes != nil && len(rv.PersistentGrantReuseGrantTypes) > 0 {
+	if rv.PersistentGrantReuseGrantTypes != nil && len(*rv.PersistentGrantReuseGrantTypes) > 0 {
 		if err := d.Set("persistent_grant_reuse_grant_types", rv.PersistentGrantReuseGrantTypes); err != nil {
 			diags = append(diags, diag.FromErr(err)...)
 		}

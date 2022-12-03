@@ -150,8 +150,8 @@ github.com/hashicorp/yamux v0.0.0-20211028200310-0bc27b27de87 h1:xixZ2bWeofWV68J
 github.com/hashicorp/yamux v0.0.0-20211028200310-0bc27b27de87/go.mod h1:CtWFDAQgb7dxtzFs4tWbplKIe2jSi3+5vKbgIO0SLnQ=
 github.com/imdario/mergo v0.3.12 h1:b6R2BslTbIEToALKP7LxUvijTsNI9TAe80pLWN2g/HU=
 github.com/imdario/mergo v0.3.12/go.mod h1:jmQim1M+e3UYxmgPu/WyfjB3N3VflVyUjjjwH0dnCYA=
-github.com/iwarapter/pingfederate-sdk-go v0.0.0-20211215181851-7405f6e2e6d3 h1:dB7Pvh2EKBIygNvyO4ygNuo/ip1YjvBbaFt527bNj+c=
-github.com/iwarapter/pingfederate-sdk-go v0.0.0-20211215181851-7405f6e2e6d3/go.mod h1:6n0YG2gahuDv4EBt9uy9Nm/py3VvuZq9coBwfqGhd4Q=
+github.com/iwarapter/pingfederate-sdk-go v0.0.0-20220911211209-6ccc7e22edce h1:GtEVbLfZKy4MOZe+b4gai1KknblUHjka1UUSwponUTo=
+github.com/iwarapter/pingfederate-sdk-go v0.0.0-20220911211209-6ccc7e22edce/go.mod h1:IG4gJ6dLzQyONf1NR9Z4zqn1uhiy1yZcX2ANF+uhgs0=
 github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 h1:BQSFePA1RWJOlocH6Fxy8MmwDt+yVQYULKfN0RoTN8A=
 github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99/go.mod h1:1lJo3i6rXxKeerYnT8Nvf0QmHCRC1n8sfWVwXF2Frvo=
 github.com/jessevdk/go-flags v1.5.0/go.mod h1:Fw0T6WPc1dYxT4mKEZRfG5kJhaTDP9pj1c2EWnYs/m4=

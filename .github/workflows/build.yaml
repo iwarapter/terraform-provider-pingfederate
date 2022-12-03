@@ -17,6 +17,10 @@ jobs:
       matrix:
         pingfederate-version: [ 10.2.7, 10.3.7, 11.0.4, 11.1.1 ]
     services:
+      ldap:
+        image: osixia/openldap:1.5.0
+        ports:
+          - 389:389
       pingfederate:
         image: ghcr.io/iwarapter/pingfederate:${{ matrix.pingfederate-version }}-edge
         env:

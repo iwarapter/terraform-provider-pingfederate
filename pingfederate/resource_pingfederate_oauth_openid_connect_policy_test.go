@@ -75,6 +75,122 @@ func TestAccPingFederateOauthOpenIdConnectPolicy(t *testing.T) {
 	})
 }
 
+func TestAccPingFederateOauthOpenIdConnectPolicy_checkLdapAttributes(t *testing.T) {
+	resourceName := "pingfederate_oauth_openid_connect_policy.example"
+	resource.ParallelTest(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckPingFederateOauthOpenIdConnectPolicyDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccPingFederateOauthOpenIdConnectPolicyConfig_checkLdapAttributes("tfaccldapattr"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckPingFederateOauthOpenIdConnectPolicyExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", "tfaccldapattr"),
+					resource.TestCheckResourceAttr(resourceName, "attribute_mapping.0.ldap_attribute_source.0.search_attributes.0", "Subject DN"),
+					resource.TestCheckResourceAttr(resourceName, "attribute_mapping.0.ldap_attribute_source.0.search_attributes.1", "host"),
+				),
+			},
+		},
+	})
+}
+
+func testAccPingFederateOauthOpenIdConnectPolicyConfig_checkLdapAttributes(name string) string {
+	return fmt.Sprintf(`
+
+resource "pingfederate_ldap_data_store" "example" {
+  ldap_type       = "ACTIVE_DIRECTORY"
+  hostnames       = ["ldap:389"]
+  max_connections = 100
+  min_connections = 10
+  name            = "%s"
+  user_dn         = "cn=admin,dc=example,dc=org"
+  password        = "admin"
+}
+
+resource "pingfederate_oauth_access_token_manager" "example" {
+  name = "%s"
+  instance_id = "%s"
+  plugin_descriptor_ref {
+    id = "org.sourceid.oauth20.token.plugin.impl.ReferenceBearerAccessTokenManagementPlugin"
+  }
+  configuration {
+    fields {
+      inherited = false
+      name      = "Expand Scope Groups"
+      value     = "false"
+    }
+    fields {
+      inherited = false
+      name      = "Lifetime Extension Policy"
+      value     = "NONE"
+    }
+    fields {
+      inherited = false
+      name      = "Lifetime Extension Threshold Percentage"
+      value     = "30"
+    }
+    fields {
+      inherited = false
+      name      = "Maximum Token Lifetime"
+    }
+    fields {
+      inherited = false
+      name      = "Mode for Synchronous RPC"
+      value     = "3"
+    }
+    fields {
+      inherited = false
+      name      = "RPC Timeout"
+      value     = "500"
+    }
+    fields {
+      inherited = false
+      name      = "Token Length"
+      value     = "28"
+    }
+    fields {
+      inherited = false
+      name      = "Token Lifetime"
+      value     = "120"
+    }
+
+  }
+  attribute_contract {
+    extended_attributes = ["sub"]
+  }
+}
+
+resource "pingfederate_oauth_openid_connect_policy" "example" {
+  name      = "%s"
+  policy_id = "%s"
+  access_token_manager_ref {
+    id = pingfederate_oauth_access_token_manager.example.id
+  }
+
+  attribute_mapping {
+    attribute_contract_fulfillment {
+      key_name = "sub"
+      source {
+        type = "NO_MAPPING"
+      }
+    }
+
+    ldap_attribute_source {
+      description       = "bar"
+      id                = "bar"
+      search_attributes = ["Subject DN", "host"]
+      search_filter     = "uid=$${sub}"
+      search_scope      = "SUBTREE"
+
+      data_store_ref {
+        id = pingfederate_ldap_data_store.example.id
+      }
+    }
+  }
+}
+`, name, name, name, name, name)
+}
+
 func testAccCheckPingFederateOauthOpenIdConnectPolicyDestroy(s *terraform.State) error {
 	return nil
 }
@@ -234,7 +350,10 @@ func Test_resourcePingFederateOauthOpenIdConnectPolicyResourceReadData(t *testin
 								MemberOfNestedGroup: Bool(true),
 								SearchFilter:        String("foo"),
 								SearchScope:         String("foo"),
-								Type:                String("LDAP"),
+								SearchAttributes: &[]*string{
+									String("attr"),
+								},
+								Type: String("LDAP"),
 							},
 							AttributeContractFulfillment: map[string]*pf.AttributeFulfillmentValue{},
 							DataStoreRef: &pf.ResourceLink{

@@ -147,8 +147,8 @@ github.com/hashicorp/terraform-svchost
 # github.com/hashicorp/yamux v0.0.0-20211028200310-0bc27b27de87
 ## explicit; go 1.15
 github.com/hashicorp/yamux
-# github.com/iwarapter/pingfederate-sdk-go v0.0.0-20211215181851-7405f6e2e6d3
-## explicit; go 1.14
+# github.com/iwarapter/pingfederate-sdk-go v0.0.0-20220911211209-6ccc7e22edce
+## explicit; go 1.18
 github.com/iwarapter/pingfederate-sdk-go/pingfederate
 github.com/iwarapter/pingfederate-sdk-go/pingfederate/client
 github.com/iwarapter/pingfederate-sdk-go/pingfederate/client/metadata

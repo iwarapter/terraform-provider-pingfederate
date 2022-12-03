@@ -810,6 +810,7 @@ Optional:
 - `description` (String) The description of this attribute source. The description needs to be unique amongst the attribute sources for the mapping.<br>Note: Required for APC-to-SP Adapter Mappings
 - `id` (String) The ID that defines this attribute source. Only alphanumeric characters allowed.<br>Note: Required for OpenID Connect policy attribute sources, OAuth IdP adapter mappings, OAuth access token mappings and APC-to-SP Adapter Mappings. IdP Connections will ignore this property since it only allows one attribute source to be defined per mapping. IdP-to-SP Adapter Mappings can contain multiple attribute sources.
 - `member_of_nested_group` (Boolean) Set this to true to return transitive group memberships for the 'memberOf' attribute.  This only applies for Active Directory data sources.  All other data sources will be set to false.
+- `search_attributes` (List of String) A list of LDAP attributes returned from search and available for mapping.
 
 <a id="nestedblock--idp_browser_sso--adapter_mappings--ldap_attribute_source--data_store_ref"></a>
 ### Nested Schema for `idp_browser_sso.adapter_mappings.ldap_attribute_source.data_store_ref`
@@ -1144,6 +1145,7 @@ Optional:
 - `description` (String) The description of this attribute source. The description needs to be unique amongst the attribute sources for the mapping.<br>Note: Required for APC-to-SP Adapter Mappings
 - `id` (String) The ID that defines this attribute source. Only alphanumeric characters allowed.<br>Note: Required for OpenID Connect policy attribute sources, OAuth IdP adapter mappings, OAuth access token mappings and APC-to-SP Adapter Mappings. IdP Connections will ignore this property since it only allows one attribute source to be defined per mapping. IdP-to-SP Adapter Mappings can contain multiple attribute sources.
 - `member_of_nested_group` (Boolean) Set this to true to return transitive group memberships for the 'memberOf' attribute.  This only applies for Active Directory data sources.  All other data sources will be set to false.
+- `search_attributes` (List of String) A list of LDAP attributes returned from search and available for mapping.
 
 <a id="nestedblock--idp_browser_sso--authentication_policy_contract_mappings--ldap_attribute_source--data_store_ref"></a>
 ### Nested Schema for `idp_browser_sso.authentication_policy_contract_mappings.ldap_attribute_source.data_store_ref`
@@ -1481,6 +1483,7 @@ Optional:
 - `description` (String) The description of this attribute source. The description needs to be unique amongst the attribute sources for the mapping.<br>Note: Required for APC-to-SP Adapter Mappings
 - `id` (String) The ID that defines this attribute source. Only alphanumeric characters allowed.<br>Note: Required for OpenID Connect policy attribute sources, OAuth IdP adapter mappings, OAuth access token mappings and APC-to-SP Adapter Mappings. IdP Connections will ignore this property since it only allows one attribute source to be defined per mapping. IdP-to-SP Adapter Mappings can contain multiple attribute sources.
 - `member_of_nested_group` (Boolean) Set this to true to return transitive group memberships for the 'memberOf' attribute.  This only applies for Active Directory data sources.  All other data sources will be set to false.
+- `search_attributes` (List of String) A list of LDAP attributes returned from search and available for mapping.
 
 <a id="nestedblock--idp_browser_sso--sso_o_auth_mapping--ldap_attribute_source--data_store_ref"></a>
 ### Nested Schema for `idp_browser_sso.sso_o_auth_mapping.ldap_attribute_source.data_store_ref`
@@ -1787,6 +1790,7 @@ Optional:
 - `description` (String) The description of this attribute source. The description needs to be unique amongst the attribute sources for the mapping.<br>Note: Required for APC-to-SP Adapter Mappings
 - `id` (String) The ID that defines this attribute source. Only alphanumeric characters allowed.<br>Note: Required for OpenID Connect policy attribute sources, OAuth IdP adapter mappings, OAuth access token mappings and APC-to-SP Adapter Mappings. IdP Connections will ignore this property since it only allows one attribute source to be defined per mapping. IdP-to-SP Adapter Mappings can contain multiple attribute sources.
 - `member_of_nested_group` (Boolean) Set this to true to return transitive group memberships for the 'memberOf' attribute.  This only applies for Active Directory data sources.  All other data sources will be set to false.
+- `search_attributes` (List of String) A list of LDAP attributes returned from search and available for mapping.
 
 <a id="nestedblock--idp_oauth_grant_attribute_mapping--access_token_manager_mappings--ldap_attribute_source--data_store_ref"></a>
 ### Nested Schema for `idp_oauth_grant_attribute_mapping.access_token_manager_mappings.ldap_attribute_source.data_store_ref`
@@ -2182,6 +2186,7 @@ Optional:
 - `description` (String) The description of this attribute source. The description needs to be unique amongst the attribute sources for the mapping.<br>Note: Required for APC-to-SP Adapter Mappings
 - `id` (String) The ID that defines this attribute source. Only alphanumeric characters allowed.<br>Note: Required for OpenID Connect policy attribute sources, OAuth IdP adapter mappings, OAuth access token mappings and APC-to-SP Adapter Mappings. IdP Connections will ignore this property since it only allows one attribute source to be defined per mapping. IdP-to-SP Adapter Mappings can contain multiple attribute sources.
 - `member_of_nested_group` (Boolean) Set this to true to return transitive group memberships for the 'memberOf' attribute.  This only applies for Active Directory data sources.  All other data sources will be set to false.
+- `search_attributes` (List of String) A list of LDAP attributes returned from search and available for mapping.
 
 <a id="nestedblock--ws_trust--token_generator_mappings--ldap_attribute_source--data_store_ref"></a>
 ### Nested Schema for `ws_trust.token_generator_mappings.ldap_attribute_source.data_store_ref`

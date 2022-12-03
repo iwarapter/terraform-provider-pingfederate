@@ -173,7 +173,7 @@ func Test_resourcePingFederateOauthAuthServerSettingsResourceReadResult(t *testi
 				PersistentGrantIdleTimeoutTimeUnit: String("foo5"),
 				PersistentGrantLifetime:            Int(8),
 				PersistentGrantLifetimeUnit:        String("foo6"),
-				PersistentGrantReuseGrantTypes:     []*string{String("foo7")},
+				PersistentGrantReuseGrantTypes:     &[]*string{String("foo7")},
 				RefreshRollingInterval:             Int(9),
 				RefreshTokenLength:                 Int(10),
 				RegisteredAuthorizationPath:        String("foo8"),

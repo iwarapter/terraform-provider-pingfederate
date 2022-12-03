@@ -215,7 +215,7 @@ func resourcePingFederateOauthAccessTokenManagersResourceCreate(ctx context.Cont
 	}
 	result, _, err := svc.CreateTokenManagerWithContext(ctx, &input)
 	if err != nil {
-		return diag.Errorf("unable to read OauthAccessTokenManagers: %s", err)
+		return diag.Errorf("unable to create OauthAccessTokenManagers: %s", err)
 	}
 	d.SetId(*result.Id)
 	return resourcePingFederateOauthAccessTokenManagersResourceReadResult(d, result, svc)
