@@ -3,6 +3,7 @@
 FEATURES:
 
 - Add support for `user_id_authenticated` within `AUTHN_SOURCE` policy actions. (#215)
+- Add support for `search_attributes` with `ldap_attribute_source`. (#233)
 
 BUG FIXES:
 

@@ -55,6 +55,7 @@ func testAccPingFederateLdapDataStoreDataSourceConfig() string {
 	return `
 provider "pingfederate" {
   bypass_external_validation = true
+  alias = "bypass"
 }
 
 resource "pingfederate_ldap_data_store" "example" {
@@ -65,10 +66,12 @@ resource "pingfederate_ldap_data_store" "example" {
 	bind_anonymously = false
 	min_connections  = 1
 	max_connections  = 2
+  	provider = pingfederate.bypass
 }
 
 data "pingfederate_ldap_data_store" "test" {
 	name = pingfederate_ldap_data_store.example.name
+	provider = pingfederate.bypass
 }`
 }
 

@@ -2106,6 +2106,10 @@ func expandLdapAttributeSource(in map[string]interface{}) *pf.AttributeSource {
 	if v, ok := in["search_filter"]; ok {
 		iac.SearchFilter = String(v.(string))
 	}
+	if v, ok := in["search_attributes"]; ok {
+		strs := expandStringList(v.([]interface{}))
+		iac.SearchAttributes = &strs
+	}
 	if v, ok := in["attribute_contract_fulfillment"]; ok {
 		iac.AttributeContractFulfillment = expandMapOfAttributeFulfillmentValue(v.(*schema.Set).List())
 		src.AttributeContractFulfillment = iac.AttributeContractFulfillment
@@ -2579,13 +2583,6 @@ func expandIdpAdapterAttributeList(in []interface{}) *[]*pf.IdpAdapterAttribute 
 	return &result
 }
 
-//func expandConfigFieldList(in []interface{}) *[]*pf.ConfigField {
-//	var result []*pf.ConfigField
-//	for _, v := range in {
-//		result = append(result, expandConfigField(v.(map[string]interface{})))
-//	}
-//	return &result
-//}
 func expandUrlWhitelistEntryList(in []interface{}) *[]*pf.UrlWhitelistEntry {
 	var result []*pf.UrlWhitelistEntry
 	for _, v := range in {
