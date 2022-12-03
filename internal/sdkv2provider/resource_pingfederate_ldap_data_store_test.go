@@ -94,18 +94,20 @@ func testAccPingFederateLdapDataStoreResourceConfig(configUpdate string) string 
 	return fmt.Sprintf(`
 provider "pingfederate" {
   bypass_external_validation = true
+  alias = "bypass"
 }
 
 resource "pingfederate_ldap_data_store" "demo" {
-  data_store_id    = "ldapexample"
-  name             = "terraform_ldap"
-  ldap_type        = "PING_DIRECTORY"
-  hostnames        = ["host.docker.internal:1389"]
-  user_dn          = "test"
-  password         = "secret"
-  bind_anonymously = false
-  min_connections  = 1
-  max_connections  = %s
+    data_store_id = "ldapexample"
+	name             = "terraform_ldap"
+	ldap_type        = "PING_DIRECTORY"
+	hostnames        = ["host.docker.internal:1389"]
+	user_dn          = "test"
+	password         = "secret"
+	bind_anonymously = false
+	min_connections  = 1
+	max_connections  = %s
+	provider = pingfederate.bypass
 }`, configUpdate)
 }
 

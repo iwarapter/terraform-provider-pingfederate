@@ -2,27 +2,16 @@
 NAME=terraform-provider-pingfederate
 OS_NAME := $(shell uname -s | tr A-Z a-z)
 CURDATE := ${shell date +'%y%m%d'}
+TEST_COUNT          ?= 1
+ACCTEST_TIMEOUT     ?= 180m
+ACCTEST_PARALLELISM ?= 20
+
+ifneq ($(origin TESTS), undefined)
+	RUNARGS = -run='$(TESTS)'
+endif
 
 pf-init:
-	@docker run -d --rm --hostname pingfederate \
-		--name pingfederate \
-		-e PING_IDENTITY_DEVOPS_KEY=$(PING_IDENTITY_DEVOPS_KEY) \
-		-e PING_IDENTITY_DEVOPS_USER=$(PING_IDENTITY_DEVOPS_USER) \
-		-e PING_IDENTITY_ACCEPT_EULA=YES \
-		-e OPERATIONAL_MODE=CLUSTERED_CONSOLE \
-		-e CLUSTER_BIND_ADDRESS=LINK_LOCAL \
-		-e CLUSTER_NAME=COMPOSE_PF_CLUSTER \
-		-e DNS_QUERY_LOCATION=pingfederate-admin \
-		-e DNS_RECORD_TYPE=A \
-		-e PF_LOG_LEVEL=DEBUG \
-		-e TAIL_LOG_PARALLEL="y" \
-		-e TAIL_LOG_FILES="/opt/out/instance/log/server.log /opt/out/instance/log/admin-api.log" \
-		-e SERVER_PROFILE_URL=https://github.com/pingidentity/pingidentity-server-profiles.git \
-		-e SERVER_PROFILE_PATH=getting-started/pingfederate \
-		-e IMAGE_VERSION=pingfederate-alpine-az11-10.3.1-${CURDATE}-d9b5 \
-		--publish 9999:9999 \
-		--publish 9031:9031 \
-		pingidentity/pingfederate:11.1.1-edge
+	@docker-compose up -d
 
 checks:
 	@go fmt ./...
@@ -56,6 +45,9 @@ test-sdkv2:
 test-and-report:
 	@rm -f pingfederate/terraform.log coverage.out report.json
 	@TF_LOG=TRACE TF_LOG_PATH=./terraform.log TF_ACC=1 go test -mod=vendor ./... -v -coverprofile=coverage.out -json > report.json && go tool cover -func=coverage.out
+
+testacc:
+	TF_ACC=1 go test ./pingfederate/... -v -count $(TEST_COUNT) -parallel $(ACCTEST_PARALLELISM) $(RUNARGS) -timeout $(ACCTEST_TIMEOUT)
 
 build:
 	@go build -mod=vendor -o ${NAME} -gcflags "all=-trimpath=$GOPATH" .

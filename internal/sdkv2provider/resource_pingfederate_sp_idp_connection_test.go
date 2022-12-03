@@ -327,7 +327,10 @@ func Test_resourcePingFederateSpIdpConnectionResourceReadData(t *testing.T) {
 										MemberOfNestedGroup: Bool(true),
 										SearchFilter:        String("foo"),
 										SearchScope:         String("foo"),
-										Type:                String("LDAP"),
+										SearchAttributes: &[]*string{
+											String("attr"),
+										},
+										Type: String("LDAP"),
 									},
 									AttributeContractFulfillment: map[string]*pf.AttributeFulfillmentValue{
 										"foo": {
@@ -493,7 +496,10 @@ func Test_resourcePingFederateSpIdpConnectionResourceReadData(t *testing.T) {
 										MemberOfNestedGroup: Bool(true),
 										SearchFilter:        String("foo"),
 										SearchScope:         String("foo"),
-										Type:                String("LDAP"),
+										SearchAttributes: &[]*string{
+											String("attr"),
+										},
+										Type: String("LDAP"),
 									},
 									AttributeContractFulfillment: map[string]*pf.AttributeFulfillmentValue{
 										"foo": {
@@ -686,7 +692,10 @@ func Test_resourcePingFederateSpIdpConnectionResourceReadData(t *testing.T) {
 									MemberOfNestedGroup: Bool(true),
 									SearchFilter:        String("foo"),
 									SearchScope:         String("foo"),
-									Type:                String("LDAP"),
+									SearchAttributes: &[]*string{
+										String("attr"),
+									},
+									Type: String("LDAP"),
 								},
 								AttributeContractFulfillment: map[string]*pf.AttributeFulfillmentValue{
 									"foo": {
@@ -839,7 +848,10 @@ func Test_resourcePingFederateSpIdpConnectionResourceReadData(t *testing.T) {
 										MemberOfNestedGroup: Bool(true),
 										SearchFilter:        String("foo"),
 										SearchScope:         String("foo"),
-										Type:                String("LDAP"),
+										SearchAttributes: &[]*string{
+											String("attr"),
+										},
+										Type: String("LDAP"),
 									},
 									AttributeContractFulfillment: map[string]*pf.AttributeFulfillmentValue{
 										"foo": {
@@ -1022,7 +1034,10 @@ func Test_resourcePingFederateSpIdpConnectionResourceReadData(t *testing.T) {
 										MemberOfNestedGroup: Bool(true),
 										SearchFilter:        String("foo"),
 										SearchScope:         String("foo"),
-										Type:                String("LDAP"),
+										SearchAttributes: &[]*string{
+											String("attr"),
+										},
+										Type: String("LDAP"),
 									},
 									AttributeContractFulfillment: map[string]*pf.AttributeFulfillmentValue{
 										"foo": {

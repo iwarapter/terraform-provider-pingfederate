@@ -3,12 +3,14 @@
 FEATURES:
 
 - Add support for `user_id_authenticated` within `AUTHN_SOURCE` policy actions. (#215)
+- Add support for `search_attributes` with `ldap_attribute_source`. (#233)
 
 BUG FIXES:
 
 - Fixed issue with empty configuration blocks. (#206)
 - Fixed issue with empty issuance criteria blocks. (#213)
 - Allowed empty `inbound_mapping` for policies. (#213)
+- Change `responder_url` to be optional due to API change in PF11.1 (#231)
 
 ## 0.0.24 (February 17th, 2022)
 

@@ -54,10 +54,6 @@ Optional:
 <a id="nestedblock--ocsp_settings"></a>
 ### Nested Schema for `ocsp_settings`
 
-Required:
-
-- `responder_url` (String) Responder URL address. This field is required if OCSP revocation is enabled.
-
 Optional:
 
 - `action_on_responder_unavailable` (String) Action on responder unavailable. This value defaults to `CONTINUE`.
@@ -68,6 +64,7 @@ Optional:
 - `requester_add_nonce` (Boolean) Do not allow responder to use cached responses. This setting defaults to disabled.
 - `responder_cert_reference` (Block List, Max: 1) Resource link to OCSP responder signature verification certificate. A previously selected certificate will be deselected if this attribute is not defined. (see [below for nested schema](#nestedblock--ocsp_settings--responder_cert_reference))
 - `responder_timeout` (Number) Responder connection timeout in seconds. This value defaults to `5`.
+- `responder_url` (String) Responder URL address. This field is required if OCSP revocation is enabled.
 - `response_cache_period` (Number) Response cache period in hours. This value defaults to `48`.
 
 <a id="nestedblock--ocsp_settings--responder_cert_reference"></a>

@@ -886,6 +886,14 @@ func resourceLdapAttributeSource() *schema.Resource {
 				Required:    true,
 				Description: "The LDAP filter that will be used to lookup the objects from the directory.",
 			},
+			"search_attributes": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "A list of LDAP attributes returned from search and available for mapping.",
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 			"attribute_contract_fulfillment": {
 				Type:        schema.TypeSet,
 				Optional:    true,
@@ -3643,7 +3651,7 @@ func resourceOcspSettings() *schema.Resource {
 			"responder_url": {
 				Type:        schema.TypeString,
 				Description: "Responder URL address. This field is required if OCSP revocation is enabled.",
-				Required:    true,
+				Optional:    true,
 			},
 			"response_cache_period": {
 				Type:        schema.TypeInt,

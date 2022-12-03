@@ -149,6 +149,9 @@ func flattenLdapAttributeSource(in *pf.AttributeSource) map[string]interface{} {
 	if in.SearchFilter != nil {
 		s["search_filter"] = *in.SearchFilter
 	}
+	if in.SearchAttributes != nil {
+		s["search_attributes"] = flattenStringList(*in.SearchAttributes)
+	}
 	if in.AttributeContractFulfillment != nil {
 		s["attribute_contract_fulfillment"] = flattenMapOfAttributeFulfillmentValue(in.AttributeContractFulfillment)
 	}

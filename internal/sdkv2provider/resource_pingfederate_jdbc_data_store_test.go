@@ -79,6 +79,7 @@ func testAccPingFederateJdbcDataStoreResourceConfig(configUpdate string) string 
 	return fmt.Sprintf(`
 provider "pingfederate" {
   bypass_external_validation = true
+  alias = "bypass"
 }
 
 resource "pingfederate_jdbc_data_store" "demo" {
@@ -93,6 +94,7 @@ resource "pingfederate_jdbc_data_store" "demo" {
     connection_url = "jdbc:hsqldb:mem:mymemdb"
     default_source = true
   }
+  provider = pingfederate.bypass
 }`, configUpdate)
 }
 
