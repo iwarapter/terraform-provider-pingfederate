@@ -76,6 +76,9 @@ func TestAccPingFederateOauthOpenIdConnectPolicy(t *testing.T) {
 }
 
 func TestAccPingFederateOauthOpenIdConnectPolicy_checkLdapAttributes(t *testing.T) {
+	if (pfClient{apiVersion: pfc.apiVersion}).IsPF10() {
+		t.Skipf("This test only runs against PingFederate 11.0 and above, not: %s", pfc.apiVersion)
+	}
 	resourceName := "pingfederate_oauth_openid_connect_policy.example"
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
