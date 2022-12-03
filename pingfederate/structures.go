@@ -3651,7 +3651,7 @@ func resourceOcspSettings() *schema.Resource {
 			"responder_url": {
 				Type:        schema.TypeString,
 				Description: "Responder URL address. This field is required if OCSP revocation is enabled.",
-				Required:    true,
+				Optional:    true,
 			},
 			"response_cache_period": {
 				Type:        schema.TypeInt,
