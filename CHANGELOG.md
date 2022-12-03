@@ -10,6 +10,7 @@ BUG FIXES:
 - Fixed issue with empty configuration blocks. (#206)
 - Fixed issue with empty issuance criteria blocks. (#213)
 - Allowed empty `inbound_mapping` for policies. (#213)
+- Change `responder_url` to be optional due to API change in PF11.1 (#231)
 
 ## 0.0.24 (February 17th, 2022)
 
