@@ -34,7 +34,6 @@ resource "tls_private_key" "example" {
 
 resource "tls_locally_signed_cert" "example" {
   cert_request_pem      = data.pingfederate_keypair_ssl_server_csr.csr.cert_request_pem
-  ca_key_algorithm      = "RSA"
   ca_private_key_pem    = tls_private_key.example.private_key_pem
   ca_cert_pem           = tls_self_signed_cert.example.cert_pem
   validity_period_hours = 12
@@ -46,7 +45,6 @@ resource "tls_locally_signed_cert" "example" {
 }
 
 resource "tls_self_signed_cert" "example" {
-  key_algorithm   = "RSA"
   private_key_pem = tls_private_key.example.private_key_pem
   subject {
     common_name  = "example.com"

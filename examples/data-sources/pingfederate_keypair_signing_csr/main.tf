@@ -1,11 +1,4 @@
-# importing a keypair using base64 encoded PKCS12 data
-resource "pingfederate_keypair_signing" "example_import" {
-  file_data = filebase64("provider.p12")
-  password  = "password"
-}
-
-# generating a keypair
-resource "pingfederate_keypair_signing" "example_generate" {
+resource "pingfederate_keypair_signing" "demo_generate" {
   city                      = "Test"
   common_name               = "Test"
   country                   = "GB"
