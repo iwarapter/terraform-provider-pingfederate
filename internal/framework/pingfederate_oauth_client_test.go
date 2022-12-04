@@ -13,31 +13,31 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	frameres "github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
-//func init() {
-//	resource.AddTestSweepers("authentication_policy_contract", &resource.Sweeper{
-//		Name:         "authentication_policy_contract",
-//		Dependencies: []string{},
-//		F: func(r string) error {
-//			svc := OAuthClients.New(cfg)
-//			results, _, err := svc.GetOAuthClients(&OAuthClients.GetOAuthClientsInput{Filter: "acc_test"})
-//			if err != nil {
-//				return fmt.Errorf("unable to list authentication policy contracts %s", err)
-//			}
-//			for _, item := range *results.Items {
-//				_, _, err := svc.DeleteOAuthClient(&OAuthClients.DeleteOAuthClientInput{Id: *item.Id})
-//				if err != nil {
-//					return fmt.Errorf("unable to sweep authentication policy contract %s because %s", *item.Id, err)
-//				}
-//			}
-//			return nil
-//		},
-//	})
-//}
+func init() {
+	resource.AddTestSweepers("pingfederate_oauth_client", &resource.Sweeper{
+		Name:         "pingfederate_oauth_client",
+		Dependencies: []string{},
+		F: func(r string) error {
+			results, _, err := pfc.OauthClients.GetClients(&oauthClients.GetClientsInput{Filter: "acc_test"})
+			if err != nil {
+				return fmt.Errorf("unable to list oauth clients %s", err)
+			}
+			for _, item := range *results.Items {
+				_, _, err := pfc.OauthClients.DeleteClient(&oauthClients.DeleteClientInput{Id: *item.ClientId})
+				if err != nil {
+					return fmt.Errorf("unable to sweep oauth client %s because %s", *item.ClientId, err)
+				}
+			}
+			return nil
+		},
+	})
+}
 
 func TestAccPingFederateOAuthClientResource(t *testing.T) {
 	resourceName := "pingfederate_oauth_client.example1"
@@ -122,8 +122,90 @@ func TestAccPingFederateOAuthClientWithClientSecretResource(t *testing.T) {
 	})
 }
 
+func TestAccPingFederateOAuthClientResourceSdkUpgradeV0toV1(t *testing.T) {
+	resourceName := "pingfederate_oauth_client.my_client"
+	resource.ParallelTest(t, resource.TestCase{
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"pingfederate": {
+						VersionConstraint: "0.0.24",
+						Source:            "iwarapter/pingfederate",
+					},
+				},
+				Config: testAccPingFederateOAuthClientResourceSdkUpgradeV0config(),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckPingFederateOAuthClientResourceExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", "acc_test_upgrade"),
+					resource.TestCheckResourceAttr(resourceName, "grant_types.0", "EXTENSION"),
+					resource.TestCheckResourceAttr(resourceName, "default_access_token_manager_ref.0.id", "testme"),
+				),
+			},
+			{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				PlanOnly:                 true,
+				Config:                   testAccPingFederateOAuthClientResourceSdkUpgradeV1config(),
+			},
+			{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Config:                   testAccPingFederateOAuthClientResourceSdkUpgradeV1config(),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckPingFederateOAuthClientResourceExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", "acc_test_upgrade"),
+					resource.TestCheckResourceAttr(resourceName, "grant_types.0", "EXTENSION"),
+					resource.TestCheckResourceAttr(resourceName, "default_access_token_manager_ref", "testme"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_policy.grant_access_session_revocation_api", "false"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_policy.logout_uris.0", "https://logout"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_policy.ping_access_logout_capable", "true"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckPingFederateOAuthClientResourceDestroy(_ *terraform.State) error {
 	return nil
+}
+
+func testAccPingFederateOAuthClientResourceSdkUpgradeV0config() string {
+	return `
+resource "pingfederate_oauth_client" "my_client" {
+  client_id   = "acc_test_upgrade"
+  name        = "acc_test_upgrade"
+  grant_types = ["EXTENSION"]
+  default_access_token_manager_ref {
+    id = "testme"
+  }
+  client_auth {
+    type   = "SECRET"
+    secret = "top_secret"
+  }
+
+  oidc_policy {
+    grant_access_session_revocation_api = false
+    logout_uris                         = ["https://logout"]
+    ping_access_logout_capable          = true
+  }
+}
+`
+}
+func testAccPingFederateOAuthClientResourceSdkUpgradeV1config() string {
+	return `
+resource "pingfederate_oauth_client" "my_client" {
+  client_id                        = "acc_test_upgrade"
+  name                             = "acc_test_upgrade"
+  grant_types                      = ["EXTENSION"]
+  default_access_token_manager_ref = "testme"
+  client_auth = {
+    type   = "SECRET"
+    secret = "top_secret"
+  }
+  oidc_policy = {
+    grant_access_session_revocation_api = false
+    logout_uris                         = ["https://logout"]
+    ping_access_logout_capable          = true
+  }
+}`
 }
 
 func testAccPingFederateOAuthClientResourceConfig(configUpdate string) string {
@@ -291,6 +373,172 @@ func Test_resourcePingFederateOAuthClientResourceReadData(t *testing.T) {
 			assert.Equal(t, tc.Resource, resp)
 		})
 	}
+}
+
+func Test_resourcePingFederateOAuthClientResourceUpgradeData(t *testing.T) {
+	res := &pingfederateOAuthClientResource{}
+	ctx := context.Background()
+	schemaV0 := resourceClientV0()
+
+	dataV0 := ClientDataV0{
+		ID:                                  types.StringValue("id"),
+		Name:                                types.StringValue("name"),
+		ClientId:                            types.StringValue("client_id"),
+		Enabled:                             types.BoolValue(true),
+		GrantTypes:                          []types.String{types.StringValue("grant_type")},
+		PersistentGrantExpirationTime:       types.NumberNull(),
+		RequireProofKeyForCodeExchange:      types.BoolValue(true),
+		RestrictedScopes:                    []types.String{types.StringValue("RestrictedScopes")},
+		CibaDeliveryMode:                    types.StringNull(),
+		PendingAuthorizationTimeoutOverride: types.NumberNull(),
+		RequestObjectSigningAlgorithm:       types.StringNull(),
+		RestrictScopes:                      types.BoolValue(true),
+		TokenExchangeProcessorPolicyRef:     []ResourceLink{{ID: types.StringValue("id")}},
+		CibaPollingInterval:                 types.NumberNull(),
+		RedirectUris:                        []types.String{types.StringValue("RedirectUris")},
+		PersistentGrantIdleTimeout:          types.NumberNull(),
+		DevicePollingIntervalOverride:       types.NumberNull(),
+		DeviceFlowSettingType:               types.StringNull(),
+		LogoUrl:                             types.StringNull(),
+		OidcPolicy: []ClientOIDCPolicyDataV0{
+			{
+				GrantAccessSessionRevocationApi:   types.BoolValue(true),
+				IdTokenContentEncryptionAlgorithm: types.StringValue("IdTokenContentEncryptionAlgorithm"),
+				IdTokenEncryptionAlgorithm:        types.StringValue("IdTokenEncryptionAlgorithm"),
+				IdTokenSigningAlgorithm:           types.StringValue("IdTokenSigningAlgorithm"),
+				LogoutUris:                        []types.String{types.StringValue("LogoutUris")},
+				PairwiseIdentifierUserType:        types.BoolValue(true),
+				PingAccessLogoutCapable:           types.BoolValue(true),
+				PolicyGroup:                       []ResourceLink{{ID: types.StringValue("id")}},
+				SectorIdentifierUri:               types.StringValue("SectorIdentifierUri"),
+			},
+		},
+		PersistentGrantExpirationTimeUnit:        types.StringNull(),
+		RequirePushedAuthorizationRequests:       types.BoolValue(true),
+		UserAuthorizationUrlOverride:             types.StringNull(),
+		BypassActivationCodeConfirmationOverride: types.BoolValue(true),
+		ValidateUsingAllEligibleAtms:             types.BoolValue(true),
+		CibaUserCodeSupported:                    types.BoolValue(true),
+		Description:                              types.StringNull(),
+		JwksSettings: []JwksSettingsData{
+			{
+				Jwks:    types.StringValue("Jwks"),
+				JwksUrl: types.StringValue("JwksUrl"),
+			},
+		},
+		RefreshRolling:                      types.StringValue("refresh_rolling"),
+		RequestPolicyRef:                    []ResourceLink{{ID: types.StringValue("id")}},
+		RequireSignedRequests:               types.BoolValue(true),
+		CibaNotificationEndpoint:            types.StringNull(),
+		CibaRequireSignedRequests:           types.BoolValue(true),
+		RestrictToDefaultAccessTokenManager: types.BoolValue(true),
+		PersistentGrantExpirationType:       types.StringNull(),
+		PersistentGrantIdleTimeoutTimeUnit:  types.StringNull(),
+		DefaultAccessTokenManagerRef:        []ResourceLink{{ID: types.StringValue("id")}},
+		ExclusiveScopes:                     []types.String{types.StringValue("ExclusiveScopes")},
+		ClientAuth: []ClientAuthDataV0{
+			{
+				ClientCertIssuerDn:                types.StringValue("ClientCertIssuerDn"),
+				ClientCertSubjectDn:               types.StringValue("ClientCertSubjectDn"),
+				EnforceReplayPrevention:           types.BoolValue(true),
+				Secret:                            types.StringValue("Secret"),
+				TokenEndpointAuthSigningAlgorithm: types.StringValue("TokenEndpointAuthSigningAlgorithm"),
+				Type:                              types.StringValue("Type"),
+			},
+		},
+		PersistentGrantIdleTimeoutType:    types.StringNull(),
+		RestrictedResponseTypes:           []types.String{types.StringValue("RestrictedResponseTypes")},
+		BypassApprovalPage:                types.BoolValue(true),
+		CibaRequestObjectSigningAlgorithm: types.StringNull(),
+		ExtendedProperties: []ExtendedPropertiesDataV0{
+			{
+				KeyName: types.StringValue("foo"),
+				Values:  []types.String{types.StringValue("bar")},
+			},
+		},
+	}
+	state := tfsdk.State{Schema: schemaV0}
+	require.False(t, state.Set(ctx, &dataV0).HasError())
+
+	upgr := res.UpgradeState(ctx)
+	resp := &frameres.UpgradeStateResponse{State: tfsdk.State{Schema: resourceClient()}}
+	upgr[0].StateUpgrader(ctx, frameres.UpgradeStateRequest{State: &state}, resp)
+	require.False(t, resp.Diagnostics.HasError())
+
+	check := ClientData{}
+	require.False(t, resp.State.Get(ctx, &check).HasError())
+
+	expected := ClientData{
+		Id:                                  types.StringValue("client_id"),
+		Name:                                types.StringValue("name"),
+		ClientId:                            types.StringValue("client_id"),
+		Enabled:                             types.BoolValue(true),
+		GrantTypes:                          []types.String{types.StringValue("grant_type")},
+		PersistentGrantExpirationTime:       types.NumberNull(),
+		RequireProofKeyForCodeExchange:      types.BoolValue(true),
+		RestrictedScopes:                    []types.String{types.StringValue("RestrictedScopes")},
+		CibaDeliveryMode:                    types.StringNull(),
+		PendingAuthorizationTimeoutOverride: types.NumberNull(),
+		RequestObjectSigningAlgorithm:       types.StringNull(),
+		RestrictScopes:                      types.BoolValue(true),
+		TokenExchangeProcessorPolicyRef:     types.StringValue("id"),
+		CibaPollingInterval:                 types.NumberNull(),
+		RedirectUris:                        []types.String{types.StringValue("RedirectUris")},
+		PersistentGrantIdleTimeout:          types.NumberNull(),
+		DevicePollingIntervalOverride:       types.NumberNull(),
+		DeviceFlowSettingType:               types.StringNull(),
+		LogoUrl:                             types.StringNull(),
+		OidcPolicy: &ClientOIDCPolicyData{
+			GrantAccessSessionRevocationApi:   types.BoolValue(true),
+			IdTokenContentEncryptionAlgorithm: types.StringValue("IdTokenContentEncryptionAlgorithm"),
+			IdTokenEncryptionAlgorithm:        types.StringValue("IdTokenEncryptionAlgorithm"),
+			IdTokenSigningAlgorithm:           types.StringValue("IdTokenSigningAlgorithm"),
+			LogoutUris:                        []types.String{types.StringValue("LogoutUris")},
+			PairwiseIdentifierUserType:        types.BoolValue(true),
+			PingAccessLogoutCapable:           types.BoolValue(true),
+			PolicyGroup:                       types.StringValue("id"),
+			SectorIdentifierUri:               types.StringValue("SectorIdentifierUri"),
+		},
+		PersistentGrantExpirationTimeUnit:        types.StringNull(),
+		RequirePushedAuthorizationRequests:       types.BoolValue(true),
+		UserAuthorizationUrlOverride:             types.StringNull(),
+		BypassActivationCodeConfirmationOverride: types.BoolValue(true),
+		ValidateUsingAllEligibleAtms:             types.BoolValue(true),
+		CibaUserCodeSupported:                    types.BoolValue(true),
+		Description:                              types.StringNull(),
+		JwksSettings: &JwksSettingsData{
+			Jwks:    types.StringValue("Jwks"),
+			JwksUrl: types.StringValue("JwksUrl"),
+		},
+		RefreshRolling:                      types.StringValue("refresh_rolling"),
+		RequestPolicyRef:                    types.StringValue("id"),
+		RequireSignedRequests:               types.BoolValue(true),
+		CibaNotificationEndpoint:            types.StringNull(),
+		CibaRequireSignedRequests:           types.BoolValue(true),
+		RestrictToDefaultAccessTokenManager: types.BoolValue(true),
+		PersistentGrantExpirationType:       types.StringNull(),
+		PersistentGrantIdleTimeoutTimeUnit:  types.StringNull(),
+		DefaultAccessTokenManagerRef:        types.StringValue("id"),
+		ExclusiveScopes:                     []types.String{types.StringValue("ExclusiveScopes")},
+		ClientAuth: &ClientAuthData{
+			ClientCertIssuerDn:                types.StringValue("ClientCertIssuerDn"),
+			ClientCertSubjectDn:               types.StringValue("ClientCertSubjectDn"),
+			EnforceReplayPrevention:           types.BoolValue(true),
+			Secret:                            types.StringValue("Secret"),
+			TokenEndpointAuthSigningAlgorithm: types.StringValue("TokenEndpointAuthSigningAlgorithm"),
+			Type:                              types.StringValue("Type"),
+		},
+		PersistentGrantIdleTimeoutType:    types.StringNull(),
+		RestrictedResponseTypes:           []types.String{types.StringValue("RestrictedResponseTypes")},
+		BypassApprovalPage:                types.BoolValue(true),
+		CibaRequestObjectSigningAlgorithm: types.StringNull(),
+		ExtendedParameters: map[string]*ParameterValuesData{
+			"foo": {
+				Values: []types.String{types.StringValue("bar")},
+			},
+		},
+	}
+	assert.Equal(t, expected, check)
 }
 
 func Test_resourcePingFederateOAuthClientResourceVersionModifications(t *testing.T) {

@@ -100,6 +100,7 @@ func TestAccPingFederateOauthOpenIdConnectPolicy_checkLdapAttributes(t *testing.
 func testAccPingFederateOauthOpenIdConnectPolicyConfig_checkLdapAttributes(name string) string {
 	return fmt.Sprintf(`
 
+
 resource "pingfederate_ldap_data_store" "example" {
   ldap_type       = "ACTIVE_DIRECTORY"
   hostnames       = ["ldap:389"]
@@ -111,7 +112,7 @@ resource "pingfederate_ldap_data_store" "example" {
 }
 
 resource "pingfederate_oauth_access_token_manager" "example" {
-  name = "%s"
+  name        = "%s"
   instance_id = "%s"
   plugin_descriptor_ref {
     id = "org.sourceid.oauth20.token.plugin.impl.ReferenceBearerAccessTokenManagementPlugin"

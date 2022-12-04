@@ -80,94 +80,6 @@ func expandScopeGroups(in []interface{}) *[]*pf.ScopeGroupEntry {
 	return &scopeGroupList
 }
 
-func expandClientAuth(in []interface{}) *pf.ClientAuth {
-	ca := &pf.ClientAuth{}
-	for _, raw := range in {
-		l := raw.(map[string]interface{})
-		if val, ok := l["client_cert_issuer_dn"]; ok && val.(string) != "" {
-			ca.ClientCertIssuerDn = String(val.(string))
-		}
-		if val, ok := l["client_cert_subject_dn"]; ok && val.(string) != "" {
-			ca.ClientCertSubjectDn = String(val.(string))
-		}
-		if val, ok := l["enforce_replay_prevention"]; ok {
-			ca.EnforceReplayPrevention = Bool(val.(bool))
-		}
-		if val, ok := l["secret"]; ok {
-			ca.Secret = String(val.(string))
-		}
-		if val, ok := l["token_endpoint_auth_signing_algorithm"]; ok && val.(string) != "" {
-			ca.TokenEndpointAuthSigningAlgorithm = String(val.(string))
-		}
-		ca.Type = String(l["type"].(string))
-	}
-	return ca
-}
-
-func expandJwksSettings(in []interface{}) *pf.JwksSettings {
-	ca := &pf.JwksSettings{}
-	for _, raw := range in {
-		l := raw.(map[string]interface{})
-		if val, ok := l["jwks"]; ok {
-			ca.Jwks = String(val.(string))
-		}
-		if val, ok := l["jwks_url"]; ok {
-			ca.JwksUrl = String(val.(string))
-		}
-	}
-	return ca
-}
-
-//func expandResourceLink(in []interface{}) *pf.ResourceLink {
-//	ca := &pf.ResourceLink{}
-//	for _, raw := range in {
-//		l := raw.(map[string]interface{})
-//		if val, ok := l["id"]; ok {
-//			ca.Id = String(val.(string))
-//		}
-//		if val, ok := l["location"]; ok && val.(string) != "" {
-//			ca.Location = String(val.(string))
-//		}
-//	}
-//	return ca
-//}
-
-func expandClientOIDCPolicy(in []interface{}) *pf.ClientOIDCPolicy {
-	ca := &pf.ClientOIDCPolicy{}
-	for _, raw := range in {
-		l := raw.(map[string]interface{})
-		if val, ok := l["grant_access_session_revocation_api"]; ok {
-			ca.GrantAccessSessionRevocationApi = Bool(val.(bool))
-		}
-		if val, ok := l["id_token_signing_algorithm"]; ok && val.(string) != "" {
-			ca.IdTokenSigningAlgorithm = String(val.(string))
-		}
-		if val, ok := l["id_token_encryption_algorithm"]; ok && val.(string) != "" {
-			ca.IdTokenEncryptionAlgorithm = String(val.(string))
-		}
-		if val, ok := l["id_token_content_encryption_algorithm"]; ok && val.(string) != "" {
-			ca.IdTokenContentEncryptionAlgorithm = String(val.(string))
-		}
-		if val, ok := l["sector_identifier_uri"]; ok && val.(string) != "" {
-			ca.SectorIdentifierUri = String(val.(string))
-		}
-		if val, ok := l["logout_uris"]; ok {
-			str := expandStringList(val.([]interface{}))
-			ca.LogoutUris = &str
-		}
-		if val, ok := l["ping_access_logout_capable"]; ok {
-			ca.PingAccessLogoutCapable = Bool(val.(bool))
-		}
-		if val, ok := l["pairwise_identifier_user_type"]; ok {
-			ca.PairwiseIdentifierUserType = Bool(val.(bool))
-		}
-		if val, ok := l["policy_group"]; ok && len(val.([]interface{})) > 0 {
-			ca.PolicyGroup = expandResourceLink(val.([]interface{})[0].(map[string]interface{}))
-		}
-	}
-	return ca
-}
-
 func expandConfigFields(in []interface{}) *[]*pf.ConfigField {
 	var configFields []*pf.ConfigField
 	for _, raw := range in {
@@ -275,17 +187,6 @@ func expandAccessTokenAttributeContract(in []interface{}) *pf.AccessTokenAttribu
 		pgc.ExtendedAttributes = &atr
 	}
 	return pgc
-}
-
-func expandAuthenticationPolicyContractAttribute(in []interface{}) *[]*pf.AuthenticationPolicyContractAttribute {
-	var contractList []*pf.AuthenticationPolicyContractAttribute
-	for _, raw := range in {
-		c := &pf.AuthenticationPolicyContractAttribute{
-			Name: String(raw.(string)),
-		}
-		contractList = append(contractList, c)
-	}
-	return &contractList
 }
 
 func expandPasswordCredentialValidatorAttribute(in []interface{}) *[]*pf.PasswordCredentialValidatorAttribute {

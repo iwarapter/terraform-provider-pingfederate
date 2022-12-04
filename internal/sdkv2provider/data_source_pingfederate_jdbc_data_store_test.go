@@ -54,7 +54,7 @@ func testAccPingFederateJdbcDataStoreDataSourceConfig() string {
 	return `
 provider "pingfederate" {
   bypass_external_validation = true
-  alias = "bypass"
+  alias                      = "bypass"
 }
 
 resource "pingfederate_jdbc_data_store" "example" {
@@ -71,8 +71,8 @@ resource "pingfederate_jdbc_data_store" "example" {
 }
 
 data "pingfederate_jdbc_data_store" "test" {
-	name = pingfederate_jdbc_data_store.example.name
-	provider = pingfederate.bypass
+  name     = pingfederate_jdbc_data_store.example.name
+  provider = pingfederate.bypass
 }`
 }
 

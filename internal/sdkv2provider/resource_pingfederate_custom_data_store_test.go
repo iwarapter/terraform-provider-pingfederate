@@ -83,7 +83,7 @@ func testAccPingFederateCustomDataStoreResourceConfig(configUpdate string) strin
 	return fmt.Sprintf(`
 provider "pingfederate" {
   bypass_external_validation = true
-  alias = "bypass"
+  alias                      = "bypass"
 }
 data "pingfederate_version" "instance" {}
 

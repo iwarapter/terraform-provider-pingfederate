@@ -55,23 +55,23 @@ func testAccPingFederateLdapDataStoreDataSourceConfig() string {
 	return `
 provider "pingfederate" {
   bypass_external_validation = true
-  alias = "bypass"
+  alias                      = "bypass"
 }
 
 resource "pingfederate_ldap_data_store" "example" {
-	ldap_type        = "PING_DIRECTORY"
-	hostnames        = ["host.docker.internal:1636"]
-	user_dn          = "foo"
-	password         = "secret"
-	bind_anonymously = false
-	min_connections  = 1
-	max_connections  = 2
-  	provider = pingfederate.bypass
+  ldap_type        = "PING_DIRECTORY"
+  hostnames        = ["host.docker.internal:1636"]
+  user_dn          = "foo"
+  password         = "secret"
+  bind_anonymously = false
+  min_connections  = 1
+  max_connections  = 2
+  provider         = pingfederate.bypass
 }
 
 data "pingfederate_ldap_data_store" "test" {
-	name = pingfederate_ldap_data_store.example.name
-	provider = pingfederate.bypass
+  name     = pingfederate_ldap_data_store.example.name
+  provider = pingfederate.bypass
 }`
 }
 

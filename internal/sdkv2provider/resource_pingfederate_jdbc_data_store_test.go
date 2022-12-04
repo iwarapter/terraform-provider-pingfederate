@@ -79,7 +79,7 @@ func testAccPingFederateJdbcDataStoreResourceConfig(configUpdate string) string 
 	return fmt.Sprintf(`
 provider "pingfederate" {
   bypass_external_validation = true
-  alias = "bypass"
+  alias                      = "bypass"
 }
 
 resource "pingfederate_jdbc_data_store" "demo" {

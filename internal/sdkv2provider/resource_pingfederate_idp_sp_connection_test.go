@@ -150,7 +150,7 @@ func testAccPingFederateIdpSpConnectionConfig(configUpdate string) string {
 		return fmt.Sprintf(`
 provider "pingfederate" {
   bypass_external_validation = true
-  alias = "bypass"
+  alias                      = "bypass"
 }
 
 resource "pingfederate_idp_sp_connection" "demo" {
@@ -351,14 +351,14 @@ resource "pingfederate_ldap_data_store" "test" {
   bind_anonymously = true
   min_connections  = 1
   max_connections  = 1
-  provider = pingfederate.bypass
+  provider         = pingfederate.bypass
 }
 `, configUpdate)
 	} else {
 		return fmt.Sprintf(`
 provider "pingfederate" {
   bypass_external_validation = true
-  alias = "bypass"
+  alias                      = "bypass"
 }
 data "pingfederate_version" "instance" {}
 
@@ -566,7 +566,7 @@ resource "pingfederate_ldap_data_store" "test" {
   bind_anonymously = true
   min_connections  = 1
   max_connections  = 1
-  provider = pingfederate.bypass
+  provider         = pingfederate.bypass
 }
 `, configUpdate)
 	}

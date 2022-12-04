@@ -18,7 +18,7 @@ Terraform 0.13 and later:
 terraform {
   required_providers {
     pingfederate = {
-      source = "iwarapter/pingfederate"
+      source  = "iwarapter/pingfederate"
       version = "~> 0.0.7"
     }
   }

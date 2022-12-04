@@ -18,12 +18,13 @@ checks:
 	@go vet ./...
 	@staticcheck ./...
 	@gosec ./...
-	@goimports -w pingfederate
+	@goimports -w ./internal
 	@govulncheck ./...
 
 fmt:
 	@find ./internal/sdkv2provider -type f -name '*_test.go' | sort -u | xargs -I {} terrafmt fmt --fmtcompat {}
 	@find ./internal/framework -type f -name '*_test.go' | sort -u | xargs -I {} terrafmt fmt --fmtcompat {}
+	@find ./templates -type f | sort -u | xargs -I {} terrafmt fmt --fmtcompat {}
 
 unit-test:
 	@go test -mod=vendor ./... -v

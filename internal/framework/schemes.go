@@ -99,6 +99,7 @@ func resourceAuthenticationPolicyContract() tfsdk.Schema {
 func resourceClient() tfsdk.Schema {
 	return tfsdk.Schema{
 		Description: `OAuth client.`,
+		Version:     1,
 		Attributes: map[string]tfsdk.Attribute{
 			"allow_authentication_api_init": {
 				Description: `Set to true to allow this client to initiate the authentication API redirectless flow.`,
@@ -709,130 +710,26 @@ func listCustomAttributeSource() map[string]tfsdk.Attribute {
 	}
 }
 
-func mapAttributeFulfillmentValue() map[string]tfsdk.Attribute {
+func singleRedirectValidationPartnerSettings() map[string]tfsdk.Attribute {
 	return map[string]tfsdk.Attribute{
-		"source": {
-			Description: `The attribute value source.`,
-			Required:    true,
-			Attributes:  tfsdk.SingleNestedAttributes(singleSourceTypeIdKey()),
-		},
-		"value": {
-			Description: `The value for this attribute.`,
-			Required:    true,
-			Type:        types.StringType,
-		},
-	}
-}
-
-func listConditionalIssuanceCriteriaEntry() map[string]tfsdk.Attribute {
-	return map[string]tfsdk.Attribute{
-		"attribute_name": {
-			Description: `The name of the attribute to use in this issuance criterion.`,
-			Required:    true,
-			Type:        types.StringType,
-		},
-		"condition": {
-			Description: `The condition that will be applied to the source attribute's value and the expected value.`,
-			Required:    true,
-			Type:        types.StringType,
-		},
-		"error_result": {
-			Description: `The error result to return if this issuance criterion fails. This error result will show up in the PingFederate server logs.`,
-			Optional:    true,
-			Type:        types.StringType,
-		},
-		"source": {
-			Description: `The source of the attribute.`,
-			Required:    true,
-			Attributes:  tfsdk.SingleNestedAttributes(singleSourceTypeIdKey()),
-		},
-		"value": {
-			Description: `The expected value of this issuance criterion.`,
-			Required:    true,
-			Type:        types.StringType,
-		},
-	}
-}
-
-func singleClientAuth() map[string]tfsdk.Attribute {
-	return map[string]tfsdk.Attribute{
-		"client_cert_issuer_dn": {
-			Description: `Client TLS Certificate Issuer DN.`,
-			Optional:    true,
-			Type:        types.StringType,
-		},
-		"client_cert_subject_dn": {
-			Description: `Client TLS Certificate Subject DN.`,
-			Optional:    true,
-			Type:        types.StringType,
-		},
-		"encrypted_secret": {
-			Description: `For GET requests, this field contains the encrypted client secret, if one exists.  For POST and PUT requests, if you wish to reuse the existing secret, this field should be passed back unchanged.`,
-			Optional:    true,
-			Computed:    true,
-			Type:        types.StringType,
-		},
-		"enforce_replay_prevention": {
-			Description: `Enforce replay prevention on JSON Web Tokens. This field is applicable only for Private Key JWT Client Authentication.`,
+		"enable_wreply_validation_slo": {
+			Description: `Enable wreply validation for SLO.`,
 			Optional:    true,
 			Type:        types.BoolType,
 		},
-		"secret": {
-			Description: `Client secret for Basic Authentication.  To update the client secret, specify the plaintext value in this field.  This field will not be populated for GET requests.`,
-			Optional:    true,
-			Type:        types.StringType,
-			PlanModifiers: tfsdk.AttributePlanModifiers{
-				resource.UseStateForUnknown(),
-			},
-		},
-		"token_endpoint_auth_signing_algorithm": {
-			Description: `The JSON Web Signature [JWS] algorithm that must be used to sign the JSON Web Tokens. This field is applicable only for Private Key JWT Client Authentication. All signing algorithms are allowed if value is not present <br>RS256 - RSA using SHA-256<br>RS384 - RSA using SHA-384<br>RS512 - RSA using SHA-512<br>ES256 - ECDSA using P256 Curve and SHA-256<br>ES384 - ECDSA using P384 Curve and SHA-384<br>ES512 - ECDSA using P521 Curve and SHA-512<br>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256<br>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384<br>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512<br>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11.`,
+	}
+}
+
+func singleSourceTypeIdKey() map[string]tfsdk.Attribute {
+	return map[string]tfsdk.Attribute{
+		"id": {
+			Description: `The attribute source ID that refers to the attribute source that this key references. In some resources, the ID is optional and will be ignored. In these cases the ID should be omitted. If the source type is not an attribute source then the ID can be omitted.`,
 			Optional:    true,
 			Type:        types.StringType,
 		},
 		"type": {
-			Description: `Client authentication type.<br>The required field for type SECRET is secret.<br>The required fields for type CERTIFICATE are clientCertIssuerDn and clientCertSubjectDn.<br>The required field for type PRIVATE_KEY_JWT is: either jwks or jwksUrl.`,
-			Optional:    true,
-			Type:        types.StringType,
-		},
-	}
-}
-
-func singleRedirectValidationLocalSettings() map[string]tfsdk.Attribute {
-	return map[string]tfsdk.Attribute{
-		"enable_in_error_resource_validation": {
-			Description: `Enable validation for error resource.`,
-			Optional:    true,
-			Type:        types.BoolType,
-		},
-		"enable_target_resource_validation_for_idp_discovery": {
-			Description: `Enable target resource validation for IdP discovery.`,
-			Optional:    true,
-			Type:        types.BoolType,
-		},
-		"enable_target_resource_validation_for_slo": {
-			Description: `Enable target resource validation for SLO.`,
-			Optional:    true,
-			Type:        types.BoolType,
-		},
-		"enable_target_resource_validation_for_sso": {
-			Description: `Enable target resource validation for SSO.`,
-			Optional:    true,
-			Type:        types.BoolType,
-		},
-		"white_list": {
-			Description: `List of URLs that are designated as valid target resources.`,
-			Optional:    true,
-			Attributes:  tfsdk.ListNestedAttributes(listRedirectValidationSettingsWhitelistEntry()),
-		},
-	}
-}
-
-func mapBinaryLdapAttributeSettings() map[string]tfsdk.Attribute {
-	return map[string]tfsdk.Attribute{
-		"binary_encoding": {
-			Description: `Get the encoding type for this attribute. If not specified, the default is BASE64.`,
-			Optional:    true,
+			Description: `The source type of this key.`,
+			Required:    true,
 			Type:        types.StringType,
 		},
 	}
@@ -898,12 +795,104 @@ func listRedirectValidationSettingsWhitelistEntry() map[string]tfsdk.Attribute {
 	}
 }
 
-func singleRedirectValidationPartnerSettings() map[string]tfsdk.Attribute {
+func mapAttributeFulfillmentValue() map[string]tfsdk.Attribute {
 	return map[string]tfsdk.Attribute{
-		"enable_wreply_validation_slo": {
-			Description: `Enable wreply validation for SLO.`,
+		"source": {
+			Description: `The attribute value source.`,
+			Required:    true,
+			Attributes:  tfsdk.SingleNestedAttributes(singleSourceTypeIdKey()),
+		},
+		"value": {
+			Description: `The value for this attribute.`,
+			Required:    true,
+			Type:        types.StringType,
+		},
+	}
+}
+
+func mapParameterValues() map[string]tfsdk.Attribute {
+	return map[string]tfsdk.Attribute{
+		"values": {
+			Description: `A List of values`,
+			Optional:    true,
+			Type: types.ListType{
+				ElemType: types.StringType,
+			},
+		},
+	}
+}
+
+func singleRedirectValidationLocalSettings() map[string]tfsdk.Attribute {
+	return map[string]tfsdk.Attribute{
+		"enable_in_error_resource_validation": {
+			Description: `Enable validation for error resource.`,
 			Optional:    true,
 			Type:        types.BoolType,
+		},
+		"enable_target_resource_validation_for_idp_discovery": {
+			Description: `Enable target resource validation for IdP discovery.`,
+			Optional:    true,
+			Type:        types.BoolType,
+		},
+		"enable_target_resource_validation_for_slo": {
+			Description: `Enable target resource validation for SLO.`,
+			Optional:    true,
+			Type:        types.BoolType,
+		},
+		"enable_target_resource_validation_for_sso": {
+			Description: `Enable target resource validation for SSO.`,
+			Optional:    true,
+			Type:        types.BoolType,
+		},
+		"white_list": {
+			Description: `List of URLs that are designated as valid target resources.`,
+			Optional:    true,
+			Attributes:  tfsdk.ListNestedAttributes(listRedirectValidationSettingsWhitelistEntry()),
+		},
+	}
+}
+
+func listConditionalIssuanceCriteriaEntry() map[string]tfsdk.Attribute {
+	return map[string]tfsdk.Attribute{
+		"attribute_name": {
+			Description: `The name of the attribute to use in this issuance criterion.`,
+			Required:    true,
+			Type:        types.StringType,
+		},
+		"condition": {
+			Description: `The condition that will be applied to the source attribute's value and the expected value.`,
+			Required:    true,
+			Type:        types.StringType,
+		},
+		"error_result": {
+			Description: `The error result to return if this issuance criterion fails. This error result will show up in the PingFederate server logs.`,
+			Optional:    true,
+			Type:        types.StringType,
+		},
+		"source": {
+			Description: `The source of the attribute.`,
+			Required:    true,
+			Attributes:  tfsdk.SingleNestedAttributes(singleSourceTypeIdKey()),
+		},
+		"value": {
+			Description: `The expected value of this issuance criterion.`,
+			Required:    true,
+			Type:        types.StringType,
+		},
+	}
+}
+
+func listFieldEntry() map[string]tfsdk.Attribute {
+	return map[string]tfsdk.Attribute{
+		"name": {
+			Description: `The name of this field.`,
+			Required:    true,
+			Type:        types.StringType,
+		},
+		"value": {
+			Description: `The value of this field. Whether or not the value is required will be determined by plugin validation checks.`,
+			Optional:    true,
+			Type:        types.StringType,
 		},
 	}
 }
@@ -952,7 +941,11 @@ func singleClientOIDCPolicy() map[string]tfsdk.Attribute {
 		"id_token_signing_algorithm": {
 			Description: `The JSON Web Signature [JWS] algorithm required for the ID Token.<br>NONE - No signing algorithm<br>HS256 - HMAC using SHA-256<br>HS384 - HMAC using SHA-384<br>HS512 - HMAC using SHA-512<br>RS256 - RSA using SHA-256<br>RS384 - RSA using SHA-384<br>RS512 - RSA using SHA-512<br>ES256 - ECDSA using P256 Curve and SHA-256<br>ES384 - ECDSA using P384 Curve and SHA-384<br>ES512 - ECDSA using P521 Curve and SHA-512<br>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256<br>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384<br>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512<br>A null value will represent the default algorithm which is RS256.<br>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11`,
 			Optional:    true,
+			Computed:    true,
 			Type:        types.StringType,
+			PlanModifiers: tfsdk.AttributePlanModifiers{
+				Default(types.StringValue("RS256")),
+			},
 		},
 		"logout_uris": {
 			Description: `A list of client logout URI's which will be invoked when a user logs out through one of PingFederate's SLO endpoints.`,
@@ -988,48 +981,6 @@ func singleClientOIDCPolicy() map[string]tfsdk.Attribute {
 	}
 }
 
-func mapParameterValues() map[string]tfsdk.Attribute {
-	return map[string]tfsdk.Attribute{
-		"values": {
-			Description: `A List of values`,
-			Optional:    true,
-			Type: types.ListType{
-				ElemType: types.StringType,
-			},
-		},
-	}
-}
-
-func singleSourceTypeIdKey() map[string]tfsdk.Attribute {
-	return map[string]tfsdk.Attribute{
-		"id": {
-			Description: `The attribute source ID that refers to the attribute source that this key references. In some resources, the ID is optional and will be ignored. In these cases the ID should be omitted. If the source type is not an attribute source then the ID can be omitted.`,
-			Optional:    true,
-			Type:        types.StringType,
-		},
-		"type": {
-			Description: `The source type of this key.`,
-			Required:    true,
-			Type:        types.StringType,
-		},
-	}
-}
-
-func listFieldEntry() map[string]tfsdk.Attribute {
-	return map[string]tfsdk.Attribute{
-		"name": {
-			Description: `The name of this field.`,
-			Required:    true,
-			Type:        types.StringType,
-		},
-		"value": {
-			Description: `The value of this field. Whether or not the value is required will be determined by plugin validation checks.`,
-			Optional:    true,
-			Type:        types.StringType,
-		},
-	}
-}
-
 func singleJwksSettings() map[string]tfsdk.Attribute {
 	return map[string]tfsdk.Attribute{
 		"jwks": {
@@ -1039,6 +990,60 @@ func singleJwksSettings() map[string]tfsdk.Attribute {
 		},
 		"jwks_url": {
 			Description: `JSON Web Key Set (JWKS) URL of the OAuth client. Either 'jwks' or 'jwksUrl' must be provided if private key JWT client authentication or signed requests is enabled.  If the client signs its JWTs using an RSASSA-PSS signing algorithm, PingFederate must either use Java 11 or be integrated with a hardware security module (HSM) to process the digital signatures.`,
+			Optional:    true,
+			Type:        types.StringType,
+		},
+	}
+}
+
+func singleClientAuth() map[string]tfsdk.Attribute {
+	return map[string]tfsdk.Attribute{
+		"client_cert_issuer_dn": {
+			Description: `Client TLS Certificate Issuer DN.`,
+			Optional:    true,
+			Type:        types.StringType,
+		},
+		"client_cert_subject_dn": {
+			Description: `Client TLS Certificate Subject DN.`,
+			Optional:    true,
+			Type:        types.StringType,
+		},
+		"encrypted_secret": {
+			Description: `For GET requests, this field contains the encrypted client secret, if one exists.  For POST and PUT requests, if you wish to reuse the existing secret, this field should be passed back unchanged.`,
+			Optional:    true,
+			Computed:    true,
+			Type:        types.StringType,
+		},
+		"enforce_replay_prevention": {
+			Description: `Enforce replay prevention on JSON Web Tokens. This field is applicable only for Private Key JWT Client Authentication.`,
+			Optional:    true,
+			Type:        types.BoolType,
+		},
+		"secret": {
+			Description: `Client secret for Basic Authentication.  To update the client secret, specify the plaintext value in this field.  This field will not be populated for GET requests.`,
+			Optional:    true,
+			Type:        types.StringType,
+			PlanModifiers: tfsdk.AttributePlanModifiers{
+				resource.UseStateForUnknown(),
+			},
+		},
+		"token_endpoint_auth_signing_algorithm": {
+			Description: `The JSON Web Signature [JWS] algorithm that must be used to sign the JSON Web Tokens. This field is applicable only for Private Key JWT Client Authentication. All signing algorithms are allowed if value is not present <br>RS256 - RSA using SHA-256<br>RS384 - RSA using SHA-384<br>RS512 - RSA using SHA-512<br>ES256 - ECDSA using P256 Curve and SHA-256<br>ES384 - ECDSA using P384 Curve and SHA-384<br>ES512 - ECDSA using P521 Curve and SHA-512<br>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256<br>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384<br>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512<br>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11.`,
+			Optional:    true,
+			Type:        types.StringType,
+		},
+		"type": {
+			Description: `Client authentication type.<br>The required field for type SECRET is secret.<br>The required fields for type CERTIFICATE are clientCertIssuerDn and clientCertSubjectDn.<br>The required field for type PRIVATE_KEY_JWT is: either jwks or jwksUrl.`,
+			Optional:    true,
+			Type:        types.StringType,
+		},
+	}
+}
+
+func mapBinaryLdapAttributeSettings() map[string]tfsdk.Attribute {
+	return map[string]tfsdk.Attribute{
+		"binary_encoding": {
+			Description: `Get the encoding type for this attribute. If not specified, the default is BASE64.`,
 			Optional:    true,
 			Type:        types.StringType,
 		},

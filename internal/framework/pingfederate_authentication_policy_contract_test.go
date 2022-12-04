@@ -82,24 +82,15 @@ func TestAccPingFederateAuthenticationPolicyContractResourceSdkUpgrade(t *testin
 					},
 				},
 				Config: `
-terraform {
-  required_providers {
-    pingfederate = {
-      source  = "iwarapter/pingfederate"
-      version = "0.0.24"
-    }
-  }
-}
-
-provider "pingfederate" {}
-
 resource "pingfederate_authentication_policy_contract" "demo" {
-  name                = "acc_test_one"
+  policy_contract_id  = "acc_test_upgrade"
+  name                = "acc_test_upgrade"
   extended_attributes = ["foo", "email"]
 }`,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateAuthenticationPolicyContractResourceExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", "acc_test_one"),
+					resource.TestCheckResourceAttr(resourceName, "policy_contract_id", "acc_test_upgrade"),
+					resource.TestCheckResourceAttr(resourceName, "name", "acc_test_upgrade"),
 					resource.TestCheckResourceAttr(resourceName, "extended_attributes.0", "email"),
 					resource.TestCheckResourceAttr(resourceName, "extended_attributes.1", "foo"),
 				),
@@ -107,13 +98,25 @@ resource "pingfederate_authentication_policy_contract" "demo" {
 			{
 				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 				PlanOnly:                 true,
-				Config: `resource "pingfederate_authentication_policy_contract" "demo" {
-  name                = "acc_test_one"
+				Config: `
+resource "pingfederate_authentication_policy_contract" "demo" {
+  id                  = "acc_test_upgrade"
+  name                = "acc_test_upgrade"
+  extended_attributes = ["foo", "email"]
+}`,
+			},
+			{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Config: `
+resource "pingfederate_authentication_policy_contract" "demo" {
+  id                  = "acc_test_upgrade"
+  name                = "acc_test_upgrade"
   extended_attributes = ["foo", "email"]
 }`,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPingFederateAuthenticationPolicyContractResourceExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", "acc_test_one"),
+					resource.TestCheckResourceAttr(resourceName, "id", "acc_test_upgrade"),
+					resource.TestCheckResourceAttr(resourceName, "name", "acc_test_upgrade"),
 					resource.TestCheckResourceAttr(resourceName, "extended_attributes.0", "email"),
 					resource.TestCheckResourceAttr(resourceName, "extended_attributes.1", "foo"),
 				),
