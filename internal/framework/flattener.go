@@ -1,0 +1,889 @@
+package framework
+
+import (
+	"math/big"
+
+	"github.com/hashicorp/terraform-plugin-framework/types"
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
+)
+
+func flattenApcToPersistentGrantMapping(in *pf.ApcToPersistentGrantMapping) *ApcToPersistentGrantMappingData {
+	result := ApcToPersistentGrantMappingData{}
+	if in.AttributeContractFulfillment != nil {
+		result.AttributeContractFulfillment = flattenMapAttributeFulfillmentValues(in.AttributeContractFulfillment)
+	}
+	if in.AttributeSources != nil && len(*in.AttributeSources) > 0 {
+		result.JdbcAttributeSources = append(result.JdbcAttributeSources, flattenJdbcAttributeSources(in.AttributeSources)...)
+	}
+	if in.AttributeSources != nil && len(*in.AttributeSources) > 0 {
+		result.LdapAttributeSources = append(result.LdapAttributeSources, flattenLdapAttributeSources(in.AttributeSources)...)
+	}
+	if in.AttributeSources != nil && len(*in.AttributeSources) > 0 {
+		result.CustomAttributeSources = append(result.CustomAttributeSources, flattenCustomAttributeSources(in.AttributeSources)...)
+	}
+	if in.AuthenticationPolicyContractRef != nil && in.AuthenticationPolicyContractRef.Id != nil && *in.AuthenticationPolicyContractRef.Id != "" {
+		result.AuthenticationPolicyContractRef = types.StringValue(*in.AuthenticationPolicyContractRef.Id)
+	} else {
+		result.AuthenticationPolicyContractRef = types.StringNull()
+	}
+	if in.Id != nil {
+		result.Id = types.StringValue(*in.Id)
+	} else {
+		result.Id = types.StringNull()
+	}
+	if in.IssuanceCriteria != nil && issuanceCriteriaShouldFlatten(in.IssuanceCriteria) {
+		result.IssuanceCriteria = flattenIssuanceCriteria(in.IssuanceCriteria)
+	}
+
+	return &result
+}
+
+func flattenAuthenticationPolicyContract(in *pf.AuthenticationPolicyContract) *AuthenticationPolicyContractData {
+	result := AuthenticationPolicyContractData{}
+	if in.CoreAttributes != nil {
+		attrs := []types.String{}
+		for _, attribute := range *in.CoreAttributes {
+			attrs = append(attrs, types.StringValue(*attribute.Name))
+		}
+		result.CoreAttributes = attrs
+	}
+	if in.ExtendedAttributes != nil {
+		attrs := []types.String{}
+		for _, attribute := range *in.ExtendedAttributes {
+			attrs = append(attrs, types.StringValue(*attribute.Name))
+		}
+		result.ExtendedAttributes = attrs
+	}
+	if in.Id != nil {
+		result.Id = types.StringValue(*in.Id)
+	} else {
+		result.Id = types.StringNull()
+	}
+	if in.Name != nil {
+		result.Name = types.StringValue(*in.Name)
+	}
+
+	return &result
+}
+
+func flattenClient(in *pf.Client) *ClientData {
+	result := ClientData{}
+	if in.AllowAuthenticationApiInit != nil {
+		result.AllowAuthenticationApiInit = types.BoolValue(*in.AllowAuthenticationApiInit)
+	} else {
+		result.AllowAuthenticationApiInit = types.BoolNull()
+	}
+	if in.BypassActivationCodeConfirmationOverride != nil {
+		result.BypassActivationCodeConfirmationOverride = types.BoolValue(*in.BypassActivationCodeConfirmationOverride)
+	} else {
+		result.BypassActivationCodeConfirmationOverride = types.BoolNull()
+	}
+	if in.BypassApprovalPage != nil {
+		result.BypassApprovalPage = types.BoolValue(*in.BypassApprovalPage)
+	} else {
+		result.BypassApprovalPage = types.BoolNull()
+	}
+	if in.CibaDeliveryMode != nil {
+		result.CibaDeliveryMode = types.StringValue(*in.CibaDeliveryMode)
+	} else {
+		result.CibaDeliveryMode = types.StringNull()
+	}
+	if in.CibaNotificationEndpoint != nil {
+		result.CibaNotificationEndpoint = types.StringValue(*in.CibaNotificationEndpoint)
+	} else {
+		result.CibaNotificationEndpoint = types.StringNull()
+	}
+	if in.CibaPollingInterval != nil {
+		result.CibaPollingInterval = types.NumberValue(big.NewFloat(float64(*in.CibaPollingInterval)))
+	} else {
+		result.CibaPollingInterval = types.NumberNull()
+	}
+	if in.CibaRequestObjectSigningAlgorithm != nil {
+		result.CibaRequestObjectSigningAlgorithm = types.StringValue(*in.CibaRequestObjectSigningAlgorithm)
+	} else {
+		result.CibaRequestObjectSigningAlgorithm = types.StringNull()
+	}
+	if in.CibaRequireSignedRequests != nil {
+		result.CibaRequireSignedRequests = types.BoolValue(*in.CibaRequireSignedRequests)
+	} else {
+		result.CibaRequireSignedRequests = types.BoolNull()
+	}
+	if in.CibaUserCodeSupported != nil {
+		result.CibaUserCodeSupported = types.BoolValue(*in.CibaUserCodeSupported)
+	} else {
+		result.CibaUserCodeSupported = types.BoolNull()
+	}
+	if in.ClientAuth != nil && *in.ClientAuth.Type != "NONE" {
+		result.ClientAuth = flattenClientAuth(in.ClientAuth)
+	}
+	if in.ClientId != nil {
+		result.ClientId = types.StringValue(*in.ClientId)
+	}
+	if in.ClientSecretChangedTime != nil {
+		result.ClientSecretChangedTime = types.StringValue(*in.ClientSecretChangedTime)
+	} else {
+		result.ClientSecretChangedTime = types.StringNull()
+	}
+	if in.ClientSecretRetentionPeriod != nil {
+		result.ClientSecretRetentionPeriod = types.NumberValue(big.NewFloat(float64(*in.ClientSecretRetentionPeriod)))
+	} else {
+		result.ClientSecretRetentionPeriod = types.NumberNull()
+	}
+	if in.ClientSecretRetentionPeriodType != nil {
+		result.ClientSecretRetentionPeriodType = types.StringValue(*in.ClientSecretRetentionPeriodType)
+	} else {
+		result.ClientSecretRetentionPeriodType = types.StringNull()
+	}
+	if in.DefaultAccessTokenManagerRef != nil && in.DefaultAccessTokenManagerRef.Id != nil && *in.DefaultAccessTokenManagerRef.Id != "" {
+		result.DefaultAccessTokenManagerRef = types.StringValue(*in.DefaultAccessTokenManagerRef.Id)
+	} else {
+		result.DefaultAccessTokenManagerRef = types.StringNull()
+	}
+	if in.Description != nil {
+		result.Description = types.StringValue(*in.Description)
+	} else {
+		result.Description = types.StringNull()
+	}
+	if in.DeviceFlowSettingType != nil {
+		result.DeviceFlowSettingType = types.StringValue(*in.DeviceFlowSettingType)
+	} else {
+		result.DeviceFlowSettingType = types.StringNull()
+	}
+	if in.DevicePollingIntervalOverride != nil {
+		result.DevicePollingIntervalOverride = types.NumberValue(big.NewFloat(float64(*in.DevicePollingIntervalOverride)))
+	} else {
+		result.DevicePollingIntervalOverride = types.NumberNull()
+	}
+	if in.Enabled != nil {
+		result.Enabled = types.BoolValue(*in.Enabled)
+	} else {
+		result.Enabled = types.BoolNull()
+	}
+	if in.ExclusiveScopes != nil {
+		result.ExclusiveScopes = flattenStringList(*in.ExclusiveScopes)
+	}
+	if in.ExtendedParameters != nil {
+		result.ExtendedParameters = flattenMapParameterValuess(in.ExtendedParameters)
+	}
+	if in.GrantTypes != nil {
+		result.GrantTypes = flattenStringList(*in.GrantTypes)
+	}
+	if in.ClientId != nil {
+		result.Id = types.StringValue(*in.ClientId)
+	}
+	if in.JwksSettings != nil {
+		result.JwksSettings = flattenJwksSettings(in.JwksSettings)
+	}
+	if in.JwtSecuredAuthorizationResponseModeContentEncryptionAlgorithm != nil {
+		result.JwtSecuredAuthorizationResponseModeContentEncryptionAlgorithm = types.StringValue(*in.JwtSecuredAuthorizationResponseModeContentEncryptionAlgorithm)
+	} else {
+		result.JwtSecuredAuthorizationResponseModeContentEncryptionAlgorithm = types.StringNull()
+	}
+	if in.JwtSecuredAuthorizationResponseModeEncryptionAlgorithm != nil {
+		result.JwtSecuredAuthorizationResponseModeEncryptionAlgorithm = types.StringValue(*in.JwtSecuredAuthorizationResponseModeEncryptionAlgorithm)
+	} else {
+		result.JwtSecuredAuthorizationResponseModeEncryptionAlgorithm = types.StringNull()
+	}
+	if in.JwtSecuredAuthorizationResponseModeSigningAlgorithm != nil {
+		result.JwtSecuredAuthorizationResponseModeSigningAlgorithm = types.StringValue(*in.JwtSecuredAuthorizationResponseModeSigningAlgorithm)
+	} else {
+		result.JwtSecuredAuthorizationResponseModeSigningAlgorithm = types.StringNull()
+	}
+	if in.LogoUrl != nil {
+		result.LogoUrl = types.StringValue(*in.LogoUrl)
+	} else {
+		result.LogoUrl = types.StringNull()
+	}
+	if in.Name != nil {
+		result.Name = types.StringValue(*in.Name)
+	}
+	if in.OidcPolicy != nil {
+		result.OidcPolicy = flattenClientOIDCPolicy(in.OidcPolicy)
+	}
+	if in.PendingAuthorizationTimeoutOverride != nil {
+		result.PendingAuthorizationTimeoutOverride = types.NumberValue(big.NewFloat(float64(*in.PendingAuthorizationTimeoutOverride)))
+	} else {
+		result.PendingAuthorizationTimeoutOverride = types.NumberNull()
+	}
+	if in.PersistentGrantExpirationTime != nil {
+		result.PersistentGrantExpirationTime = types.NumberValue(big.NewFloat(float64(*in.PersistentGrantExpirationTime)))
+	} else {
+		result.PersistentGrantExpirationTime = types.NumberNull()
+	}
+	if in.PersistentGrantExpirationTimeUnit != nil {
+		result.PersistentGrantExpirationTimeUnit = types.StringValue(*in.PersistentGrantExpirationTimeUnit)
+	} else {
+		result.PersistentGrantExpirationTimeUnit = types.StringValue("DAYS")
+	}
+	if in.PersistentGrantExpirationType != nil {
+		result.PersistentGrantExpirationType = types.StringValue(*in.PersistentGrantExpirationType)
+	} else {
+		result.PersistentGrantExpirationType = types.StringNull()
+	}
+	if in.PersistentGrantIdleTimeout != nil {
+		result.PersistentGrantIdleTimeout = types.NumberValue(big.NewFloat(float64(*in.PersistentGrantIdleTimeout)))
+	} else {
+		result.PersistentGrantIdleTimeout = types.NumberNull()
+	}
+	if in.PersistentGrantIdleTimeoutTimeUnit != nil {
+		result.PersistentGrantIdleTimeoutTimeUnit = types.StringValue(*in.PersistentGrantIdleTimeoutTimeUnit)
+	} else {
+		result.PersistentGrantIdleTimeoutTimeUnit = types.StringNull()
+	}
+	if in.PersistentGrantIdleTimeoutType != nil {
+		result.PersistentGrantIdleTimeoutType = types.StringValue(*in.PersistentGrantIdleTimeoutType)
+	} else {
+		result.PersistentGrantIdleTimeoutType = types.StringNull()
+	}
+	if in.PersistentGrantReuseGrantTypes != nil {
+		result.PersistentGrantReuseGrantTypes = flattenStringList(*in.PersistentGrantReuseGrantTypes)
+	}
+	if in.PersistentGrantReuseType != nil {
+		result.PersistentGrantReuseType = types.StringValue(*in.PersistentGrantReuseType)
+	} else {
+		result.PersistentGrantReuseType = types.StringNull()
+	}
+	if in.RedirectUris != nil {
+		result.RedirectUris = flattenStringList(*in.RedirectUris)
+	}
+	if in.RefreshRolling != nil {
+		result.RefreshRolling = types.StringValue(*in.RefreshRolling)
+	} else {
+		result.RefreshRolling = types.StringNull()
+	}
+	if in.RefreshTokenRollingGracePeriod != nil {
+		result.RefreshTokenRollingGracePeriod = types.NumberValue(big.NewFloat(float64(*in.RefreshTokenRollingGracePeriod)))
+	} else {
+		result.RefreshTokenRollingGracePeriod = types.NumberNull()
+	}
+	if in.RefreshTokenRollingGracePeriodType != nil {
+		result.RefreshTokenRollingGracePeriodType = types.StringValue(*in.RefreshTokenRollingGracePeriodType)
+	} else {
+		result.RefreshTokenRollingGracePeriodType = types.StringNull()
+	}
+	if in.RefreshTokenRollingInterval != nil {
+		result.RefreshTokenRollingInterval = types.NumberValue(big.NewFloat(float64(*in.RefreshTokenRollingInterval)))
+	} else {
+		result.RefreshTokenRollingInterval = types.NumberNull()
+	}
+	if in.RefreshTokenRollingIntervalType != nil {
+		result.RefreshTokenRollingIntervalType = types.StringValue(*in.RefreshTokenRollingIntervalType)
+	} else {
+		result.RefreshTokenRollingIntervalType = types.StringNull()
+	}
+	if in.RequestObjectSigningAlgorithm != nil {
+		result.RequestObjectSigningAlgorithm = types.StringValue(*in.RequestObjectSigningAlgorithm)
+	} else {
+		result.RequestObjectSigningAlgorithm = types.StringNull()
+	}
+	if in.RequestPolicyRef != nil && in.RequestPolicyRef.Id != nil && *in.RequestPolicyRef.Id != "" {
+		result.RequestPolicyRef = types.StringValue(*in.RequestPolicyRef.Id)
+	} else {
+		result.RequestPolicyRef = types.StringNull()
+	}
+	if in.RequireJwtSecuredAuthorizationResponseMode != nil {
+		result.RequireJwtSecuredAuthorizationResponseMode = types.BoolValue(*in.RequireJwtSecuredAuthorizationResponseMode)
+	} else {
+		result.RequireJwtSecuredAuthorizationResponseMode = types.BoolNull()
+	}
+	if in.RequireProofKeyForCodeExchange != nil {
+		result.RequireProofKeyForCodeExchange = types.BoolValue(*in.RequireProofKeyForCodeExchange)
+	} else {
+		result.RequireProofKeyForCodeExchange = types.BoolNull()
+	}
+	if in.RequirePushedAuthorizationRequests != nil {
+		result.RequirePushedAuthorizationRequests = types.BoolValue(*in.RequirePushedAuthorizationRequests)
+	} else {
+		result.RequirePushedAuthorizationRequests = types.BoolNull()
+	}
+	if in.RequireSignedRequests != nil {
+		result.RequireSignedRequests = types.BoolValue(*in.RequireSignedRequests)
+	} else {
+		result.RequireSignedRequests = types.BoolNull()
+	}
+	if in.RestrictScopes != nil {
+		result.RestrictScopes = types.BoolValue(*in.RestrictScopes)
+	} else {
+		result.RestrictScopes = types.BoolNull()
+	}
+	if in.RestrictToDefaultAccessTokenManager != nil {
+		result.RestrictToDefaultAccessTokenManager = types.BoolValue(*in.RestrictToDefaultAccessTokenManager)
+	} else {
+		result.RestrictToDefaultAccessTokenManager = types.BoolNull()
+	}
+	if in.RestrictedResponseTypes != nil {
+		result.RestrictedResponseTypes = flattenStringList(*in.RestrictedResponseTypes)
+	}
+	if in.RestrictedScopes != nil {
+		result.RestrictedScopes = flattenStringList(*in.RestrictedScopes)
+	}
+	if in.TokenExchangeProcessorPolicyRef != nil && in.TokenExchangeProcessorPolicyRef.Id != nil && *in.TokenExchangeProcessorPolicyRef.Id != "" {
+		result.TokenExchangeProcessorPolicyRef = types.StringValue(*in.TokenExchangeProcessorPolicyRef.Id)
+	} else {
+		result.TokenExchangeProcessorPolicyRef = types.StringNull()
+	}
+	if in.TokenIntrospectionContentEncryptionAlgorithm != nil {
+		result.TokenIntrospectionContentEncryptionAlgorithm = types.StringValue(*in.TokenIntrospectionContentEncryptionAlgorithm)
+	} else {
+		result.TokenIntrospectionContentEncryptionAlgorithm = types.StringNull()
+	}
+	if in.TokenIntrospectionEncryptionAlgorithm != nil {
+		result.TokenIntrospectionEncryptionAlgorithm = types.StringValue(*in.TokenIntrospectionEncryptionAlgorithm)
+	} else {
+		result.TokenIntrospectionEncryptionAlgorithm = types.StringNull()
+	}
+	if in.TokenIntrospectionSigningAlgorithm != nil {
+		result.TokenIntrospectionSigningAlgorithm = types.StringValue(*in.TokenIntrospectionSigningAlgorithm)
+	} else {
+		result.TokenIntrospectionSigningAlgorithm = types.StringNull()
+	}
+	if in.UserAuthorizationUrlOverride != nil {
+		result.UserAuthorizationUrlOverride = types.StringValue(*in.UserAuthorizationUrlOverride)
+	} else {
+		result.UserAuthorizationUrlOverride = types.StringNull()
+	}
+	if in.ValidateUsingAllEligibleAtms != nil {
+		result.ValidateUsingAllEligibleAtms = types.BoolValue(*in.ValidateUsingAllEligibleAtms)
+	} else {
+		result.ValidateUsingAllEligibleAtms = types.BoolNull()
+	}
+
+	return &result
+}
+
+func flattenRedirectValidationSettings(in *pf.RedirectValidationSettings) *RedirectValidationSettingsData {
+	result := RedirectValidationSettingsData{}
+	result.Id = types.StringValue("settings")
+	if in.RedirectValidationLocalSettings != nil {
+		result.RedirectValidationLocalSettings = flattenRedirectValidationLocalSettings(in.RedirectValidationLocalSettings)
+	}
+	if in.RedirectValidationPartnerSettings != nil {
+		result.RedirectValidationPartnerSettings = flattenRedirectValidationPartnerSettings(in.RedirectValidationPartnerSettings)
+	}
+
+	return &result
+}
+
+func flattenMapAttributeFulfillmentValues(in map[string]*pf.AttributeFulfillmentValue) map[string]*AttributeFulfillmentValueData {
+	results := map[string]*AttributeFulfillmentValueData{}
+	for s, data := range in {
+		results[s] = flattenAttributeFulfillmentValue(data)
+	}
+	return results
+}
+func flattenAttributeFulfillmentValue(in *pf.AttributeFulfillmentValue) *AttributeFulfillmentValueData {
+	result := AttributeFulfillmentValueData{}
+	if in.Source != nil {
+		result.Source = flattenSourceTypeIdKey(in.Source)
+	}
+	if in.Value != nil {
+		result.Value = types.StringValue(*in.Value)
+	}
+
+	return &result
+}
+
+func flattenMapBinaryLdapAttributeSettingss(in map[string]*pf.BinaryLdapAttributeSettings) map[string]*BinaryLdapAttributeSettingsData {
+	results := map[string]*BinaryLdapAttributeSettingsData{}
+	for s, data := range in {
+		results[s] = flattenBinaryLdapAttributeSettings(data)
+	}
+	return results
+}
+func flattenBinaryLdapAttributeSettings(in *pf.BinaryLdapAttributeSettings) *BinaryLdapAttributeSettingsData {
+	result := BinaryLdapAttributeSettingsData{}
+	if in.BinaryEncoding != nil {
+		result.BinaryEncoding = types.StringValue(*in.BinaryEncoding)
+	} else {
+		result.BinaryEncoding = types.StringNull()
+	}
+
+	return &result
+}
+
+func flattenClientAuth(in *pf.ClientAuth) *ClientAuthData {
+	result := ClientAuthData{}
+	if in.ClientCertIssuerDn != nil {
+		result.ClientCertIssuerDn = types.StringValue(*in.ClientCertIssuerDn)
+	} else {
+		result.ClientCertIssuerDn = types.StringNull()
+	}
+	if in.ClientCertSubjectDn != nil {
+		result.ClientCertSubjectDn = types.StringValue(*in.ClientCertSubjectDn)
+	} else {
+		result.ClientCertSubjectDn = types.StringNull()
+	}
+	if in.EncryptedSecret != nil {
+		result.EncryptedSecret = types.StringValue(*in.EncryptedSecret)
+	} else {
+		result.EncryptedSecret = types.StringNull()
+	}
+	if in.EnforceReplayPrevention != nil {
+		result.EnforceReplayPrevention = types.BoolValue(*in.EnforceReplayPrevention)
+	} else {
+		result.EnforceReplayPrevention = types.BoolNull()
+	}
+	if in.Secret != nil {
+		result.Secret = types.StringValue(*in.Secret)
+	} else {
+		result.Secret = types.StringNull()
+	}
+	if in.TokenEndpointAuthSigningAlgorithm != nil {
+		result.TokenEndpointAuthSigningAlgorithm = types.StringValue(*in.TokenEndpointAuthSigningAlgorithm)
+	} else {
+		result.TokenEndpointAuthSigningAlgorithm = types.StringNull()
+	}
+	if in.Type != nil {
+		result.Type = types.StringValue(*in.Type)
+	} else {
+		result.Type = types.StringNull()
+	}
+
+	return &result
+}
+
+func flattenClientOIDCPolicy(in *pf.ClientOIDCPolicy) *ClientOIDCPolicyData {
+	result := ClientOIDCPolicyData{}
+	if in.GrantAccessSessionRevocationApi != nil {
+		result.GrantAccessSessionRevocationApi = types.BoolValue(*in.GrantAccessSessionRevocationApi)
+	} else {
+		result.GrantAccessSessionRevocationApi = types.BoolNull()
+	}
+	if in.GrantAccessSessionSessionManagementApi != nil {
+		result.GrantAccessSessionSessionManagementApi = types.BoolValue(*in.GrantAccessSessionSessionManagementApi)
+	} else {
+		result.GrantAccessSessionSessionManagementApi = types.BoolNull()
+	}
+	if in.IdTokenContentEncryptionAlgorithm != nil {
+		result.IdTokenContentEncryptionAlgorithm = types.StringValue(*in.IdTokenContentEncryptionAlgorithm)
+	} else {
+		result.IdTokenContentEncryptionAlgorithm = types.StringNull()
+	}
+	if in.IdTokenEncryptionAlgorithm != nil {
+		result.IdTokenEncryptionAlgorithm = types.StringValue(*in.IdTokenEncryptionAlgorithm)
+	} else {
+		result.IdTokenEncryptionAlgorithm = types.StringNull()
+	}
+	if in.IdTokenSigningAlgorithm != nil {
+		result.IdTokenSigningAlgorithm = types.StringValue(*in.IdTokenSigningAlgorithm)
+	} else {
+		result.IdTokenSigningAlgorithm = types.StringNull()
+	}
+	if in.LogoutUris != nil {
+		result.LogoutUris = flattenStringList(*in.LogoutUris)
+	}
+	if in.PairwiseIdentifierUserType != nil {
+		result.PairwiseIdentifierUserType = types.BoolValue(*in.PairwiseIdentifierUserType)
+	} else {
+		result.PairwiseIdentifierUserType = types.BoolNull()
+	}
+	if in.PingAccessLogoutCapable != nil {
+		result.PingAccessLogoutCapable = types.BoolValue(*in.PingAccessLogoutCapable)
+	} else {
+		result.PingAccessLogoutCapable = types.BoolNull()
+	}
+	if in.PolicyGroup != nil && in.PolicyGroup.Id != nil && *in.PolicyGroup.Id != "" {
+		result.PolicyGroup = types.StringValue(*in.PolicyGroup.Id)
+	} else {
+		result.PolicyGroup = types.StringNull()
+	}
+	if in.SectorIdentifierUri != nil {
+		result.SectorIdentifierUri = types.StringValue(*in.SectorIdentifierUri)
+	} else {
+		result.SectorIdentifierUri = types.StringNull()
+	}
+
+	return &result
+}
+
+func flattenConditionalIssuanceCriteriaEntrys(in *[]*pf.ConditionalIssuanceCriteriaEntry) *[]*ConditionalIssuanceCriteriaEntryData {
+	results := []*ConditionalIssuanceCriteriaEntryData{}
+	for _, data := range *in {
+		results = append(results, flattenConditionalIssuanceCriteriaEntry(data))
+	}
+	return &results
+}
+func flattenConditionalIssuanceCriteriaEntry(in *pf.ConditionalIssuanceCriteriaEntry) *ConditionalIssuanceCriteriaEntryData {
+	result := ConditionalIssuanceCriteriaEntryData{}
+	if in.AttributeName != nil {
+		result.AttributeName = types.StringValue(*in.AttributeName)
+	}
+	if in.Condition != nil {
+		result.Condition = types.StringValue(*in.Condition)
+	}
+	if in.ErrorResult != nil {
+		result.ErrorResult = types.StringValue(*in.ErrorResult)
+	} else {
+		result.ErrorResult = types.StringNull()
+	}
+	if in.Source != nil {
+		result.Source = flattenSourceTypeIdKey(in.Source)
+	}
+	if in.Value != nil {
+		result.Value = types.StringValue(*in.Value)
+	}
+
+	return &result
+}
+
+func flattenCustomAttributeSource(in *pf.CustomAttributeSource) *CustomAttributeSourceData {
+	result := CustomAttributeSourceData{}
+	if in.AttributeContractFulfillment != nil {
+		result.AttributeContractFulfillment = flattenMapAttributeFulfillmentValues(in.AttributeContractFulfillment)
+	}
+	if in.DataStoreRef != nil && in.DataStoreRef.Id != nil && *in.DataStoreRef.Id != "" {
+		result.DataStoreRef = types.StringValue(*in.DataStoreRef.Id)
+	} else {
+		result.DataStoreRef = types.StringNull()
+	}
+	if in.Description != nil {
+		result.Description = types.StringValue(*in.Description)
+	} else {
+		result.Description = types.StringNull()
+	}
+	if in.FilterFields != nil {
+		result.FilterFields = flattenFieldEntrys(in.FilterFields)
+	}
+	if in.Id != nil {
+		result.Id = types.StringValue(*in.Id)
+	} else {
+		result.Id = types.StringNull()
+	}
+
+	return &result
+}
+
+func flattenExpressionIssuanceCriteriaEntrys(in *[]*pf.ExpressionIssuanceCriteriaEntry) *[]*ExpressionIssuanceCriteriaEntryData {
+	results := []*ExpressionIssuanceCriteriaEntryData{}
+	for _, data := range *in {
+		results = append(results, flattenExpressionIssuanceCriteriaEntry(data))
+	}
+	return &results
+}
+func flattenExpressionIssuanceCriteriaEntry(in *pf.ExpressionIssuanceCriteriaEntry) *ExpressionIssuanceCriteriaEntryData {
+	result := ExpressionIssuanceCriteriaEntryData{}
+	if in.ErrorResult != nil {
+		result.ErrorResult = types.StringValue(*in.ErrorResult)
+	} else {
+		result.ErrorResult = types.StringNull()
+	}
+	if in.Expression != nil {
+		result.Expression = types.StringValue(*in.Expression)
+	}
+
+	return &result
+}
+
+func flattenFieldEntrys(in *[]*pf.FieldEntry) *[]*FieldEntryData {
+	results := []*FieldEntryData{}
+	for _, data := range *in {
+		results = append(results, flattenFieldEntry(data))
+	}
+	return &results
+}
+func flattenFieldEntry(in *pf.FieldEntry) *FieldEntryData {
+	result := FieldEntryData{}
+	if in.Name != nil {
+		result.Name = types.StringValue(*in.Name)
+	}
+	if in.Value != nil {
+		result.Value = types.StringValue(*in.Value)
+	} else {
+		result.Value = types.StringNull()
+	}
+
+	return &result
+}
+
+func flattenIssuanceCriteria(in *pf.IssuanceCriteria) *IssuanceCriteriaData {
+	result := IssuanceCriteriaData{}
+	if in.ConditionalCriteria != nil {
+		result.ConditionalCriteria = flattenConditionalIssuanceCriteriaEntrys(in.ConditionalCriteria)
+	}
+	if in.ExpressionCriteria != nil {
+		result.ExpressionCriteria = flattenExpressionIssuanceCriteriaEntrys(in.ExpressionCriteria)
+	}
+
+	return &result
+}
+
+func flattenJdbcAttributeSource(in *pf.JdbcAttributeSource) *JdbcAttributeSourceData {
+	result := JdbcAttributeSourceData{}
+	if in.AttributeContractFulfillment != nil {
+		result.AttributeContractFulfillment = flattenMapAttributeFulfillmentValues(in.AttributeContractFulfillment)
+	}
+	if in.ColumnNames != nil {
+		result.ColumnNames = flattenStringList(*in.ColumnNames)
+	}
+	if in.DataStoreRef != nil && in.DataStoreRef.Id != nil && *in.DataStoreRef.Id != "" {
+		result.DataStoreRef = types.StringValue(*in.DataStoreRef.Id)
+	} else {
+		result.DataStoreRef = types.StringNull()
+	}
+	if in.Description != nil {
+		result.Description = types.StringValue(*in.Description)
+	} else {
+		result.Description = types.StringNull()
+	}
+	if in.Filter != nil {
+		result.Filter = types.StringValue(*in.Filter)
+	} else {
+		result.Filter = types.StringNull()
+	}
+	if in.Id != nil {
+		result.Id = types.StringValue(*in.Id)
+	} else {
+		result.Id = types.StringNull()
+	}
+	if in.Schema != nil {
+		result.Schema = types.StringValue(*in.Schema)
+	} else {
+		result.Schema = types.StringNull()
+	}
+	if in.Table != nil {
+		result.Table = types.StringValue(*in.Table)
+	} else {
+		result.Table = types.StringNull()
+	}
+
+	return &result
+}
+
+func flattenJwksSettings(in *pf.JwksSettings) *JwksSettingsData {
+	result := JwksSettingsData{}
+	if in.Jwks != nil {
+		result.Jwks = types.StringValue(*in.Jwks)
+	} else {
+		result.Jwks = types.StringNull()
+	}
+	if in.JwksUrl != nil {
+		result.JwksUrl = types.StringValue(*in.JwksUrl)
+	} else {
+		result.JwksUrl = types.StringNull()
+	}
+
+	return &result
+}
+
+func flattenLdapAttributeSource(in *pf.LdapAttributeSource) *LdapAttributeSourceData {
+	result := LdapAttributeSourceData{}
+	if in.AttributeContractFulfillment != nil {
+		result.AttributeContractFulfillment = flattenMapAttributeFulfillmentValues(in.AttributeContractFulfillment)
+	}
+	if in.BaseDn != nil {
+		result.BaseDn = types.StringValue(*in.BaseDn)
+	} else {
+		result.BaseDn = types.StringNull()
+	}
+	if in.BinaryAttributeSettings != nil {
+		result.BinaryAttributeSettings = flattenMapBinaryLdapAttributeSettingss(in.BinaryAttributeSettings)
+	}
+	if in.DataStoreRef != nil && in.DataStoreRef.Id != nil && *in.DataStoreRef.Id != "" {
+		result.DataStoreRef = types.StringValue(*in.DataStoreRef.Id)
+	} else {
+		result.DataStoreRef = types.StringNull()
+	}
+	if in.Description != nil {
+		result.Description = types.StringValue(*in.Description)
+	} else {
+		result.Description = types.StringNull()
+	}
+	if in.Id != nil {
+		result.Id = types.StringValue(*in.Id)
+	} else {
+		result.Id = types.StringNull()
+	}
+	if in.MemberOfNestedGroup != nil {
+		result.MemberOfNestedGroup = types.BoolValue(*in.MemberOfNestedGroup)
+	} else {
+		result.MemberOfNestedGroup = types.BoolNull()
+	}
+	if in.SearchAttributes != nil {
+		result.SearchAttributes = flattenStringList(*in.SearchAttributes)
+	}
+	if in.SearchFilter != nil {
+		result.SearchFilter = types.StringValue(*in.SearchFilter)
+	} else {
+		result.SearchFilter = types.StringNull()
+	}
+	if in.SearchScope != nil {
+		result.SearchScope = types.StringValue(*in.SearchScope)
+	} else {
+		result.SearchScope = types.StringNull()
+	}
+
+	return &result
+}
+
+func flattenMapParameterValuess(in map[string]*pf.ParameterValues) map[string]*ParameterValuesData {
+	results := map[string]*ParameterValuesData{}
+	for s, data := range in {
+		results[s] = flattenParameterValues(data)
+	}
+	return results
+}
+func flattenParameterValues(in *pf.ParameterValues) *ParameterValuesData {
+	result := ParameterValuesData{}
+	if in.Values != nil {
+		result.Values = flattenStringList(*in.Values)
+	}
+
+	return &result
+}
+
+func flattenRedirectValidationLocalSettings(in *pf.RedirectValidationLocalSettings) *RedirectValidationLocalSettingsData {
+	result := RedirectValidationLocalSettingsData{}
+	if in.EnableInErrorResourceValidation != nil {
+		result.EnableInErrorResourceValidation = types.BoolValue(*in.EnableInErrorResourceValidation)
+	} else {
+		result.EnableInErrorResourceValidation = types.BoolNull()
+	}
+	if in.EnableTargetResourceValidationForIdpDiscovery != nil {
+		result.EnableTargetResourceValidationForIdpDiscovery = types.BoolValue(*in.EnableTargetResourceValidationForIdpDiscovery)
+	} else {
+		result.EnableTargetResourceValidationForIdpDiscovery = types.BoolNull()
+	}
+	if in.EnableTargetResourceValidationForSLO != nil {
+		result.EnableTargetResourceValidationForSLO = types.BoolValue(*in.EnableTargetResourceValidationForSLO)
+	} else {
+		result.EnableTargetResourceValidationForSLO = types.BoolNull()
+	}
+	if in.EnableTargetResourceValidationForSSO != nil {
+		result.EnableTargetResourceValidationForSSO = types.BoolValue(*in.EnableTargetResourceValidationForSSO)
+	} else {
+		result.EnableTargetResourceValidationForSSO = types.BoolNull()
+	}
+	if in.WhiteList != nil {
+		result.WhiteList = flattenRedirectValidationSettingsWhitelistEntrys(in.WhiteList)
+	}
+
+	return &result
+}
+
+func flattenRedirectValidationPartnerSettings(in *pf.RedirectValidationPartnerSettings) *RedirectValidationPartnerSettingsData {
+	result := RedirectValidationPartnerSettingsData{}
+	if in.EnableWreplyValidationSLO != nil {
+		result.EnableWreplyValidationSLO = types.BoolValue(*in.EnableWreplyValidationSLO)
+	} else {
+		result.EnableWreplyValidationSLO = types.BoolNull()
+	}
+
+	return &result
+}
+
+func flattenRedirectValidationSettingsWhitelistEntrys(in *[]*pf.RedirectValidationSettingsWhitelistEntry) *[]*RedirectValidationSettingsWhitelistEntryData {
+	results := []*RedirectValidationSettingsWhitelistEntryData{}
+	for _, data := range *in {
+		results = append(results, flattenRedirectValidationSettingsWhitelistEntry(data))
+	}
+	return &results
+}
+func flattenRedirectValidationSettingsWhitelistEntry(in *pf.RedirectValidationSettingsWhitelistEntry) *RedirectValidationSettingsWhitelistEntryData {
+	result := RedirectValidationSettingsWhitelistEntryData{}
+	if in.AllowQueryAndFragment != nil {
+		result.AllowQueryAndFragment = types.BoolValue(*in.AllowQueryAndFragment)
+	} else {
+		result.AllowQueryAndFragment = types.BoolNull()
+	}
+	if in.IdpDiscovery != nil {
+		result.IdpDiscovery = types.BoolValue(*in.IdpDiscovery)
+	} else {
+		result.IdpDiscovery = types.BoolNull()
+	}
+	if in.InErrorResource != nil {
+		result.InErrorResource = types.BoolValue(*in.InErrorResource)
+	} else {
+		result.InErrorResource = types.BoolNull()
+	}
+	if in.RequireHttps != nil {
+		result.RequireHttps = types.BoolValue(*in.RequireHttps)
+	} else {
+		result.RequireHttps = types.BoolNull()
+	}
+	if in.TargetResourceSLO != nil {
+		result.TargetResourceSLO = types.BoolValue(*in.TargetResourceSLO)
+	} else {
+		result.TargetResourceSLO = types.BoolNull()
+	}
+	if in.TargetResourceSSO != nil {
+		result.TargetResourceSSO = types.BoolValue(*in.TargetResourceSSO)
+	} else {
+		result.TargetResourceSSO = types.BoolNull()
+	}
+	if in.ValidDomain != nil {
+		result.ValidDomain = types.StringValue(*in.ValidDomain)
+	}
+	if in.ValidPath != nil {
+		result.ValidPath = types.StringValue(*in.ValidPath)
+	} else {
+		result.ValidPath = types.StringNull()
+	}
+
+	return &result
+}
+
+func flattenSourceTypeIdKey(in *pf.SourceTypeIdKey) *SourceTypeIdKeyData {
+	result := SourceTypeIdKeyData{}
+	if in.Id != nil {
+		result.Id = types.StringValue(*in.Id)
+	} else {
+		result.Id = types.StringNull()
+	}
+	if in.Type != nil {
+		result.Type = types.StringValue(*in.Type)
+	}
+
+	return &result
+}
+
+func flattenJdbcAttributeSources(in *[]*pf.AttributeSource) []JdbcAttributeSourceData {
+	results := []JdbcAttributeSourceData{}
+	for _, source := range *in {
+		if source.Type != nil && *source.Type == "JDBC" {
+			source.JdbcAttributeSource.DataStoreRef = source.DataStoreRef
+			source.JdbcAttributeSource.AttributeContractFulfillment = source.AttributeContractFulfillment
+			source.JdbcAttributeSource.Id = source.Id
+			source.JdbcAttributeSource.Description = source.Description
+			results = append(results, *flattenJdbcAttributeSource(&source.JdbcAttributeSource))
+		}
+	}
+	return results
+}
+
+func flattenLdapAttributeSources(in *[]*pf.AttributeSource) []LdapAttributeSourceData {
+	results := []LdapAttributeSourceData{}
+	for _, source := range *in {
+		if source.Type != nil && *source.Type == "LDAP" {
+			results = append(results, *flattenLdapAttributeSource(&source.LdapAttributeSource))
+		}
+	}
+	return results
+}
+
+func flattenCustomAttributeSources(in *[]*pf.AttributeSource) []CustomAttributeSourceData {
+	results := []CustomAttributeSourceData{}
+	for _, source := range *in {
+		if source.Type != nil && *source.Type == "CUSTOM" {
+			results = append(results, *flattenCustomAttributeSource(&source.CustomAttributeSource))
+		}
+	}
+	return results
+}
+
+func flattenStringList(in []*string) []types.String {
+	results := []types.String{}
+	for _, s := range in {
+		results = append(results, types.StringValue(*s))
+	}
+	return results
+}
+
+func issuanceCriteriaShouldFlatten(in *pf.IssuanceCriteria) bool {
+	if in.ExpressionCriteria != nil && len(*in.ExpressionCriteria) > 0 {
+		return true
+	}
+	if in.ConditionalCriteria != nil && len(*in.ConditionalCriteria) > 0 {
+		return true
+	}
+	return false
+}

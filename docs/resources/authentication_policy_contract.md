@@ -3,12 +3,12 @@
 page_title: "pingfederate_authentication_policy_contract Resource - terraform-provider-pingfederate"
 subcategory: ""
 description: |-
-  Provides configuration for Authentication Policy Contracts within PingFederate.
+  Authentication Policy Contracts carry user attributes from the identity provider to the service provider.
 ---
 
 # pingfederate_authentication_policy_contract (Resource)
 
-Provides configuration for Authentication Policy Contracts within PingFederate.
+Authentication Policy Contracts carry user attributes from the identity provider to the service provider.
 
 ## Example Usage
 
@@ -28,13 +28,9 @@ resource "pingfederate_authentication_policy_contract" "example" {
 
 ### Optional
 
-- `extended_attributes` (Set of String) A list of additional attributes as needed.
-- `policy_contract_id` (String) The persistent, unique ID for the authentication policy contract. It can be any combination of [a-zA-Z0-9._-]. This property is system-assigned if not specified.
-
-### Read-Only
-
 - `core_attributes` (Set of String) A list of read-only assertion attributes (for example, subject) that are automatically populated by PingFederate.
-- `id` (String) The ID of this resource.
+- `extended_attributes` (Set of String) A list of additional attributes as needed.
+- `id` (String) The persistent, unique ID for the authentication policy contract. It can be any combination of [a-zA-Z0-9._-]. This property is system-assigned if not specified.
 
 ## Import
 
