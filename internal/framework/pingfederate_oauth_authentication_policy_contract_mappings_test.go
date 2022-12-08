@@ -3,7 +3,6 @@ package framework
 import (
 	"context"
 	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
@@ -29,11 +28,9 @@ func init() {
 				return fmt.Errorf("unable to list oauth authentication policy contract mappings %s", err)
 			}
 			for _, item := range *results.Items {
-				if strings.Contains(*item.Id, "acc_test") {
-					_, _, err := pfc.OauthAuthenticationPolicyContractMappings.DeleteApcMapping(&oauthAuthenticationPolicyContractMappings.DeleteApcMappingInput{Id: *item.Id})
-					if err != nil {
-						return fmt.Errorf("unable to sweep oauth authentication policy contract mapping %s because %s", *item.Id, err)
-					}
+				_, _, err := pfc.OauthAuthenticationPolicyContractMappings.DeleteApcMapping(&oauthAuthenticationPolicyContractMappings.DeleteApcMappingInput{Id: *item.Id})
+				if err != nil {
+					return fmt.Errorf("unable to sweep oauth authentication policy contract mapping %s because %s", *item.Id, err)
 				}
 			}
 			return nil
@@ -128,7 +125,7 @@ resource "pingfederate_ldap_data_store" "example" {
 }
 
 resource "pingfederate_authentication_policy_contract" "demo" {
-  name                = "acc_test_upgrade"
+  name                = "acc_test_upgrade2"
   extended_attributes = ["foo", "email"]
 }
 
@@ -208,7 +205,7 @@ resource "pingfederate_ldap_data_store" "example" {
 }
 
 resource "pingfederate_authentication_policy_contract" "demo" {
-  name                = "acc_test_upgrade"
+  name                = "acc_test_upgrade2"
   extended_attributes = ["foo", "email"]
 }
 

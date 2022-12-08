@@ -62,7 +62,7 @@ func (r *pingfederateOauthAuthenticationPolicyContractMappingResource) Create(ct
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create oauthAccessTokenMapping, got error: %s", err))
 		return
 	}
-	resp.Diagnostics.Append(resp.State.Set(ctx, *flattenApcToPersistentGrantMapping(body))...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, r.versionResponseModifier(flattenApcToPersistentGrantMapping(body)))...)
 }
 
 func (r *pingfederateOauthAuthenticationPolicyContractMappingResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -79,7 +79,7 @@ func (r *pingfederateOauthAuthenticationPolicyContractMappingResource) Read(ctx 
 		return
 	}
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, *flattenApcToPersistentGrantMapping(body))...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, r.versionResponseModifier(flattenApcToPersistentGrantMapping(body)))...)
 }
 
 func (r *pingfederateOauthAuthenticationPolicyContractMappingResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -100,7 +100,7 @@ func (r *pingfederateOauthAuthenticationPolicyContractMappingResource) Update(ct
 		return
 	}
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, *flattenApcToPersistentGrantMapping(body))...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, r.versionResponseModifier(flattenApcToPersistentGrantMapping(body)))...)
 }
 
 func (r *pingfederateOauthAuthenticationPolicyContractMappingResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -260,6 +260,34 @@ func (r *pingfederateOauthAuthenticationPolicyContractMappingResource) UpgradeSt
 
 func (r *pingfederateOauthAuthenticationPolicyContractMappingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+}
+
+// old version of pingfederate have different defaults which we need to handle
+func (r *pingfederateOauthAuthenticationPolicyContractMappingResource) versionResponseModifier(data *ApcToPersistentGrantMappingData) *ApcToPersistentGrantMappingData {
+	if r.client.IsVersionLessEqThan(10, 2) {
+		for i := range data.LdapAttributeSources {
+			if data.LdapAttributeSources[i].BaseDn.IsNull() {
+				data.LdapAttributeSources[i].BaseDn = types.StringValue("")
+			}
+		}
+		if data.IssuanceCriteria != nil {
+			if data.IssuanceCriteria.ConditionalCriteria != nil {
+				for i := range *data.IssuanceCriteria.ConditionalCriteria {
+					if (*data.IssuanceCriteria.ConditionalCriteria)[i].ErrorResult.IsNull() {
+						(*data.IssuanceCriteria.ConditionalCriteria)[i].ErrorResult = types.StringValue("")
+					}
+				}
+			}
+			if data.IssuanceCriteria.ExpressionCriteria != nil {
+				for i := range *data.IssuanceCriteria.ExpressionCriteria {
+					if (*data.IssuanceCriteria.ExpressionCriteria)[i].ErrorResult.IsNull() {
+						(*data.IssuanceCriteria.ExpressionCriteria)[i].ErrorResult = types.StringValue("")
+					}
+				}
+			}
+		}
+	}
+	return data
 }
 
 func resourceApcToPersistentGrantMappingV0() tfsdk.Schema {
