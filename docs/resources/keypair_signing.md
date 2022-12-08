@@ -15,7 +15,7 @@ Provides configuration for Signing KeyPairs within PingFederate.
 ```terraform
 # importing a keypair using base64 encoded PKCS12 data
 resource "pingfederate_keypair_signing" "example_import" {
-  file_data = filebase64("test_cases/provider.p12")
+  file_data = filebase64("provider.p12")
   password  = "password"
 }
 
