@@ -6,6 +6,54 @@ import (
 	"fmt"
 )
 
+func (f *AttributeSource) UnmarshalJSON(b []byte) error {
+	type resp AttributeSource
+	err := json.Unmarshal(b, (*resp)(f))
+	if err != nil {
+		return err
+	}
+	switch *f.Type {
+	case "LDAP":
+		f.LdapAttributeSource = LdapAttributeSource{
+			AttributeContractFulfillment: f.AttributeContractFulfillment,
+			BaseDn:                       f.BaseDn,
+			BinaryAttributeSettings:      f.BinaryAttributeSettings,
+			DataStoreRef:                 f.DataStoreRef,
+			Description:                  f.Description,
+			Id:                           f.Id,
+			MemberOfNestedGroup:          f.MemberOfNestedGroup,
+			SearchAttributes:             f.SearchAttributes,
+			SearchFilter:                 f.SearchFilter,
+			SearchScope:                  f.SearchScope,
+			Type:                         f.Type,
+		}
+	case "JDBC":
+		f.JdbcAttributeSource = JdbcAttributeSource{
+			AttributeContractFulfillment: f.AttributeContractFulfillment,
+			ColumnNames:                  f.ColumnNames,
+			DataStoreRef:                 f.DataStoreRef,
+			Description:                  f.Description,
+			Filter:                       f.Filter,
+			Id:                           f.Id,
+			Schema:                       f.Schema,
+			Table:                        f.Table,
+			Type:                         f.Type,
+		}
+	case "CUSTOM":
+		f.CustomAttributeSource = CustomAttributeSource{
+			AttributeContractFulfillment: f.AttributeContractFulfillment,
+			DataStoreRef:                 f.DataStoreRef,
+			Description:                  f.Description,
+			FilterFields:                 f.FilterFields,
+			Id:                           f.Id,
+			Type:                         f.Type,
+		}
+	default:
+		return errors.New("unknown data store type")
+	}
+	return nil
+}
+
 func (f *DataStores) UnmarshalJSON(b []byte) error {
 	type resp DataStores
 	err := json.Unmarshal(b, (*resp)(f))

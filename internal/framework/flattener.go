@@ -353,7 +353,6 @@ func flattenClient(in *pf.Client) *ClientData {
 
 func flattenRedirectValidationSettings(in *pf.RedirectValidationSettings) *RedirectValidationSettingsData {
 	result := RedirectValidationSettingsData{}
-	result.Id = types.StringValue("settings")
 	if in.RedirectValidationLocalSettings != nil {
 		result.RedirectValidationLocalSettings = flattenRedirectValidationLocalSettings(in.RedirectValidationLocalSettings)
 	}

@@ -62,9 +62,7 @@ func (r *pingfederateOAuthClientResource) Create(ctx context.Context, req resour
 	resp.Diagnostics.Append(resp.State.Set(ctx, r.versionResponseModifier(flattenClient(body)))...)
 	if data.ClientAuth != nil && !data.ClientAuth.Secret.IsNull() {
 		var originalSecret string
-		//resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, tftypes.NewAttributePath().WithAttributeName("client_auth").WithAttributeName("secret"), &originalSecret)...)
 		resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, path.Root("client_auth").AtName("secret"), &originalSecret)...)
-		//resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tftypes.NewAttributePath().WithAttributeName("client_auth").WithAttributeName("secret"), originalSecret)...)
 		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("client_auth").AtName("secret"), originalSecret)...)
 	}
 }
@@ -251,9 +249,6 @@ func (r *pingfederateOAuthClientResource) UpgradeState(context.Context) map[int6
 					clientDataV1.ExtendedParameters[property.KeyName.ValueString()] = &ParameterValuesData{Values: property.Values}
 				}
 				resp.Diagnostics.Append(resp.State.Set(ctx, &clientDataV1)...)
-				if resp.Diagnostics.HasError() {
-					return
-				}
 			},
 		},
 	}

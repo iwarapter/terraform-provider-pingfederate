@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-framework/types"
+
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -73,7 +75,9 @@ func (r *pingfederateRedirectValidationSettingsResource) Read(ctx context.Contex
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to get RedirectValidation, got error: %s", err))
 		return
 	}
-	resp.Diagnostics.Append(resp.State.Set(ctx, *flattenRedirectValidationSettings(body))...)
+	save := *flattenRedirectValidationSettings(body)
+	save.Id = types.StringValue("settings")
+	resp.Diagnostics.Append(resp.State.Set(ctx, save)...)
 }
 
 func (r *pingfederateRedirectValidationSettingsResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -91,7 +95,9 @@ func (r *pingfederateRedirectValidationSettingsResource) Update(ctx context.Cont
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update RedirectValidation, got error: %s", err))
 		return
 	}
-	resp.Diagnostics.Append(resp.State.Set(ctx, *flattenRedirectValidationSettings(body))...)
+	save := *flattenRedirectValidationSettings(body)
+	save.Id = types.StringValue("settings")
+	resp.Diagnostics.Append(resp.State.Set(ctx, save)...)
 }
 
 func (r *pingfederateRedirectValidationSettingsResource) Delete(ctx context.Context, _ resource.DeleteRequest, resp *resource.DeleteResponse) {

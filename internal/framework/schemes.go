@@ -12,6 +12,7 @@ import (
 func resourceApcToPersistentGrantMapping() tfsdk.Schema {
 	return tfsdk.Schema{
 		Description: `An authentication policy contract mapping into an OAuth persistent grant.`,
+		Version:     1,
 		Attributes: map[string]tfsdk.Attribute{
 			"attribute_contract_fulfillment": {
 				Description: `A list of mappings from attribute names to their fulfillment values.`,
@@ -228,7 +229,7 @@ func resourceClient() tfsdk.Schema {
 					ElemType: types.StringType,
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.ListValueMust(types.StringType, []attr.Value{})),
+					Default(types.ListValueMust(types.StringType, []attr.Value{types.StringValue("")})),
 				},
 			},
 			"extended_parameters": {
@@ -370,7 +371,7 @@ func resourceClient() tfsdk.Schema {
 					ElemType: types.StringType,
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.ListValueMust(types.StringType, []attr.Value{})),
+					Default(types.ListValueMust(types.StringType, []attr.Value{types.StringValue("")})),
 				},
 			},
 			"refresh_rolling": {
@@ -482,7 +483,7 @@ func resourceClient() tfsdk.Schema {
 					ElemType: types.StringType,
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.ListValueMust(types.StringType, []attr.Value{})),
+					Default(types.ListValueMust(types.StringType, []attr.Value{types.StringValue("")})),
 				},
 			},
 			"restricted_scopes": {
@@ -493,7 +494,7 @@ func resourceClient() tfsdk.Schema {
 					ElemType: types.StringType,
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					Default(types.ListValueMust(types.StringType, []attr.Value{})),
+					Default(types.ListValueMust(types.StringType, []attr.Value{types.StringValue("")})),
 				},
 			},
 			"token_exchange_processor_policy_ref": {
@@ -622,12 +623,20 @@ func listLdapAttributeSource() map[string]tfsdk.Attribute {
 		"base_dn": {
 			Description: `The base DN to search from. If not specified, the search will start at the LDAP's root.`,
 			Optional:    true,
+			Computed:    true,
 			Type:        types.StringType,
+			PlanModifiers: tfsdk.AttributePlanModifiers{
+				Default(types.StringValue("")),
+			},
 		},
 		"binary_attribute_settings": {
 			Description: `The advanced settings for binary LDAP attributes.`,
 			Optional:    true,
+			Computed:    true,
 			Attributes:  tfsdk.MapNestedAttributes(mapBinaryLdapAttributeSettings()),
+			PlanModifiers: tfsdk.AttributePlanModifiers{
+				Default(types.MapValueMust(types.ObjectType{AttrTypes: map[string]attr.Type{"binary_encoding": types.StringType}}, map[string]attr.Value{})),
+			},
 		},
 		"data_store_ref": {
 			Description: `Reference to the associated data store.`,
