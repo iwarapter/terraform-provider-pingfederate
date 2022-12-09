@@ -8,16 +8,15 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/iwarapter/pingfederate-sdk-go/services/redirectValidation"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
 var (
 	_ resource.Resource                = &pingfederateRedirectValidationSettingsResource{}
+	_ resource.ResourceWithSchema      = &pingfederateRedirectValidationSettingsResource{}
 	_ resource.ResourceWithConfigure   = &pingfederateRedirectValidationSettingsResource{}
 	_ resource.ResourceWithImportState = &pingfederateRedirectValidationSettingsResource{}
 )
@@ -30,8 +29,8 @@ func NewRedirectValidationResource() resource.Resource {
 	return &pingfederateRedirectValidationSettingsResource{}
 }
 
-func (r *pingfederateRedirectValidationSettingsResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return resourceRedirectValidationSettings(), nil
+func (r *pingfederateRedirectValidationSettingsResource) Schema(ctx context.Context, request resource.SchemaRequest, response *resource.SchemaResponse) {
+	response.Schema = resourceRedirectValidationSettings()
 }
 
 // Configure adds the client configured client to the resource.

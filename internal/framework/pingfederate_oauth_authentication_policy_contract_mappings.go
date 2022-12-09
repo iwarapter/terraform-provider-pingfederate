@@ -4,19 +4,20 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthAuthenticationPolicyContractMappings"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
 var (
 	_ resource.Resource                = &pingfederateOauthAuthenticationPolicyContractMappingResource{}
+	_ resource.ResourceWithSchema      = &pingfederateOauthAuthenticationPolicyContractMappingResource{}
 	_ resource.ResourceWithConfigure   = &pingfederateOauthAuthenticationPolicyContractMappingResource{}
 	_ resource.ResourceWithImportState = &pingfederateOauthAuthenticationPolicyContractMappingResource{}
 )
@@ -29,8 +30,8 @@ func NewOauthAuthenticationPolicyContractMappingResource() resource.Resource {
 	return &pingfederateOauthAuthenticationPolicyContractMappingResource{}
 }
 
-func (r *pingfederateOauthAuthenticationPolicyContractMappingResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return resourceApcToPersistentGrantMapping(), nil
+func (r *pingfederateOauthAuthenticationPolicyContractMappingResource) Schema(ctx context.Context, request resource.SchemaRequest, response *resource.SchemaResponse) {
+	response.Schema = resourceApcToPersistentGrantMapping()
 }
 
 // Configure adds the client configured client to the resource.
@@ -250,8 +251,6 @@ func (r *pingfederateOauthAuthenticationPolicyContractMappingResource) UpgradeSt
 						}
 					}
 				}
-				if mappingDataV1.Id.IsNull() {
-				}
 				resp.Diagnostics.Append(resp.State.Set(ctx, &mappingDataV1)...)
 			},
 		},
@@ -290,221 +289,136 @@ func (r *pingfederateOauthAuthenticationPolicyContractMappingResource) versionRe
 	return data
 }
 
-func resourceApcToPersistentGrantMappingV0() tfsdk.Schema {
-	return tfsdk.Schema{
-		Attributes: map[string]tfsdk.Attribute{
-			"authentication_policy_contract_ref": {
-				Optional:   true,
-				Attributes: tfsdk.ListNestedAttributes(legacyResourceLinkSchema()),
-			},
-			"attribute_contract_fulfillment": {
+func resourceApcToPersistentGrantMappingV0() schema.Schema {
+	return schema.Schema{
+		Attributes: map[string]schema.Attribute{
+			"authentication_policy_contract_ref": resourceLinkSchemaV0(),
+			"attribute_contract_fulfillment":     attributeContractFulfilmentSchemaV0(),
+			"jdbc_attribute_source": schema.ListNestedAttribute{
 				Optional: true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"key_name": {
-						Type:     types.StringType,
-						Required: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"attribute_contract_fulfillment": attributeContractFulfilmentSchemaV0(),
+						"column_names": schema.ListAttribute{
+							Optional:    true,
+							ElementType: types.StringType,
+						},
+						"data_store_ref": resourceLinkSchemaV0(),
+						"description":    schema.StringAttribute{Optional: true},
+						"filter":         schema.StringAttribute{Optional: true},
+						"id":             schema.StringAttribute{Optional: true},
+						"schema":         schema.StringAttribute{Optional: true},
+						"table":          schema.StringAttribute{Optional: true},
 					},
-					"source": {
-						Attributes: tfsdk.ListNestedAttributes(singleSourceTypeIdKey()),
-						Required:   true,
-					},
-					"value": {
-						Type:     types.StringType,
-						Required: true,
-					},
-				}),
+				},
 			},
-			"jdbc_attribute_source": {
+			"ldap_attribute_source": schema.ListNestedAttribute{
 				Optional: true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"attribute_contract_fulfillment": {
-						Optional: true,
-						Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-							"key_name": {
-								Type:     types.StringType,
-								Required: true,
-							},
-							"source": {
-								Attributes: tfsdk.ListNestedAttributes(singleSourceTypeIdKey()),
-								Required:   true,
-							},
-							"value": {
-								Type:     types.StringType,
-								Required: true,
-							},
-						}),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"attribute_contract_fulfillment": attributeContractFulfilmentSchemaV0(),
+						"base_dn":                        schema.StringAttribute{Optional: true},
+						"binary_attribute_settings":      schema.MapAttribute{Optional: true, ElementType: types.StringType},
+						"data_store_ref":                 resourceLinkSchemaV0(),
+						"description":                    schema.StringAttribute{Optional: true},
+						"id":                             schema.StringAttribute{Optional: true},
+						"member_of_nested_group":         schema.BoolAttribute{Optional: true},
+						"search_attributes":              schema.ListAttribute{Optional: true, ElementType: types.StringType},
+						"search_filter":                  schema.StringAttribute{Optional: true},
+						"search_scope":                   schema.StringAttribute{Optional: true},
 					},
-					"column_names": {
-						Optional: true,
-						Type:     types.ListType{ElemType: types.StringType},
-					},
-					"data_store_ref": {
-						Required:   true,
-						Attributes: tfsdk.ListNestedAttributes(legacyResourceLinkSchema()),
-					},
-					"description": {
-						Optional: true,
-						Type:     types.StringType,
-					},
-					"filter": {
-						Optional: true,
-						Type:     types.StringType,
-					},
-					"id": {
-						Optional: true,
-						Type:     types.StringType,
-					},
-					"schema": {
-						Optional: true,
-						Type:     types.StringType,
-					},
-					"table": {
-						Optional: true,
-						Type:     types.StringType,
-					}}),
+				},
 			},
-			"ldap_attribute_source": {
+			"custom_attribute_source": schema.ListNestedAttribute{
 				Optional: true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"attribute_contract_fulfillment": {
-						Optional: true,
-						Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-							"key_name": {
-								Type:     types.StringType,
-								Required: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"attribute_contract_fulfillment": attributeContractFulfilmentSchemaV0(),
+						"filter_fields": schema.ListNestedAttribute{
+							Optional: true,
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"name":  schema.StringAttribute{Required: true},
+									"value": schema.StringAttribute{Optional: true},
+								},
 							},
-							"source": {
-								Attributes: tfsdk.ListNestedAttributes(singleSourceTypeIdKey()),
-								Required:   true,
-							},
-							"value": {
-								Type:     types.StringType,
-								Required: true,
-							},
-						}),
+						},
+						"data_store_ref": resourceLinkSchemaV0(),
+						"description":    schema.StringAttribute{Optional: true},
+						"id":             schema.StringAttribute{Optional: true},
 					},
-					"base_dn": {
-						Optional: true,
-						Type:     types.StringType,
-					},
-					"binary_attribute_settings": {
-						Optional: true,
-						Type:     types.MapType{ElemType: types.StringType},
-					},
-					"data_store_ref": {
-						Required:   true,
-						Attributes: tfsdk.ListNestedAttributes(legacyResourceLinkSchema()),
-					},
-					"description": {
-						Optional: true,
-						Type:     types.StringType,
-					},
-					"id": {
-						Optional: true,
-						Type:     types.StringType,
-					},
-					"member_of_nested_group": {
-						Optional: true,
-						Type:     types.BoolType,
-					},
-					"search_attributes": {
-						Optional: true,
-						Type:     types.ListType{ElemType: types.StringType},
-					},
-					"search_filter": {
-						Optional: true,
-						Type:     types.StringType,
-					},
-					"search_scope": {
-						Optional: true,
-						Type:     types.StringType,
-					},
-				}),
+				},
 			},
-			"custom_attribute_source": {
+			"id": schema.StringAttribute{Optional: true},
+			"issuance_criteria": schema.ListNestedAttribute{
 				Optional: true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"attribute_contract_fulfillment": {
-						Optional: true,
-						Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-							"key_name": {
-								Type:     types.StringType,
-								Required: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"conditional_criteria": schema.ListNestedAttribute{
+							Optional: true,
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"attribute_name": schema.StringAttribute{
+										Required: true,
+									},
+									"condition": schema.StringAttribute{
+										Required: true,
+									},
+									"error_result": schema.StringAttribute{
+										Optional: true,
+									},
+									"source": schema.ListNestedAttribute{
+										Required: true,
+										NestedObject: schema.NestedAttributeObject{
+											Attributes: singleSourceTypeIdKey(),
+										},
+									},
+									"value": schema.StringAttribute{
+										Required: true,
+									},
+								},
 							},
-							"source": {
-								Attributes: tfsdk.ListNestedAttributes(singleSourceTypeIdKey()),
-								Required:   true,
+						},
+						"expression_criteria": schema.ListNestedAttribute{
+							Optional: true,
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: listExpressionIssuanceCriteriaEntry(),
 							},
-							"value": {
-								Type:     types.StringType,
-								Required: true,
-							},
-						}),
+						},
 					},
-					"filter_fields": {
-						Optional: true,
-						Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-							"name": {
-								Required: true,
-								Type:     types.StringType,
-							},
-							"value": {
-								Optional: true,
-								Type:     types.StringType,
-							},
-						}),
-					},
-					"data_store_ref": {
-						Required:   true,
-						Attributes: tfsdk.ListNestedAttributes(legacyResourceLinkSchema()),
-					},
-					"description": {
-						Optional: true,
-						Type:     types.StringType,
-					},
-					"id": {
-						Optional: true,
-						Type:     types.StringType,
-					},
-				}),
+				},
 			},
-			"id": {
-				Optional: true,
-				Type:     types.StringType,
-			},
-			"issuance_criteria": {
-				Optional: true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"conditional_criteria": {
-						Optional: true,
-						Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-							"attribute_name": {
-								Required: true,
-								Type:     types.StringType,
-							},
-							"condition": {
-								Required: true,
-								Type:     types.StringType,
-							},
-							"error_result": {
-								Optional: true,
-								Type:     types.StringType,
-							},
-							"source": {
-								Required:   true,
-								Attributes: tfsdk.ListNestedAttributes(singleSourceTypeIdKey()),
-							},
-							"value": {
-								Required: true,
-								Type:     types.StringType,
-							}}),
+		},
+	}
+}
+
+func attributeContractFulfilmentSchemaV0() schema.ListNestedAttribute {
+	return schema.ListNestedAttribute{
+		Optional: true,
+		NestedObject: schema.NestedAttributeObject{
+			Attributes: map[string]schema.Attribute{
+				"key_name": schema.StringAttribute{
+					Required: true,
+				},
+				"source": schema.ListNestedAttribute{
+					NestedObject: schema.NestedAttributeObject{
+						Attributes: singleSourceTypeIdKey(),
 					},
-					"expression_criteria": {
-						Optional:   true,
-						Attributes: tfsdk.ListNestedAttributes(listExpressionIssuanceCriteriaEntry()),
-					},
-				}),
+					Required: true,
+				},
+				"value": schema.StringAttribute{
+					Required: true,
+				},
 			},
+		},
+	}
+}
+
+func resourceLinkSchemaV0() schema.ListNestedAttribute {
+	return schema.ListNestedAttribute{
+		Optional: true,
+		NestedObject: schema.NestedAttributeObject{
+			Attributes: legacyResourceLinkSchema(),
 		},
 	}
 }

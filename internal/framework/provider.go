@@ -4,19 +4,20 @@ import (
 	"context"
 	"os"
 
+	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
+
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // Ensure the implementation satisfies the expected interfaces
 var (
-	_ provider.Provider = &pfprovider{}
+	_ provider.Provider           = &pfprovider{}
+	_ provider.ProviderWithSchema = &pfprovider{}
 )
 
 // client satisfies the provider.Provider interface and usually is included
@@ -136,36 +137,31 @@ func (p *pfprovider) DataSources(_ context.Context) []func() datasource.DataSour
 	return []func() datasource.DataSource{}
 }
 
-func (p *pfprovider) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
-		Attributes: map[string]tfsdk.Attribute{
-			"username": {
+func (p *pfprovider) Schema(_ context.Context, _ provider.SchemaRequest, resp *provider.SchemaResponse) {
+	resp.Schema = schema.Schema{
+		Attributes: map[string]schema.Attribute{
+			"username": schema.StringAttribute{
 				Optional:    true,
-				Type:        types.StringType,
 				Description: "The username for pingfederate API.",
 			},
-			"password": {
+			"password": schema.StringAttribute{
 				Optional:    true,
-				Type:        types.StringType,
 				Description: "The password for pingfederate API.",
 			},
-			"base_url": {
+			"base_url": schema.StringAttribute{
 				Optional:    true,
-				Type:        types.StringType,
 				Description: "The base url of the pingfederate API.",
 			},
-			"context": {
+			"context": schema.StringAttribute{
 				Optional:    true,
-				Type:        types.StringType,
 				Description: "The context path of the pingfederate API.",
 			},
-			"bypass_external_validation": {
+			"bypass_external_validation": schema.BoolAttribute{
 				Optional:    true,
-				Type:        types.BoolType,
 				Description: "External validation will be bypassed when set to true. Default to false.",
 			},
 		},
-	}, nil
+	}
 }
 
 func New(version string) provider.Provider {

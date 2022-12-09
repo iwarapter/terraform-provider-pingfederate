@@ -12,6 +12,7 @@ import (
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/authenticationPolicyContracts"
 
+	fresource "github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
@@ -184,10 +185,11 @@ func Test_resourcePingFederateAuthenticationPolicyContractResourceReadData(t *te
 		t.Run(fmt.Sprintf("tc:%v", i), func(t *testing.T) {
 			res := &pingfederateAuthenticationPolicyContractResource{}
 			ctx := context.Background()
-			resourceSchema, diags := res.GetSchema(ctx)
-			require.False(t, diags.HasError())
+			schResp := &fresource.SchemaResponse{}
+			res.Schema(ctx, fresource.SchemaRequest{}, schResp)
+			require.False(t, schResp.Diagnostics.HasError())
 
-			state := tfsdk.State{Schema: resourceSchema}
+			state := tfsdk.State{Schema: schResp.Schema}
 			require.False(t, state.Set(ctx, flattenAuthenticationPolicyContract(&tc.Resource)).HasError())
 
 			check := AuthenticationPolicyContractData{}

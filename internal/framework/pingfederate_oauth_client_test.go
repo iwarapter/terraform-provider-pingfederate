@@ -11,9 +11,9 @@ import (
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthClients"
 	"github.com/stretchr/testify/require"
 
+	fresource "github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/stretchr/testify/assert"
 
-	frameres "github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
@@ -360,10 +360,11 @@ func Test_resourcePingFederateOAuthClientResourceReadData(t *testing.T) {
 		t.Run(fmt.Sprintf("tc:%v", i), func(t *testing.T) {
 			res := &pingfederateOAuthClientResource{}
 			ctx := context.Background()
-			resourceSchema, diags := res.GetSchema(ctx)
-			require.False(t, diags.HasError())
+			schResp := &fresource.SchemaResponse{}
+			res.Schema(ctx, fresource.SchemaRequest{}, schResp)
+			require.False(t, schResp.Diagnostics.HasError())
 
-			state := tfsdk.State{Schema: resourceSchema}
+			state := tfsdk.State{Schema: schResp.Schema}
 			require.False(t, state.Set(ctx, flattenClient(&tc.Resource)).HasError())
 
 			check := ClientData{}
@@ -461,8 +462,8 @@ func Test_resourcePingFederateOAuthClientResourceUpgradeData(t *testing.T) {
 	require.False(t, state.Set(ctx, &dataV0).HasError())
 
 	upgr := res.UpgradeState(ctx)
-	resp := &frameres.UpgradeStateResponse{State: tfsdk.State{Schema: resourceClient()}}
-	upgr[0].StateUpgrader(ctx, frameres.UpgradeStateRequest{State: &state}, resp)
+	resp := &fresource.UpgradeStateResponse{State: tfsdk.State{Schema: resourceClient()}}
+	upgr[0].StateUpgrader(ctx, fresource.UpgradeStateRequest{State: &state}, resp)
 	require.False(t, resp.Diagnostics.HasError())
 
 	check := ClientData{}
