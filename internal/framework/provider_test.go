@@ -1,6 +1,7 @@
 package framework
 
 import (
+	"context"
 	"crypto/tls"
 	"flag"
 	"fmt"
@@ -9,6 +10,10 @@ import (
 	"net/http/httputil"
 	"os"
 	"testing"
+
+	"github.com/hashicorp/terraform-plugin-mux/tf5to6server"
+	"github.com/hashicorp/terraform-plugin-mux/tf6muxserver"
+	"github.com/iwarapter/terraform-provider-pingfederate/internal/sdkv2provider"
 
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
@@ -66,7 +71,20 @@ func TestMain(m *testing.M) {
 //var testAccProtoV6ProviderFactories = tfsdk.NewProtocol6ProviderServer(New("test")())
 
 var testAccProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServer, error){
-	"pingfederate": providerserver.NewProtocol6WithError(New("1.0-dev")),
+	"pingfederate": func() (tfprotov6.ProviderServer, error) {
+		upgradedSdkProvider, err := tf5to6server.UpgradeServer(context.Background(), sdkv2provider.Provider().GRPCProvider)
+		if err != nil {
+			log.Fatal(err)
+		}
+		providers := []func() tfprotov6.ProviderServer{
+			func() tfprotov6.ProviderServer {
+				return upgradedSdkProvider
+			},
+			providerserver.NewProtocol6(New("test")),
+		}
+
+		return tf6muxserver.NewMuxServer(context.Background(), providers...)
+	},
 }
 
 func testAccPreCheck(t *testing.T) {

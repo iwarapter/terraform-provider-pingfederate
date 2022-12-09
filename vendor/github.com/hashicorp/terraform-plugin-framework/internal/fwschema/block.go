@@ -21,16 +21,6 @@ type Block interface {
 	// Equal should return true if the other block is exactly equivalent.
 	Equal(o Block) bool
 
-	// GetAttributes should return the nested attributes of a block, if
-	// applicable. This is named differently than Attributes to prevent a
-	// conflict with the tfsdk.Block field name.
-	GetAttributes() map[string]Attribute
-
-	// GetBlocks should return the nested blocks of a block, if
-	// applicable. This is named differently than Blocks to prevent a
-	// conflict with the tfsdk.Block field name.
-	GetBlocks() map[string]Block
-
 	// GetDeprecationMessage should return a non-empty string if an attribute
 	// is deprecated. This is named differently than DeprecationMessage to
 	// prevent a conflict with the tfsdk.Attribute field name.
@@ -57,6 +47,11 @@ type Block interface {
 	// field name.
 	GetMinItems() int64
 
+	// GetNestedObject should return the object underneath the block.
+	// For single nesting mode, the NestedBlockObject can be generated from
+	// the Block.
+	GetNestedObject() NestedBlockObject
+
 	// GetNestingMode should return the nesting mode of a block. This is named
 	// differently than NestingMode to prevent a conflict with the tfsdk.Block
 	// field name.
@@ -64,4 +59,35 @@ type Block interface {
 
 	// Type should return the framework type of a block.
 	Type() attr.Type
+}
+
+// BlocksEqual is a helper function to perform equality testing on two
+// Block. Attribute Equal implementations should still compare the concrete
+// types in addition to using this helper.
+func BlocksEqual(a, b Block) bool {
+	if !a.Type().Equal(b.Type()) {
+		return false
+	}
+
+	if a.GetDeprecationMessage() != b.GetDeprecationMessage() {
+		return false
+	}
+
+	if a.GetDescription() != b.GetDescription() {
+		return false
+	}
+
+	if a.GetMarkdownDescription() != b.GetMarkdownDescription() {
+		return false
+	}
+
+	if a.GetMaxItems() != b.GetMaxItems() {
+		return false
+	}
+
+	if a.GetMinItems() != b.GetMinItems() {
+		return false
+	}
+
+	return true
 }

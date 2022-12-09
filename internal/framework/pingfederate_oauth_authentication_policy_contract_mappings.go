@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-framework/types"
+
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 
@@ -60,7 +62,7 @@ func (r *pingfederateOauthAuthenticationPolicyContractMappingResource) Create(ct
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create oauthAccessTokenMapping, got error: %s", err))
 		return
 	}
-	resp.Diagnostics.Append(resp.State.Set(ctx, *flattenApcToPersistentGrantMapping(body))...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, r.versionResponseModifier(flattenApcToPersistentGrantMapping(body)))...)
 }
 
 func (r *pingfederateOauthAuthenticationPolicyContractMappingResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -77,7 +79,7 @@ func (r *pingfederateOauthAuthenticationPolicyContractMappingResource) Read(ctx 
 		return
 	}
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, *flattenApcToPersistentGrantMapping(body))...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, r.versionResponseModifier(flattenApcToPersistentGrantMapping(body)))...)
 }
 
 func (r *pingfederateOauthAuthenticationPolicyContractMappingResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -98,7 +100,7 @@ func (r *pingfederateOauthAuthenticationPolicyContractMappingResource) Update(ct
 		return
 	}
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, *flattenApcToPersistentGrantMapping(body))...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, r.versionResponseModifier(flattenApcToPersistentGrantMapping(body)))...)
 }
 
 func (r *pingfederateOauthAuthenticationPolicyContractMappingResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -118,6 +120,452 @@ func (r *pingfederateOauthAuthenticationPolicyContractMappingResource) Delete(ct
 	resp.State.RemoveResource(ctx)
 }
 
+func (r *pingfederateOauthAuthenticationPolicyContractMappingResource) UpgradeState(context.Context) map[int64]resource.StateUpgrader {
+	schemaV0 := resourceApcToPersistentGrantMappingV0()
+
+	return map[int64]resource.StateUpgrader{
+		0: {
+			PriorSchema: &schemaV0,
+			StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+				var mappingDataV0 ApcToPersistentGrantMappingDataV0
+				resp.Diagnostics.Append(req.State.Get(ctx, &mappingDataV0)...)
+				if resp.Diagnostics.HasError() {
+					return
+				}
+
+				mappingDataV1 := ApcToPersistentGrantMappingData{
+					Id: mappingDataV0.Id,
+				}
+				for _, source := range mappingDataV0.LdapAttributeSources {
+					ds := LdapAttributeSourceData{
+						BaseDn: source.BaseDn,
+						//BinaryAttributeSettings: map[string]*BinaryLdapAttributeSettingsData{},
+						DataStoreRef:        source.DataStoreRef[0].ID,
+						Description:         source.Description,
+						Id:                  source.Id,
+						MemberOfNestedGroup: source.MemberOfNestedGroup,
+						SearchAttributes:    source.SearchAttributes,
+						SearchFilter:        source.SearchFilter,
+						SearchScope:         source.SearchScope,
+					}
+					for k, v := range source.BinaryAttributeSettings {
+						ds.BinaryAttributeSettings[k] = &BinaryLdapAttributeSettingsData{BinaryEncoding: v}
+					}
+					if len(source.AttributeContractFulfillment) > 0 {
+						ds.AttributeContractFulfillment = map[string]*AttributeFulfillmentValueData{}
+					}
+					for _, attr := range source.AttributeContractFulfillment {
+						ds.AttributeContractFulfillment[attr.KeyName.ValueString()] = &AttributeFulfillmentValueData{
+							Source: &SourceTypeIdKeyData{
+								Id:   attr.Source[0].Id,
+								Type: attr.Source[0].Type,
+							},
+							Value: attr.Value,
+						}
+					}
+					mappingDataV1.LdapAttributeSources = append(mappingDataV1.LdapAttributeSources, ds)
+				}
+				for _, source := range mappingDataV0.JdbcAttributeSources {
+					ds := JdbcAttributeSourceData{
+						ColumnNames:  source.ColumnNames,
+						DataStoreRef: source.DataStoreRef[0].ID,
+						Description:  source.Description,
+						Filter:       source.Filter,
+						Id:           source.Id,
+						Schema:       source.Schema,
+						Table:        source.Table,
+					}
+					if len(source.AttributeContractFulfillment) > 0 {
+						ds.AttributeContractFulfillment = map[string]*AttributeFulfillmentValueData{}
+					}
+					for _, attr := range source.AttributeContractFulfillment {
+						ds.AttributeContractFulfillment[attr.KeyName.ValueString()] = &AttributeFulfillmentValueData{
+							Source: &attr.Source[0],
+							Value:  attr.Value,
+						}
+					}
+					mappingDataV1.JdbcAttributeSources = append(mappingDataV1.JdbcAttributeSources, ds)
+				}
+				for _, source := range mappingDataV0.CustomAttributeSources {
+					ds := CustomAttributeSourceData{
+						DataStoreRef: source.DataStoreRef[0].ID,
+						Description:  source.Description,
+						FilterFields: source.FilterFields,
+						Id:           source.Id,
+					}
+					if len(source.AttributeContractFulfillment) > 0 {
+						ds.AttributeContractFulfillment = map[string]*AttributeFulfillmentValueData{}
+					}
+					for _, attr := range source.AttributeContractFulfillment {
+						ds.AttributeContractFulfillment[attr.KeyName.ValueString()] = &AttributeFulfillmentValueData{
+							Source: &SourceTypeIdKeyData{
+								Id:   attr.Source[0].Id,
+								Type: attr.Source[0].Type,
+							},
+							Value: attr.Value,
+						}
+					}
+					mappingDataV1.CustomAttributeSources = append(mappingDataV1.CustomAttributeSources, ds)
+				}
+				if len(mappingDataV0.AttributeContractFulfillment) > 0 {
+					mappingDataV1.AttributeContractFulfillment = map[string]*AttributeFulfillmentValueData{}
+				}
+				for _, attr := range mappingDataV0.AttributeContractFulfillment {
+					src := &SourceTypeIdKeyData{
+						Id:   attr.Source[0].Id,
+						Type: attr.Source[0].Type,
+					}
+					if src.Id.ValueString() == "" {
+						src.Id = types.StringNull()
+					}
+					mappingDataV1.AttributeContractFulfillment[attr.KeyName.ValueString()] = &AttributeFulfillmentValueData{
+						Source: src,
+						Value:  attr.Value,
+					}
+
+				}
+				if len(mappingDataV0.AuthenticationPolicyContractRef) == 1 {
+					mappingDataV1.AuthenticationPolicyContractRef = mappingDataV0.AuthenticationPolicyContractRef[0].ID
+				}
+				if len(mappingDataV0.IssuanceCriteria) == 1 {
+					mappingDataV1.IssuanceCriteria = &IssuanceCriteriaData{
+						ExpressionCriteria: mappingDataV0.IssuanceCriteria[0].ExpressionCriteria,
+					}
+					if mappingDataV0.IssuanceCriteria[0].ConditionalCriteria != nil {
+						mappingDataV1.IssuanceCriteria.ConditionalCriteria = &[]*ConditionalIssuanceCriteriaEntryData{}
+						for _, data := range *mappingDataV0.IssuanceCriteria[0].ConditionalCriteria {
+							d := &ConditionalIssuanceCriteriaEntryData{
+								AttributeName: data.AttributeName,
+								Condition:     data.Condition,
+								ErrorResult:   data.ErrorResult,
+								Value:         data.Value,
+							}
+							if len(data.Source) == 1 {
+								d.Source = &SourceTypeIdKeyData{
+									Id:   data.Source[0].Id,
+									Type: data.Source[0].Type,
+								}
+							}
+							*mappingDataV1.IssuanceCriteria.ConditionalCriteria = append(*mappingDataV1.IssuanceCriteria.ConditionalCriteria, d)
+						}
+					}
+				}
+				if mappingDataV1.Id.IsNull() {
+				}
+				resp.Diagnostics.Append(resp.State.Set(ctx, &mappingDataV1)...)
+			},
+		},
+	}
+}
+
 func (r *pingfederateOauthAuthenticationPolicyContractMappingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+}
+
+// old version of pingfederate have different defaults which we need to handle
+func (r *pingfederateOauthAuthenticationPolicyContractMappingResource) versionResponseModifier(data *ApcToPersistentGrantMappingData) *ApcToPersistentGrantMappingData {
+	if r.client.IsVersionLessEqThan(10, 2) {
+		for i := range data.LdapAttributeSources {
+			if data.LdapAttributeSources[i].BaseDn.IsNull() {
+				data.LdapAttributeSources[i].BaseDn = types.StringValue("")
+			}
+		}
+		if data.IssuanceCriteria != nil {
+			if data.IssuanceCriteria.ConditionalCriteria != nil {
+				for i := range *data.IssuanceCriteria.ConditionalCriteria {
+					if (*data.IssuanceCriteria.ConditionalCriteria)[i].ErrorResult.IsNull() {
+						(*data.IssuanceCriteria.ConditionalCriteria)[i].ErrorResult = types.StringValue("")
+					}
+				}
+			}
+			if data.IssuanceCriteria.ExpressionCriteria != nil {
+				for i := range *data.IssuanceCriteria.ExpressionCriteria {
+					if (*data.IssuanceCriteria.ExpressionCriteria)[i].ErrorResult.IsNull() {
+						(*data.IssuanceCriteria.ExpressionCriteria)[i].ErrorResult = types.StringValue("")
+					}
+				}
+			}
+		}
+	}
+	return data
+}
+
+func resourceApcToPersistentGrantMappingV0() tfsdk.Schema {
+	return tfsdk.Schema{
+		Attributes: map[string]tfsdk.Attribute{
+			"authentication_policy_contract_ref": {
+				Optional:   true,
+				Attributes: tfsdk.ListNestedAttributes(legacyResourceLinkSchema()),
+			},
+			"attribute_contract_fulfillment": {
+				Optional: true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"key_name": {
+						Type:     types.StringType,
+						Required: true,
+					},
+					"source": {
+						Attributes: tfsdk.ListNestedAttributes(singleSourceTypeIdKey()),
+						Required:   true,
+					},
+					"value": {
+						Type:     types.StringType,
+						Required: true,
+					},
+				}),
+			},
+			"jdbc_attribute_source": {
+				Optional: true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"attribute_contract_fulfillment": {
+						Optional: true,
+						Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+							"key_name": {
+								Type:     types.StringType,
+								Required: true,
+							},
+							"source": {
+								Attributes: tfsdk.ListNestedAttributes(singleSourceTypeIdKey()),
+								Required:   true,
+							},
+							"value": {
+								Type:     types.StringType,
+								Required: true,
+							},
+						}),
+					},
+					"column_names": {
+						Optional: true,
+						Type:     types.ListType{ElemType: types.StringType},
+					},
+					"data_store_ref": {
+						Required:   true,
+						Attributes: tfsdk.ListNestedAttributes(legacyResourceLinkSchema()),
+					},
+					"description": {
+						Optional: true,
+						Type:     types.StringType,
+					},
+					"filter": {
+						Optional: true,
+						Type:     types.StringType,
+					},
+					"id": {
+						Optional: true,
+						Type:     types.StringType,
+					},
+					"schema": {
+						Optional: true,
+						Type:     types.StringType,
+					},
+					"table": {
+						Optional: true,
+						Type:     types.StringType,
+					}}),
+			},
+			"ldap_attribute_source": {
+				Optional: true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"attribute_contract_fulfillment": {
+						Optional: true,
+						Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+							"key_name": {
+								Type:     types.StringType,
+								Required: true,
+							},
+							"source": {
+								Attributes: tfsdk.ListNestedAttributes(singleSourceTypeIdKey()),
+								Required:   true,
+							},
+							"value": {
+								Type:     types.StringType,
+								Required: true,
+							},
+						}),
+					},
+					"base_dn": {
+						Optional: true,
+						Type:     types.StringType,
+					},
+					"binary_attribute_settings": {
+						Optional: true,
+						Type:     types.MapType{ElemType: types.StringType},
+					},
+					"data_store_ref": {
+						Required:   true,
+						Attributes: tfsdk.ListNestedAttributes(legacyResourceLinkSchema()),
+					},
+					"description": {
+						Optional: true,
+						Type:     types.StringType,
+					},
+					"id": {
+						Optional: true,
+						Type:     types.StringType,
+					},
+					"member_of_nested_group": {
+						Optional: true,
+						Type:     types.BoolType,
+					},
+					"search_attributes": {
+						Optional: true,
+						Type:     types.ListType{ElemType: types.StringType},
+					},
+					"search_filter": {
+						Optional: true,
+						Type:     types.StringType,
+					},
+					"search_scope": {
+						Optional: true,
+						Type:     types.StringType,
+					},
+				}),
+			},
+			"custom_attribute_source": {
+				Optional: true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"attribute_contract_fulfillment": {
+						Optional: true,
+						Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+							"key_name": {
+								Type:     types.StringType,
+								Required: true,
+							},
+							"source": {
+								Attributes: tfsdk.ListNestedAttributes(singleSourceTypeIdKey()),
+								Required:   true,
+							},
+							"value": {
+								Type:     types.StringType,
+								Required: true,
+							},
+						}),
+					},
+					"filter_fields": {
+						Optional: true,
+						Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+							"name": {
+								Required: true,
+								Type:     types.StringType,
+							},
+							"value": {
+								Optional: true,
+								Type:     types.StringType,
+							},
+						}),
+					},
+					"data_store_ref": {
+						Required:   true,
+						Attributes: tfsdk.ListNestedAttributes(legacyResourceLinkSchema()),
+					},
+					"description": {
+						Optional: true,
+						Type:     types.StringType,
+					},
+					"id": {
+						Optional: true,
+						Type:     types.StringType,
+					},
+				}),
+			},
+			"id": {
+				Optional: true,
+				Type:     types.StringType,
+			},
+			"issuance_criteria": {
+				Optional: true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"conditional_criteria": {
+						Optional: true,
+						Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+							"attribute_name": {
+								Required: true,
+								Type:     types.StringType,
+							},
+							"condition": {
+								Required: true,
+								Type:     types.StringType,
+							},
+							"error_result": {
+								Optional: true,
+								Type:     types.StringType,
+							},
+							"source": {
+								Required:   true,
+								Attributes: tfsdk.ListNestedAttributes(singleSourceTypeIdKey()),
+							},
+							"value": {
+								Required: true,
+								Type:     types.StringType,
+							}}),
+					},
+					"expression_criteria": {
+						Optional:   true,
+						Attributes: tfsdk.ListNestedAttributes(listExpressionIssuanceCriteriaEntry()),
+					},
+				}),
+			},
+		},
+	}
+}
+
+type ApcToPersistentGrantMappingDataV0 struct {
+	Id                              types.String                      `tfsdk:"id"`
+	AuthenticationPolicyContractRef []ResourceLink                    `tfsdk:"authentication_policy_contract_ref"`
+	JdbcAttributeSources            []JdbcAttributeSourceDataV0       `tfsdk:"jdbc_attribute_source"`
+	LdapAttributeSources            []LdapAttributeSourceDataV0       `tfsdk:"ldap_attribute_source"`
+	CustomAttributeSources          []CustomAttributeSourceDataV0     `tfsdk:"custom_attribute_source"`
+	IssuanceCriteria                []IssuanceCriteriaDataV0          `tfsdk:"issuance_criteria"`
+	AttributeContractFulfillment    []AttributeFulfillmentValueDataV0 `tfsdk:"attribute_contract_fulfillment"`
+}
+
+type JdbcAttributeSourceDataV0 struct {
+	AttributeContractFulfillment []AttributeFulfillmentValueDataV0 `tfsdk:"attribute_contract_fulfillment"`
+	ColumnNames                  []types.String                    `tfsdk:"column_names"`
+	DataStoreRef                 []ResourceLink                    `tfsdk:"data_store_ref"`
+	Description                  types.String                      `tfsdk:"description"`
+	Filter                       types.String                      `tfsdk:"filter"`
+	Id                           types.String                      `tfsdk:"id"`
+	Schema                       types.String                      `tfsdk:"schema"`
+	Table                        types.String                      `tfsdk:"table"`
+}
+
+type LdapAttributeSourceDataV0 struct {
+	AttributeContractFulfillment []AttributeFulfillmentValueDataV0 `tfsdk:"attribute_contract_fulfillment"`
+	BaseDn                       types.String                      `tfsdk:"base_dn"`
+	BinaryAttributeSettings      map[string]types.String           `tfsdk:"binary_attribute_settings"`
+	DataStoreRef                 []ResourceLink                    `tfsdk:"data_store_ref"`
+	Description                  types.String                      `tfsdk:"description"`
+	Id                           types.String                      `tfsdk:"id"`
+	MemberOfNestedGroup          types.Bool                        `tfsdk:"member_of_nested_group"`
+	SearchAttributes             []types.String                    `tfsdk:"search_attributes"`
+	SearchFilter                 types.String                      `tfsdk:"search_filter"`
+	SearchScope                  types.String                      `tfsdk:"search_scope"`
+}
+
+type CustomAttributeSourceDataV0 struct {
+	AttributeContractFulfillment []AttributeFulfillmentValueDataV0 `tfsdk:"attribute_contract_fulfillment"`
+	DataStoreRef                 []ResourceLink                    `tfsdk:"data_store_ref"`
+	Description                  types.String                      `tfsdk:"description"`
+	FilterFields                 *[]*FieldEntryData                `tfsdk:"filter_fields"`
+	Id                           types.String                      `tfsdk:"id"`
+}
+
+type AttributeFulfillmentValueDataV0 struct {
+	KeyName types.String          `tfsdk:"key_name"`
+	Source  []SourceTypeIdKeyData `tfsdk:"source"`
+	Value   types.String          `tfsdk:"value"`
+}
+
+type IssuanceCriteriaDataV0 struct {
+	ConditionalCriteria *[]*ConditionalIssuanceCriteriaEntryDataV0 `tfsdk:"conditional_criteria"`
+	ExpressionCriteria  *[]*ExpressionIssuanceCriteriaEntryData    `tfsdk:"expression_criteria"`
+}
+
+type ConditionalIssuanceCriteriaEntryDataV0 struct {
+	AttributeName types.String          `tfsdk:"attribute_name"`
+	Condition     types.String          `tfsdk:"condition"`
+	ErrorResult   types.String          `tfsdk:"error_result"`
+	Source        []SourceTypeIdKeyData `tfsdk:"source"`
+	Value         types.String          `tfsdk:"value"`
 }

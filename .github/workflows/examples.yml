@@ -1,0 +1,108 @@
+name: Examples Checks
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    paths:
+      - .github/workflows/examples.yml
+      - go.mod
+      - examples/**
+
+jobs:
+  tflint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/cache@v3
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-pkg-mod-${{ hashFiles('go.sum') }}
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: go.mod
+
+      - name: install tflint
+        uses: terraform-linters/setup-tflint@v2
+
+      - uses: actions/cache@v3
+        name: Cache plugin dir
+        with:
+          path: ~/.tflint.d/plugins
+          key: ${{ runner.os }}-tflint
+
+      - run: tflint --init
+
+      - name: tflint
+        run: |
+          exit_code=0
+          for DIR in $(find ./examples -type f -name '*.tf' -exec dirname {} \; | sort -u); do
+            pushd "$DIR"
+            tflint \
+              --enable-rule=terraform_comment_syntax \
+              --enable-rule=terraform_deprecated_index \
+              --enable-rule=terraform_deprecated_interpolation \
+              --disable-rule=terraform_unused_declarations \
+              --disable-rule=terraform_required_version \
+              --disable-rule=terraform_required_providers \
+              --disable-rule=terraform_typed_variables \
+              || exit_code=1
+            popd
+          done
+          exit $exit_code
+  validate-terraform:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    env:
+      TF_IN_AUTOMATION: "1"
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/cache@v3
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-pkg-mod-${{ hashFiles('go.sum') }}
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: go.mod
+      - name: go build
+        run: go build -o terraform-plugin-dir/terraform-provider-pingfederate_v99.99.99_x5 .
+      - name: override plugin
+        run: |
+          mkdir -p ~/.terraform.d/plugins/registry.terraform.io/iwarapter/pingfederate/99.99.99/"$(go env GOOS)"_"$(go env GOARCH)"/
+          cp terraform-plugin-dir/terraform-provider-pingfederate_v99.99.99_x5 ~/.terraform.d/plugins/registry.terraform.io/iwarapter/pingfederate/99.99.99/"$(go env GOOS)"_"$(go env GOARCH)"/
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.2.6
+          # Needed to use the output of `terraform validate -json`
+          terraform_wrapper: false
+
+      - name: terraform
+        run: |
+          for DIR in $(find ./examples -type f -name '*.tf' -exec dirname {} \; | sort -u); do
+            pushd "$DIR"
+            cat <<EOF > provider.tf
+          terraform {
+            required_providers {
+              pingfederate = {
+                source = "iwarapter/pingfederate"
+              }
+            }
+          }
+          EOF
+            if [ -f terraform.template.tfvars ]; then
+              cp terraform.template.tfvars terraform.tfvars
+            fi
+            echo; echo -e "\e[1;35m===> Initializing Example: $DIR <===\e[0m"; echo
+            terraform init
+            echo; echo -e "\e[1;35m===> Format Checking Example: $DIR <===\e[0m"; echo
+            terraform fmt -check
+            echo; echo -e "\e[1;35m===> Validating Example: $DIR <===\e[0m"; echo
+            # Catch errors
+            terraform validate
+            popd
+          done

@@ -12,11 +12,19 @@ import (
 // fwxschema.AttributeWithPlanModifiers and fwxschema.AttributeWithValidators
 // interfaces, however we cannot check that here or it would introduce an
 // import cycle.
-var _ fwschema.Attribute = Attribute{}
+var (
+	_ fwschema.Attribute       = Attribute{}
+	_ fwschema.NestedAttribute = Attribute{}
+)
 
 // Attribute defines the constraints and behaviors of a single value field in a
 // schema. Attributes are the fields that show up in Terraform state files and
 // can be used in configuration files.
+//
+// Deprecated: Use datasource/schema.Attribute, provider/schema.Attribute, or
+// resource/schema.Attribute instead. This can be switched by using the
+// datasource/schema.Schema, provider/schema.Schema, or resource/schema.Schema
+// types.
 type Attribute struct {
 	// Type indicates what kind of attribute this is. You'll most likely
 	// want to use one of the types in the types package.
@@ -160,60 +168,25 @@ func (a Attribute) ApplyTerraform5AttributePathStep(step tftypes.AttributePathSt
 
 // Equal returns true if `a` and `o` should be considered Equal.
 func (a Attribute) Equal(o fwschema.Attribute) bool {
-	if _, ok := o.(Attribute); !ok {
-		return false
-	}
-	if a.GetType() == nil && o.GetType() != nil {
-		return false
-	} else if a.GetType() != nil && o.GetType() == nil {
-		return false
-	} else if a.GetType() != nil && o.GetType() != nil && !a.GetType().Equal(o.GetType()) {
-		return false
-	}
-	if a.GetAttributes() == nil && o.GetAttributes() != nil {
-		return false
-	} else if a.GetAttributes() != nil && o.GetAttributes() == nil {
-		return false
-	} else if a.GetAttributes() != nil && o.GetAttributes() != nil && !a.GetAttributes().Equal(o.GetAttributes()) {
-		return false
-	}
-	if a.GetDescription() != o.GetDescription() {
-		return false
-	}
-	if a.GetMarkdownDescription() != o.GetMarkdownDescription() {
-		return false
-	}
-	if a.IsRequired() != o.IsRequired() {
-		return false
-	}
-	if a.IsOptional() != o.IsOptional() {
-		return false
-	}
-	if a.IsComputed() != o.IsComputed() {
-		return false
-	}
-	if a.IsSensitive() != o.IsSensitive() {
-		return false
-	}
-	if a.GetDeprecationMessage() != o.GetDeprecationMessage() {
-		return false
-	}
-	return true
-}
+	other, ok := o.(Attribute)
 
-// FrameworkType returns the framework type, whether the direct type or nested
-// attributes type, of the attribute.
-func (a Attribute) FrameworkType() attr.Type {
-	if a.Attributes != nil {
-		return a.Attributes.Type()
+	if !ok {
+		return false
 	}
 
-	return a.Type
-}
+	if a.GetNestingMode() != other.GetNestingMode() {
+		return false
+	}
 
-// GetAttributes satisfies the fwschema.Attribute interface.
-func (a Attribute) GetAttributes() fwschema.NestedAttributes {
-	return a.Attributes
+	if a.GetNestedObject() != nil && !a.GetNestedObject().Equal(other.GetNestedObject()) {
+		return false
+	}
+
+	if other.GetNestedObject() != nil && !other.GetNestedObject().Equal(a.GetNestedObject()) {
+		return false
+	}
+
+	return fwschema.AttributesEqual(a, o)
 }
 
 // GetDeprecationMessage satisfies the fwschema.Attribute interface.
@@ -231,6 +204,32 @@ func (a Attribute) GetMarkdownDescription() string {
 	return a.MarkdownDescription
 }
 
+// GetNestedObject returns a generated NestedAttributeObject if the
+// Attribute represents nested attributes, otherwise nil.
+func (a Attribute) GetNestedObject() fwschema.NestedAttributeObject {
+	if a.GetNestingMode() == fwschema.NestingModeUnknown {
+		return nil
+	}
+
+	return nestedAttributeObject{
+		Attributes: a.Attributes.GetAttributes(),
+	}
+}
+
+// GetNestingMode returns the Attributes nesting mode, if set. Otherwise,
+// returns NestingModeUnset.
+func (a Attribute) GetNestingMode() fwschema.NestingMode {
+	if a.Type != nil {
+		return fwschema.NestingModeUnknown
+	}
+
+	if a.Attributes != nil {
+		return a.Attributes.GetNestingMode()
+	}
+
+	return fwschema.NestingModeUnknown
+}
+
 // GetPlanModifiers satisfies the fwxschema.AttributeWithPlanModifiers
 // interface.
 func (a Attribute) GetPlanModifiers() AttributePlanModifiers {
@@ -244,6 +243,10 @@ func (a Attribute) GetValidators() []AttributeValidator {
 
 // GetType satisfies the fwschema.Attribute interface.
 func (a Attribute) GetType() attr.Type {
+	if a.Attributes != nil {
+		return a.Attributes.Type()
+	}
+
 	return a.Type
 }
 

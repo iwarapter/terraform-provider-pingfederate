@@ -15,7 +15,7 @@ Provides configuration for Ssl Server KeyPairs within PingFederate.
 ```terraform
 # importing a keypair using base64 encoded PKCS12 data
 resource "pingfederate_keypair_ssl_server" "example_import" {
-  file_data = filebase64("test_cases/provider.p12")
+  file_data = filebase64("provider.p12")
   password  = "password"
 }
 

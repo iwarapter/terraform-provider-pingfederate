@@ -4,6 +4,10 @@ import (
 	"context"
 	"fmt"
 
+	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
+
+	"github.com/hashicorp/terraform-plugin-framework/types"
+
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -57,7 +61,7 @@ func (r *pingfederateRedirectValidationSettingsResource) Create(ctx context.Cont
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create RedirectValidation, got error: %s", err))
 		return
 	}
-	resp.Diagnostics.Append(resp.State.Set(ctx, *flattenRedirectValidationSettings(body))...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, addRedirectValidationSettingsId(body))...)
 }
 
 func (r *pingfederateRedirectValidationSettingsResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -73,7 +77,7 @@ func (r *pingfederateRedirectValidationSettingsResource) Read(ctx context.Contex
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to get RedirectValidation, got error: %s", err))
 		return
 	}
-	resp.Diagnostics.Append(resp.State.Set(ctx, *flattenRedirectValidationSettings(body))...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, addRedirectValidationSettingsId(body))...)
 }
 
 func (r *pingfederateRedirectValidationSettingsResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -91,7 +95,7 @@ func (r *pingfederateRedirectValidationSettingsResource) Update(ctx context.Cont
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update RedirectValidation, got error: %s", err))
 		return
 	}
-	resp.Diagnostics.Append(resp.State.Set(ctx, *flattenRedirectValidationSettings(body))...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, addRedirectValidationSettingsId(body))...)
 }
 
 func (r *pingfederateRedirectValidationSettingsResource) Delete(ctx context.Context, _ resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -100,4 +104,10 @@ func (r *pingfederateRedirectValidationSettingsResource) Delete(ctx context.Cont
 
 func (r *pingfederateRedirectValidationSettingsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+}
+
+func addRedirectValidationSettingsId(body *pf.RedirectValidationSettings) RedirectValidationSettingsData {
+	save := *flattenRedirectValidationSettings(body)
+	save.Id = types.StringValue("settings")
+	return save
 }

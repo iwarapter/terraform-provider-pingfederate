@@ -3,7 +3,6 @@ package framework
 import (
 	"context"
 	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
@@ -29,11 +28,9 @@ func init() {
 				return fmt.Errorf("unable to list oauth authentication policy contract mappings %s", err)
 			}
 			for _, item := range *results.Items {
-				if strings.Contains(*item.Id, "acc_test") {
-					_, _, err := pfc.OauthAuthenticationPolicyContractMappings.DeleteApcMapping(&oauthAuthenticationPolicyContractMappings.DeleteApcMappingInput{Id: *item.Id})
-					if err != nil {
-						return fmt.Errorf("unable to sweep oauth authentication policy contract mapping %s because %s", *item.Id, err)
-					}
+				_, _, err := pfc.OauthAuthenticationPolicyContractMappings.DeleteApcMapping(&oauthAuthenticationPolicyContractMappings.DeleteApcMappingInput{Id: *item.Id})
+				if err != nil {
+					return fmt.Errorf("unable to sweep oauth authentication policy contract mapping %s because %s", *item.Id, err)
 				}
 			}
 			return nil
@@ -76,6 +73,204 @@ func TestAccPingFederateOauthAuthenticationPolicyContractMapping(t *testing.T) {
 			},
 		},
 	})
+}
+
+func TestAccPingFederateOauthAuthenticationPolicyContractMappingResourceSdkUpgradeV0toV1(t *testing.T) {
+	resourceName := "pingfederate_oauth_authentication_policy_contract_mapping.test"
+	resource.ParallelTest(t, resource.TestCase{
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"pingfederate": {
+						VersionConstraint: "0.0.24",
+						Source:            "iwarapter/pingfederate",
+					},
+				},
+				Config: testAccPingFederateOauthAuthenticationPolicyContractMappingResourceSdkUpgradeV0config(),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "attribute_contract_fulfillment.0.key_name", "USER_KEY"),
+					resource.TestCheckResourceAttr(resourceName, "attribute_contract_fulfillment.0.value", "subject"),
+				),
+			},
+			{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				PlanOnly:                 true,
+				Config:                   testAccPingFederateOauthAuthenticationPolicyContractMappingResourceSdkUpgradeV1config(),
+			},
+			{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Config:                   testAccPingFederateOauthAuthenticationPolicyContractMappingResourceSdkUpgradeV1config(),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckPingFederateOauthAuthenticationPolicyContractMappingExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "attribute_contract_fulfillment.USER_KEY.value", "subject"),
+					resource.TestCheckResourceAttr(resourceName, "attribute_contract_fulfillment.USER_KEY.source.type", "AUTHENTICATION_POLICY_CONTRACT"),
+					resource.TestCheckResourceAttr(resourceName, "attribute_contract_fulfillment.USER_NAME.value", "subject"),
+					resource.TestCheckResourceAttr(resourceName, "attribute_contract_fulfillment.USER_NAME.source.type", "AUTHENTICATION_POLICY_CONTRACT"),
+				),
+			},
+		},
+	})
+}
+
+func testAccPingFederateOauthAuthenticationPolicyContractMappingResourceSdkUpgradeV0config() string {
+	return `
+resource "pingfederate_ldap_data_store" "example" {
+  ldap_type       = "ACTIVE_DIRECTORY"
+  hostnames       = ["ldap:389"]
+  max_connections = 100
+  min_connections = 10
+  name            = "ldap"
+  user_dn         = "cn=admin,dc=example,dc=org"
+  password        = "admin"
+}
+
+resource "pingfederate_authentication_policy_contract" "demo" {
+  name                = "acc_test_upgrade2"
+  extended_attributes = ["foo", "email"]
+}
+
+resource "pingfederate_oauth_authentication_policy_contract_mapping" "test" {
+  authentication_policy_contract_ref {
+    id = pingfederate_authentication_policy_contract.demo.id
+  }
+  attribute_contract_fulfillment {
+    key_name = "USER_NAME"
+    source {
+      type = "AUTHENTICATION_POLICY_CONTRACT"
+    }
+    value = "subject"
+  }
+  attribute_contract_fulfillment {
+    key_name = "USER_KEY"
+    source {
+      type = "AUTHENTICATION_POLICY_CONTRACT"
+    }
+    value = "subject"
+  }
+  ldap_attribute_source {
+    description            = "desc"
+    id                     = "ldap"
+    member_of_nested_group = false
+    search_filter          = "uid=$${subject}"
+    search_scope           = "SUBTREE"
+
+    data_store_ref {
+      id = pingfederate_ldap_data_store.example.id
+    }
+  }
+  jdbc_attribute_source {
+    description = "jdbc"
+    filter      = "uid=$${email}"
+    id          = "jdbc"
+    schema      = "INFORMATION_SCHEMA"
+    table       = "ADMINISTRABLE_ROLE_AUTHORIZATIONS"
+
+    data_store_ref {
+      id = "ProvisionerDS"
+    }
+  }
+
+  issuance_criteria {
+    conditional_criteria {
+      attribute_name = "Subject DN"
+      condition      = "EQUALS"
+      value          = "foo"
+
+      source {
+        id   = "ldap"
+        type = "LDAP_DATA_STORE"
+      }
+    }
+    expression_criteria {
+      expression = "far"
+    }
+    expression_criteria {
+      error_result = "woot"
+      expression   = "bar"
+    }
+  }
+}
+`
+}
+func testAccPingFederateOauthAuthenticationPolicyContractMappingResourceSdkUpgradeV1config() string {
+	return `
+resource "pingfederate_ldap_data_store" "example" {
+  ldap_type       = "ACTIVE_DIRECTORY"
+  hostnames       = ["ldap:389"]
+  max_connections = 100
+  min_connections = 10
+  name            = "ldap"
+  user_dn         = "cn=admin,dc=example,dc=org"
+  password        = "admin"
+}
+
+resource "pingfederate_authentication_policy_contract" "demo" {
+  name                = "acc_test_upgrade2"
+  extended_attributes = ["foo", "email"]
+}
+
+resource "pingfederate_oauth_authentication_policy_contract_mapping" "test" {
+  authentication_policy_contract_ref = pingfederate_authentication_policy_contract.demo.id
+  attribute_contract_fulfillment = {
+    "USER_NAME" = {
+      source = {
+        type = "AUTHENTICATION_POLICY_CONTRACT"
+      }
+      value = "subject"
+    },
+    "USER_KEY" = {
+      source = {
+        type = "AUTHENTICATION_POLICY_CONTRACT"
+      }
+      value = "subject"
+    }
+  }
+  jdbc_attribute_sources = [
+    {
+      description    = "jdbc"
+      filter         = "uid=$${email}"
+      id             = "jdbc"
+      schema         = "INFORMATION_SCHEMA"
+      table          = "ADMINISTRABLE_ROLE_AUTHORIZATIONS"
+      data_store_ref = "ProvisionerDS"
+    }
+  ]
+  ldap_attribute_sources = [
+    {
+      description            = "desc"
+      id                     = "ldap"
+      member_of_nested_group = false
+      search_filter          = "uid=$${subject}"
+      search_scope           = "SUBTREE"
+      data_store_ref         = pingfederate_ldap_data_store.example.id
+    }
+  ]
+
+  issuance_criteria = {
+    conditional_criteria = [
+      {
+        attribute_name = "Subject DN"
+        condition      = "EQUALS"
+        value          = "foo"
+
+        source = {
+          id   = "ldap"
+          type = "LDAP_DATA_STORE"
+        }
+      }
+    ]
+    expression_criteria = [
+      {
+        expression = "far"
+      },
+      {
+        error_result = "woot"
+        expression   = "bar"
+      }
+    ]
+  }
+}
+`
 }
 
 func testAccCheckPingFederateOauthAuthenticationPolicyContractMappingDestroy(s *terraform.State) error {
@@ -215,6 +410,10 @@ func Test_resourcePingFederateOauthAuthenticationPolicyContractMappingResourceRe
 									Source: &pf.SourceTypeIdKey{Type: String("foo"), Id: String("bar")},
 									Value:  String("foo"),
 								},
+							},
+							ColumnNames: &[]*string{
+								String("column"),
+								String("name"),
 							},
 							DataStoreRef: &pf.ResourceLink{
 								Id: String("foo"),

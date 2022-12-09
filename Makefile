@@ -48,7 +48,7 @@ test-and-report:
 	@TF_LOG=TRACE TF_LOG_PATH=./terraform.log TF_ACC=1 go test -mod=vendor ./... -v -coverprofile=coverage.out -json > report.json && go tool cover -func=coverage.out
 
 testacc:
-	TF_ACC=1 go test ./pingfederate/... -v -count $(TEST_COUNT) -parallel $(ACCTEST_PARALLELISM) $(RUNARGS) -timeout $(ACCTEST_TIMEOUT)
+	TF_ACC=1 go test ./internal/... -v -count $(TEST_COUNT) -parallel $(ACCTEST_PARALLELISM) $(RUNARGS) -timeout $(ACCTEST_TIMEOUT)
 
 build:
 	@go build -mod=vendor -o ${NAME} -gcflags "all=-trimpath=$GOPATH" .
