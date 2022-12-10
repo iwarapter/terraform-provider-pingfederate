@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthClients"
 )
@@ -15,6 +15,7 @@ import (
 // Ensure the implementation satisfies the expected interfaces.
 var (
 	_ resource.Resource                 = &pingfederateOAuthClientResource{}
+	_ resource.ResourceWithSchema       = &pingfederateOAuthClientResource{}
 	_ resource.ResourceWithConfigure    = &pingfederateOAuthClientResource{}
 	_ resource.ResourceWithImportState  = &pingfederateOAuthClientResource{}
 	_ resource.ResourceWithUpgradeState = &pingfederateOAuthClientResource{}
@@ -28,8 +29,8 @@ func NewOAuthClientResource() resource.Resource {
 	return &pingfederateOAuthClientResource{}
 }
 
-func (r *pingfederateOAuthClientResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return resourceClient(), nil
+func (r *pingfederateOAuthClientResource) Schema(ctx context.Context, request resource.SchemaRequest, response *resource.SchemaResponse) {
+	response.Schema = resourceClient()
 }
 
 // Configure adds the client configured client to the resource.
@@ -286,269 +287,89 @@ func (r *pingfederateOAuthClientResource) versionResponseModifier(data *ClientDa
 	return data
 }
 
-func resourceClientV0() tfsdk.Schema {
-	return tfsdk.Schema{
-		Attributes: map[string]tfsdk.Attribute{
-			"id": {
-				Type:     types.StringType,
-				Required: true,
-			},
-			"name": {
-				Type:     types.StringType,
-				Required: true,
-			},
-			"client_id": {
-				Type:     types.StringType,
-				Required: true,
-			},
-			"enabled": {
-				Type:     types.BoolType,
+func resourceClientV0() schema.Schema {
+	return schema.Schema{
+		Attributes: map[string]schema.Attribute{
+			"id":                                    schema.StringAttribute{Required: true},
+			"name":                                  schema.StringAttribute{Required: true},
+			"client_id":                             schema.StringAttribute{Required: true},
+			"enabled":                               schema.BoolAttribute{Optional: true},
+			"grant_types":                           schema.SetAttribute{ElementType: types.StringType, Required: true},
+			"bypass_approval_page":                  schema.BoolAttribute{Optional: true},
+			"description":                           schema.StringAttribute{Optional: true},
+			"exclusive_scopes":                      schema.SetAttribute{ElementType: types.StringType, Optional: true},
+			"logo_url":                              schema.StringAttribute{Optional: true},
+			"persistent_grant_expiration_time":      schema.NumberAttribute{Optional: true},
+			"persistent_grant_expiration_time_unit": schema.StringAttribute{Optional: true},
+			"persistent_grant_expiration_type":      schema.StringAttribute{Optional: true},
+			"redirect_uris":                         schema.SetAttribute{ElementType: types.StringType, Optional: true},
+			"refresh_rolling":                       schema.StringAttribute{Optional: true},
+			"require_signed_requests":               schema.BoolAttribute{Optional: true},
+			"restrict_scopes":                       schema.BoolAttribute{Optional: true},
+			"restricted_response_types":             schema.SetAttribute{ElementType: types.StringType, Optional: true},
+			"restricted_scopes":                     schema.SetAttribute{ElementType: types.StringType, Optional: true},
+			"validate_using_all_eligible_atms":      schema.BoolAttribute{Optional: true},
+			"client_auth": schema.ListNestedAttribute{
 				Optional: true,
-			},
-			"grant_types": {
-				Type: types.SetType{
-					ElemType: types.StringType,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"client_cert_issuer_dn":     schema.StringAttribute{Optional: true},
+						"client_cert_subject_dn":    schema.StringAttribute{Optional: true},
+						"enforce_replay_prevention": schema.BoolAttribute{Optional: true},
+						//TODO do we enable Secret/EncryptedSecret??
+						"secret":                                schema.StringAttribute{Optional: true, Sensitive: true},
+						"type":                                  schema.StringAttribute{Required: true},
+						"token_endpoint_auth_signing_algorithm": schema.StringAttribute{Optional: true},
+					},
 				},
-				Required: true,
 			},
-			"bypass_approval_page": {
-				Type:     types.BoolType,
+			"default_access_token_manager_ref": resourceLinkSchemaV0(),
+			"oidc_policy": schema.ListNestedAttribute{
 				Optional: true,
-			},
-			"description": {
-				Type:     types.StringType,
-				Optional: true,
-			},
-			"exclusive_scopes": {
-				Type: types.SetType{
-					ElemType: types.StringType,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"grant_access_session_revocation_api":   schema.BoolAttribute{Optional: true},
+						"pairwise_identifier_user_type":         schema.BoolAttribute{Optional: true},
+						"id_token_signing_algorithm":            schema.StringAttribute{Optional: true},
+						"id_token_encryption_algorithm":         schema.StringAttribute{Optional: true},
+						"id_token_content_encryption_algorithm": schema.StringAttribute{Optional: true},
+						"sector_identifier_uri":                 schema.StringAttribute{Optional: true},
+						"logout_uris":                           schema.ListAttribute{ElementType: types.StringType, Optional: true},
+						"ping_access_logout_capable":            schema.BoolAttribute{Optional: true},
+						"policy_group":                          resourceLinkSchemaV0(),
+					},
 				},
-				Optional: true,
 			},
-			"logo_url": {
-				Type:     types.StringType,
+			"jwks_settings": schema.ListNestedAttribute{
 				Optional: true,
-			},
-			"persistent_grant_expiration_time": {
-				Type:     types.NumberType,
-				Optional: true,
-			},
-			"persistent_grant_expiration_time_unit": {
-				Type:     types.StringType,
-				Optional: true,
-			},
-			"persistent_grant_expiration_type": {
-				Type:     types.StringType,
-				Optional: true,
-			},
-			"redirect_uris": {
-				Type: types.SetType{
-					ElemType: types.StringType,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"jwks":     schema.StringAttribute{Optional: true},
+						"jwks_url": schema.StringAttribute{Optional: true},
+					},
 				},
-				Optional: true,
 			},
-			"refresh_rolling": {
-				Type:     types.StringType,
-				Optional: true,
-			},
-			"require_signed_requests": {
-				Type:     types.BoolType,
-				Optional: true,
-			},
-			"restrict_scopes": {
-				Type:     types.BoolType,
-				Optional: true,
-			},
-			"restricted_response_types": {
-				Type: types.SetType{
-					ElemType: types.StringType,
-				},
-				Optional: true,
-			},
-			"restricted_scopes": {
-				Type: types.SetType{
-					ElemType: types.StringType,
-				},
-				Optional: true,
-			},
-			"validate_using_all_eligible_atms": {
-				Type:     types.BoolType,
-				Optional: true,
-			},
-			"client_auth": {
-				Optional: true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"client_cert_issuer_dn": {
-						Type:     types.StringType,
-						Optional: true,
-					},
-					"client_cert_subject_dn": {
-						Type:     types.StringType,
-						Optional: true,
-					},
-					"enforce_replay_prevention": {
-						Type:     types.BoolType,
-						Optional: true,
-					},
-					//TODO do we enable Secret/EncryptedSecret??
-					"secret": {
-						Type:      types.StringType,
-						Optional:  true,
-						Sensitive: true,
-					},
-					"type": {
-						Type:     types.StringType,
-						Required: true,
-					},
-					"token_endpoint_auth_signing_algorithm": {
-						Type:     types.StringType,
-						Optional: true,
-					},
-				}),
-			},
-			"default_access_token_manager_ref": {
-				Optional:   true,
-				Attributes: tfsdk.ListNestedAttributes(legacyResourceLinkSchema()),
-			},
-			"oidc_policy": {
-				Optional: true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"grant_access_session_revocation_api": {
-						Type:     types.BoolType,
-						Optional: true,
-					},
-					"pairwise_identifier_user_type": {
-						Type:     types.BoolType,
-						Optional: true,
-					},
-					"id_token_signing_algorithm": {
-						Type:     types.StringType,
-						Optional: true,
-					},
-					"id_token_encryption_algorithm": {
-						Type:     types.StringType,
-						Optional: true,
-					},
-					"id_token_content_encryption_algorithm": {
-						Type:     types.StringType,
-						Optional: true,
-					},
-					"sector_identifier_uri": {
-						Type:     types.StringType,
-						Optional: true,
-					},
-					"logout_uris": {
-						Type:     types.ListType{ElemType: types.StringType},
-						Optional: true,
-					},
-					"ping_access_logout_capable": {
-						Type:     types.BoolType,
-						Optional: true,
-					},
-					"policy_group": {
-						Optional:   true,
-						Attributes: tfsdk.ListNestedAttributes(legacyResourceLinkSchema()),
-					},
-				}),
-			},
-			"jwks_settings": {
-				Optional: true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"jwks": {
-						Type:     types.StringType,
-						Optional: true,
-					},
-					"jwks_url": {
-						Type:     types.StringType,
-						Optional: true,
-					},
-				}),
-			},
-			"ciba_delivery_mode": {
-				Type:     types.StringType,
-				Optional: true,
-			},
-			"ciba_notification_endpoint": {
-				Type:     types.StringType,
-				Optional: true,
-			},
-			"ciba_polling_interval": {
-				Type:     types.NumberType,
-				Optional: true,
-			},
-			"ciba_request_object_signing_algorithm": {
-				Type:     types.StringType,
-				Optional: true,
-			},
-			"ciba_require_signed_requests": {
-				Type:     types.BoolType,
-				Optional: true,
-			},
-			"ciba_user_code_supported": {
-				Type:     types.BoolType,
-				Optional: true,
-			},
-			"bypass_activation_code_confirmation_override": {
-				Type:     types.BoolType,
-				Optional: true,
-			},
-			"device_flow_setting_type": {
-				Type:     types.StringType,
-				Optional: true,
-			},
-			"device_polling_interval_override": {
-				Type:     types.NumberType,
-				Optional: true,
-			},
-			"extended_properties": {
-				Attributes: tfsdk.SetNestedAttributes(legacyResourceParameterValues()),
-				Optional:   true,
-			},
-			"pending_authorization_timeout_override": {
-				Type:     types.NumberType,
-				Optional: true,
-			},
-			"persistent_grant_idle_timeout": {
-				Type:        types.NumberType,
-				Description: "The persistent grant idle timeout.",
-				Optional:    true,
-			},
-			"persistent_grant_idle_timeout_time_unit": {
-				Type:     types.StringType,
-				Optional: true,
-			},
-			"persistent_grant_idle_timeout_type": {
-				Type:     types.StringType,
-				Optional: true,
-			},
-			"request_object_signing_algorithm": {
-				Type:     types.StringType,
-				Optional: true,
-			},
-			"request_policy_ref": {
-				Optional:   true,
-				Attributes: tfsdk.ListNestedAttributes(legacyResourceLinkSchema()),
-			},
-			"require_proof_key_for_code_exchange": {
-				Type:     types.BoolType,
-				Optional: true,
-			},
-			"require_pushed_authorization_requests": {
-				Type:     types.BoolType,
-				Optional: true,
-			},
-			"token_exchange_processor_policy_ref": {
-				Optional:   true,
-				Attributes: tfsdk.ListNestedAttributes(legacyResourceLinkSchema()),
-			},
-			"user_authorization_url_override": {
-				Type:     types.StringType,
-				Optional: true,
-			},
-			"restrict_to_default_access_token_manager": {
-				Type:     types.BoolType,
-				Optional: true,
-			},
+			"ciba_delivery_mode":                           schema.StringAttribute{Optional: true},
+			"ciba_notification_endpoint":                   schema.StringAttribute{Optional: true},
+			"ciba_polling_interval":                        schema.NumberAttribute{Optional: true},
+			"ciba_request_object_signing_algorithm":        schema.StringAttribute{Optional: true},
+			"ciba_require_signed_requests":                 schema.BoolAttribute{Optional: true},
+			"ciba_user_code_supported":                     schema.BoolAttribute{Optional: true},
+			"bypass_activation_code_confirmation_override": schema.BoolAttribute{Optional: true},
+			"device_flow_setting_type":                     schema.StringAttribute{Optional: true},
+			"device_polling_interval_override":             schema.NumberAttribute{Optional: true},
+			"extended_properties":                          legacyResourceParameterValues(),
+			"pending_authorization_timeout_override":       schema.NumberAttribute{Optional: true},
+			"persistent_grant_idle_timeout":                schema.NumberAttribute{Optional: true},
+			"persistent_grant_idle_timeout_time_unit":      schema.StringAttribute{Optional: true},
+			"persistent_grant_idle_timeout_type":           schema.StringAttribute{Optional: true},
+			"request_object_signing_algorithm":             schema.StringAttribute{Optional: true},
+			"request_policy_ref":                           resourceLinkSchemaV0(),
+			"require_proof_key_for_code_exchange":          schema.BoolAttribute{Optional: true},
+			"require_pushed_authorization_requests":        schema.BoolAttribute{Optional: true},
+			"token_exchange_processor_policy_ref":          resourceLinkSchemaV0(),
+			"user_authorization_url_override":              schema.StringAttribute{Optional: true},
+			"restrict_to_default_access_token_manager":     schema.BoolAttribute{Optional: true},
 		},
 	}
 }

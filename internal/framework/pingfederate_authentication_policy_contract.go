@@ -4,16 +4,15 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/iwarapter/pingfederate-sdk-go/services/authenticationPolicyContracts"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
 var (
 	_ resource.Resource                = &pingfederateAuthenticationPolicyContractResource{}
+	_ resource.ResourceWithSchema      = &pingfederateAuthenticationPolicyContractResource{}
 	_ resource.ResourceWithConfigure   = &pingfederateAuthenticationPolicyContractResource{}
 	_ resource.ResourceWithImportState = &pingfederateAuthenticationPolicyContractResource{}
 )
@@ -26,8 +25,8 @@ func NewAuthenticationPolicyContractResource() resource.Resource {
 	return &pingfederateAuthenticationPolicyContractResource{}
 }
 
-func (r *pingfederateAuthenticationPolicyContractResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return resourceAuthenticationPolicyContract(), nil
+func (r *pingfederateAuthenticationPolicyContractResource) Schema(ctx context.Context, request resource.SchemaRequest, response *resource.SchemaResponse) {
+	response.Schema = resourceAuthenticationPolicyContract()
 }
 
 // Configure adds the client configured client to the resource.

@@ -9,11 +9,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	fresource "github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/iwarapter/pingfederate-sdk-go/services/oauthAuthenticationPolicyContractMappings"
-
-	res "github.com/hashicorp/terraform-plugin-framework/resource"
 
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
@@ -522,10 +521,11 @@ func Test_resourcePingFederateOauthAuthenticationPolicyContractMappingResourceRe
 		t.Run(fmt.Sprintf("tc:%v", i), func(t *testing.T) {
 			res := &pingfederateOauthAuthenticationPolicyContractMappingResource{}
 			ctx := context.Background()
-			resourceSchema, diags := res.GetSchema(ctx)
-			require.False(t, diags.HasError())
+			schResp := &fresource.SchemaResponse{}
+			res.Schema(ctx, fresource.SchemaRequest{}, schResp)
+			require.False(t, schResp.Diagnostics.HasError())
 
-			state := tfsdk.State{Schema: resourceSchema}
+			state := tfsdk.State{Schema: schResp.Schema}
 			require.False(t, state.Set(ctx, flattenApcToPersistentGrantMapping(&tc.Resource)).HasError())
 
 			check := ApcToPersistentGrantMappingData{}
@@ -563,19 +563,20 @@ func Test_resourceWithExtraReturnedDataDoesntError(t *testing.T) {
 		},
 	}
 
-	resType := &pingfederateOauthAuthenticationPolicyContractMappingResource{}
+	res := &pingfederateOauthAuthenticationPolicyContractMappingResource{}
 	ctx := context.Background()
-	resourceSchema, diags := resType.GetSchema(ctx)
-	require.False(t, diags.HasError())
+	schResp := &fresource.SchemaResponse{}
+	res.Schema(ctx, fresource.SchemaRequest{}, schResp)
+	require.False(t, schResp.Diagnostics.HasError())
 
 	r := pingfederateOauthAuthenticationPolicyContractMappingResource{p}
 
-	resp := &res.CreateResponse{}
-	r.Create(ctx, res.CreateRequest{
+	resp := &fresource.CreateResponse{}
+	r.Create(ctx, fresource.CreateRequest{
 		Config: tfsdk.Config{
-			Schema: resourceSchema,
+			Schema: schResp.Schema,
 		},
-		Plan: tfsdk.Plan{Schema: resourceSchema},
+		Plan: tfsdk.Plan{Schema: schResp.Schema},
 	}, resp)
 
 	//model := &pf.ApcToPersistentGrantMapping{
@@ -601,7 +602,7 @@ func Test_resourceWithExtraReturnedDataDoesntError(t *testing.T) {
 	//	},
 	//}
 
-	state := tfsdk.State{Schema: resourceSchema}
+	state := tfsdk.State{Schema: schResp.Schema}
 
 	require.False(t, state.Set(ctx, flattenApcToPersistentGrantMapping(model)).HasError())
 

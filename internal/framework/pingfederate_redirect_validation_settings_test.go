@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"testing"
 
+	fresource "github.com/hashicorp/terraform-plugin-framework/resource"
+
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/stretchr/testify/require"
 
@@ -157,10 +159,11 @@ func Test_resourcePingFederateRedirectValidationSettingsResourceReadData(t *test
 		t.Run(fmt.Sprintf("tc:%v", i), func(t *testing.T) {
 			res := &pingfederateRedirectValidationSettingsResource{}
 			ctx := context.Background()
-			resourceSchema, diags := res.GetSchema(ctx)
-			require.False(t, diags.HasError())
+			schResp := &fresource.SchemaResponse{}
+			res.Schema(ctx, fresource.SchemaRequest{}, schResp)
+			require.False(t, schResp.Diagnostics.HasError())
 
-			state := tfsdk.State{Schema: resourceSchema}
+			state := tfsdk.State{Schema: schResp.Schema}
 			require.False(t, state.Set(ctx, flattenRedirectValidationSettings(&tc.Resource)).HasError())
 
 			check := RedirectValidationSettingsData{}

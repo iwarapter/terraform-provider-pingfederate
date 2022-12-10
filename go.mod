@@ -60,3 +60,5 @@ require (
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+replace github.com/hashicorp/terraform-plugin-framework v0.17.0 => github.com/iwarapter/terraform-plugin-framework v0.6.2-0.20221209210120-6fec238ce7ff
