@@ -1,7 +1,19 @@
-## 0.0.25 (Unreleased)
+## 0.1.0 (December 11th, 2022)
+
+BREAKING CHANGES:
+- The provider is being migrated to the new Terraform Provider Framework and all resources will eventually be moved over.
+- The following resources have been upgraded and contain breaking changes to their interface:
+  - pingfederate_authentication_policy_contract
+  - pingfederate_oauth_client
+- See the upgrade guide on the registry for more detail upgrading each resource.
 
 FEATURES:
 
+- New Resource `pingfederate_application_session_policy`. (#232)
+- New Resource `pingfederate_authentication_session_policy`. (#232)
+- New Resource `pingfederate_session_settings`. (#232)
+- New Resource `pingfederate_global_authentication_session_policy`. (#232)
+- New Resource `pingfederate_redirect_validation_settings`. (#193)
 - Add support for `user_id_authenticated` within `AUTHN_SOURCE` policy actions. (#215)
 - Add support for `search_attributes` with `ldap_attribute_source`. (#233)
 
