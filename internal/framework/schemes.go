@@ -3,10 +3,12 @@ package framework
 import (
 	"math/big"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/iwarapter/terraform-provider-pingfederate/internal/framework/defaults"
 )
@@ -54,12 +56,46 @@ func resourceApcToPersistentGrantMapping() schema.Schema {
 				Computed:    true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
 			"issuance_criteria": schema.SingleNestedAttribute{
 				Description: `The issuance criteria that this transaction must meet before the corresponding attribute contract is fulfilled.`,
 				Optional:    true,
 				Attributes:  singleIssuanceCriteria(),
+			},
+		},
+	}
+}
+
+func resourceApplicationSessionPolicy() schema.Schema {
+	return schema.Schema{
+		Description: `Session controls for user facing PingFederate application endpoints, such as the profile management endpoint.`,
+		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: ``,
+				Optional:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+					stringplanmodifier.RequiresReplace(),
+				},
+			},
+			"idle_timeout_mins": schema.NumberAttribute{
+				Description: `The idle timeout period, in minutes. If set to -1, the idle timeout will be set to the maximum timeout. The default is 60.`,
+				Optional:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.Number{
+					defaults.NewDefaultNumber(big.NewFloat(60)),
+				},
+			},
+			"max_timeout_mins": schema.NumberAttribute{
+				Description: `The maximum timeout period, in minutes. If set to -1, sessions do not expire. The default is 480.`,
+				Optional:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.Number{
+					defaults.NewDefaultNumber(big.NewFloat(480)),
+				},
 			},
 		},
 	}
@@ -89,11 +125,61 @@ func resourceAuthenticationPolicyContract() schema.Schema {
 				Computed:    true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
 			"name": schema.StringAttribute{
 				Description: `The Authentication Policy Contract Name. Name is unique.`,
 				Required:    true,
+			},
+		},
+	}
+}
+
+func resourceAuthenticationSessionPolicy() schema.Schema {
+	return schema.Schema{
+		Description: `The session policy for a specified authentication source.`,
+		Attributes: map[string]schema.Attribute{
+			"authentication_source": schema.SingleNestedAttribute{
+				Description: `The authentication source this session policy applies to. This property cannot be changed after the policy is created.`,
+				Required:    true,
+				Attributes:  singleAuthenticationSource(),
+			},
+			"authn_context_sensitive": schema.BoolAttribute{
+				Description: `Determines whether the requested authentication context is considered when deciding whether an existing session is valid for a given request. The default is false.`,
+				Optional:    true,
+			},
+			"enable_sessions": schema.BoolAttribute{
+				Description: `Determines whether sessions are enabled for the authentication source. This value overrides the enableSessions value from the global authentication session policy.`,
+				Required:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: `The persistent, unique ID for the session policy. It can be any combination of [a-z0-9._-]. This property is system-assigned if not specified.`,
+				Optional:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+					stringplanmodifier.RequiresReplace(),
+				},
+			},
+			"idle_timeout_mins": schema.NumberAttribute{
+				Description: `The idle timeout period, in minutes. If omitted, the value from the global authentication session policy will be used. If set to -1, the idle timeout will be set to the maximum timeout. If a value is provided for this property, a value must also be provided for maxTimeoutMins.`,
+				Optional:    true,
+			},
+			"max_timeout_mins": schema.NumberAttribute{
+				Description: `The maximum timeout period, in minutes. If omitted, the value from the global authentication session policy will be used. If set to -1, sessions do not expire. If a value is provided for this property, a value must also be provided for idleTimeoutMins.`,
+				Optional:    true,
+			},
+			"persistent": schema.BoolAttribute{
+				Description: `Determines whether sessions for the authentication source are persistent. This value overrides the persistentSessions value from the global authentication session policy. This field is ignored if enableSessions is false.`,
+				Optional:    true,
+			},
+			"timeout_display_unit": schema.StringAttribute{
+				Description: `The display unit for session timeout periods in the PingFederate administrative console. When the display unit is HOURS or DAYS, the timeout values in minutes must correspond to a whole number value for the specified unit.`,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOf("MINUTES", "HOURS", "DAYS"),
+				},
 			},
 		},
 	}
@@ -127,6 +213,9 @@ func resourceClient() schema.Schema {
 			"ciba_delivery_mode": schema.StringAttribute{
 				Description: `The token delivery mode for the client.  The default value is 'POLL'.`,
 				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOf("POLL", "PING"),
+				},
 			},
 			"ciba_notification_endpoint": schema.StringAttribute{
 				Description: `The endpoint the OP will call after a successful or failed end-user authentication.`,
@@ -139,6 +228,9 @@ func resourceClient() schema.Schema {
 			"ciba_request_object_signing_algorithm": schema.StringAttribute{
 				Description: `The JSON Web Signature [JWS] algorithm that must be used to sign the CIBA Request Object. All signing algorithms are allowed if value is not present <br>RS256 - RSA using SHA-256<br>RS384 - RSA using SHA-384<br>RS512 - RSA using SHA-512<br>ES256 - ECDSA using P256 Curve and SHA-256<br>ES384 - ECDSA using P384 Curve and SHA-384<br>ES512 - ECDSA using P521 Curve and SHA-512<br>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256<br>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384<br>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512<br>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11.`,
 				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOf("RS256", "RS384", "RS512", "ES256", "ES384", "ES512", "PS256", "PS384", "PS512"),
+				},
 			},
 			"ciba_require_signed_requests": schema.BoolAttribute{
 				Description: `Determines whether CIBA signed requests are required for this client.`,
@@ -173,6 +265,9 @@ func resourceClient() schema.Schema {
 				Description: `Use OVERRIDE_SERVER_DEFAULT to override the Client Secret Retention Period value on the Authorization Server Settings. SERVER_DEFAULT will default to the Client Secret Retention Period value on the Authorization Server Setting. Defaults to SERVER_DEFAULT.`,
 				Optional:    true,
 				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOf("SERVER_DEFAULT", "OVERRIDE_SERVER_DEFAULT"),
+				},
 				PlanModifiers: []planmodifier.String{
 					defaults.NewDefaultString("SERVER_DEFAULT"),
 				},
@@ -189,6 +284,9 @@ func resourceClient() schema.Schema {
 				Description: `Allows an administrator to override the Device Authorization Settings set globally for the OAuth AS. Defaults to SERVER_DEFAULT.`,
 				Optional:    true,
 				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOf("SERVER_DEFAULT", "OVERRIDE_SERVER_DEFAULT"),
+				},
 				PlanModifiers: []planmodifier.String{
 					defaults.NewDefaultString("SERVER_DEFAULT"),
 				},
@@ -232,6 +330,7 @@ func resourceClient() schema.Schema {
 				Computed:    true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
 			"jwks_settings": schema.SingleNestedAttribute{
@@ -242,14 +341,23 @@ func resourceClient() schema.Schema {
 			"jwt_secured_authorization_response_mode_content_encryption_algorithm": schema.StringAttribute{
 				Description: `The JSON Web Encryption [JWE] content-encryption algorithm for the JWT Secured Authorization Response.<br>AES_128_CBC_HMAC_SHA_256 - Composite AES-CBC-128 HMAC-SHA-256<br>AES_192_CBC_HMAC_SHA_384 - Composite AES-CBC-192 HMAC-SHA-384<br>AES_256_CBC_HMAC_SHA_512 - Composite AES-CBC-256 HMAC-SHA-512<br>AES_128_GCM - AES-GCM-128<br>AES_192_GCM - AES-GCM-192<br>AES_256_GCM - AES-GCM-256`,
 				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOf("AES_128_CBC_HMAC_SHA_256", "AES_192_CBC_HMAC_SHA_384", "AES_256_CBC_HMAC_SHA_512", "AES_128_GCM", "AES_192_GCM", "AES_256_GCM"),
+				},
 			},
 			"jwt_secured_authorization_response_mode_encryption_algorithm": schema.StringAttribute{
 				Description: `The JSON Web Encryption [JWE] encryption algorithm used to encrypt the content-encryption key of the JWT Secured Authorization Response.<br>DIR - Direct Encryption with symmetric key<br>A128KW - AES-128 Key Wrap<br>A192KW - AES-192 Key Wrap<br>A256KW - AES-256 Key Wrap<br>A128GCMKW - AES-GCM-128 key encryption<br>A192GCMKW - AES-GCM-192 key encryption<br>A256GCMKW - AES-GCM-256 key encryption<br>ECDH_ES - ECDH-ES<br>ECDH_ES_A128KW - ECDH-ES with AES-128 Key Wrap<br>ECDH_ES_A192KW - ECDH-ES with AES-192 Key Wrap<br>ECDH_ES_A256KW - ECDH-ES with AES-256 Key Wrap<br>RSA_OAEP - RSAES OAEP<br>RSA_OAEP_256 - RSAES OAEP using SHA-256 and MGF1 with SHA-256`,
 				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOf("DIR", "A128KW", "A192KW", "A256KW", "A128GCMKW", "A192GCMKW", "A256GCMKW", "ECDH_ES", "ECDH_ES_A128KW", "ECDH_ES_A192KW", "ECDH_ES_A256KW", "RSA_OAEP", "RSA_OAEP_256"),
+				},
 			},
 			"jwt_secured_authorization_response_mode_signing_algorithm": schema.StringAttribute{
 				Description: `The JSON Web Signature [JWS] algorithm required to sign the JWT Secured Authorization Response.<br>HS256 - HMAC using SHA-256<br>HS384 - HMAC using SHA-384<br>HS512 - HMAC using SHA-512<br>RS256 - RSA using SHA-256<br>RS384 - RSA using SHA-384<br>RS512 - RSA using SHA-512<br>ES256 - ECDSA using P256 Curve and SHA-256<br>ES384 - ECDSA using P384 Curve and SHA-384<br>ES512 - ECDSA using P521 Curve and SHA-512<br>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256<br>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384<br>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512<br>A null value will represent the default algorithm which is RS256.<br>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11`,
 				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOf("RS256", "RS384", "RS512", "HS256", "HS384", "HS512", "ES256", "ES384", "ES512", "PS256", "PS384", "PS512"),
+				},
 			},
 			"logo_url": schema.StringAttribute{
 				Description: `The location of the logo used on user-facing OAuth grant authorization and revocation pages.`,
@@ -280,6 +388,9 @@ func resourceClient() schema.Schema {
 				Description: `The persistent grant expiration time unit.`,
 				Optional:    true,
 				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOf("MINUTES", "DAYS", "HOURS"),
+				},
 				PlanModifiers: []planmodifier.String{
 					defaults.NewDefaultString("DAYS"),
 				},
@@ -288,6 +399,9 @@ func resourceClient() schema.Schema {
 				Description: `Allows an administrator to override the Persistent Grant Lifetime set globally for the OAuth AS. Defaults to SERVER_DEFAULT.`,
 				Optional:    true,
 				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOf("INDEFINITE_EXPIRY", "SERVER_DEFAULT", "OVERRIDE_SERVER_DEFAULT"),
+				},
 				PlanModifiers: []planmodifier.String{
 					defaults.NewDefaultString("SERVER_DEFAULT"),
 				},
@@ -304,6 +418,9 @@ func resourceClient() schema.Schema {
 				Description: `The persistent grant idle timeout time unit.`,
 				Optional:    true,
 				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOf("MINUTES", "DAYS", "HOURS"),
+				},
 				PlanModifiers: []planmodifier.String{
 					defaults.NewDefaultString("DAYS"),
 				},
@@ -312,6 +429,9 @@ func resourceClient() schema.Schema {
 				Description: `Allows an administrator to override the Persistent Grant Idle Timeout set globally for the OAuth AS. Defaults to SERVER_DEFAULT.`,
 				Optional:    true,
 				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOf("INDEFINITE_EXPIRY", "SERVER_DEFAULT", "OVERRIDE_SERVER_DEFAULT"),
+				},
 				PlanModifiers: []planmodifier.String{
 					defaults.NewDefaultString("SERVER_DEFAULT"),
 				},
@@ -325,6 +445,9 @@ func resourceClient() schema.Schema {
 				Description: `Allows and administrator to override the Reuse Existing Persistent Access Grants for Grant Types set globally for OAuth AS. Defaults to SERVER_DEFAULT.`,
 				Optional:    true,
 				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOf("SERVER_DEFAULT", "OVERRIDE_SERVER_DEFAULT"),
+				},
 				PlanModifiers: []planmodifier.String{
 					defaults.NewDefaultString("SERVER_DEFAULT"),
 				},
@@ -342,6 +465,9 @@ func resourceClient() schema.Schema {
 				Description: `Use ROLL or DONT_ROLL to override the Roll Refresh Token Values setting on the Authorization Server Settings. SERVER_DEFAULT will default to the Roll Refresh Token Values setting on the Authorization Server Setting screen. Defaults to SERVER_DEFAULT.`,
 				Optional:    true,
 				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOf("SERVER_DEFAULT", "DONT_ROLL", "ROLL"),
+				},
 				PlanModifiers: []planmodifier.String{
 					defaults.NewDefaultString("SERVER_DEFAULT"),
 				},
@@ -354,6 +480,9 @@ func resourceClient() schema.Schema {
 				Description: `When specified, it overrides the global Refresh Token Grace Period defined in the Authorization Server Settings. The default value is SERVER_DEFAULT`,
 				Optional:    true,
 				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOf("SERVER_DEFAULT", "OVERRIDE_SERVER_DEFAULT"),
+				},
 				PlanModifiers: []planmodifier.String{
 					defaults.NewDefaultString("SERVER_DEFAULT"),
 				},
@@ -366,6 +495,9 @@ func resourceClient() schema.Schema {
 				Description: `Use OVERRIDE_SERVER_DEFAULT to override the Refresh Token Rolling Interval value on the Authorization Server Settings. SERVER_DEFAULT will default to the Refresh Token Rolling Interval value on the Authorization Server Setting. Defaults to SERVER_DEFAULT.`,
 				Optional:    true,
 				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOf("SERVER_DEFAULT", "OVERRIDE_SERVER_DEFAULT"),
+				},
 				PlanModifiers: []planmodifier.String{
 					defaults.NewDefaultString("SERVER_DEFAULT"),
 				},
@@ -373,6 +505,9 @@ func resourceClient() schema.Schema {
 			"request_object_signing_algorithm": schema.StringAttribute{
 				Description: `The JSON Web Signature [JWS] algorithm that must be used to sign the Request Object. All signing algorithms are allowed if value is not present <br>RS256 - RSA using SHA-256<br>RS384 - RSA using SHA-384<br>RS512 - RSA using SHA-512<br>ES256 - ECDSA using P256 Curve and SHA-256<br>ES384 - ECDSA using P384 Curve and SHA-384<br>ES512 - ECDSA using P521 Curve and SHA-512<br>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256<br>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384<br>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512<br>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11.`,
 				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOf("RS256", "RS384", "RS512", "ES256", "ES384", "ES512", "PS256", "PS384", "PS512"),
+				},
 			},
 			"request_policy_ref": schema.StringAttribute{
 				Description: `The CIBA request policy.`,
@@ -451,14 +586,23 @@ func resourceClient() schema.Schema {
 			"token_introspection_content_encryption_algorithm": schema.StringAttribute{
 				Description: `The JSON Web Encryption [JWE] content-encryption algorithm for the Token Introspection Response.<br>AES_128_CBC_HMAC_SHA_256 - Composite AES-CBC-128 HMAC-SHA-256<br>AES_192_CBC_HMAC_SHA_384 - Composite AES-CBC-192 HMAC-SHA-384<br>AES_256_CBC_HMAC_SHA_512 - Composite AES-CBC-256 HMAC-SHA-512<br>AES_128_GCM - AES-GCM-128<br>AES_192_GCM - AES-GCM-192<br>AES_256_GCM - AES-GCM-256`,
 				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOf("AES_128_CBC_HMAC_SHA_256", "AES_192_CBC_HMAC_SHA_384", "AES_256_CBC_HMAC_SHA_512", "AES_128_GCM", "AES_192_GCM", "AES_256_GCM"),
+				},
 			},
 			"token_introspection_encryption_algorithm": schema.StringAttribute{
 				Description: `The JSON Web Encryption [JWE] encryption algorithm used to encrypt the content-encryption key of the Token Introspection Response.<br>DIR - Direct Encryption with symmetric key<br>A128KW - AES-128 Key Wrap<br>A192KW - AES-192 Key Wrap<br>A256KW - AES-256 Key Wrap<br>A128GCMKW - AES-GCM-128 key encryption<br>A192GCMKW - AES-GCM-192 key encryption<br>A256GCMKW - AES-GCM-256 key encryption<br>ECDH_ES - ECDH-ES<br>ECDH_ES_A128KW - ECDH-ES with AES-128 Key Wrap<br>ECDH_ES_A192KW - ECDH-ES with AES-192 Key Wrap<br>ECDH_ES_A256KW - ECDH-ES with AES-256 Key Wrap<br>RSA_OAEP - RSAES OAEP<br>RSA_OAEP_256 - RSAES OAEP using SHA-256 and MGF1 with SHA-256`,
 				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOf("DIR", "A128KW", "A192KW", "A256KW", "A128GCMKW", "A192GCMKW", "A256GCMKW", "ECDH_ES", "ECDH_ES_A128KW", "ECDH_ES_A192KW", "ECDH_ES_A256KW", "RSA_OAEP", "RSA_OAEP_256"),
+				},
 			},
 			"token_introspection_signing_algorithm": schema.StringAttribute{
 				Description: `The JSON Web Signature [JWS] algorithm required to sign the Token Introspection Response.<br>HS256 - HMAC using SHA-256<br>HS384 - HMAC using SHA-384<br>HS512 - HMAC using SHA-512<br>RS256 - RSA using SHA-256<br>RS384 - RSA using SHA-384<br>RS512 - RSA using SHA-512<br>ES256 - ECDSA using P256 Curve and SHA-256<br>ES384 - ECDSA using P384 Curve and SHA-384<br>ES512 - ECDSA using P521 Curve and SHA-512<br>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256<br>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384<br>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512<br>A null value will represent the default algorithm which is RS256.<br>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11`,
 				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOf("RS256", "RS384", "RS512", "HS256", "HS384", "HS512", "ES256", "ES384", "ES512", "PS256", "PS384", "PS512"),
+				},
 			},
 			"user_authorization_url_override": schema.StringAttribute{
 				Description: `The URL used as 'verification_url' and 'verification_url_complete' values in a Device Authorization request. This property overrides the 'userAuthorizationUrl' value present in Authorization Server Settings.`,
@@ -476,6 +620,57 @@ func resourceClient() schema.Schema {
 	}
 }
 
+func resourceGlobalAuthenticationSessionPolicy() schema.Schema {
+	return schema.Schema{
+		Description: `The global policy for authentication sessions.`,
+		Attributes: map[string]schema.Attribute{
+			"enable_sessions": schema.BoolAttribute{
+				Description: `Determines whether authentication sessions are enabled globally.`,
+				Required:    true,
+			},
+			"hash_unique_user_key_attribute": schema.BoolAttribute{
+				Description: `Determines whether to hash the value of the unique user key attribute.`,
+				Optional:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: ``,
+				Optional:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+					stringplanmodifier.RequiresReplace(),
+				},
+			},
+			"idle_timeout_display_unit": schema.StringAttribute{
+				Description: `The display unit for the idle timeout period in the PingFederate administrative console. When the display unit is HOURS or DAYS, the timeout value in minutes must correspond to a whole number value for the specified unit.`,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOf("MINUTES", "HOURS", "DAYS"),
+				},
+			},
+			"idle_timeout_mins": schema.NumberAttribute{
+				Description: `The idle timeout period, in minutes. If set to -1, the idle timeout will be set to the maximum timeout. The default is 60.`,
+				Optional:    true,
+			},
+			"max_timeout_display_unit": schema.StringAttribute{
+				Description: `The display unit for the maximum timeout period in the PingFederate administrative console. When the display unit is HOURS or DAYS, the timeout value in minutes must correspond to a whole number value for the specified unit.`,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOf("MINUTES", "HOURS", "DAYS"),
+				},
+			},
+			"max_timeout_mins": schema.NumberAttribute{
+				Description: `The maximum timeout period, in minutes. If set to -1, sessions do not expire. The default is 480.`,
+				Optional:    true,
+			},
+			"persistent_sessions": schema.BoolAttribute{
+				Description: `Determines whether authentication sessions are persistent by default. Persistent sessions are linked to a persistent cookie and stored in a data store. This field is ignored if enableSessions is false.`,
+				Optional:    true,
+			},
+		},
+	}
+}
+
 func resourceRedirectValidationSettings() schema.Schema {
 	return schema.Schema{
 		Description: `Settings for redirect validation for SSO, SLO and IdP discovery.`,
@@ -486,6 +681,7 @@ func resourceRedirectValidationSettings() schema.Schema {
 				Computed:    true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
 			"redirect_validation_local_settings": schema.SingleNestedAttribute{
@@ -497,6 +693,35 @@ func resourceRedirectValidationSettings() schema.Schema {
 				Description: `Settings for redirection at a partner site.`,
 				Optional:    true,
 				Attributes:  singleRedirectValidationPartnerSettings(),
+			},
+		},
+	}
+}
+
+func resourceSessionSettings() schema.Schema {
+	return schema.Schema{
+		Description: `General settings related to session management.`,
+		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: ``,
+				Optional:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+					stringplanmodifier.RequiresReplace(),
+				},
+			},
+			"revoke_user_session_on_logout": schema.BoolAttribute{
+				Description: `Determines whether the user's session is revoked on logout. If this property is not provided on a PUT, the setting is left unchanged.`,
+				Optional:    true,
+			},
+			"session_revocation_lifetime": schema.NumberAttribute{
+				Description: `How long a session revocation is tracked and stored, in minutes. If this property is not provided on a PUT, the setting is left unchanged.`,
+				Optional:    true,
+			},
+			"track_adapter_sessions_for_logout": schema.BoolAttribute{
+				Description: `Determines whether adapter sessions are tracked for cleanup during single logout. The default is false.`,
+				Optional:    true,
 			},
 		},
 	}
@@ -608,6 +833,9 @@ func listLdapAttributeSource() map[string]schema.Attribute {
 		"search_scope": schema.StringAttribute{
 			Description: `Determines the node depth of the query.`,
 			Optional:    true,
+			Validators: []validator.String{
+				stringvalidator.OneOf("OBJECT", "ONE_LEVEL", "SUBTREE"),
+			},
 		},
 	}
 }
@@ -663,11 +891,30 @@ func mapAttributeFulfillmentValue() map[string]schema.Attribute {
 	}
 }
 
+func singleAuthenticationSource() map[string]schema.Attribute {
+	return map[string]schema.Attribute{
+		"source_ref": schema.StringAttribute{
+			Description: `A reference to the authentication source.`,
+			Required:    true,
+		},
+		"type": schema.StringAttribute{
+			Description: `The type of this authentication source.`,
+			Required:    true,
+			Validators: []validator.String{
+				stringvalidator.OneOf("IDP_ADAPTER", "IDP_CONNECTION"),
+			},
+		},
+	}
+}
+
 func mapBinaryLdapAttributeSettings() map[string]schema.Attribute {
 	return map[string]schema.Attribute{
 		"binary_encoding": schema.StringAttribute{
 			Description: `Get the encoding type for this attribute. If not specified, the default is BASE64.`,
 			Optional:    true,
+			Validators: []validator.String{
+				stringvalidator.OneOf("BASE64", "HEX", "SID"),
+			},
 		},
 	}
 }
@@ -701,10 +948,16 @@ func singleClientAuth() map[string]schema.Attribute {
 		"token_endpoint_auth_signing_algorithm": schema.StringAttribute{
 			Description: `The JSON Web Signature [JWS] algorithm that must be used to sign the JSON Web Tokens. This field is applicable only for Private Key JWT Client Authentication. All signing algorithms are allowed if value is not present <br>RS256 - RSA using SHA-256<br>RS384 - RSA using SHA-384<br>RS512 - RSA using SHA-512<br>ES256 - ECDSA using P256 Curve and SHA-256<br>ES384 - ECDSA using P384 Curve and SHA-384<br>ES512 - ECDSA using P521 Curve and SHA-512<br>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256<br>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384<br>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512<br>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11.`,
 			Optional:    true,
+			Validators: []validator.String{
+				stringvalidator.OneOf("RS256", "RS384", "RS512", "ES256", "ES384", "ES512", "PS256", "PS384", "PS512"),
+			},
 		},
 		"type": schema.StringAttribute{
 			Description: `Client authentication type.<br>The required field for type SECRET is secret.<br>The required fields for type CERTIFICATE are clientCertIssuerDn and clientCertSubjectDn.<br>The required field for type PRIVATE_KEY_JWT is: either jwks or jwksUrl.`,
 			Optional:    true,
+			Validators: []validator.String{
+				stringvalidator.OneOf("NONE", "SECRET", "CERTIFICATE", "PRIVATE_KEY_JWT"),
+			},
 		},
 	}
 }
@@ -726,15 +979,24 @@ func singleClientOIDCPolicy() map[string]schema.Attribute {
 		"id_token_content_encryption_algorithm": schema.StringAttribute{
 			Description: `The JSON Web Encryption [JWE] content encryption algorithm for the ID Token.<br>AES_128_CBC_HMAC_SHA_256 - Composite AES-CBC-128 HMAC-SHA-256<br>AES_192_CBC_HMAC_SHA_384 - Composite AES-CBC-192 HMAC-SHA-384<br>AES_256_CBC_HMAC_SHA_512 - Composite AES-CBC-256 HMAC-SHA-512<br>AES_128_GCM - AES-GCM-128<br>AES_192_GCM - AES-GCM-192<br>AES_256_GCM - AES-GCM-256`,
 			Optional:    true,
+			Validators: []validator.String{
+				stringvalidator.OneOf("AES_128_CBC_HMAC_SHA_256", "AES_192_CBC_HMAC_SHA_384", "AES_256_CBC_HMAC_SHA_512", "AES_128_GCM", "AES_192_GCM", "AES_256_GCM"),
+			},
 		},
 		"id_token_encryption_algorithm": schema.StringAttribute{
 			Description: `The JSON Web Encryption [JWE] encryption algorithm used to encrypt the content encryption key for the ID Token.<br>DIR - Direct Encryption with symmetric key<br>A128KW - AES-128 Key Wrap<br>A192KW - AES-192 Key Wrap<br>A256KW - AES-256 Key Wrap<br>A128GCMKW - AES-GCM-128 key encryption<br>A192GCMKW - AES-GCM-192 key encryption<br>A256GCMKW - AES-GCM-256 key encryption<br>ECDH_ES - ECDH-ES<br>ECDH_ES_A128KW - ECDH-ES with AES-128 Key Wrap<br>ECDH_ES_A192KW - ECDH-ES with AES-192 Key Wrap<br>ECDH_ES_A256KW - ECDH-ES with AES-256 Key Wrap<br>RSA_OAEP - RSAES OAEP<br>RSA_OAEP_256 - RSAES OAEP using SHA-256 and MGF1 with SHA-256`,
 			Optional:    true,
+			Validators: []validator.String{
+				stringvalidator.OneOf("DIR", "A128KW", "A192KW", "A256KW", "A128GCMKW", "A192GCMKW", "A256GCMKW", "ECDH_ES", "ECDH_ES_A128KW", "ECDH_ES_A192KW", "ECDH_ES_A256KW", "RSA_OAEP", "RSA_OAEP_256"),
+			},
 		},
 		"id_token_signing_algorithm": schema.StringAttribute{
 			Description: `The JSON Web Signature [JWS] algorithm required for the ID Token.<br>NONE - No signing algorithm<br>HS256 - HMAC using SHA-256<br>HS384 - HMAC using SHA-384<br>HS512 - HMAC using SHA-512<br>RS256 - RSA using SHA-256<br>RS384 - RSA using SHA-384<br>RS512 - RSA using SHA-512<br>ES256 - ECDSA using P256 Curve and SHA-256<br>ES384 - ECDSA using P384 Curve and SHA-384<br>ES512 - ECDSA using P521 Curve and SHA-512<br>PS256 - RSASSA-PSS using SHA-256 and MGF1 padding with SHA-256<br>PS384 - RSASSA-PSS using SHA-384 and MGF1 padding with SHA-384<br>PS512 - RSASSA-PSS using SHA-512 and MGF1 padding with SHA-512<br>A null value will represent the default algorithm which is RS256.<br>RSASSA-PSS is only supported with SafeNet Luna, Thales nCipher or Java 11`,
 			Optional:    true,
 			Computed:    true,
+			Validators: []validator.String{
+				stringvalidator.OneOf("NONE", "HS256", "HS384", "HS512", "RS256", "RS384", "RS512", "ES256", "ES384", "ES512", "PS256", "PS384", "PS512"),
+			},
 			PlanModifiers: []planmodifier.String{
 				defaults.NewDefaultString("RS256"),
 			},
@@ -776,6 +1038,9 @@ func listConditionalIssuanceCriteriaEntry() map[string]schema.Attribute {
 		"condition": schema.StringAttribute{
 			Description: `The condition that will be applied to the source attribute's value and the expected value.`,
 			Required:    true,
+			Validators: []validator.String{
+				stringvalidator.OneOf("EQUALS", "EQUALS_CASE_INSENSITIVE", "EQUALS_DN", "NOT_EQUAL", "NOT_EQUAL_CASE_INSENSITIVE", "NOT_EQUAL_DN", "MULTIVALUE_CONTAINS", "MULTIVALUE_CONTAINS_CASE_INSENSITIVE", "MULTIVALUE_CONTAINS_DN", "MULTIVALUE_DOES_NOT_CONTAIN", "MULTIVALUE_DOES_NOT_CONTAIN_CASE_INSENSITIVE", "MULTIVALUE_DOES_NOT_CONTAIN_DN"),
+			},
 		},
 		"error_result": schema.StringAttribute{
 			Description: `The error result to return if this issuance criterion fails. This error result will show up in the PingFederate server logs.`,
@@ -952,6 +1217,9 @@ func singleSourceTypeIdKey() map[string]schema.Attribute {
 		"type": schema.StringAttribute{
 			Description: `The source type of this key.`,
 			Required:    true,
+			Validators: []validator.String{
+				stringvalidator.OneOf("TOKEN_EXCHANGE_PROCESSOR_POLICY", "ACCOUNT_LINK", "ADAPTER", "ASSERTION", "CONTEXT", "CUSTOM_DATA_STORE", "EXPRESSION", "JDBC_DATA_STORE", "LDAP_DATA_STORE", "PING_ONE_LDAP_GATEWAY_DATA_STORE", "MAPPED_ATTRIBUTES", "NO_MAPPING", "TEXT", "TOKEN", "REQUEST", "OAUTH_PERSISTENT_GRANT", "SUBJECT_TOKEN", "ACTOR_TOKEN", "PASSWORD_CREDENTIAL_VALIDATOR", "IDP_CONNECTION", "AUTHENTICATION_POLICY_CONTRACT", "CLAIMS", "LOCAL_IDENTITY_PROFILE", "EXTENDED_CLIENT_METADATA", "EXTENDED_PROPERTIES", "TRACKED_HTTP_PARAMS", "FRAGMENT", "INPUTS", "ATTRIBUTE_QUERY", "IDENTITY_STORE_USER", "IDENTITY_STORE_GROUP", "SCIM_USER", "SCIM_GROUP"),
+			},
 		},
 	}
 }

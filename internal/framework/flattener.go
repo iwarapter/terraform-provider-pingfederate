@@ -38,6 +38,22 @@ func flattenApcToPersistentGrantMapping(in *pf.ApcToPersistentGrantMapping) *Apc
 	return &result
 }
 
+func flattenApplicationSessionPolicy(in *pf.ApplicationSessionPolicy) *ApplicationSessionPolicyData {
+	result := ApplicationSessionPolicyData{}
+	if in.IdleTimeoutMins != nil {
+		result.IdleTimeoutMins = types.NumberValue(big.NewFloat(float64(*in.IdleTimeoutMins)))
+	} else {
+		result.IdleTimeoutMins = types.NumberNull()
+	}
+	if in.MaxTimeoutMins != nil {
+		result.MaxTimeoutMins = types.NumberValue(big.NewFloat(float64(*in.MaxTimeoutMins)))
+	} else {
+		result.MaxTimeoutMins = types.NumberNull()
+	}
+
+	return &result
+}
+
 func flattenAuthenticationPolicyContract(in *pf.AuthenticationPolicyContract) *AuthenticationPolicyContractData {
 	result := AuthenticationPolicyContractData{}
 	if in.CoreAttributes != nil {
@@ -61,6 +77,48 @@ func flattenAuthenticationPolicyContract(in *pf.AuthenticationPolicyContract) *A
 	}
 	if in.Name != nil {
 		result.Name = types.StringValue(*in.Name)
+	}
+
+	return &result
+}
+
+func flattenAuthenticationSessionPolicy(in *pf.AuthenticationSessionPolicy) *AuthenticationSessionPolicyData {
+	result := AuthenticationSessionPolicyData{}
+	if in.AuthenticationSource != nil {
+		result.AuthenticationSource = flattenAuthenticationSource(in.AuthenticationSource)
+	}
+	if in.AuthnContextSensitive != nil {
+		result.AuthnContextSensitive = types.BoolValue(*in.AuthnContextSensitive)
+	} else {
+		result.AuthnContextSensitive = types.BoolNull()
+	}
+	if in.EnableSessions != nil {
+		result.EnableSessions = types.BoolValue(*in.EnableSessions)
+	}
+	if in.Id != nil {
+		result.Id = types.StringValue(*in.Id)
+	} else {
+		result.Id = types.StringNull()
+	}
+	if in.IdleTimeoutMins != nil {
+		result.IdleTimeoutMins = types.NumberValue(big.NewFloat(float64(*in.IdleTimeoutMins)))
+	} else {
+		result.IdleTimeoutMins = types.NumberNull()
+	}
+	if in.MaxTimeoutMins != nil {
+		result.MaxTimeoutMins = types.NumberValue(big.NewFloat(float64(*in.MaxTimeoutMins)))
+	} else {
+		result.MaxTimeoutMins = types.NumberNull()
+	}
+	if in.Persistent != nil {
+		result.Persistent = types.BoolValue(*in.Persistent)
+	} else {
+		result.Persistent = types.BoolNull()
+	}
+	if in.TimeoutDisplayUnit != nil {
+		result.TimeoutDisplayUnit = types.StringValue(*in.TimeoutDisplayUnit)
+	} else {
+		result.TimeoutDisplayUnit = types.StringNull()
 	}
 
 	return &result
@@ -351,6 +409,45 @@ func flattenClient(in *pf.Client) *ClientData {
 	return &result
 }
 
+func flattenGlobalAuthenticationSessionPolicy(in *pf.GlobalAuthenticationSessionPolicy) *GlobalAuthenticationSessionPolicyData {
+	result := GlobalAuthenticationSessionPolicyData{}
+	if in.EnableSessions != nil {
+		result.EnableSessions = types.BoolValue(*in.EnableSessions)
+	}
+	if in.HashUniqueUserKeyAttribute != nil {
+		result.HashUniqueUserKeyAttribute = types.BoolValue(*in.HashUniqueUserKeyAttribute)
+	} else {
+		result.HashUniqueUserKeyAttribute = types.BoolNull()
+	}
+	if in.IdleTimeoutDisplayUnit != nil {
+		result.IdleTimeoutDisplayUnit = types.StringValue(*in.IdleTimeoutDisplayUnit)
+	} else {
+		result.IdleTimeoutDisplayUnit = types.StringNull()
+	}
+	if in.IdleTimeoutMins != nil {
+		result.IdleTimeoutMins = types.NumberValue(big.NewFloat(float64(*in.IdleTimeoutMins)))
+	} else {
+		result.IdleTimeoutMins = types.NumberNull()
+	}
+	if in.MaxTimeoutDisplayUnit != nil {
+		result.MaxTimeoutDisplayUnit = types.StringValue(*in.MaxTimeoutDisplayUnit)
+	} else {
+		result.MaxTimeoutDisplayUnit = types.StringNull()
+	}
+	if in.MaxTimeoutMins != nil {
+		result.MaxTimeoutMins = types.NumberValue(big.NewFloat(float64(*in.MaxTimeoutMins)))
+	} else {
+		result.MaxTimeoutMins = types.NumberNull()
+	}
+	if in.PersistentSessions != nil {
+		result.PersistentSessions = types.BoolValue(*in.PersistentSessions)
+	} else {
+		result.PersistentSessions = types.BoolNull()
+	}
+
+	return &result
+}
+
 func flattenRedirectValidationSettings(in *pf.RedirectValidationSettings) *RedirectValidationSettingsData {
 	result := RedirectValidationSettingsData{}
 	if in.RedirectValidationLocalSettings != nil {
@@ -358,6 +455,27 @@ func flattenRedirectValidationSettings(in *pf.RedirectValidationSettings) *Redir
 	}
 	if in.RedirectValidationPartnerSettings != nil {
 		result.RedirectValidationPartnerSettings = flattenRedirectValidationPartnerSettings(in.RedirectValidationPartnerSettings)
+	}
+
+	return &result
+}
+
+func flattenSessionSettings(in *pf.SessionSettings) *SessionSettingsData {
+	result := SessionSettingsData{}
+	if in.RevokeUserSessionOnLogout != nil {
+		result.RevokeUserSessionOnLogout = types.BoolValue(*in.RevokeUserSessionOnLogout)
+	} else {
+		result.RevokeUserSessionOnLogout = types.BoolNull()
+	}
+	if in.SessionRevocationLifetime != nil {
+		result.SessionRevocationLifetime = types.NumberValue(big.NewFloat(float64(*in.SessionRevocationLifetime)))
+	} else {
+		result.SessionRevocationLifetime = types.NumberNull()
+	}
+	if in.TrackAdapterSessionsForLogout != nil {
+		result.TrackAdapterSessionsForLogout = types.BoolValue(*in.TrackAdapterSessionsForLogout)
+	} else {
+		result.TrackAdapterSessionsForLogout = types.BoolNull()
 	}
 
 	return &result
@@ -377,6 +495,20 @@ func flattenAttributeFulfillmentValue(in *pf.AttributeFulfillmentValue) *Attribu
 	}
 	if in.Value != nil {
 		result.Value = types.StringValue(*in.Value)
+	}
+
+	return &result
+}
+
+func flattenAuthenticationSource(in *pf.AuthenticationSource) *AuthenticationSourceData {
+	result := AuthenticationSourceData{}
+	if in.SourceRef != nil && in.SourceRef.Id != nil && *in.SourceRef.Id != "" {
+		result.SourceRef = types.StringValue(*in.SourceRef.Id)
+	} else {
+		result.SourceRef = types.StringNull()
+	}
+	if in.Type != nil {
+		result.Type = types.StringValue(*in.Type)
 	}
 
 	return &result

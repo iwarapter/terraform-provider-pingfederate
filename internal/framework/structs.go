@@ -176,6 +176,7 @@ type ApiResultData struct {
 }
 
 type ApplicationSessionPolicyData struct {
+	Id              types.String `tfsdk:"id"`
 	IdleTimeoutMins types.Number `tfsdk:"idle_timeout_mins"`
 	MaxTimeoutMins  types.Number `tfsdk:"max_timeout_mins"`
 }
@@ -1150,6 +1151,7 @@ type GeneralSettingsData struct {
 type GlobalAuthenticationSessionPolicyData struct {
 	EnableSessions             types.Bool   `tfsdk:"enable_sessions"`
 	HashUniqueUserKeyAttribute types.Bool   `tfsdk:"hash_unique_user_key_attribute"`
+	Id                         types.String `tfsdk:"id"`
 	IdleTimeoutDisplayUnit     types.String `tfsdk:"idle_timeout_display_unit"`
 	IdleTimeoutMins            types.Number `tfsdk:"idle_timeout_mins"`
 	MaxTimeoutDisplayUnit      types.String `tfsdk:"max_timeout_display_unit"`
@@ -2487,6 +2489,7 @@ type ServiceModelData struct {
 }
 
 type SessionSettingsData struct {
+	Id                            types.String `tfsdk:"id"`
 	RevokeUserSessionOnLogout     types.Bool   `tfsdk:"revoke_user_session_on_logout"`
 	SessionRevocationLifetime     types.Number `tfsdk:"session_revocation_lifetime"`
 	TrackAdapterSessionsForLogout types.Bool   `tfsdk:"track_adapter_sessions_for_logout"`

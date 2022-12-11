@@ -35,6 +35,20 @@ func expandApcToPersistentGrantMapping(in ApcToPersistentGrantMappingData) *pf.A
 	return &result
 }
 
+func expandApplicationSessionPolicy(in ApplicationSessionPolicyData) *pf.ApplicationSessionPolicy {
+	var result pf.ApplicationSessionPolicy
+	if !in.IdleTimeoutMins.IsUnknown() && !in.IdleTimeoutMins.IsNull() {
+		i64, _ := in.IdleTimeoutMins.ValueBigFloat().Int64()
+		result.IdleTimeoutMins = Int(int(i64))
+	}
+	if !in.MaxTimeoutMins.IsUnknown() && !in.MaxTimeoutMins.IsNull() {
+		i64, _ := in.MaxTimeoutMins.ValueBigFloat().Int64()
+		result.MaxTimeoutMins = Int(int(i64))
+	}
+
+	return &result
+}
+
 func expandAuthenticationPolicyContract(in AuthenticationPolicyContractData) *pf.AuthenticationPolicyContract {
 	var result pf.AuthenticationPolicyContract
 	result.CoreAttributes = &[]*pf.AuthenticationPolicyContractAttribute{
@@ -54,6 +68,38 @@ func expandAuthenticationPolicyContract(in AuthenticationPolicyContractData) *pf
 	}
 	if !in.Name.IsUnknown() && !in.Name.IsNull() {
 		result.Name = String(in.Name.ValueString())
+	}
+
+	return &result
+}
+
+func expandAuthenticationSessionPolicy(in AuthenticationSessionPolicyData) *pf.AuthenticationSessionPolicy {
+	var result pf.AuthenticationSessionPolicy
+	if in.AuthenticationSource != nil {
+		result.AuthenticationSource = expandAuthenticationSource(*in.AuthenticationSource)
+	}
+	if !in.AuthnContextSensitive.IsUnknown() && !in.AuthnContextSensitive.IsNull() {
+		result.AuthnContextSensitive = Bool(in.AuthnContextSensitive.ValueBool())
+	}
+	if !in.EnableSessions.IsUnknown() && !in.EnableSessions.IsNull() {
+		result.EnableSessions = Bool(in.EnableSessions.ValueBool())
+	}
+	if !in.Id.IsUnknown() && !in.Id.IsNull() {
+		result.Id = String(in.Id.ValueString())
+	}
+	if !in.IdleTimeoutMins.IsUnknown() && !in.IdleTimeoutMins.IsNull() {
+		i64, _ := in.IdleTimeoutMins.ValueBigFloat().Int64()
+		result.IdleTimeoutMins = Int(int(i64))
+	}
+	if !in.MaxTimeoutMins.IsUnknown() && !in.MaxTimeoutMins.IsNull() {
+		i64, _ := in.MaxTimeoutMins.ValueBigFloat().Int64()
+		result.MaxTimeoutMins = Int(int(i64))
+	}
+	if !in.Persistent.IsUnknown() && !in.Persistent.IsNull() {
+		result.Persistent = Bool(in.Persistent.ValueBool())
+	}
+	if !in.TimeoutDisplayUnit.IsUnknown() && !in.TimeoutDisplayUnit.IsNull() {
+		result.TimeoutDisplayUnit = String(in.TimeoutDisplayUnit.ValueString())
 	}
 
 	return &result
@@ -253,6 +299,35 @@ func expandClient(in ClientData) *pf.Client {
 	return &result
 }
 
+func expandGlobalAuthenticationSessionPolicy(in GlobalAuthenticationSessionPolicyData) *pf.GlobalAuthenticationSessionPolicy {
+	var result pf.GlobalAuthenticationSessionPolicy
+	if !in.EnableSessions.IsUnknown() && !in.EnableSessions.IsNull() {
+		result.EnableSessions = Bool(in.EnableSessions.ValueBool())
+	}
+	if !in.HashUniqueUserKeyAttribute.IsUnknown() && !in.HashUniqueUserKeyAttribute.IsNull() {
+		result.HashUniqueUserKeyAttribute = Bool(in.HashUniqueUserKeyAttribute.ValueBool())
+	}
+	if !in.IdleTimeoutDisplayUnit.IsUnknown() && !in.IdleTimeoutDisplayUnit.IsNull() {
+		result.IdleTimeoutDisplayUnit = String(in.IdleTimeoutDisplayUnit.ValueString())
+	}
+	if !in.IdleTimeoutMins.IsUnknown() && !in.IdleTimeoutMins.IsNull() {
+		i64, _ := in.IdleTimeoutMins.ValueBigFloat().Int64()
+		result.IdleTimeoutMins = Int(int(i64))
+	}
+	if !in.MaxTimeoutDisplayUnit.IsUnknown() && !in.MaxTimeoutDisplayUnit.IsNull() {
+		result.MaxTimeoutDisplayUnit = String(in.MaxTimeoutDisplayUnit.ValueString())
+	}
+	if !in.MaxTimeoutMins.IsUnknown() && !in.MaxTimeoutMins.IsNull() {
+		i64, _ := in.MaxTimeoutMins.ValueBigFloat().Int64()
+		result.MaxTimeoutMins = Int(int(i64))
+	}
+	if !in.PersistentSessions.IsUnknown() && !in.PersistentSessions.IsNull() {
+		result.PersistentSessions = Bool(in.PersistentSessions.ValueBool())
+	}
+
+	return &result
+}
+
 func expandRedirectValidationSettings(in RedirectValidationSettingsData) *pf.RedirectValidationSettings {
 	var result pf.RedirectValidationSettings
 	if in.RedirectValidationLocalSettings != nil {
@@ -260,6 +335,22 @@ func expandRedirectValidationSettings(in RedirectValidationSettingsData) *pf.Red
 	}
 	if in.RedirectValidationPartnerSettings != nil {
 		result.RedirectValidationPartnerSettings = expandRedirectValidationPartnerSettings(*in.RedirectValidationPartnerSettings)
+	}
+
+	return &result
+}
+
+func expandSessionSettings(in SessionSettingsData) *pf.SessionSettings {
+	var result pf.SessionSettings
+	if !in.RevokeUserSessionOnLogout.IsUnknown() && !in.RevokeUserSessionOnLogout.IsNull() {
+		result.RevokeUserSessionOnLogout = Bool(in.RevokeUserSessionOnLogout.ValueBool())
+	}
+	if !in.SessionRevocationLifetime.IsUnknown() && !in.SessionRevocationLifetime.IsNull() {
+		i64, _ := in.SessionRevocationLifetime.ValueBigFloat().Int64()
+		result.SessionRevocationLifetime = Int(int(i64))
+	}
+	if !in.TrackAdapterSessionsForLogout.IsUnknown() && !in.TrackAdapterSessionsForLogout.IsNull() {
+		result.TrackAdapterSessionsForLogout = Bool(in.TrackAdapterSessionsForLogout.ValueBool())
 	}
 
 	return &result
@@ -279,6 +370,18 @@ func expandAttributeFulfillmentValue(in AttributeFulfillmentValueData) *pf.Attri
 	}
 	if !in.Value.IsUnknown() && !in.Value.IsNull() {
 		result.Value = String(in.Value.ValueString())
+	}
+
+	return &result
+}
+
+func expandAuthenticationSource(in AuthenticationSourceData) *pf.AuthenticationSource {
+	var result pf.AuthenticationSource
+	if !in.SourceRef.IsUnknown() && !in.SourceRef.IsNull() {
+		result.SourceRef = &pf.ResourceLink{Id: String(in.SourceRef.ValueString())}
+	}
+	if !in.Type.IsUnknown() && !in.Type.IsNull() {
+		result.Type = String(in.Type.ValueString())
 	}
 
 	return &result
