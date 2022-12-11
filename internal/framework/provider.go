@@ -123,13 +123,14 @@ func (p *pfprovider) Configure(ctx context.Context, req provider.ConfigureReques
 
 func (p *pfprovider) Resources(_ context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
+		NewApplicationSessionPolicyResource,
 		NewAuthenticationPolicyContractResource,
+		NewAuthenticationSessionPolicyResource,
+		NewGlobalAuthenticationSessionPolicyResource,
 		NewOauthAuthenticationPolicyContractMappingResource,
 		NewOAuthClientResource,
 		NewRedirectValidationResource,
-		//"pingfederate_oauth_authentication_policy_contract_mapping": pingfederateOauthAuthenticationPolicyContractMappingType{},
-		//"pingfederate_oauth_client":                                 pingfederateOAuthClientType{},
-		//"pingfederate_redirect_validation_settings":                 pingfederateRedirectValidationSettingsType{},
+		NewSessionSettingsResource,
 	}
 }
 
