@@ -94,7 +94,7 @@ github.com/hashicorp/terraform-exec/tfexec
 # github.com/hashicorp/terraform-json v0.14.0
 ## explicit; go 1.13
 github.com/hashicorp/terraform-json
-# github.com/hashicorp/terraform-plugin-framework v0.17.0 => github.com/iwarapter/terraform-plugin-framework v0.6.2-0.20221209210120-6fec238ce7ff
+# github.com/hashicorp/terraform-plugin-framework v1.0.0
 ## explicit; go 1.18
 github.com/hashicorp/terraform-plugin-framework/attr
 github.com/hashicorp/terraform-plugin-framework/attr/xattr
@@ -128,7 +128,8 @@ github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifi
 github.com/hashicorp/terraform-plugin-framework/schema/validator
 github.com/hashicorp/terraform-plugin-framework/tfsdk
 github.com/hashicorp/terraform-plugin-framework/types
-# github.com/hashicorp/terraform-plugin-framework-validators v0.7.0
+github.com/hashicorp/terraform-plugin-framework/types/basetypes
+# github.com/hashicorp/terraform-plugin-framework-validators v0.8.0
 ## explicit; go 1.18
 github.com/hashicorp/terraform-plugin-framework-validators/helpers/validatordiag
 github.com/hashicorp/terraform-plugin-framework-validators/internal/schemavalidator
@@ -452,3 +453,4 @@ google.golang.org/protobuf/types/known/timestamppb
 # gopkg.in/yaml.v3 v3.0.1
 ## explicit
 gopkg.in/yaml.v3
+# github.com/hashicorp/terraform-plugin-framework v0.17.0 => github.com/iwarapter/terraform-plugin-framework v0.6.2-0.20221209210120-6fec238ce7ff
