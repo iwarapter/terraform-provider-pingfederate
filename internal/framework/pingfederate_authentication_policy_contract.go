@@ -12,7 +12,6 @@ import (
 // Ensure the implementation satisfies the expected interfaces.
 var (
 	_ resource.Resource                = &pingfederateAuthenticationPolicyContractResource{}
-	_ resource.ResourceWithSchema      = &pingfederateAuthenticationPolicyContractResource{}
 	_ resource.ResourceWithConfigure   = &pingfederateAuthenticationPolicyContractResource{}
 	_ resource.ResourceWithImportState = &pingfederateAuthenticationPolicyContractResource{}
 )

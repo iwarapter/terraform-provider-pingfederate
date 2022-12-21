@@ -10,7 +10,7 @@ import (
 
 var _ planmodifier.Bool = boolDefaultModifier{}
 
-func NewDefaultBool(s bool) boolDefaultModifier {
+func DefaultBool(s bool) boolDefaultModifier {
 	return boolDefaultModifier{Default: s}
 }
 

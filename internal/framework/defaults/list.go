@@ -11,13 +11,12 @@ import (
 
 var _ planmodifier.List = listDefaultModifier{}
 
-func NewDefaultList(elementType attr.Type, elements []attr.Value) listDefaultModifier {
-	return listDefaultModifier{ElementType: elementType, Elements: elements}
+func DefaultList(elements []attr.Value) listDefaultModifier {
+	return listDefaultModifier{Elements: elements}
 }
 
 type listDefaultModifier struct {
-	ElementType attr.Type
-	Elements    []attr.Value
+	Elements []attr.Value
 }
 
 // Description returns a plain text description of the validator's behavior, suitable for a practitioner to understand its impact.
@@ -31,7 +30,7 @@ func (m listDefaultModifier) MarkdownDescription(_ context.Context) string {
 }
 
 // PlanModifyList updates the planned value with the default if its not null
-func (m listDefaultModifier) PlanModifyList(_ context.Context, req planmodifier.ListRequest, resp *planmodifier.ListResponse) {
+func (m listDefaultModifier) PlanModifyList(ctx context.Context, req planmodifier.ListRequest, resp *planmodifier.ListResponse) {
 	// If the attribute configuration is not null, we are done here
 	if !req.ConfigValue.IsNull() {
 		return
@@ -42,5 +41,5 @@ func (m listDefaultModifier) PlanModifyList(_ context.Context, req planmodifier.
 	if !req.PlanValue.IsUnknown() && !req.PlanValue.IsNull() {
 		return
 	}
-	resp.PlanValue, resp.Diagnostics = types.ListValue(m.ElementType, m.Elements)
+	resp.PlanValue, resp.Diagnostics = types.ListValue(req.PlanValue.ElementType(ctx), m.Elements)
 }

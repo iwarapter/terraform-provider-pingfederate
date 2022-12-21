@@ -1,6 +1,8 @@
 package framework
 
 import (
+	"context"
+
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
@@ -56,10 +58,14 @@ func expandAuthenticationPolicyContract(in AuthenticationPolicyContractData) *pf
 			Name: String("subject"),
 		},
 	}
-	if in.ExtendedAttributes != nil && len(in.ExtendedAttributes) > 0 {
+	if !in.ExtendedAttributes.IsUnknown() && !in.ExtendedAttributes.IsNull() {
+		results := []*string{}
+		diags := in.ExtendedAttributes.ElementsAs(context.Background(), &results, false)
+		diags.HasError()
+
 		attrs := []*pf.AuthenticationPolicyContractAttribute{}
-		for _, data := range in.ExtendedAttributes {
-			attrs = append(attrs, &pf.AuthenticationPolicyContractAttribute{Name: String(data.ValueString())})
+		for _, data := range results {
+			attrs = append(attrs, &pf.AuthenticationPolicyContractAttribute{Name: data})
 		}
 		result.ExtendedAttributes = &attrs
 	}
@@ -167,13 +173,13 @@ func expandClient(in ClientData) *pf.Client {
 	if !in.Enabled.IsUnknown() && !in.Enabled.IsNull() {
 		result.Enabled = Bool(in.Enabled.ValueBool())
 	}
-	if in.ExclusiveScopes != nil {
+	if !in.ExclusiveScopes.IsUnknown() && !in.ExclusiveScopes.IsNull() {
 		result.ExclusiveScopes = expandStringList(in.ExclusiveScopes)
 	}
 	if in.ExtendedParameters != nil {
 		result.ExtendedParameters = expandMapParameterValuess(in.ExtendedParameters)
 	}
-	if in.GrantTypes != nil {
+	if !in.GrantTypes.IsUnknown() && !in.GrantTypes.IsNull() {
 		result.GrantTypes = expandStringList(in.GrantTypes)
 	}
 	if in.JwksSettings != nil {
@@ -221,13 +227,13 @@ func expandClient(in ClientData) *pf.Client {
 	if !in.PersistentGrantIdleTimeoutType.IsUnknown() && !in.PersistentGrantIdleTimeoutType.IsNull() {
 		result.PersistentGrantIdleTimeoutType = String(in.PersistentGrantIdleTimeoutType.ValueString())
 	}
-	if in.PersistentGrantReuseGrantTypes != nil {
+	if !in.PersistentGrantReuseGrantTypes.IsUnknown() && !in.PersistentGrantReuseGrantTypes.IsNull() {
 		result.PersistentGrantReuseGrantTypes = expandStringList(in.PersistentGrantReuseGrantTypes)
 	}
 	if !in.PersistentGrantReuseType.IsUnknown() && !in.PersistentGrantReuseType.IsNull() {
 		result.PersistentGrantReuseType = String(in.PersistentGrantReuseType.ValueString())
 	}
-	if in.RedirectUris != nil {
+	if !in.RedirectUris.IsUnknown() && !in.RedirectUris.IsNull() {
 		result.RedirectUris = expandStringList(in.RedirectUris)
 	}
 	if !in.RefreshRolling.IsUnknown() && !in.RefreshRolling.IsNull() {
@@ -271,11 +277,11 @@ func expandClient(in ClientData) *pf.Client {
 	if !in.RestrictToDefaultAccessTokenManager.IsUnknown() && !in.RestrictToDefaultAccessTokenManager.IsNull() {
 		result.RestrictToDefaultAccessTokenManager = Bool(in.RestrictToDefaultAccessTokenManager.ValueBool())
 	}
-	if in.RestrictedResponseTypes != nil {
+	if !in.RestrictedResponseTypes.IsUnknown() && !in.RestrictedResponseTypes.IsNull() {
 		result.RestrictedResponseTypes = expandStringList(in.RestrictedResponseTypes)
 	}
-	if in.RestrictedScopes != nil {
-		result.RestrictedScopes = expandStringList(in.RestrictedScopes)
+	if !in.RestrictedScopes.IsUnknown() && !in.RestrictedScopes.IsNull() {
+		result.RestrictedScopes = expandStringSet(in.RestrictedScopes)
 	}
 	if !in.TokenExchangeProcessorPolicyRef.IsUnknown() && !in.TokenExchangeProcessorPolicyRef.IsNull() {
 		result.TokenExchangeProcessorPolicyRef = &pf.ResourceLink{Id: String(in.TokenExchangeProcessorPolicyRef.ValueString())}
@@ -447,7 +453,7 @@ func expandClientOIDCPolicy(in ClientOIDCPolicyData) *pf.ClientOIDCPolicy {
 	if !in.IdTokenSigningAlgorithm.IsUnknown() && !in.IdTokenSigningAlgorithm.IsNull() {
 		result.IdTokenSigningAlgorithm = String(in.IdTokenSigningAlgorithm.ValueString())
 	}
-	if in.LogoutUris != nil {
+	if !in.LogoutUris.IsUnknown() && !in.LogoutUris.IsNull() {
 		result.LogoutUris = expandStringList(in.LogoutUris)
 	}
 	if !in.PairwiseIdentifierUserType.IsUnknown() && !in.PairwiseIdentifierUserType.IsNull() {
@@ -570,7 +576,7 @@ func expandJdbcAttributeSource(in JdbcAttributeSourceData) *pf.JdbcAttributeSour
 	if in.AttributeContractFulfillment != nil {
 		result.AttributeContractFulfillment = expandMapAttributeFulfillmentValues(in.AttributeContractFulfillment)
 	}
-	if in.ColumnNames != nil {
+	if !in.ColumnNames.IsUnknown() && !in.ColumnNames.IsNull() {
 		result.ColumnNames = expandStringList(in.ColumnNames)
 	}
 	if !in.DataStoreRef.IsUnknown() && !in.DataStoreRef.IsNull() {
@@ -630,7 +636,7 @@ func expandLdapAttributeSource(in LdapAttributeSourceData) *pf.LdapAttributeSour
 	if !in.MemberOfNestedGroup.IsUnknown() && !in.MemberOfNestedGroup.IsNull() {
 		result.MemberOfNestedGroup = Bool(in.MemberOfNestedGroup.ValueBool())
 	}
-	if in.SearchAttributes != nil {
+	if !in.SearchAttributes.IsUnknown() && !in.SearchAttributes.IsNull() {
 		result.SearchAttributes = expandStringList(in.SearchAttributes)
 	}
 	if !in.SearchFilter.IsUnknown() && !in.SearchFilter.IsNull() {
@@ -652,7 +658,7 @@ func expandMapParameterValuess(in map[string]*ParameterValuesData) map[string]*p
 }
 func expandParameterValues(in ParameterValuesData) *pf.ParameterValues {
 	var result pf.ParameterValues
-	if in.Values != nil {
+	if !in.Values.IsUnknown() && !in.Values.IsNull() {
 		result.Values = expandStringList(in.Values)
 	}
 
@@ -790,10 +796,14 @@ func expandCustomAttributeSources(in []CustomAttributeSourceData) *[]*pf.Attribu
 	return &results
 }
 
-func expandStringList(in []types.String) *[]*string {
+func expandStringSet(in types.Set) *[]*string {
 	results := []*string{}
-	for _, s := range in {
-		results = append(results, String(s.ValueString()))
-	}
+	_ = in.ElementsAs(context.Background(), &results, false)
+	return &results
+}
+
+func expandStringList(in types.List) *[]*string {
+	results := []*string{}
+	_ = in.ElementsAs(context.Background(), &results, false)
 	return &results
 }

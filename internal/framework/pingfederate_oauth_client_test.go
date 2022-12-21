@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-framework/attr"
+
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
@@ -122,6 +124,47 @@ func TestAccPingFederateOAuthClientWithClientSecretResource(t *testing.T) {
 	})
 }
 
+func TestAccPingFederateOAuthClientWithClientWithoutOidcPolicy(t *testing.T) {
+	t.Skip("currently unable to get a computed object to not break other fields")
+	resourceName := "pingfederate_oauth_client.example"
+	resource.ParallelTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckPingFederateOAuthClientResourceDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: `
+resource "pingfederate_oauth_client" "example" {
+  client_id         = "acc_test_withoutoidc"
+  name              = "acc_test_withoutoidc"
+  grant_types       = ["ACCESS_TOKEN_VALIDATION"]
+  restrict_scopes   = true
+  restricted_scopes = ["openid"]
+}`,
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckPingFederateOAuthClientResourceExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", "acc_test_withoutoidc"),
+					resource.TestCheckResourceAttr(resourceName, "grant_types.0", "ACCESS_TOKEN_VALIDATION"),
+					resource.TestCheckResourceAttr(resourceName, "restrict_scopes", "true"),
+					resource.TestCheckResourceAttr(resourceName, "restricted_scopes.0", "openid"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"client_auth.secret", "client_auth.encrypted_secret"},
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckPingFederateOAuthClientResourceExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", "acc_test_withoutoidc"),
+					resource.TestCheckResourceAttr(resourceName, "grant_types.0", "ACCESS_TOKEN_VALIDATION"),
+					resource.TestCheckResourceAttr(resourceName, "restrict_scopes", "true"),
+					resource.TestCheckResourceAttr(resourceName, "restricted_scopes.0", "openid"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccPingFederateOAuthClientResourceSdkUpgradeV0toV1(t *testing.T) {
 	resourceName := "pingfederate_oauth_client.my_client"
 	resource.ParallelTest(t, resource.TestCase{
@@ -189,6 +232,7 @@ resource "pingfederate_oauth_client" "my_client" {
 }
 `
 }
+
 func testAccPingFederateOAuthClientResourceSdkUpgradeV1config() string {
 	return `
 resource "pingfederate_oauth_client" "my_client" {
@@ -474,17 +518,18 @@ func Test_resourcePingFederateOAuthClientResourceUpgradeData(t *testing.T) {
 		Name:                                types.StringValue("name"),
 		ClientId:                            types.StringValue("client_id"),
 		Enabled:                             types.BoolValue(true),
-		GrantTypes:                          []types.String{types.StringValue("grant_type")},
+		GrantTypes:                          types.ListValueMust(types.StringType, []attr.Value{types.StringValue("grant_type")}),
 		PersistentGrantExpirationTime:       types.NumberNull(),
 		RequireProofKeyForCodeExchange:      types.BoolValue(true),
-		RestrictedScopes:                    []types.String{types.StringValue("RestrictedScopes")},
+		RestrictedScopes:                    types.SetValueMust(types.StringType, []attr.Value{types.StringValue("RestrictedScopes")}),
 		CibaDeliveryMode:                    types.StringNull(),
 		PendingAuthorizationTimeoutOverride: types.NumberNull(),
 		RequestObjectSigningAlgorithm:       types.StringNull(),
 		RestrictScopes:                      types.BoolValue(true),
+		PersistentGrantReuseGrantTypes:      types.ListNull(types.StringType),
 		TokenExchangeProcessorPolicyRef:     types.StringValue("id"),
 		CibaPollingInterval:                 types.NumberNull(),
-		RedirectUris:                        []types.String{types.StringValue("RedirectUris")},
+		RedirectUris:                        types.ListValueMust(types.StringType, []attr.Value{types.StringValue("RedirectUris")}),
 		PersistentGrantIdleTimeout:          types.NumberNull(),
 		DevicePollingIntervalOverride:       types.NumberNull(),
 		DeviceFlowSettingType:               types.StringNull(),
@@ -494,7 +539,7 @@ func Test_resourcePingFederateOAuthClientResourceUpgradeData(t *testing.T) {
 			IdTokenContentEncryptionAlgorithm: types.StringValue("IdTokenContentEncryptionAlgorithm"),
 			IdTokenEncryptionAlgorithm:        types.StringValue("IdTokenEncryptionAlgorithm"),
 			IdTokenSigningAlgorithm:           types.StringValue("IdTokenSigningAlgorithm"),
-			LogoutUris:                        []types.String{types.StringValue("LogoutUris")},
+			LogoutUris:                        types.ListValueMust(types.StringType, []attr.Value{types.StringValue("LogoutUris")}),
 			PairwiseIdentifierUserType:        types.BoolValue(true),
 			PingAccessLogoutCapable:           types.BoolValue(true),
 			PolicyGroup:                       types.StringValue("id"),
@@ -520,7 +565,7 @@ func Test_resourcePingFederateOAuthClientResourceUpgradeData(t *testing.T) {
 		PersistentGrantExpirationType:       types.StringNull(),
 		PersistentGrantIdleTimeoutTimeUnit:  types.StringNull(),
 		DefaultAccessTokenManagerRef:        types.StringValue("id"),
-		ExclusiveScopes:                     []types.String{types.StringValue("ExclusiveScopes")},
+		ExclusiveScopes:                     types.ListValueMust(types.StringType, []attr.Value{types.StringValue("ExclusiveScopes")}),
 		ClientAuth: &ClientAuthData{
 			ClientCertIssuerDn:                types.StringValue("ClientCertIssuerDn"),
 			ClientCertSubjectDn:               types.StringValue("ClientCertSubjectDn"),
@@ -530,12 +575,12 @@ func Test_resourcePingFederateOAuthClientResourceUpgradeData(t *testing.T) {
 			Type:                              types.StringValue("Type"),
 		},
 		PersistentGrantIdleTimeoutType:    types.StringNull(),
-		RestrictedResponseTypes:           []types.String{types.StringValue("RestrictedResponseTypes")},
+		RestrictedResponseTypes:           types.ListValueMust(types.StringType, []attr.Value{types.StringValue("RestrictedResponseTypes")}),
 		BypassApprovalPage:                types.BoolValue(true),
 		CibaRequestObjectSigningAlgorithm: types.StringNull(),
 		ExtendedParameters: map[string]*ParameterValuesData{
 			"foo": {
-				Values: []types.String{types.StringValue("bar")},
+				Values: types.ListValueMust(types.StringType, []attr.Value{types.StringValue("bar")}),
 			},
 		},
 	}

@@ -10,7 +10,7 @@ import (
 
 var _ planmodifier.String = stringDefaultModifier{}
 
-func NewDefaultString(s string) stringDefaultModifier {
+func DefaultString(s string) stringDefaultModifier {
 	return stringDefaultModifier{Default: s}
 }
 

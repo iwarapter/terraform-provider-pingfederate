@@ -16,8 +16,7 @@ import (
 
 // Ensure the implementation satisfies the expected interfaces
 var (
-	_ provider.Provider           = &pfprovider{}
-	_ provider.ProviderWithSchema = &pfprovider{}
+	_ provider.Provider = &pfprovider{}
 )
 
 // client satisfies the provider.Provider interface and usually is included
