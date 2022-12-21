@@ -11,13 +11,12 @@ import (
 
 var _ planmodifier.Map = mapDefaultModifier{}
 
-func NewDefaultMap(elementType attr.Type, elements map[string]attr.Value) mapDefaultModifier {
-	return mapDefaultModifier{ElementType: elementType, Elements: elements}
+func DefaultMap(elements map[string]attr.Value) mapDefaultModifier {
+	return mapDefaultModifier{Elements: elements}
 }
 
 type mapDefaultModifier struct {
-	ElementType attr.Type
-	Elements    map[string]attr.Value
+	Elements map[string]attr.Value
 }
 
 // Description returns a plain text description of the validator's behavior, suitable for a practitioner to understand its impact.
@@ -31,7 +30,7 @@ func (m mapDefaultModifier) MarkdownDescription(_ context.Context) string {
 }
 
 // PlanModifyMap updates the planned value with the default if its not null
-func (m mapDefaultModifier) PlanModifyMap(_ context.Context, req planmodifier.MapRequest, resp *planmodifier.MapResponse) {
+func (m mapDefaultModifier) PlanModifyMap(ctx context.Context, req planmodifier.MapRequest, resp *planmodifier.MapResponse) {
 	// If the attribute configuration is not null, we are done here
 	if !req.ConfigValue.IsNull() {
 		return
@@ -42,5 +41,5 @@ func (m mapDefaultModifier) PlanModifyMap(_ context.Context, req planmodifier.Ma
 	if !req.PlanValue.IsUnknown() && !req.PlanValue.IsNull() {
 		return
 	}
-	resp.PlanValue, resp.Diagnostics = types.MapValue(m.ElementType, m.Elements)
+	resp.PlanValue, resp.Diagnostics = types.MapValue(req.PlanValue.ElementType(ctx), m.Elements)
 }

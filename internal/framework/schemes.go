@@ -86,7 +86,7 @@ func resourceApplicationSessionPolicy() schema.Schema {
 				Optional:    true,
 				Computed:    true,
 				PlanModifiers: []planmodifier.Number{
-					defaults.NewDefaultNumber(big.NewFloat(60)),
+					defaults.DefaultNumber(big.NewFloat(60)),
 				},
 			},
 			"max_timeout_mins": schema.NumberAttribute{
@@ -94,7 +94,7 @@ func resourceApplicationSessionPolicy() schema.Schema {
 				Optional:    true,
 				Computed:    true,
 				PlanModifiers: []planmodifier.Number{
-					defaults.NewDefaultNumber(big.NewFloat(480)),
+					defaults.DefaultNumber(big.NewFloat(480)),
 				},
 			},
 		},
@@ -111,13 +111,17 @@ func resourceAuthenticationPolicyContract() schema.Schema {
 				Optional:    true,
 				Computed:    true,
 				PlanModifiers: []planmodifier.Set{
-					defaults.NewDefaultSet(types.StringType, []attr.Value{types.StringValue("subject")}),
+					defaults.DefaultSet([]attr.Value{types.StringValue("subject")}),
 				},
 			},
 			"extended_attributes": schema.SetAttribute{
 				ElementType: types.StringType,
 				Description: `A list of additional attributes as needed.`,
 				Optional:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.Set{
+					defaults.DefaultSet([]attr.Value{}),
+				},
 			},
 			"id": schema.StringAttribute{
 				Description: `The persistent, unique ID for the authentication policy contract. It can be any combination of [a-zA-Z0-9._-]. This property is system-assigned if not specified.`,
@@ -195,7 +199,7 @@ func resourceClient() schema.Schema {
 				Optional:    true,
 				Computed:    true,
 				PlanModifiers: []planmodifier.Bool{
-					defaults.NewDefaultBool(false),
+					defaults.DefaultBool(false),
 				},
 			},
 			"bypass_activation_code_confirmation_override": schema.BoolAttribute{
@@ -207,7 +211,7 @@ func resourceClient() schema.Schema {
 				Optional:    true,
 				Computed:    true,
 				PlanModifiers: []planmodifier.Bool{
-					defaults.NewDefaultBool(false),
+					defaults.DefaultBool(false),
 				},
 			},
 			"ciba_delivery_mode": schema.StringAttribute{
@@ -256,6 +260,9 @@ func resourceClient() schema.Schema {
 				Description: `The time at which the client secret was last changed. This property is read only and is ignored on PUT and POST requests.`,
 				Optional:    true,
 				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"client_secret_retention_period": schema.NumberAttribute{
 				Description: `The length of time in minutes that client secrets will be retained as secondary secrets after secret change. The default value is 0, which will disable secondary client secret retention. This value will override the Client Secret Retention Period value on the Authorization Server Settings.`,
@@ -269,7 +276,7 @@ func resourceClient() schema.Schema {
 					stringvalidator.OneOf("SERVER_DEFAULT", "OVERRIDE_SERVER_DEFAULT"),
 				},
 				PlanModifiers: []planmodifier.String{
-					defaults.NewDefaultString("SERVER_DEFAULT"),
+					defaults.DefaultString("SERVER_DEFAULT"),
 				},
 			},
 			"default_access_token_manager_ref": schema.StringAttribute{
@@ -288,7 +295,7 @@ func resourceClient() schema.Schema {
 					stringvalidator.OneOf("SERVER_DEFAULT", "OVERRIDE_SERVER_DEFAULT"),
 				},
 				PlanModifiers: []planmodifier.String{
-					defaults.NewDefaultString("SERVER_DEFAULT"),
+					defaults.DefaultString("SERVER_DEFAULT"),
 				},
 			},
 			"device_polling_interval_override": schema.NumberAttribute{
@@ -300,7 +307,7 @@ func resourceClient() schema.Schema {
 				Optional:    true,
 				Computed:    true,
 				PlanModifiers: []planmodifier.Bool{
-					defaults.NewDefaultBool(true),
+					defaults.DefaultBool(true),
 				},
 			},
 			"exclusive_scopes": schema.ListAttribute{
@@ -309,7 +316,7 @@ func resourceClient() schema.Schema {
 				Computed:    true,
 				ElementType: types.StringType,
 				PlanModifiers: []planmodifier.List{
-					defaults.NewDefaultList(types.StringType, []attr.Value{}),
+					defaults.DefaultList([]attr.Value{}),
 				},
 			},
 			"extended_parameters": schema.MapNestedAttribute{
@@ -370,7 +377,22 @@ func resourceClient() schema.Schema {
 			"oidc_policy": schema.SingleNestedAttribute{
 				Description: `Open ID Connect Policy settings.  This is included in the message only when OIDC is enabled.`,
 				Optional:    true,
-				Attributes:  singleClientOIDCPolicy(),
+				//Computed:    true,
+				Attributes: singleClientOIDCPolicy(),
+				//PlanModifiers: []planmodifier.Object{
+				//	defaults.DefaultObject(map[string]attr.Value{
+				//		"grant_access_session_revocation_api":         types.BoolValue(false),
+				//		"grant_access_session_session_management_api": types.BoolValue(false),
+				//		"id_token_content_encryption_algorithm":       types.StringValue("RS256"),
+				//		"sector_identifier_uri":                       types.StringNull(),
+				//		"policy_group":                                types.StringNull(),
+				//		"pairwise_identifier_user_type":               types.BoolNull(),
+				//		"ping_access_logout_capable":                  types.BoolNull(),
+				//		"id_token_encryption_algorithm":               types.StringNull(),
+				//		"logout_uris":                                 types.ListUnknown(types.StringType),
+				//		"id_token_signing_algorithm":                  types.StringNull(),
+				//	}),
+				//},
 			},
 			"pending_authorization_timeout_override": schema.NumberAttribute{
 				Description: `The 'device_code' and 'user_code' timeout, in seconds. This overrides the 'pendingAuthorizationTimeout' value present in Authorization Server Settings.`,
@@ -381,7 +403,7 @@ func resourceClient() schema.Schema {
 				Optional:    true,
 				Computed:    true,
 				PlanModifiers: []planmodifier.Number{
-					defaults.NewDefaultNumber(big.NewFloat(0)),
+					defaults.DefaultNumber(big.NewFloat(0)),
 				},
 			},
 			"persistent_grant_expiration_time_unit": schema.StringAttribute{
@@ -392,7 +414,7 @@ func resourceClient() schema.Schema {
 					stringvalidator.OneOf("MINUTES", "DAYS", "HOURS"),
 				},
 				PlanModifiers: []planmodifier.String{
-					defaults.NewDefaultString("DAYS"),
+					defaults.DefaultString("DAYS"),
 				},
 			},
 			"persistent_grant_expiration_type": schema.StringAttribute{
@@ -403,7 +425,7 @@ func resourceClient() schema.Schema {
 					stringvalidator.OneOf("INDEFINITE_EXPIRY", "SERVER_DEFAULT", "OVERRIDE_SERVER_DEFAULT"),
 				},
 				PlanModifiers: []planmodifier.String{
-					defaults.NewDefaultString("SERVER_DEFAULT"),
+					defaults.DefaultString("SERVER_DEFAULT"),
 				},
 			},
 			"persistent_grant_idle_timeout": schema.NumberAttribute{
@@ -411,7 +433,7 @@ func resourceClient() schema.Schema {
 				Optional:    true,
 				Computed:    true,
 				PlanModifiers: []planmodifier.Number{
-					defaults.NewDefaultNumber(big.NewFloat(0)),
+					defaults.DefaultNumber(big.NewFloat(0)),
 				},
 			},
 			"persistent_grant_idle_timeout_time_unit": schema.StringAttribute{
@@ -422,7 +444,7 @@ func resourceClient() schema.Schema {
 					stringvalidator.OneOf("MINUTES", "DAYS", "HOURS"),
 				},
 				PlanModifiers: []planmodifier.String{
-					defaults.NewDefaultString("DAYS"),
+					defaults.DefaultString("DAYS"),
 				},
 			},
 			"persistent_grant_idle_timeout_type": schema.StringAttribute{
@@ -433,7 +455,7 @@ func resourceClient() schema.Schema {
 					stringvalidator.OneOf("INDEFINITE_EXPIRY", "SERVER_DEFAULT", "OVERRIDE_SERVER_DEFAULT"),
 				},
 				PlanModifiers: []planmodifier.String{
-					defaults.NewDefaultString("SERVER_DEFAULT"),
+					defaults.DefaultString("SERVER_DEFAULT"),
 				},
 			},
 			"persistent_grant_reuse_grant_types": schema.ListAttribute{
@@ -449,7 +471,7 @@ func resourceClient() schema.Schema {
 					stringvalidator.OneOf("SERVER_DEFAULT", "OVERRIDE_SERVER_DEFAULT"),
 				},
 				PlanModifiers: []planmodifier.String{
-					defaults.NewDefaultString("SERVER_DEFAULT"),
+					defaults.DefaultString("SERVER_DEFAULT"),
 				},
 			},
 			"redirect_uris": schema.ListAttribute{
@@ -458,7 +480,7 @@ func resourceClient() schema.Schema {
 				Computed:    true,
 				ElementType: types.StringType,
 				PlanModifiers: []planmodifier.List{
-					defaults.NewDefaultList(types.StringType, []attr.Value{}),
+					defaults.DefaultList([]attr.Value{}),
 				},
 			},
 			"refresh_rolling": schema.StringAttribute{
@@ -469,7 +491,7 @@ func resourceClient() schema.Schema {
 					stringvalidator.OneOf("SERVER_DEFAULT", "DONT_ROLL", "ROLL"),
 				},
 				PlanModifiers: []planmodifier.String{
-					defaults.NewDefaultString("SERVER_DEFAULT"),
+					defaults.DefaultString("SERVER_DEFAULT"),
 				},
 			},
 			"refresh_token_rolling_grace_period": schema.NumberAttribute{
@@ -484,7 +506,7 @@ func resourceClient() schema.Schema {
 					stringvalidator.OneOf("SERVER_DEFAULT", "OVERRIDE_SERVER_DEFAULT"),
 				},
 				PlanModifiers: []planmodifier.String{
-					defaults.NewDefaultString("SERVER_DEFAULT"),
+					defaults.DefaultString("SERVER_DEFAULT"),
 				},
 			},
 			"refresh_token_rolling_interval": schema.NumberAttribute{
@@ -499,7 +521,7 @@ func resourceClient() schema.Schema {
 					stringvalidator.OneOf("SERVER_DEFAULT", "OVERRIDE_SERVER_DEFAULT"),
 				},
 				PlanModifiers: []planmodifier.String{
-					defaults.NewDefaultString("SERVER_DEFAULT"),
+					defaults.DefaultString("SERVER_DEFAULT"),
 				},
 			},
 			"request_object_signing_algorithm": schema.StringAttribute{
@@ -518,7 +540,7 @@ func resourceClient() schema.Schema {
 				Optional:    true,
 				Computed:    true,
 				PlanModifiers: []planmodifier.Bool{
-					defaults.NewDefaultBool(false),
+					defaults.DefaultBool(false),
 				},
 			},
 			"require_proof_key_for_code_exchange": schema.BoolAttribute{
@@ -526,7 +548,7 @@ func resourceClient() schema.Schema {
 				Optional:    true,
 				Computed:    true,
 				PlanModifiers: []planmodifier.Bool{
-					defaults.NewDefaultBool(false),
+					defaults.DefaultBool(false),
 				},
 			},
 			"require_pushed_authorization_requests": schema.BoolAttribute{
@@ -534,7 +556,7 @@ func resourceClient() schema.Schema {
 				Optional:    true,
 				Computed:    true,
 				PlanModifiers: []planmodifier.Bool{
-					defaults.NewDefaultBool(false),
+					defaults.DefaultBool(false),
 				},
 			},
 			"require_signed_requests": schema.BoolAttribute{
@@ -542,7 +564,7 @@ func resourceClient() schema.Schema {
 				Optional:    true,
 				Computed:    true,
 				PlanModifiers: []planmodifier.Bool{
-					defaults.NewDefaultBool(false),
+					defaults.DefaultBool(false),
 				},
 			},
 			"restrict_scopes": schema.BoolAttribute{
@@ -550,7 +572,7 @@ func resourceClient() schema.Schema {
 				Optional:    true,
 				Computed:    true,
 				PlanModifiers: []planmodifier.Bool{
-					defaults.NewDefaultBool(false),
+					defaults.DefaultBool(false),
 				},
 			},
 			"restrict_to_default_access_token_manager": schema.BoolAttribute{
@@ -558,7 +580,7 @@ func resourceClient() schema.Schema {
 				Optional:    true,
 				Computed:    true,
 				PlanModifiers: []planmodifier.Bool{
-					defaults.NewDefaultBool(false),
+					defaults.DefaultBool(false),
 				},
 			},
 			"restricted_response_types": schema.ListAttribute{
@@ -567,16 +589,16 @@ func resourceClient() schema.Schema {
 				Computed:    true,
 				ElementType: types.StringType,
 				PlanModifiers: []planmodifier.List{
-					defaults.NewDefaultList(types.StringType, []attr.Value{}),
+					defaults.DefaultList([]attr.Value{}),
 				},
 			},
-			"restricted_scopes": schema.ListAttribute{
+			"restricted_scopes": schema.SetAttribute{
+				ElementType: types.StringType,
 				Description: `The scopes available for this client.`,
 				Optional:    true,
 				Computed:    true,
-				ElementType: types.StringType,
-				PlanModifiers: []planmodifier.List{
-					defaults.NewDefaultList(types.StringType, []attr.Value{}),
+				PlanModifiers: []planmodifier.Set{
+					defaults.DefaultSet([]attr.Value{}),
 				},
 			},
 			"token_exchange_processor_policy_ref": schema.StringAttribute{
@@ -613,7 +635,7 @@ func resourceClient() schema.Schema {
 				Optional:    true,
 				Computed:    true,
 				PlanModifiers: []planmodifier.Bool{
-					defaults.NewDefaultBool(false),
+					defaults.DefaultBool(false),
 				},
 			},
 		},
@@ -750,7 +772,7 @@ func listJdbcAttributeSource() map[string]schema.Attribute {
 			Optional:    true,
 			Computed:    true,
 			PlanModifiers: []planmodifier.String{
-				defaults.NewDefaultString("JDBC"),
+				defaults.DefaultString("JDBC"),
 			},
 		},
 		"filter": schema.StringAttribute{
@@ -786,7 +808,7 @@ func listLdapAttributeSource() map[string]schema.Attribute {
 			Optional:    true,
 			Computed:    true,
 			PlanModifiers: []planmodifier.String{
-				defaults.NewDefaultString(""),
+				defaults.DefaultString(""),
 			},
 		},
 		"binary_attribute_settings": schema.MapNestedAttribute{
@@ -797,7 +819,7 @@ func listLdapAttributeSource() map[string]schema.Attribute {
 				Attributes: mapBinaryLdapAttributeSettings(),
 			},
 			PlanModifiers: []planmodifier.Map{
-				defaults.NewDefaultMap(types.ObjectType{AttrTypes: map[string]attr.Type{"binary_encoding": types.StringType}}, map[string]attr.Value{}),
+				defaults.DefaultMap(map[string]attr.Value{}),
 			},
 		},
 		"data_store_ref": schema.StringAttribute{
@@ -809,8 +831,8 @@ func listLdapAttributeSource() map[string]schema.Attribute {
 			Optional:    true,
 			Computed:    true,
 			PlanModifiers: []planmodifier.String{
-				defaults.NewDefaultString("JDBC"),
-				defaults.NewDefaultString("JDBC"),
+				defaults.DefaultString("JDBC"),
+				defaults.DefaultString("JDBC"),
 			},
 		},
 		"id": schema.StringAttribute{
@@ -858,9 +880,9 @@ func listCustomAttributeSource() map[string]schema.Attribute {
 			Optional:    true,
 			Computed:    true,
 			PlanModifiers: []planmodifier.String{
-				defaults.NewDefaultString("JDBC"),
-				defaults.NewDefaultString("JDBC"),
-				defaults.NewDefaultString("JDBC"),
+				defaults.DefaultString("JDBC"),
+				defaults.DefaultString("JDBC"),
+				defaults.DefaultString("JDBC"),
 			},
 		},
 		"filter_fields": schema.ListNestedAttribute{
@@ -933,6 +955,9 @@ func singleClientAuth() map[string]schema.Attribute {
 			Description: `For GET requests, this field contains the encrypted client secret, if one exists.  For POST and PUT requests, if you wish to reuse the existing secret, this field should be passed back unchanged.`,
 			Optional:    true,
 			Computed:    true,
+			//PlanModifiers: []planmodifier.String{
+			//	stringplanmodifier.UseStateForUnknown(),
+			//},
 		},
 		"enforce_replay_prevention": schema.BoolAttribute{
 			Description: `Enforce replay prevention on JSON Web Tokens. This field is applicable only for Private Key JWT Client Authentication.`,
@@ -973,7 +998,7 @@ func singleClientOIDCPolicy() map[string]schema.Attribute {
 			Optional:    true,
 			Computed:    true,
 			PlanModifiers: []planmodifier.Bool{
-				defaults.NewDefaultBool(false),
+				defaults.DefaultBool(false),
 			},
 		},
 		"id_token_content_encryption_algorithm": schema.StringAttribute{
@@ -998,7 +1023,7 @@ func singleClientOIDCPolicy() map[string]schema.Attribute {
 				stringvalidator.OneOf("NONE", "HS256", "HS384", "HS512", "RS256", "RS384", "RS512", "ES256", "ES384", "ES512", "PS256", "PS384", "PS512"),
 			},
 			PlanModifiers: []planmodifier.String{
-				defaults.NewDefaultString("RS256"),
+				defaults.DefaultString("RS256"),
 			},
 		},
 		"logout_uris": schema.ListAttribute{
@@ -1011,7 +1036,7 @@ func singleClientOIDCPolicy() map[string]schema.Attribute {
 			Optional:    true,
 			Computed:    true,
 			PlanModifiers: []planmodifier.Bool{
-				defaults.NewDefaultBool(false),
+				defaults.DefaultBool(false),
 			},
 		},
 		"ping_access_logout_capable": schema.BoolAttribute{
@@ -1047,7 +1072,7 @@ func listConditionalIssuanceCriteriaEntry() map[string]schema.Attribute {
 			Optional:    true,
 			Computed:    true,
 			PlanModifiers: []planmodifier.String{
-				defaults.NewDefaultString(""),
+				defaults.DefaultString(""),
 			},
 		},
 		"source": schema.SingleNestedAttribute{
@@ -1069,7 +1094,7 @@ func listExpressionIssuanceCriteriaEntry() map[string]schema.Attribute {
 			Optional:    true,
 			Computed:    true,
 			PlanModifiers: []planmodifier.String{
-				defaults.NewDefaultString(""),
+				defaults.DefaultString(""),
 			},
 		},
 		"expression": schema.StringAttribute{

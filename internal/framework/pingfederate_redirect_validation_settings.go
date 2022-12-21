@@ -16,7 +16,6 @@ import (
 // Ensure the implementation satisfies the expected interfaces.
 var (
 	_ resource.Resource                = &pingfederateRedirectValidationSettingsResource{}
-	_ resource.ResourceWithSchema      = &pingfederateRedirectValidationSettingsResource{}
 	_ resource.ResourceWithConfigure   = &pingfederateRedirectValidationSettingsResource{}
 	_ resource.ResourceWithImportState = &pingfederateRedirectValidationSettingsResource{}
 )

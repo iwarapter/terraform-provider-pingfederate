@@ -16,7 +16,6 @@ import (
 // Ensure the implementation satisfies the expected interfaces.
 var (
 	_ resource.Resource                = &pingfederateSessionSettingsResource{}
-	_ resource.ResourceWithSchema      = &pingfederateSessionSettingsResource{}
 	_ resource.ResourceWithConfigure   = &pingfederateSessionSettingsResource{}
 	_ resource.ResourceWithImportState = &pingfederateSessionSettingsResource{}
 )

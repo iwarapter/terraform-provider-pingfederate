@@ -3,6 +3,7 @@ package framework
 import (
 	"math/big"
 
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
@@ -57,18 +58,18 @@ func flattenApplicationSessionPolicy(in *pf.ApplicationSessionPolicy) *Applicati
 func flattenAuthenticationPolicyContract(in *pf.AuthenticationPolicyContract) *AuthenticationPolicyContractData {
 	result := AuthenticationPolicyContractData{}
 	if in.CoreAttributes != nil {
-		attrs := []types.String{}
-		for _, attribute := range *in.CoreAttributes {
-			attrs = append(attrs, types.StringValue(*attribute.Name))
+		var values []attr.Value
+		for _, s := range *in.CoreAttributes {
+			values = append(values, types.StringValue(*s.Name))
 		}
-		result.CoreAttributes = attrs
+		result.CoreAttributes = types.SetValueMust(types.StringType, values)
 	}
 	if in.ExtendedAttributes != nil {
-		attrs := []types.String{}
-		for _, attribute := range *in.ExtendedAttributes {
-			attrs = append(attrs, types.StringValue(*attribute.Name))
+		var values []attr.Value
+		for _, s := range *in.ExtendedAttributes {
+			values = append(values, types.StringValue(*s.Name))
 		}
-		result.ExtendedAttributes = attrs
+		result.ExtendedAttributes = types.SetValueMust(types.StringType, values)
 	}
 	if in.Id != nil {
 		result.Id = types.StringValue(*in.Id)
@@ -219,12 +220,16 @@ func flattenClient(in *pf.Client) *ClientData {
 	}
 	if in.ExclusiveScopes != nil {
 		result.ExclusiveScopes = flattenStringList(*in.ExclusiveScopes)
+	} else {
+		result.ExclusiveScopes = types.ListNull(types.StringType)
 	}
 	if in.ExtendedParameters != nil {
 		result.ExtendedParameters = flattenMapParameterValuess(in.ExtendedParameters)
 	}
 	if in.GrantTypes != nil {
 		result.GrantTypes = flattenStringList(*in.GrantTypes)
+	} else {
+		result.GrantTypes = types.ListNull(types.StringType)
 	}
 	if in.ClientId != nil {
 		result.Id = types.StringValue(*in.ClientId)
@@ -295,6 +300,8 @@ func flattenClient(in *pf.Client) *ClientData {
 	}
 	if in.PersistentGrantReuseGrantTypes != nil {
 		result.PersistentGrantReuseGrantTypes = flattenStringList(*in.PersistentGrantReuseGrantTypes)
+	} else {
+		result.PersistentGrantReuseGrantTypes = types.ListNull(types.StringType)
 	}
 	if in.PersistentGrantReuseType != nil {
 		result.PersistentGrantReuseType = types.StringValue(*in.PersistentGrantReuseType)
@@ -303,6 +310,8 @@ func flattenClient(in *pf.Client) *ClientData {
 	}
 	if in.RedirectUris != nil {
 		result.RedirectUris = flattenStringList(*in.RedirectUris)
+	} else {
+		result.RedirectUris = types.ListNull(types.StringType)
 	}
 	if in.RefreshRolling != nil {
 		result.RefreshRolling = types.StringValue(*in.RefreshRolling)
@@ -371,9 +380,13 @@ func flattenClient(in *pf.Client) *ClientData {
 	}
 	if in.RestrictedResponseTypes != nil {
 		result.RestrictedResponseTypes = flattenStringList(*in.RestrictedResponseTypes)
+	} else {
+		result.RestrictedResponseTypes = types.ListNull(types.StringType)
 	}
 	if in.RestrictedScopes != nil {
-		result.RestrictedScopes = flattenStringList(*in.RestrictedScopes)
+		result.RestrictedScopes = flattenStringSet(*in.RestrictedScopes)
+	} else {
+		result.RestrictedScopes = types.SetNull(types.StringType)
 	}
 	if in.TokenExchangeProcessorPolicyRef != nil && in.TokenExchangeProcessorPolicyRef.Id != nil && *in.TokenExchangeProcessorPolicyRef.Id != "" {
 		result.TokenExchangeProcessorPolicyRef = types.StringValue(*in.TokenExchangeProcessorPolicyRef.Id)
@@ -602,6 +615,8 @@ func flattenClientOIDCPolicy(in *pf.ClientOIDCPolicy) *ClientOIDCPolicyData {
 	}
 	if in.LogoutUris != nil {
 		result.LogoutUris = flattenStringList(*in.LogoutUris)
+	} else {
+		result.LogoutUris = types.ListNull(types.StringType)
 	}
 	if in.PairwiseIdentifierUserType != nil {
 		result.PairwiseIdentifierUserType = types.BoolValue(*in.PairwiseIdentifierUserType)
@@ -745,6 +760,8 @@ func flattenJdbcAttributeSource(in *pf.JdbcAttributeSource) *JdbcAttributeSource
 	}
 	if in.ColumnNames != nil {
 		result.ColumnNames = flattenStringList(*in.ColumnNames)
+	} else {
+		result.ColumnNames = types.ListNull(types.StringType)
 	}
 	if in.DataStoreRef != nil && in.DataStoreRef.Id != nil && *in.DataStoreRef.Id != "" {
 		result.DataStoreRef = types.StringValue(*in.DataStoreRef.Id)
@@ -831,6 +848,8 @@ func flattenLdapAttributeSource(in *pf.LdapAttributeSource) *LdapAttributeSource
 	}
 	if in.SearchAttributes != nil {
 		result.SearchAttributes = flattenStringList(*in.SearchAttributes)
+	} else {
+		result.SearchAttributes = types.ListNull(types.StringType)
 	}
 	if in.SearchFilter != nil {
 		result.SearchFilter = types.StringValue(*in.SearchFilter)
@@ -857,6 +876,8 @@ func flattenParameterValues(in *pf.ParameterValues) *ParameterValuesData {
 	result := ParameterValuesData{}
 	if in.Values != nil {
 		result.Values = flattenStringList(*in.Values)
+	} else {
+		result.Values = types.ListNull(types.StringType)
 	}
 
 	return &result
@@ -1001,12 +1022,20 @@ func flattenCustomAttributeSources(in *[]*pf.AttributeSource) []CustomAttributeS
 	return results
 }
 
-func flattenStringList(in []*string) []types.String {
-	results := []types.String{}
+func flattenStringList(in []*string) types.List {
+	var values []attr.Value
 	for _, s := range in {
-		results = append(results, types.StringValue(*s))
+		values = append(values, types.StringValue(*s))
 	}
-	return results
+	return types.ListValueMust(types.StringType, values)
+}
+
+func flattenStringSet(in []*string) types.Set {
+	var values []attr.Value
+	for _, s := range in {
+		values = append(values, types.StringValue(*s))
+	}
+	return types.SetValueMust(types.StringType, values)
 }
 
 func issuanceCriteriaShouldFlatten(in *pf.IssuanceCriteria) bool {

@@ -17,7 +17,6 @@ import (
 // Ensure the implementation satisfies the expected interfaces.
 var (
 	_ resource.Resource                = &pingfederateOauthAuthenticationPolicyContractMappingResource{}
-	_ resource.ResourceWithSchema      = &pingfederateOauthAuthenticationPolicyContractMappingResource{}
 	_ resource.ResourceWithConfigure   = &pingfederateOauthAuthenticationPolicyContractMappingResource{}
 	_ resource.ResourceWithImportState = &pingfederateOauthAuthenticationPolicyContractMappingResource{}
 )
@@ -145,7 +144,7 @@ func (r *pingfederateOauthAuthenticationPolicyContractMappingResource) UpgradeSt
 						Description:         source.Description,
 						Id:                  source.Id,
 						MemberOfNestedGroup: source.MemberOfNestedGroup,
-						SearchAttributes:    source.SearchAttributes,
+						SearchAttributes:    sliceStringTypeToList(source.SearchAttributes),
 						SearchFilter:        source.SearchFilter,
 						SearchScope:         source.SearchScope,
 					}
@@ -168,7 +167,7 @@ func (r *pingfederateOauthAuthenticationPolicyContractMappingResource) UpgradeSt
 				}
 				for _, source := range mappingDataV0.JdbcAttributeSources {
 					ds := JdbcAttributeSourceData{
-						ColumnNames:  source.ColumnNames,
+						ColumnNames:  sliceStringTypeToList(source.ColumnNames),
 						DataStoreRef: source.DataStoreRef[0].ID,
 						Description:  source.Description,
 						Filter:       source.Filter,

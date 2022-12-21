@@ -105,16 +105,16 @@ type AdditionalKeySetsData struct {
 }
 
 type AdministrativeAccountData struct {
-	Active            types.Bool     `tfsdk:"active"`
-	Auditor           types.Bool     `tfsdk:"auditor"`
-	Department        types.String   `tfsdk:"department"`
-	Description       types.String   `tfsdk:"description"`
-	EmailAddress      types.String   `tfsdk:"email_address"`
-	EncryptedPassword types.String   `tfsdk:"encrypted_password"`
-	Password          types.String   `tfsdk:"password"`
-	PhoneNumber       types.String   `tfsdk:"phone_number"`
-	Roles             []types.String `tfsdk:"roles"`
-	Username          types.String   `tfsdk:"username"`
+	Active            types.Bool   `tfsdk:"active"`
+	Auditor           types.Bool   `tfsdk:"auditor"`
+	Department        types.String `tfsdk:"department"`
+	Description       types.String `tfsdk:"description"`
+	EmailAddress      types.String `tfsdk:"email_address"`
+	EncryptedPassword types.String `tfsdk:"encrypted_password"`
+	Password          types.String `tfsdk:"password"`
+	PhoneNumber       types.String `tfsdk:"phone_number"`
+	Roles             types.List   `tfsdk:"roles"`
+	Username          types.String `tfsdk:"username"`
 }
 
 type AdministrativeAccountsData struct {
@@ -204,8 +204,8 @@ type AtmAccessControlSettingsData struct {
 }
 
 type AtmSelectionSettingsData struct {
-	Inherited    types.Bool     `tfsdk:"inherited"`
-	ResourceUris []types.String `tfsdk:"resource_uris"`
+	Inherited    types.Bool `tfsdk:"inherited"`
+	ResourceUris types.List `tfsdk:"resource_uris"`
 }
 
 type AttributeData struct {
@@ -259,14 +259,14 @@ type AuthenticationPolicyData struct {
 	AuthnSelectionTrees          *[]*AuthenticationPolicyTreeData `tfsdk:"authn_selection_trees"`
 	DefaultAuthenticationSources *[]*AuthenticationSourceData     `tfsdk:"default_authentication_sources"`
 	FailIfNoSelection            types.Bool                       `tfsdk:"fail_if_no_selection"`
-	TrackedHttpParameters        []types.String                   `tfsdk:"tracked_http_parameters"`
+	TrackedHttpParameters        types.List                       `tfsdk:"tracked_http_parameters"`
 }
 
 type AuthenticationPolicyContractData struct {
-	CoreAttributes     []types.String `tfsdk:"core_attributes"`
-	ExtendedAttributes []types.String `tfsdk:"extended_attributes"`
-	Id                 types.String   `tfsdk:"id"`
-	Name               types.String   `tfsdk:"name"`
+	CoreAttributes     types.Set    `tfsdk:"core_attributes"`
+	ExtendedAttributes types.Set    `tfsdk:"extended_attributes"`
+	Id                 types.String `tfsdk:"id"`
+	Name               types.String `tfsdk:"name"`
 }
 
 type AuthenticationPolicyContractAssertionMappingData struct {
@@ -278,7 +278,7 @@ type AuthenticationPolicyContractAssertionMappingData struct {
 	AuthenticationPolicyContractRef types.String                              `tfsdk:"authentication_policy_contract_ref"`
 	IssuanceCriteria                *IssuanceCriteriaData                     `tfsdk:"issuance_criteria"`
 	RestrictVirtualEntityIds        types.Bool                                `tfsdk:"restrict_virtual_entity_ids"`
-	RestrictedVirtualEntityIds      []types.String                            `tfsdk:"restricted_virtual_entity_ids"`
+	RestrictedVirtualEntityIds      types.List                                `tfsdk:"restricted_virtual_entity_ids"`
 }
 
 type AuthenticationPolicyContractAttributeData struct {
@@ -293,7 +293,7 @@ type AuthenticationPolicyContractMappingData struct {
 	AuthenticationPolicyContractRef types.String                              `tfsdk:"authentication_policy_contract_ref"`
 	IssuanceCriteria                *IssuanceCriteriaData                     `tfsdk:"issuance_criteria"`
 	RestrictVirtualServerIds        types.Bool                                `tfsdk:"restrict_virtual_server_ids"`
-	RestrictedVirtualServerIds      []types.String                            `tfsdk:"restricted_virtual_server_ids"`
+	RestrictedVirtualServerIds      types.List                                `tfsdk:"restricted_virtual_server_ids"`
 }
 
 type AuthenticationPolicyContractsData struct {
@@ -370,12 +370,12 @@ type AuthenticationSourceData struct {
 }
 
 type AuthnApiApplicationData struct {
-	AdditionalAllowedOrigins     []types.String `tfsdk:"additional_allowed_origins"`
-	ClientForRedirectlessModeRef types.String   `tfsdk:"client_for_redirectless_mode_ref"`
-	Description                  types.String   `tfsdk:"description"`
-	Id                           types.String   `tfsdk:"id"`
-	Name                         types.String   `tfsdk:"name"`
-	Url                          types.String   `tfsdk:"url"`
+	AdditionalAllowedOrigins     types.List   `tfsdk:"additional_allowed_origins"`
+	ClientForRedirectlessModeRef types.String `tfsdk:"client_for_redirectless_mode_ref"`
+	Description                  types.String `tfsdk:"description"`
+	Id                           types.String `tfsdk:"id"`
+	Name                         types.String `tfsdk:"name"`
+	Url                          types.String `tfsdk:"url"`
 }
 
 type AuthnApiApplicationsData struct {
@@ -415,7 +415,7 @@ type AuthorizationServerSettingsData struct {
 	AdminWebServicePcvRef                       types.String                 `tfsdk:"admin_web_service_pcv_ref"`
 	AllowUnidentifiedClientExtensionGrants      types.Bool                   `tfsdk:"allow_unidentified_client_extension_grants"`
 	AllowUnidentifiedClientROCreds              types.Bool                   `tfsdk:"allow_unidentified_client_ro_creds"`
-	AllowedOrigins                              []types.String               `tfsdk:"allowed_origins"`
+	AllowedOrigins                              types.List                   `tfsdk:"allowed_origins"`
 	ApprovedScopesAttribute                     types.String                 `tfsdk:"approved_scopes_attribute"`
 	AtmIdForOAuthGrantManagement                types.String                 `tfsdk:"atm_id_for_o_auth_grant_management"`
 	AuthorizationCodeEntropy                    types.Number                 `tfsdk:"authorization_code_entropy"`
@@ -439,7 +439,7 @@ type AuthorizationServerSettingsData struct {
 	PersistentGrantIdleTimeoutTimeUnit          types.String                 `tfsdk:"persistent_grant_idle_timeout_time_unit"`
 	PersistentGrantLifetime                     types.Number                 `tfsdk:"persistent_grant_lifetime"`
 	PersistentGrantLifetimeUnit                 types.String                 `tfsdk:"persistent_grant_lifetime_unit"`
-	PersistentGrantReuseGrantTypes              []types.String               `tfsdk:"persistent_grant_reuse_grant_types"`
+	PersistentGrantReuseGrantTypes              types.List                   `tfsdk:"persistent_grant_reuse_grant_types"`
 	RefreshRollingInterval                      types.Number                 `tfsdk:"refresh_rolling_interval"`
 	RefreshTokenLength                          types.Number                 `tfsdk:"refresh_token_length"`
 	RefreshTokenRollingGracePeriod              types.Number                 `tfsdk:"refresh_token_rolling_grace_period"`
@@ -483,7 +483,7 @@ type BaseSelectionLocalIdentityFieldData struct {
 	Attributes            map[string]types.Bool `tfsdk:"attributes"`
 	Id                    types.String          `tfsdk:"id"`
 	Label                 types.String          `tfsdk:"label"`
-	Options               []types.String        `tfsdk:"options"`
+	Options               types.List            `tfsdk:"options"`
 	ProfilePageField      types.Bool            `tfsdk:"profile_page_field"`
 	RegistrationPageField types.Bool            `tfsdk:"registration_page_field"`
 	Type                  types.String          `tfsdk:"type"`
@@ -511,21 +511,21 @@ type CaptchaSettingsData struct {
 }
 
 type CertViewData struct {
-	CryptoProvider          types.String   `tfsdk:"crypto_provider"`
-	Expires                 types.String   `tfsdk:"expires"`
-	Id                      types.String   `tfsdk:"id"`
-	IssuerDN                types.String   `tfsdk:"issuer_dn"`
-	KeyAlgorithm            types.String   `tfsdk:"key_algorithm"`
-	KeySize                 types.Number   `tfsdk:"key_size"`
-	SerialNumber            types.String   `tfsdk:"serial_number"`
-	Sha1Fingerprint         types.String   `tfsdk:"sha1fingerprint"`
-	Sha256Fingerprint       types.String   `tfsdk:"sha256fingerprint"`
-	SignatureAlgorithm      types.String   `tfsdk:"signature_algorithm"`
-	Status                  types.String   `tfsdk:"status"`
-	SubjectAlternativeNames []types.String `tfsdk:"subject_alternative_names"`
-	SubjectDN               types.String   `tfsdk:"subject_dn"`
-	ValidFrom               types.String   `tfsdk:"valid_from"`
-	Version                 types.Number   `tfsdk:"version"`
+	CryptoProvider          types.String `tfsdk:"crypto_provider"`
+	Expires                 types.String `tfsdk:"expires"`
+	Id                      types.String `tfsdk:"id"`
+	IssuerDN                types.String `tfsdk:"issuer_dn"`
+	KeyAlgorithm            types.String `tfsdk:"key_algorithm"`
+	KeySize                 types.Number `tfsdk:"key_size"`
+	SerialNumber            types.String `tfsdk:"serial_number"`
+	Sha1Fingerprint         types.String `tfsdk:"sha1fingerprint"`
+	Sha256Fingerprint       types.String `tfsdk:"sha256fingerprint"`
+	SignatureAlgorithm      types.String `tfsdk:"signature_algorithm"`
+	Status                  types.String `tfsdk:"status"`
+	SubjectAlternativeNames types.List   `tfsdk:"subject_alternative_names"`
+	SubjectDN               types.String `tfsdk:"subject_dn"`
+	ValidFrom               types.String `tfsdk:"valid_from"`
+	Version                 types.Number `tfsdk:"version"`
 }
 
 type CertViewsData struct {
@@ -584,7 +584,7 @@ type CheckboxGroupLocalIdentityFieldData struct {
 	Attributes            map[string]types.Bool `tfsdk:"attributes"`
 	Id                    types.String          `tfsdk:"id"`
 	Label                 types.String          `tfsdk:"label"`
-	Options               []types.String        `tfsdk:"options"`
+	Options               types.List            `tfsdk:"options"`
 	ProfilePageField      types.Bool            `tfsdk:"profile_page_field"`
 	RegistrationPageField types.Bool            `tfsdk:"registration_page_field"`
 	Type                  types.String          `tfsdk:"type"`
@@ -624,9 +624,9 @@ type ClientData struct {
 	DeviceFlowSettingType                                         types.String                    `tfsdk:"device_flow_setting_type"`
 	DevicePollingIntervalOverride                                 types.Number                    `tfsdk:"device_polling_interval_override"`
 	Enabled                                                       types.Bool                      `tfsdk:"enabled"`
-	ExclusiveScopes                                               []types.String                  `tfsdk:"exclusive_scopes"`
+	ExclusiveScopes                                               types.List                      `tfsdk:"exclusive_scopes"`
 	ExtendedParameters                                            map[string]*ParameterValuesData `tfsdk:"extended_parameters"`
-	GrantTypes                                                    []types.String                  `tfsdk:"grant_types"`
+	GrantTypes                                                    types.List                      `tfsdk:"grant_types"`
 	Id                                                            types.String                    `tfsdk:"id"`
 	JwksSettings                                                  *JwksSettingsData               `tfsdk:"jwks_settings"`
 	JwtSecuredAuthorizationResponseModeContentEncryptionAlgorithm types.String                    `tfsdk:"jwt_secured_authorization_response_mode_content_encryption_algorithm"`
@@ -642,9 +642,9 @@ type ClientData struct {
 	PersistentGrantIdleTimeout                                    types.Number                    `tfsdk:"persistent_grant_idle_timeout"`
 	PersistentGrantIdleTimeoutTimeUnit                            types.String                    `tfsdk:"persistent_grant_idle_timeout_time_unit"`
 	PersistentGrantIdleTimeoutType                                types.String                    `tfsdk:"persistent_grant_idle_timeout_type"`
-	PersistentGrantReuseGrantTypes                                []types.String                  `tfsdk:"persistent_grant_reuse_grant_types"`
+	PersistentGrantReuseGrantTypes                                types.List                      `tfsdk:"persistent_grant_reuse_grant_types"`
 	PersistentGrantReuseType                                      types.String                    `tfsdk:"persistent_grant_reuse_type"`
-	RedirectUris                                                  []types.String                  `tfsdk:"redirect_uris"`
+	RedirectUris                                                  types.List                      `tfsdk:"redirect_uris"`
 	RefreshRolling                                                types.String                    `tfsdk:"refresh_rolling"`
 	RefreshTokenRollingGracePeriod                                types.Number                    `tfsdk:"refresh_token_rolling_grace_period"`
 	RefreshTokenRollingGracePeriodType                            types.String                    `tfsdk:"refresh_token_rolling_grace_period_type"`
@@ -658,8 +658,8 @@ type ClientData struct {
 	RequireSignedRequests                                         types.Bool                      `tfsdk:"require_signed_requests"`
 	RestrictScopes                                                types.Bool                      `tfsdk:"restrict_scopes"`
 	RestrictToDefaultAccessTokenManager                           types.Bool                      `tfsdk:"restrict_to_default_access_token_manager"`
-	RestrictedResponseTypes                                       []types.String                  `tfsdk:"restricted_response_types"`
-	RestrictedScopes                                              []types.String                  `tfsdk:"restricted_scopes"`
+	RestrictedResponseTypes                                       types.List                      `tfsdk:"restricted_response_types"`
+	RestrictedScopes                                              types.Set                       `tfsdk:"restricted_scopes"`
 	TokenExchangeProcessorPolicyRef                               types.String                    `tfsdk:"token_exchange_processor_policy_ref"`
 	TokenIntrospectionContentEncryptionAlgorithm                  types.String                    `tfsdk:"token_introspection_content_encryption_algorithm"`
 	TokenIntrospectionEncryptionAlgorithm                         types.String                    `tfsdk:"token_introspection_encryption_algorithm"`
@@ -685,16 +685,16 @@ type ClientMetadataData struct {
 }
 
 type ClientOIDCPolicyData struct {
-	GrantAccessSessionRevocationApi        types.Bool     `tfsdk:"grant_access_session_revocation_api"`
-	GrantAccessSessionSessionManagementApi types.Bool     `tfsdk:"grant_access_session_session_management_api"`
-	IdTokenContentEncryptionAlgorithm      types.String   `tfsdk:"id_token_content_encryption_algorithm"`
-	IdTokenEncryptionAlgorithm             types.String   `tfsdk:"id_token_encryption_algorithm"`
-	IdTokenSigningAlgorithm                types.String   `tfsdk:"id_token_signing_algorithm"`
-	LogoutUris                             []types.String `tfsdk:"logout_uris"`
-	PairwiseIdentifierUserType             types.Bool     `tfsdk:"pairwise_identifier_user_type"`
-	PingAccessLogoutCapable                types.Bool     `tfsdk:"ping_access_logout_capable"`
-	PolicyGroup                            types.String   `tfsdk:"policy_group"`
-	SectorIdentifierUri                    types.String   `tfsdk:"sector_identifier_uri"`
+	GrantAccessSessionRevocationApi        types.Bool   `tfsdk:"grant_access_session_revocation_api"`
+	GrantAccessSessionSessionManagementApi types.Bool   `tfsdk:"grant_access_session_session_management_api"`
+	IdTokenContentEncryptionAlgorithm      types.String `tfsdk:"id_token_content_encryption_algorithm"`
+	IdTokenEncryptionAlgorithm             types.String `tfsdk:"id_token_encryption_algorithm"`
+	IdTokenSigningAlgorithm                types.String `tfsdk:"id_token_signing_algorithm"`
+	LogoutUris                             types.List   `tfsdk:"logout_uris"`
+	PairwiseIdentifierUserType             types.Bool   `tfsdk:"pairwise_identifier_user_type"`
+	PingAccessLogoutCapable                types.Bool   `tfsdk:"ping_access_logout_capable"`
+	PolicyGroup                            types.String `tfsdk:"policy_group"`
+	SectorIdentifierUri                    types.String `tfsdk:"sector_identifier_uri"`
 }
 
 type ClientRegistrationOIDCPolicyData struct {
@@ -776,7 +776,7 @@ type ConfigStoreBundleData struct {
 
 type ConfigStoreSettingData struct {
 	Id          types.String            `tfsdk:"id"`
-	ListValue   []types.String          `tfsdk:"list_value"`
+	ListValue   types.List              `tfsdk:"list_value"`
 	MapValue    map[string]types.String `tfsdk:"map_value"`
 	StringValue types.String            `tfsdk:"string_value"`
 	Type        types.String            `tfsdk:"type"`
@@ -812,7 +812,7 @@ type ConnectionData struct {
 	MetadataReloadSettings                 *ConnectionMetadataUrlData                  `tfsdk:"metadata_reload_settings"`
 	Name                                   types.String                                `tfsdk:"name"`
 	Type                                   types.String                                `tfsdk:"type"`
-	VirtualEntityIds                       []types.String                              `tfsdk:"virtual_entity_ids"`
+	VirtualEntityIds                       types.List                                  `tfsdk:"virtual_entity_ids"`
 }
 
 type ConnectionCertData struct {
@@ -970,7 +970,7 @@ type DropDownLocalIdentityFieldData struct {
 	DefaultValue          types.String          `tfsdk:"default_value"`
 	Id                    types.String          `tfsdk:"id"`
 	Label                 types.String          `tfsdk:"label"`
-	Options               []types.String        `tfsdk:"options"`
+	Options               types.List            `tfsdk:"options"`
 	ProfilePageField      types.Bool            `tfsdk:"profile_page_field"`
 	RegistrationPageField types.Bool            `tfsdk:"registration_page_field"`
 	Type                  types.String          `tfsdk:"type"`
@@ -978,7 +978,7 @@ type DropDownLocalIdentityFieldData struct {
 
 type DynamicClientRegistrationData struct {
 	AllowClientDelete                          types.Bool                        `tfsdk:"allow_client_delete"`
-	AllowedExclusiveScopes                     []types.String                    `tfsdk:"allowed_exclusive_scopes"`
+	AllowedExclusiveScopes                     types.List                        `tfsdk:"allowed_exclusive_scopes"`
 	BypassActivationCodeConfirmationOverride   types.Bool                        `tfsdk:"bypass_activation_code_confirmation_override"`
 	CibaPollingInterval                        types.Number                      `tfsdk:"ciba_polling_interval"`
 	CibaRequireSignedRequests                  types.Bool                        `tfsdk:"ciba_require_signed_requests"`
@@ -1012,7 +1012,7 @@ type DynamicClientRegistrationData struct {
 	RequireSignedRequests                      types.Bool                        `tfsdk:"require_signed_requests"`
 	RestrictCommonScopes                       types.Bool                        `tfsdk:"restrict_common_scopes"`
 	RestrictToDefaultAccessTokenManager        types.Bool                        `tfsdk:"restrict_to_default_access_token_manager"`
-	RestrictedCommonScopes                     []types.String                    `tfsdk:"restricted_common_scopes"`
+	RestrictedCommonScopes                     types.List                        `tfsdk:"restricted_common_scopes"`
 	RetainClientSecret                         types.Bool                        `tfsdk:"retain_client_secret"`
 	RotateClientSecret                         types.Bool                        `tfsdk:"rotate_client_secret"`
 	RotateRegistrationAccessToken              types.Bool                        `tfsdk:"rotate_registration_access_token"`
@@ -1068,10 +1068,10 @@ type EmailVerificationConfigData struct {
 }
 
 type EncryptionPolicyData struct {
-	EncryptAssertion          types.Bool     `tfsdk:"encrypt_assertion"`
-	EncryptSloSubjectNameId   types.Bool     `tfsdk:"encrypt_slo_subject_name_id"`
-	EncryptedAttributes       []types.String `tfsdk:"encrypted_attributes"`
-	SloSubjectNameIDEncrypted types.Bool     `tfsdk:"slo_subject_name_id_encrypted"`
+	EncryptAssertion          types.Bool `tfsdk:"encrypt_assertion"`
+	EncryptSloSubjectNameId   types.Bool `tfsdk:"encrypt_slo_subject_name_id"`
+	EncryptedAttributes       types.List `tfsdk:"encrypted_attributes"`
+	SloSubjectNameIDEncrypted types.Bool `tfsdk:"slo_subject_name_id_encrypted"`
 }
 
 type EntityData struct {
@@ -1213,10 +1213,10 @@ type IdentityStoreProvisionerAttributeContractData struct {
 }
 
 type IdentityStoreProvisionerDescriptorData struct {
-	AttributeContract             []types.String              `tfsdk:"attribute_contract"`
+	AttributeContract             types.List                  `tfsdk:"attribute_contract"`
 	ClassName                     types.String                `tfsdk:"class_name"`
 	ConfigDescriptor              *PluginConfigDescriptorData `tfsdk:"config_descriptor"`
-	GroupAttributeContract        []types.String              `tfsdk:"group_attribute_contract"`
+	GroupAttributeContract        types.List                  `tfsdk:"group_attribute_contract"`
 	Id                            types.String                `tfsdk:"id"`
 	Name                          types.String                `tfsdk:"name"`
 	SupportsExtendedContract      types.Bool                  `tfsdk:"supports_extended_contract"`
@@ -1258,7 +1258,7 @@ type IdpAdapterAssertionMappingData struct {
 	IdpAdapterRef                 types.String                              `tfsdk:"idp_adapter_ref"`
 	IssuanceCriteria              *IssuanceCriteriaData                     `tfsdk:"issuance_criteria"`
 	RestrictVirtualEntityIds      types.Bool                                `tfsdk:"restrict_virtual_entity_ids"`
-	RestrictedVirtualEntityIds    []types.String                            `tfsdk:"restricted_virtual_entity_ids"`
+	RestrictedVirtualEntityIds    types.List                                `tfsdk:"restricted_virtual_entity_ids"`
 }
 
 type IdpAdapterAttributeData struct {
@@ -1327,9 +1327,9 @@ type IdpBrowserSsoData struct {
 	AuthnContextMappings                 *[]*AuthnContextMappingData                 `tfsdk:"authn_context_mappings"`
 	DecryptionPolicy                     *DecryptionPolicyData                       `tfsdk:"decryption_policy"`
 	DefaultTargetUrl                     types.String                                `tfsdk:"default_target_url"`
-	EnabledProfiles                      []types.String                              `tfsdk:"enabled_profiles"`
+	EnabledProfiles                      types.List                                  `tfsdk:"enabled_profiles"`
 	IdpIdentityMapping                   types.String                                `tfsdk:"idp_identity_mapping"`
-	IncomingBindings                     []types.String                              `tfsdk:"incoming_bindings"`
+	IncomingBindings                     types.List                                  `tfsdk:"incoming_bindings"`
 	JitProvisioning                      *JitProvisioningData                        `tfsdk:"jit_provisioning"`
 	MessageCustomizations                *[]*ProtocolMessageCustomizationData        `tfsdk:"message_customizations"`
 	OauthAuthenticationPolicyContractRef types.String                                `tfsdk:"oauth_authentication_policy_contract_ref"`
@@ -1373,7 +1373,7 @@ type IdpConnectionData struct {
 	Name                                   types.String                                `tfsdk:"name"`
 	OidcClientCredentials                  *OIDCClientCredentialsData                  `tfsdk:"oidc_client_credentials"`
 	Type                                   types.String                                `tfsdk:"type"`
-	VirtualEntityIds                       []types.String                              `tfsdk:"virtual_entity_ids"`
+	VirtualEntityIds                       types.List                                  `tfsdk:"virtual_entity_ids"`
 	WsTrust                                *IdpWsTrustData                             `tfsdk:"ws_trust"`
 }
 
@@ -1457,7 +1457,7 @@ type IdpTokenProcessorMappingData struct {
 	CustomAttributeSources       []CustomAttributeSourceData               `tfsdk:"custom_attribute_sources"`
 	IdpTokenProcessorRef         types.String                              `tfsdk:"idp_token_processor_ref"`
 	IssuanceCriteria             *IssuanceCriteriaData                     `tfsdk:"issuance_criteria"`
-	RestrictedVirtualEntityIds   []types.String                            `tfsdk:"restricted_virtual_entity_ids"`
+	RestrictedVirtualEntityIds   types.List                                `tfsdk:"restricted_virtual_entity_ids"`
 }
 
 type IdpWsTrustData struct {
@@ -1529,7 +1529,7 @@ type IssuersData struct {
 
 type JdbcAttributeSourceData struct {
 	AttributeContractFulfillment map[string]*AttributeFulfillmentValueData `tfsdk:"attribute_contract_fulfillment"`
-	ColumnNames                  []types.String                            `tfsdk:"column_names"`
+	ColumnNames                  types.List                                `tfsdk:"column_names"`
 	DataStoreRef                 types.String                              `tfsdk:"data_store_ref"`
 	Description                  types.String                              `tfsdk:"description"`
 	Filter                       types.String                              `tfsdk:"filter"`
@@ -1599,7 +1599,7 @@ type KerberosRealmData struct {
 	KerberosPassword                   types.String           `tfsdk:"kerberos_password"`
 	KerberosRealmName                  types.String           `tfsdk:"kerberos_realm_name"`
 	KerberosUsername                   types.String           `tfsdk:"kerberos_username"`
-	KeyDistributionCenters             []types.String         `tfsdk:"key_distribution_centers"`
+	KeyDistributionCenters             types.List             `tfsdk:"key_distribution_centers"`
 	KeySets                            *[]*KerberosKeySetData `tfsdk:"key_sets"`
 	LdapGatewayDataStoreRef            types.String           `tfsdk:"ldap_gateway_data_store_ref"`
 	RetainPreviousKeysOnPasswordChange types.Bool             `tfsdk:"retain_previous_keys_on_password_change"`
@@ -1619,11 +1619,11 @@ type KerberosRealmsSettingsData struct {
 }
 
 type KeyAlgorithmData struct {
-	DefaultKeySize            types.Number   `tfsdk:"default_key_size"`
-	DefaultSignatureAlgorithm types.String   `tfsdk:"default_signature_algorithm"`
-	KeySizes                  []types.Number `tfsdk:"key_sizes"`
-	Name                      types.String   `tfsdk:"name"`
-	SignatureAlgorithms       []types.String `tfsdk:"signature_algorithms"`
+	DefaultKeySize            types.Number `tfsdk:"default_key_size"`
+	DefaultSignatureAlgorithm types.String `tfsdk:"default_signature_algorithm"`
+	KeySizes                  types.List   `tfsdk:"key_sizes"`
+	Name                      types.String `tfsdk:"name"`
+	SignatureAlgorithms       types.List   `tfsdk:"signature_algorithms"`
 }
 
 type KeyAlgorithmsData struct {
@@ -1666,7 +1666,7 @@ type KeyPairViewData struct {
 	Sha256Fingerprint       types.String                 `tfsdk:"sha256fingerprint"`
 	SignatureAlgorithm      types.String                 `tfsdk:"signature_algorithm"`
 	Status                  types.String                 `tfsdk:"status"`
-	SubjectAlternativeNames []types.String               `tfsdk:"subject_alternative_names"`
+	SubjectAlternativeNames types.List                   `tfsdk:"subject_alternative_names"`
 	SubjectDN               types.String                 `tfsdk:"subject_dn"`
 	ValidFrom               types.String                 `tfsdk:"valid_from"`
 	Version                 types.Number                 `tfsdk:"version"`
@@ -1684,20 +1684,20 @@ type LdapAttributeSourceData struct {
 	Description                  types.String                                `tfsdk:"description"`
 	Id                           types.String                                `tfsdk:"id"`
 	MemberOfNestedGroup          types.Bool                                  `tfsdk:"member_of_nested_group"`
-	SearchAttributes             []types.String                              `tfsdk:"search_attributes"`
+	SearchAttributes             types.List                                  `tfsdk:"search_attributes"`
 	SearchFilter                 types.String                                `tfsdk:"search_filter"`
 	SearchScope                  types.String                                `tfsdk:"search_scope"`
 }
 
 type LdapDataStoreData struct {
-	BinaryAttributes     []types.String        `tfsdk:"binary_attributes"`
+	BinaryAttributes     types.List            `tfsdk:"binary_attributes"`
 	BindAnonymously      types.Bool            `tfsdk:"bind_anonymously"`
 	ConnectionTimeout    types.Number          `tfsdk:"connection_timeout"`
 	CreateIfNecessary    types.Bool            `tfsdk:"create_if_necessary"`
 	DnsTtl               types.Number          `tfsdk:"dns_ttl"`
 	EncryptedPassword    types.String          `tfsdk:"encrypted_password"`
 	FollowLDAPReferrals  types.Bool            `tfsdk:"follow_ldap_referrals"`
-	Hostnames            []types.String        `tfsdk:"hostnames"`
+	Hostnames            types.List            `tfsdk:"hostnames"`
 	HostnamesTags        *[]*LdapTagConfigData `tfsdk:"hostnames_tags"`
 	Id                   types.String          `tfsdk:"id"`
 	LdapDnsSrvPrefix     types.String          `tfsdk:"ldap_dns_srv_prefix"`
@@ -1727,7 +1727,7 @@ type LdapDataStoreAttributeData struct {
 }
 
 type LdapDataStoreConfigData struct {
-	AuxiliaryObjectClasses []types.String                     `tfsdk:"auxiliary_object_classes"`
+	AuxiliaryObjectClasses types.List                         `tfsdk:"auxiliary_object_classes"`
 	BaseDn                 types.String                       `tfsdk:"base_dn"`
 	CreatePattern          types.String                       `tfsdk:"create_pattern"`
 	DataStoreMapping       map[string]*DataStoreAttributeData `tfsdk:"data_store_mapping"`
@@ -1753,9 +1753,9 @@ type LdapInboundProvisioningUserRepositoryData struct {
 }
 
 type LdapTagConfigData struct {
-	DefaultSource types.Bool     `tfsdk:"default_source"`
-	Hostnames     []types.String `tfsdk:"hostnames"`
-	Tags          types.String   `tfsdk:"tags"`
+	DefaultSource types.Bool   `tfsdk:"default_source"`
+	Hostnames     types.List   `tfsdk:"hostnames"`
+	Tags          types.String `tfsdk:"tags"`
 }
 
 type LicenseAgreementInfoData struct {
@@ -1881,19 +1881,19 @@ type MoveItemRequestData struct {
 }
 
 type NewKeyPairSettingsData struct {
-	City                    types.String   `tfsdk:"city"`
-	CommonName              types.String   `tfsdk:"common_name"`
-	Country                 types.String   `tfsdk:"country"`
-	CryptoProvider          types.String   `tfsdk:"crypto_provider"`
-	Id                      types.String   `tfsdk:"id"`
-	KeyAlgorithm            types.String   `tfsdk:"key_algorithm"`
-	KeySize                 types.Number   `tfsdk:"key_size"`
-	Organization            types.String   `tfsdk:"organization"`
-	OrganizationUnit        types.String   `tfsdk:"organization_unit"`
-	SignatureAlgorithm      types.String   `tfsdk:"signature_algorithm"`
-	State                   types.String   `tfsdk:"state"`
-	SubjectAlternativeNames []types.String `tfsdk:"subject_alternative_names"`
-	ValidDays               types.Number   `tfsdk:"valid_days"`
+	City                    types.String `tfsdk:"city"`
+	CommonName              types.String `tfsdk:"common_name"`
+	Country                 types.String `tfsdk:"country"`
+	CryptoProvider          types.String `tfsdk:"crypto_provider"`
+	Id                      types.String `tfsdk:"id"`
+	KeyAlgorithm            types.String `tfsdk:"key_algorithm"`
+	KeySize                 types.Number `tfsdk:"key_size"`
+	Organization            types.String `tfsdk:"organization"`
+	OrganizationUnit        types.String `tfsdk:"organization_unit"`
+	SignatureAlgorithm      types.String `tfsdk:"signature_algorithm"`
+	State                   types.String `tfsdk:"state"`
+	SubjectAlternativeNames types.List   `tfsdk:"subject_alternative_names"`
+	ValidDays               types.Number `tfsdk:"valid_days"`
 }
 
 type NotificationPublisherData struct {
@@ -2094,7 +2094,7 @@ type P14EKeysViewData struct {
 }
 
 type ParameterValuesData struct {
-	Values []types.String `tfsdk:"values"`
+	Values types.List `tfsdk:"values"`
 }
 
 type PasswordCredentialValidatorData struct {
@@ -2185,16 +2185,16 @@ type PingOneForEnterpriseSettingsData struct {
 }
 
 type PingOneLdapGatewayDataStoreData struct {
-	BinaryAttributes     []types.String `tfsdk:"binary_attributes"`
-	Id                   types.String   `tfsdk:"id"`
-	LdapType             types.String   `tfsdk:"ldap_type"`
-	MaskAttributeValues  types.Bool     `tfsdk:"mask_attribute_values"`
-	Name                 types.String   `tfsdk:"name"`
-	PingOneConnectionRef types.String   `tfsdk:"ping_one_connection_ref"`
-	PingOneEnvironmentId types.String   `tfsdk:"ping_one_environment_id"`
-	PingOneLdapGatewayId types.String   `tfsdk:"ping_one_ldap_gateway_id"`
-	Type                 types.String   `tfsdk:"type"`
-	UseSsl               types.Bool     `tfsdk:"use_ssl"`
+	BinaryAttributes     types.List   `tfsdk:"binary_attributes"`
+	Id                   types.String `tfsdk:"id"`
+	LdapType             types.String `tfsdk:"ldap_type"`
+	MaskAttributeValues  types.Bool   `tfsdk:"mask_attribute_values"`
+	Name                 types.String `tfsdk:"name"`
+	PingOneConnectionRef types.String `tfsdk:"ping_one_connection_ref"`
+	PingOneEnvironmentId types.String `tfsdk:"ping_one_environment_id"`
+	PingOneLdapGatewayId types.String `tfsdk:"ping_one_ldap_gateway_id"`
+	Type                 types.String `tfsdk:"type"`
+	UseSsl               types.Bool   `tfsdk:"use_ssl"`
 }
 
 type PluginConfigDescriptorData struct {
@@ -2382,14 +2382,14 @@ type SaasAttributeMappingData struct {
 }
 
 type SaasFieldConfigurationData struct {
-	AttributeNames []types.String `tfsdk:"attribute_names"`
-	CharacterCase  types.String   `tfsdk:"character_case"`
-	CreateOnly     types.Bool     `tfsdk:"create_only"`
-	DefaultValue   types.String   `tfsdk:"default_value"`
-	Expression     types.String   `tfsdk:"expression"`
-	Masked         types.Bool     `tfsdk:"masked"`
-	Parser         types.String   `tfsdk:"parser"`
-	Trim           types.Bool     `tfsdk:"trim"`
+	AttributeNames types.List   `tfsdk:"attribute_names"`
+	CharacterCase  types.String `tfsdk:"character_case"`
+	CreateOnly     types.Bool   `tfsdk:"create_only"`
+	DefaultValue   types.String `tfsdk:"default_value"`
+	Expression     types.String `tfsdk:"expression"`
+	Masked         types.Bool   `tfsdk:"masked"`
+	Parser         types.String `tfsdk:"parser"`
+	Trim           types.Bool   `tfsdk:"trim"`
 }
 
 type SaasPluginFieldInfoDescriptorData struct {
@@ -2401,7 +2401,7 @@ type SaasPluginFieldInfoDescriptorData struct {
 	MaxLength            types.Number                  `tfsdk:"max_length"`
 	MinLength            types.Number                  `tfsdk:"min_length"`
 	MultiValue           types.Bool                    `tfsdk:"multi_value"`
-	Notes                []types.String                `tfsdk:"notes"`
+	Notes                types.List                    `tfsdk:"notes"`
 	Options              *[]*SaasPluginFieldOptionData `tfsdk:"options"`
 	Pattern              types.String                  `tfsdk:"pattern"`
 	PersistForMembership types.Bool                    `tfsdk:"persist_for_membership"`
@@ -2420,10 +2420,10 @@ type SchemaData struct {
 }
 
 type SchemaAttributeData struct {
-	MultiValued   types.Bool     `tfsdk:"multi_valued"`
-	Name          types.String   `tfsdk:"name"`
-	SubAttributes []types.String `tfsdk:"sub_attributes"`
-	Types         []types.String `tfsdk:"types"`
+	MultiValued   types.Bool   `tfsdk:"multi_valued"`
+	Name          types.String `tfsdk:"name"`
+	SubAttributes types.List   `tfsdk:"sub_attributes"`
+	Types         types.List   `tfsdk:"types"`
 }
 
 type ScopeEntryData struct {
@@ -2433,9 +2433,9 @@ type ScopeEntryData struct {
 }
 
 type ScopeGroupEntryData struct {
-	Description types.String   `tfsdk:"description"`
-	Name        types.String   `tfsdk:"name"`
-	Scopes      []types.String `tfsdk:"scopes"`
+	Description types.String `tfsdk:"description"`
+	Name        types.String `tfsdk:"name"`
+	Scopes      types.List   `tfsdk:"scopes"`
 }
 
 type SecondarySecretData struct {
@@ -2466,9 +2466,9 @@ type ServerSettingsData struct {
 }
 
 type ServiceAssociationData struct {
-	ComponentName types.String   `tfsdk:"component_name"`
-	Configured    types.Bool     `tfsdk:"configured"`
-	ServiceNames  []types.String `tfsdk:"service_names"`
+	ComponentName types.String `tfsdk:"component_name"`
+	Configured    types.Bool   `tfsdk:"configured"`
+	ServiceNames  types.List   `tfsdk:"service_names"`
 }
 
 type ServiceAssociationsData struct {
@@ -2565,7 +2565,7 @@ type SpAdapterMappingData struct {
 	CustomAttributeSources       []CustomAttributeSourceData               `tfsdk:"custom_attribute_sources"`
 	IssuanceCriteria             *IssuanceCriteriaData                     `tfsdk:"issuance_criteria"`
 	RestrictVirtualEntityIds     types.Bool                                `tfsdk:"restrict_virtual_entity_ids"`
-	RestrictedVirtualEntityIds   []types.String                            `tfsdk:"restricted_virtual_entity_ids"`
+	RestrictedVirtualEntityIds   types.List                                `tfsdk:"restricted_virtual_entity_ids"`
 	SpAdapterRef                 types.String                              `tfsdk:"sp_adapter_ref"`
 }
 
@@ -2593,7 +2593,7 @@ type SpAttributeQueryData struct {
 	JdbcAttributeSources         []JdbcAttributeSourceData                 `tfsdk:"jdbc_attribute_sources"`
 	LdapAttributeSources         []LdapAttributeSourceData                 `tfsdk:"ldap_attribute_sources"`
 	CustomAttributeSources       []CustomAttributeSourceData               `tfsdk:"custom_attribute_sources"`
-	Attributes                   []types.String                            `tfsdk:"attributes"`
+	Attributes                   types.List                                `tfsdk:"attributes"`
 	IssuanceCriteria             *IssuanceCriteriaData                     `tfsdk:"issuance_criteria"`
 	Policy                       *SpAttributeQueryPolicyData               `tfsdk:"policy"`
 }
@@ -2614,9 +2614,9 @@ type SpBrowserSsoData struct {
 	AttributeContract                             *SpBrowserSsoAttributeContractData                   `tfsdk:"attribute_contract"`
 	AuthenticationPolicyContractAssertionMappings *[]*AuthenticationPolicyContractAssertionMappingData `tfsdk:"authentication_policy_contract_assertion_mappings"`
 	DefaultTargetUrl                              types.String                                         `tfsdk:"default_target_url"`
-	EnabledProfiles                               []types.String                                       `tfsdk:"enabled_profiles"`
+	EnabledProfiles                               types.List                                           `tfsdk:"enabled_profiles"`
 	EncryptionPolicy                              *EncryptionPolicyData                                `tfsdk:"encryption_policy"`
-	IncomingBindings                              []types.String                                       `tfsdk:"incoming_bindings"`
+	IncomingBindings                              types.List                                           `tfsdk:"incoming_bindings"`
 	MessageCustomizations                         *[]*ProtocolMessageCustomizationData                 `tfsdk:"message_customizations"`
 	Protocol                                      types.String                                         `tfsdk:"protocol"`
 	RequireSignedAuthnRequests                    types.Bool                                           `tfsdk:"require_signed_authn_requests"`
@@ -2662,7 +2662,7 @@ type SpConnectionData struct {
 	OutboundProvision                      *OutboundProvisionData                      `tfsdk:"outbound_provision"`
 	SpBrowserSso                           *SpBrowserSsoData                           `tfsdk:"sp_browser_sso"`
 	Type                                   types.String                                `tfsdk:"type"`
-	VirtualEntityIds                       []types.String                              `tfsdk:"virtual_entity_ids"`
+	VirtualEntityIds                       types.List                                  `tfsdk:"virtual_entity_ids"`
 	WsTrust                                *SpWsTrustData                              `tfsdk:"ws_trust"`
 }
 
@@ -2707,7 +2707,7 @@ type SpTokenGeneratorMappingData struct {
 	CustomAttributeSources       []CustomAttributeSourceData               `tfsdk:"custom_attribute_sources"`
 	DefaultMapping               types.Bool                                `tfsdk:"default_mapping"`
 	IssuanceCriteria             *IssuanceCriteriaData                     `tfsdk:"issuance_criteria"`
-	RestrictedVirtualEntityIds   []types.String                            `tfsdk:"restricted_virtual_entity_ids"`
+	RestrictedVirtualEntityIds   types.List                                `tfsdk:"restricted_virtual_entity_ids"`
 	SpTokenGeneratorRef          types.String                              `tfsdk:"sp_token_generator_ref"`
 }
 
@@ -2731,7 +2731,7 @@ type SpWsTrustData struct {
 	MinutesAfter                   types.Number                         `tfsdk:"minutes_after"`
 	MinutesBefore                  types.Number                         `tfsdk:"minutes_before"`
 	OAuthAssertionProfiles         types.Bool                           `tfsdk:"o_auth_assertion_profiles"`
-	PartnerServiceIds              []types.String                       `tfsdk:"partner_service_ids"`
+	PartnerServiceIds              types.List                           `tfsdk:"partner_service_ids"`
 	RequestContractRef             types.String                         `tfsdk:"request_contract_ref"`
 	TokenProcessorMappings         *[]*IdpTokenProcessorMappingData     `tfsdk:"token_processor_mappings"`
 }
@@ -2772,9 +2772,9 @@ type StoredProcedureData struct {
 }
 
 type StsRequestParametersContractData struct {
-	Id         types.String   `tfsdk:"id"`
-	Name       types.String   `tfsdk:"name"`
-	Parameters []types.String `tfsdk:"parameters"`
+	Id         types.String `tfsdk:"id"`
+	Name       types.String `tfsdk:"name"`
+	Parameters types.List   `tfsdk:"parameters"`
 }
 
 type StsRequestParametersContractsData struct {
@@ -2821,7 +2821,7 @@ type TokenExchangeGeneratorGroupData struct {
 	GeneratorMappings *[]*TokenExchangeGeneratorMappingData `tfsdk:"generator_mappings"`
 	Id                types.String                          `tfsdk:"id"`
 	Name              types.String                          `tfsdk:"name"`
-	ResourceUris      []types.String                        `tfsdk:"resource_uris"`
+	ResourceUris      types.List                            `tfsdk:"resource_uris"`
 }
 
 type TokenExchangeGeneratorGroupsData struct {
@@ -2975,7 +2975,7 @@ type VersionData struct {
 }
 
 type VirtualHostNameSettingsData struct {
-	VirtualHostNames []types.String `tfsdk:"virtual_host_names"`
+	VirtualHostNames types.List `tfsdk:"virtual_host_names"`
 }
 
 type WriteGroupsData struct {
@@ -2992,7 +2992,7 @@ type WsTrustStsSettingsData struct {
 	IssuerCerts            *[]*ResourceLinkData                `tfsdk:"issuer_certs"`
 	RestrictByIssuerCert   types.Bool                          `tfsdk:"restrict_by_issuer_cert"`
 	RestrictBySubjectDn    types.Bool                          `tfsdk:"restrict_by_subject_dn"`
-	SubjectDns             []types.String                      `tfsdk:"subject_dns"`
+	SubjectDns             types.List                          `tfsdk:"subject_dns"`
 	Users                  *[]*UsernamePasswordCredentialsData `tfsdk:"users"`
 }
 

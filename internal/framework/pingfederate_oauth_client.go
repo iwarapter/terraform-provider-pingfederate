@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-framework/attr"
+
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -15,7 +17,6 @@ import (
 // Ensure the implementation satisfies the expected interfaces.
 var (
 	_ resource.Resource                 = &pingfederateOAuthClientResource{}
-	_ resource.ResourceWithSchema       = &pingfederateOAuthClientResource{}
 	_ resource.ResourceWithConfigure    = &pingfederateOAuthClientResource{}
 	_ resource.ResourceWithImportState  = &pingfederateOAuthClientResource{}
 	_ resource.ResourceWithUpgradeState = &pingfederateOAuthClientResource{}
@@ -167,8 +168,8 @@ func (r *pingfederateOAuthClientResource) UpgradeState(context.Context) map[int6
 					DeviceFlowSettingType:                    clientDataV0.DeviceFlowSettingType,
 					DevicePollingIntervalOverride:            clientDataV0.DevicePollingIntervalOverride,
 					Enabled:                                  clientDataV0.Enabled,
-					ExclusiveScopes:                          clientDataV0.ExclusiveScopes,
-					GrantTypes:                               clientDataV0.GrantTypes,
+					ExclusiveScopes:                          sliceStringTypeToList(clientDataV0.ExclusiveScopes),
+					GrantTypes:                               sliceStringTypeToList(clientDataV0.GrantTypes),
 					Id:                                       clientDataV0.ClientId,
 					JwtSecuredAuthorizationResponseModeContentEncryptionAlgorithm: types.StringNull(),
 					JwtSecuredAuthorizationResponseModeEncryptionAlgorithm:        types.StringNull(),
@@ -182,9 +183,9 @@ func (r *pingfederateOAuthClientResource) UpgradeState(context.Context) map[int6
 					PersistentGrantIdleTimeout:                   clientDataV0.PersistentGrantIdleTimeout,
 					PersistentGrantIdleTimeoutTimeUnit:           clientDataV0.PersistentGrantIdleTimeoutTimeUnit,
 					PersistentGrantIdleTimeoutType:               clientDataV0.PersistentGrantIdleTimeoutType,
-					PersistentGrantReuseGrantTypes:               nil,
+					PersistentGrantReuseGrantTypes:               types.ListNull(types.StringType),
 					PersistentGrantReuseType:                     types.StringNull(),
-					RedirectUris:                                 clientDataV0.RedirectUris,
+					RedirectUris:                                 sliceStringTypeToList(clientDataV0.RedirectUris),
 					RefreshRolling:                               clientDataV0.RefreshRolling,
 					RefreshTokenRollingGracePeriod:               types.NumberNull(),
 					RefreshTokenRollingGracePeriodType:           types.StringNull(),
@@ -197,8 +198,8 @@ func (r *pingfederateOAuthClientResource) UpgradeState(context.Context) map[int6
 					RequireSignedRequests:                        clientDataV0.RequireSignedRequests,
 					RestrictScopes:                               clientDataV0.RestrictScopes,
 					RestrictToDefaultAccessTokenManager:          clientDataV0.RestrictToDefaultAccessTokenManager,
-					RestrictedResponseTypes:                      clientDataV0.RestrictedResponseTypes,
-					RestrictedScopes:                             clientDataV0.RestrictedScopes,
+					RestrictedResponseTypes:                      sliceStringTypeToList(clientDataV0.RestrictedResponseTypes),
+					RestrictedScopes:                             sliceStringTypeToSet(clientDataV0.RestrictedScopes),
 					TokenIntrospectionContentEncryptionAlgorithm: types.StringNull(),
 					TokenIntrospectionEncryptionAlgorithm:        types.StringNull(),
 					TokenIntrospectionSigningAlgorithm:           types.StringNull(),
@@ -231,7 +232,7 @@ func (r *pingfederateOAuthClientResource) UpgradeState(context.Context) map[int6
 						IdTokenContentEncryptionAlgorithm:      clientDataV0.OidcPolicy[0].IdTokenContentEncryptionAlgorithm,
 						IdTokenEncryptionAlgorithm:             clientDataV0.OidcPolicy[0].IdTokenEncryptionAlgorithm,
 						IdTokenSigningAlgorithm:                clientDataV0.OidcPolicy[0].IdTokenSigningAlgorithm,
-						LogoutUris:                             clientDataV0.OidcPolicy[0].LogoutUris,
+						LogoutUris:                             sliceStringTypeToList(clientDataV0.OidcPolicy[0].LogoutUris),
 						PairwiseIdentifierUserType:             clientDataV0.OidcPolicy[0].PairwiseIdentifierUserType,
 						PingAccessLogoutCapable:                clientDataV0.OidcPolicy[0].PingAccessLogoutCapable,
 						SectorIdentifierUri:                    clientDataV0.OidcPolicy[0].SectorIdentifierUri,
@@ -247,12 +248,34 @@ func (r *pingfederateOAuthClientResource) UpgradeState(context.Context) map[int6
 					clientDataV1.ExtendedParameters = map[string]*ParameterValuesData{}
 				}
 				for _, property := range clientDataV0.ExtendedProperties {
-					clientDataV1.ExtendedParameters[property.KeyName.ValueString()] = &ParameterValuesData{Values: property.Values}
+					clientDataV1.ExtendedParameters[property.KeyName.ValueString()] = &ParameterValuesData{Values: sliceStringTypeToList(property.Values)}
 				}
 				resp.Diagnostics.Append(resp.State.Set(ctx, &clientDataV1)...)
 			},
 		},
 	}
+}
+
+func sliceStringTypeToList(slice []types.String) types.List {
+	if len(slice) == 0 {
+		return types.ListNull(types.StringType)
+	}
+	strs := []attr.Value{}
+	for _, value := range slice {
+		strs = append(strs, value)
+	}
+	return types.ListValueMust(types.StringType, strs)
+}
+
+func sliceStringTypeToSet(slice []types.String) types.Set {
+	if len(slice) == 0 {
+		return types.SetNull(types.StringType)
+	}
+	strs := []attr.Value{}
+	for _, value := range slice {
+		strs = append(strs, value)
+	}
+	return types.SetValueMust(types.StringType, strs)
 }
 
 // old version of pingfederate dont handle the follow fields so we strip them before marshalling

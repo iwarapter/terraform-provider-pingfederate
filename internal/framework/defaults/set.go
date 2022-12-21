@@ -11,13 +11,12 @@ import (
 
 var _ planmodifier.Set = setDefaultModifier{}
 
-func NewDefaultSet(elementType attr.Type, elements []attr.Value) setDefaultModifier {
-	return setDefaultModifier{ElementType: elementType, Elements: elements}
+func DefaultSet(elements []attr.Value) setDefaultModifier {
+	return setDefaultModifier{Elements: elements}
 }
 
 type setDefaultModifier struct {
-	ElementType attr.Type
-	Elements    []attr.Value
+	Elements []attr.Value
 }
 
 // Description returns a plain text description of the validator's behavior, suitable for a practitioner to understand its impact.
@@ -31,7 +30,7 @@ func (m setDefaultModifier) MarkdownDescription(_ context.Context) string {
 }
 
 // PlanModifySet updates the planned value with the default if its not null
-func (m setDefaultModifier) PlanModifySet(_ context.Context, req planmodifier.SetRequest, resp *planmodifier.SetResponse) {
+func (m setDefaultModifier) PlanModifySet(ctx context.Context, req planmodifier.SetRequest, resp *planmodifier.SetResponse) {
 	// If the attribute configuration is not null, we are done here
 	if !req.ConfigValue.IsNull() {
 		return
@@ -42,5 +41,5 @@ func (m setDefaultModifier) PlanModifySet(_ context.Context, req planmodifier.Se
 	if !req.PlanValue.IsUnknown() && !req.PlanValue.IsNull() {
 		return
 	}
-	resp.PlanValue, resp.Diagnostics = types.SetValue(m.ElementType, m.Elements)
+	resp.PlanValue, resp.Diagnostics = types.SetValue(req.PlanValue.ElementType(ctx), m.Elements)
 }

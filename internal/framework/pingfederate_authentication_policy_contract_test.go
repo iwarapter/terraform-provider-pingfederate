@@ -72,7 +72,8 @@ func TestAccPingFederateAuthenticationPolicyContractResource(t *testing.T) {
 }
 
 func TestAccPingFederateAuthenticationPolicyContractResourceSdkUpgrade(t *testing.T) {
-	resourceName := "pingfederate_authentication_policy_contract.demo"
+	resourceNameWithAttributes := "pingfederate_authentication_policy_contract.with_attributes"
+	resourceNameWithoutAttributes := "pingfederate_authentication_policy_contract.without_attributes"
 	resource.ParallelTest(t, resource.TestCase{
 		Steps: []resource.TestStep{
 			{
@@ -83,43 +84,66 @@ func TestAccPingFederateAuthenticationPolicyContractResourceSdkUpgrade(t *testin
 					},
 				},
 				Config: `
-resource "pingfederate_authentication_policy_contract" "demo" {
+resource "pingfederate_authentication_policy_contract" "with_attributes" {
   policy_contract_id  = "acc_test_upgrade"
   name                = "acc_test_upgrade"
   extended_attributes = ["foo", "email"]
-}`,
+}
+
+resource "pingfederate_authentication_policy_contract" "without_attributes" {
+  name = "acc_test_upgrade_without"
+}
+`,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateAuthenticationPolicyContractResourceExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "policy_contract_id", "acc_test_upgrade"),
-					resource.TestCheckResourceAttr(resourceName, "name", "acc_test_upgrade"),
-					resource.TestCheckResourceAttr(resourceName, "extended_attributes.0", "email"),
-					resource.TestCheckResourceAttr(resourceName, "extended_attributes.1", "foo"),
+					testAccCheckPingFederateAuthenticationPolicyContractResourceExists(resourceNameWithAttributes),
+					resource.TestCheckResourceAttr(resourceNameWithAttributes, "policy_contract_id", "acc_test_upgrade"),
+					resource.TestCheckResourceAttr(resourceNameWithAttributes, "name", "acc_test_upgrade"),
+					resource.TestCheckResourceAttr(resourceNameWithAttributes, "extended_attributes.0", "email"),
+					resource.TestCheckResourceAttr(resourceNameWithAttributes, "extended_attributes.1", "foo"),
+
+					testAccCheckPingFederateAuthenticationPolicyContractResourceExists(resourceNameWithoutAttributes),
+					resource.TestCheckResourceAttr(resourceNameWithoutAttributes, "name", "acc_test_upgrade_without"),
+					resource.TestCheckResourceAttr(resourceNameWithoutAttributes, "extended_attributes.#", "0"),
 				),
 			},
 			{
 				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 				PlanOnly:                 true,
 				Config: `
-resource "pingfederate_authentication_policy_contract" "demo" {
+resource "pingfederate_authentication_policy_contract" "with_attributes" {
   id                  = "acc_test_upgrade"
   name                = "acc_test_upgrade"
   extended_attributes = ["foo", "email"]
-}`,
+}
+
+resource "pingfederate_authentication_policy_contract" "without_attributes" {
+  name = "acc_test_upgrade_without"
+}
+`,
 			},
 			{
 				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 				Config: `
-resource "pingfederate_authentication_policy_contract" "demo" {
+resource "pingfederate_authentication_policy_contract" "with_attributes" {
   id                  = "acc_test_upgrade"
   name                = "acc_test_upgrade"
   extended_attributes = ["foo", "email"]
-}`,
+}
+
+resource "pingfederate_authentication_policy_contract" "without_attributes" {
+  name = "acc_test_upgrade_without"
+}
+`,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateAuthenticationPolicyContractResourceExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "id", "acc_test_upgrade"),
-					resource.TestCheckResourceAttr(resourceName, "name", "acc_test_upgrade"),
-					resource.TestCheckResourceAttr(resourceName, "extended_attributes.0", "email"),
-					resource.TestCheckResourceAttr(resourceName, "extended_attributes.1", "foo"),
+					testAccCheckPingFederateAuthenticationPolicyContractResourceExists(resourceNameWithAttributes),
+					resource.TestCheckResourceAttr(resourceNameWithAttributes, "id", "acc_test_upgrade"),
+					resource.TestCheckResourceAttr(resourceNameWithAttributes, "name", "acc_test_upgrade"),
+					resource.TestCheckResourceAttr(resourceNameWithAttributes, "extended_attributes.0", "email"),
+					resource.TestCheckResourceAttr(resourceNameWithAttributes, "extended_attributes.1", "foo"),
+
+					testAccCheckPingFederateAuthenticationPolicyContractResourceExists(resourceNameWithoutAttributes),
+					resource.TestCheckResourceAttr(resourceNameWithoutAttributes, "name", "acc_test_upgrade_without"),
+					resource.TestCheckResourceAttr(resourceNameWithoutAttributes, "extended_attributes.#", "0"),
 				),
 			},
 		},

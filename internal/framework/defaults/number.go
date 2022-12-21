@@ -11,7 +11,7 @@ import (
 
 var _ planmodifier.Number = numberDefaultModifier{}
 
-func NewDefaultNumber(s *big.Float) numberDefaultModifier {
+func DefaultNumber(s *big.Float) numberDefaultModifier {
 	return numberDefaultModifier{Default: s}
 }
 
