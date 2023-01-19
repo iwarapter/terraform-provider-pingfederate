@@ -47,6 +47,66 @@ func (r *pingfederateOAuthClientResource) Configure(_ context.Context, req resou
 func (r *pingfederateOAuthClientResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_oauth_client"
 }
+
+func (r *pingfederateOAuthClientResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	// Skip modification on resource creation
+	if req.State.Raw.IsNull() {
+		return
+	}
+
+	// Skip modification on resource destruction
+	if req.Plan.Raw.IsNull() {
+		return
+	}
+
+	// Skip modification if planning no changes
+	if req.Plan.Raw.Equal(req.State.Raw) {
+		return
+	}
+
+	var originalPlan, plan, state ClientData
+
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &originalPlan)...)
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if r.client.IsVersionLessEqThan(11, 0) {
+		plan.ClientSecretChangedTime = types.StringNull()
+	}
+	if plan.ClientAuth == nil {
+		plan.ClientSecretChangedTime = types.StringNull()
+		resp.Diagnostics.Append(resp.Plan.Set(ctx, &plan)...)
+		return
+	} else {
+		if plan.ClientAuth.Secret.IsNull() {
+			plan.ClientSecretChangedTime = types.StringNull()
+		}
+	}
+
+	// Skip modification if encrypted_secret is known
+	if !plan.ClientAuth.EncryptedSecret.IsUnknown() {
+		return
+	}
+
+	// Copy encrypted_secret prior state to plan
+	plan.ClientAuth.EncryptedSecret = state.ClientAuth.EncryptedSecret
+
+	resp.Diagnostics.Append(resp.Plan.Set(ctx, &plan)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Undo modification if there are changes outside encrypted_secret
+	if !resp.Plan.Raw.Equal(req.State.Raw) {
+		resp.Diagnostics.Append(resp.Plan.Set(ctx, &originalPlan)...)
+	}
+}
+
 func (r *pingfederateOAuthClientResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data ClientData
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
