@@ -125,7 +125,6 @@ func TestAccPingFederateOAuthClientWithClientSecretResource(t *testing.T) {
 }
 
 func TestAccPingFederateOAuthClientWithClientWithoutOidcPolicy(t *testing.T) {
-	t.Skip("currently unable to get a computed object to not break other fields")
 	resourceName := "pingfederate_oauth_client.example"
 	resource.ParallelTest(t, resource.TestCase{
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,

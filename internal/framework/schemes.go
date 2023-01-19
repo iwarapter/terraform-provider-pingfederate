@@ -377,22 +377,22 @@ func resourceClient() schema.Schema {
 			"oidc_policy": schema.SingleNestedAttribute{
 				Description: `Open ID Connect Policy settings.  This is included in the message only when OIDC is enabled.`,
 				Optional:    true,
-				//Computed:    true,
-				Attributes: singleClientOIDCPolicy(),
-				//PlanModifiers: []planmodifier.Object{
-				//	defaults.DefaultObject(map[string]attr.Value{
-				//		"grant_access_session_revocation_api":         types.BoolValue(false),
-				//		"grant_access_session_session_management_api": types.BoolValue(false),
-				//		"id_token_content_encryption_algorithm":       types.StringValue("RS256"),
-				//		"sector_identifier_uri":                       types.StringNull(),
-				//		"policy_group":                                types.StringNull(),
-				//		"pairwise_identifier_user_type":               types.BoolNull(),
-				//		"ping_access_logout_capable":                  types.BoolNull(),
-				//		"id_token_encryption_algorithm":               types.StringNull(),
-				//		"logout_uris":                                 types.ListUnknown(types.StringType),
-				//		"id_token_signing_algorithm":                  types.StringNull(),
-				//	}),
-				//},
+				Computed:    true,
+				Attributes:  singleClientOIDCPolicy(),
+				PlanModifiers: []planmodifier.Object{
+					defaults.DefaultObject(map[string]attr.Value{
+						"grant_access_session_revocation_api":         types.BoolValue(false),
+						"grant_access_session_session_management_api": types.BoolValue(false),
+						"id_token_content_encryption_algorithm":       types.StringValue("RS256"),
+						"sector_identifier_uri":                       types.StringNull(),
+						"policy_group":                                types.StringNull(),
+						"pairwise_identifier_user_type":               types.BoolNull(),
+						"ping_access_logout_capable":                  types.BoolNull(),
+						"id_token_encryption_algorithm":               types.StringNull(),
+						"logout_uris":                                 types.ListUnknown(types.StringType),
+						"id_token_signing_algorithm":                  types.StringNull(),
+					}),
+				},
 			},
 			"pending_authorization_timeout_override": schema.NumberAttribute{
 				Description: `The 'device_code' and 'user_code' timeout, in seconds. This overrides the 'pendingAuthorizationTimeout' value present in Authorization Server Settings.`,
