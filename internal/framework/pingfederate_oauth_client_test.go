@@ -205,6 +205,52 @@ func TestAccPingFederateOAuthClientResourceSdkUpgradeV0toV1(t *testing.T) {
 	})
 }
 
+func TestAccPingFederateOAuthClientResourceSdkUpgradeV1checkListToSetHandles(t *testing.T) {
+	resourceName := "pingfederate_oauth_client.my_client"
+	resource.ParallelTest(t, resource.TestCase{
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"pingfederate": {
+						VersionConstraint: "0.1.0",
+						Source:            "iwarapter/pingfederate",
+					},
+				},
+				Config: testAccPingFederateOAuthClientResourceSdkUpgradeV1configWithRedirects(),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckPingFederateOAuthClientResourceExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", "acc_test_upgrade2"),
+					resource.TestCheckResourceAttr(resourceName, "grant_types.0", "EXTENSION"),
+					resource.TestCheckResourceAttr(resourceName, "default_access_token_manager_ref", "testme"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_policy.grant_access_session_revocation_api", "false"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_policy.logout_uris.0", "https://logout"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_policy.ping_access_logout_capable", "true"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_uris.0", "https://foo.com"),
+				),
+			},
+			{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				PlanOnly:                 true,
+				Config:                   testAccPingFederateOAuthClientResourceSdkUpgradeV1configWithRedirects(),
+			},
+			{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Config:                   testAccPingFederateOAuthClientResourceSdkUpgradeV1configWithRedirects(),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckPingFederateOAuthClientResourceExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", "acc_test_upgrade2"),
+					resource.TestCheckResourceAttr(resourceName, "grant_types.0", "EXTENSION"),
+					resource.TestCheckResourceAttr(resourceName, "default_access_token_manager_ref", "testme"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_policy.grant_access_session_revocation_api", "false"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_policy.logout_uris.0", "https://logout"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_policy.ping_access_logout_capable", "true"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_uris.0", "https://foo.com"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckPingFederateOAuthClientResourceDestroy(_ *terraform.State) error {
 	return nil
 }
@@ -243,6 +289,26 @@ resource "pingfederate_oauth_client" "my_client" {
     type   = "SECRET"
     secret = "top_secret"
   }
+  oidc_policy = {
+    grant_access_session_revocation_api = false
+    logout_uris                         = ["https://logout"]
+    ping_access_logout_capable          = true
+  }
+}`
+}
+
+func testAccPingFederateOAuthClientResourceSdkUpgradeV1configWithRedirects() string {
+	return `
+resource "pingfederate_oauth_client" "my_client" {
+  client_id                        = "acc_test_upgrade2"
+  name                             = "acc_test_upgrade2"
+  grant_types                      = ["EXTENSION"]
+  default_access_token_manager_ref = "testme"
+  client_auth = {
+    type   = "SECRET"
+    secret = "top_secret"
+  }
+  redirect_uris = ["https://foo.com"]
   oidc_policy = {
     grant_access_session_revocation_api = false
     logout_uris                         = ["https://logout"]
@@ -528,7 +594,7 @@ func Test_resourcePingFederateOAuthClientResourceUpgradeData(t *testing.T) {
 		PersistentGrantReuseGrantTypes:      types.ListNull(types.StringType),
 		TokenExchangeProcessorPolicyRef:     types.StringValue("id"),
 		CibaPollingInterval:                 types.NumberNull(),
-		RedirectUris:                        types.ListValueMust(types.StringType, []attr.Value{types.StringValue("RedirectUris")}),
+		RedirectUris:                        types.SetValueMust(types.StringType, []attr.Value{types.StringValue("RedirectUris")}),
 		PersistentGrantIdleTimeout:          types.NumberNull(),
 		DevicePollingIntervalOverride:       types.NumberNull(),
 		DeviceFlowSettingType:               types.StringNull(),

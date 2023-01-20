@@ -234,7 +234,7 @@ func expandClient(in ClientData) *pf.Client {
 		result.PersistentGrantReuseType = String(in.PersistentGrantReuseType.ValueString())
 	}
 	if !in.RedirectUris.IsUnknown() && !in.RedirectUris.IsNull() {
-		result.RedirectUris = expandStringList(in.RedirectUris)
+		result.RedirectUris = expandStringSet(in.RedirectUris)
 	}
 	if !in.RefreshRolling.IsUnknown() && !in.RefreshRolling.IsNull() {
 		result.RefreshRolling = String(in.RefreshRolling.ValueString())

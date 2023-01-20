@@ -245,7 +245,7 @@ func (r *pingfederateOAuthClientResource) UpgradeState(context.Context) map[int6
 					PersistentGrantIdleTimeoutType:               clientDataV0.PersistentGrantIdleTimeoutType,
 					PersistentGrantReuseGrantTypes:               types.ListNull(types.StringType),
 					PersistentGrantReuseType:                     types.StringNull(),
-					RedirectUris:                                 sliceStringTypeToList(clientDataV0.RedirectUris),
+					RedirectUris:                                 sliceStringTypeToSet(clientDataV0.RedirectUris),
 					RefreshRolling:                               clientDataV0.RefreshRolling,
 					RefreshTokenRollingGracePeriod:               types.NumberNull(),
 					RefreshTokenRollingGracePeriodType:           types.StringNull(),

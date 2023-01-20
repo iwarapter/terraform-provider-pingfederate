@@ -3,6 +3,8 @@ package framework
 import (
 	"math/big"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -389,7 +391,7 @@ func resourceClient() schema.Schema {
 						"pairwise_identifier_user_type":               types.BoolNull(),
 						"ping_access_logout_capable":                  types.BoolNull(),
 						"id_token_encryption_algorithm":               types.StringNull(),
-						"logout_uris":                                 types.ListUnknown(types.StringType),
+						"logout_uris":                                 types.ListNull(types.StringType),
 						"id_token_signing_algorithm":                  types.StringNull(),
 					}),
 				},
@@ -474,13 +476,13 @@ func resourceClient() schema.Schema {
 					defaults.DefaultString("SERVER_DEFAULT"),
 				},
 			},
-			"redirect_uris": schema.ListAttribute{
+			"redirect_uris": schema.SetAttribute{
 				Description: `URIs to which the OAuth AS may redirect the resource owner's user agent after authorization is obtained. A redirection URI is used with the Authorization Code and Implicit grant types. Wildcards are allowed. However, for security reasons, make the URL as restrictive as possible.For example: https://*.company.com/* Important: If more than one URI is added or if a single URI uses wildcards, then Authorization Code grant and token requests must contain a specific matching redirect uri parameter.`,
 				Optional:    true,
 				Computed:    true,
 				ElementType: types.StringType,
-				PlanModifiers: []planmodifier.List{
-					defaults.DefaultList([]attr.Value{}),
+				PlanModifiers: []planmodifier.Set{
+					defaults.DefaultSet([]attr.Value{}),
 				},
 			},
 			"refresh_rolling": schema.StringAttribute{
@@ -1030,6 +1032,9 @@ func singleClientOIDCPolicy() map[string]schema.Attribute {
 			Description: `A list of client logout URI's which will be invoked when a user logs out through one of PingFederate's SLO endpoints.`,
 			Optional:    true,
 			ElementType: types.StringType,
+			Validators: []validator.List{
+				listvalidator.SizeAtLeast(1),
+			},
 		},
 		"pairwise_identifier_user_type": schema.BoolAttribute{
 			Description: `Determines whether the subject identifier type is pairwise.`,
