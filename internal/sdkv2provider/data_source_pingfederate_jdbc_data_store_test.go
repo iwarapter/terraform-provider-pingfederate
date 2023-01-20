@@ -54,7 +54,6 @@ func testAccPingFederateJdbcDataStoreDataSourceConfig() string {
 	return `
 provider "pingfederate" {
   bypass_external_validation = true
-  alias                      = "bypass"
 }
 
 resource "pingfederate_jdbc_data_store" "example" {
@@ -67,12 +66,10 @@ resource "pingfederate_jdbc_data_store" "example" {
     connection_url = "jdbc:hsqldb:mem:mymemdb"
     default_source = true
   }
-  provider = pingfederate.bypass
 }
 
 data "pingfederate_jdbc_data_store" "test" {
   name     = pingfederate_jdbc_data_store.example.name
-  provider = pingfederate.bypass
 }`
 }
 

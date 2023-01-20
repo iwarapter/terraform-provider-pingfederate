@@ -52,7 +52,6 @@ func testAccPingFederateCustomDataStoreDataSourceConfig() string {
 	return `
 provider "pingfederate" {
   bypass_external_validation = true
-  alias                      = "bypass"
 }
 data "pingfederate_version" "instance" {}
 
@@ -188,7 +187,6 @@ resource "pingfederate_custom_data_store" "example" {
       }
     }
   }
-  provider = pingfederate.bypass
 }`
 }
 
