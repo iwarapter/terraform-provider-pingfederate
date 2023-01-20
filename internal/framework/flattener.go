@@ -309,9 +309,9 @@ func flattenClient(in *pf.Client) *ClientData {
 		result.PersistentGrantReuseType = types.StringNull()
 	}
 	if in.RedirectUris != nil {
-		result.RedirectUris = flattenStringList(*in.RedirectUris)
+		result.RedirectUris = flattenStringSet(*in.RedirectUris)
 	} else {
-		result.RedirectUris = types.ListNull(types.StringType)
+		result.RedirectUris = types.SetNull(types.StringType)
 	}
 	if in.RefreshRolling != nil {
 		result.RefreshRolling = types.StringValue(*in.RefreshRolling)

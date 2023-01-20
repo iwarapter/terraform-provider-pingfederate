@@ -644,7 +644,7 @@ type ClientData struct {
 	PersistentGrantIdleTimeoutType                                types.String                    `tfsdk:"persistent_grant_idle_timeout_type"`
 	PersistentGrantReuseGrantTypes                                types.List                      `tfsdk:"persistent_grant_reuse_grant_types"`
 	PersistentGrantReuseType                                      types.String                    `tfsdk:"persistent_grant_reuse_type"`
-	RedirectUris                                                  types.List                      `tfsdk:"redirect_uris"`
+	RedirectUris                                                  types.Set                       `tfsdk:"redirect_uris"`
 	RefreshRolling                                                types.String                    `tfsdk:"refresh_rolling"`
 	RefreshTokenRollingGracePeriod                                types.Number                    `tfsdk:"refresh_token_rolling_grace_period"`
 	RefreshTokenRollingGracePeriodType                            types.String                    `tfsdk:"refresh_token_rolling_grace_period_type"`

@@ -94,7 +94,6 @@ func testAccPingFederateLdapDataStoreResourceConfig(configUpdate string) string 
 	return fmt.Sprintf(`
 provider "pingfederate" {
   bypass_external_validation = true
-  alias                      = "bypass"
 }
 
 resource "pingfederate_ldap_data_store" "demo" {
@@ -107,7 +106,6 @@ resource "pingfederate_ldap_data_store" "demo" {
   bind_anonymously = false
   min_connections  = 1
   max_connections  = %s
-  provider         = pingfederate.bypass
 }`, configUpdate)
 }
 
