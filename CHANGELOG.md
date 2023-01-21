@@ -1,3 +1,9 @@
+## 0.1.1 (January 21st, 2023)
+
+BUG FIXES:
+
+- Fix issues with `pingfederate_authentication_policy_contract` `pingfederate_oauth_client` plans being incorrect (#245)
+
 ## 0.1.0 (December 11th, 2022)
 
 BREAKING CHANGES:

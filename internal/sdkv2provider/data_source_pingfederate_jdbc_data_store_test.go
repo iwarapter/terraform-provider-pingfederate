@@ -69,7 +69,7 @@ resource "pingfederate_jdbc_data_store" "example" {
 }
 
 data "pingfederate_jdbc_data_store" "test" {
-  name     = pingfederate_jdbc_data_store.example.name
+  name = pingfederate_jdbc_data_store.example.name
 }`
 }
 

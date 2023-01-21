@@ -68,7 +68,7 @@ resource "pingfederate_ldap_data_store" "example" {
 }
 
 data "pingfederate_ldap_data_store" "test" {
-  name     = pingfederate_ldap_data_store.example.name
+  name = pingfederate_ldap_data_store.example.name
 }`
 }
 
