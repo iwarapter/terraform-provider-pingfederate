@@ -124,7 +124,7 @@ func resourcePingFederateIdpSpConnectionResourceSchema() map[string]*schema.Sche
 			Optional:    true,
 		},
 		"sp_browser_sso": {
-			Type:        schema.TypeList,
+			Type:        schema.TypeSet,
 			Elem:        resourceSpBrowserSso(),
 			Description: "The browser-based SSO settings used to communicate with your SP.",
 			Optional:    true,
