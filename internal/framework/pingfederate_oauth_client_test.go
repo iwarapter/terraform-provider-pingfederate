@@ -251,6 +251,21 @@ func TestAccPingFederateOAuthClientResourceSdkUpgradeV1checkListToSetHandles(t *
 	})
 }
 
+func TestAccPingFederateOAuthClientResourceIssue263(t *testing.T) {
+	resourceName := "pingfederate_oauth_client.test"
+	resource.ParallelTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccPingFederateOAuthClientResourceIssue263(),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckPingFederateOAuthClientResourceExists(resourceName),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckPingFederateOAuthClientResourceDestroy(_ *terraform.State) error {
 	return nil
 }
@@ -314,6 +329,41 @@ resource "pingfederate_oauth_client" "my_client" {
     logout_uris                         = ["https://logout"]
     ping_access_logout_capable          = true
   }
+}`
+}
+
+func testAccPingFederateOAuthClientResourceIssue263() string {
+	return `
+resource "pingfederate_oauth_client" "test" {
+  client_id   = "test"
+  name        = "test"
+  description = "This client is a test client"
+
+  grant_types = [
+    "ACCESS_TOKEN_VALIDATION"
+  ]
+
+  client_auth = {
+    type                      = "PRIVATE_KEY_JWT"
+    enforce_replay_prevention = false
+  }
+
+  jwks_settings = {
+    jwks_url = "https://localhost/"
+  }
+
+  validate_using_all_eligible_atms = true
+
+  oidc_policy = {
+    grant_access_session_revocation_api = false
+    logout_uris                         = null
+    ping_access_logout_capable          = false
+  }
+
+  ## Enabling the following three lines "solves" the issue (but it is more like a workaround though)
+  # persistent_grant_expiration_time = 90
+  # persistent_grant_expiration_time_unit = "DAYS"
+  # persistent_grant_expiration_type = "OVERRIDE_SERVER_DEFAULT"
 }`
 }
 
