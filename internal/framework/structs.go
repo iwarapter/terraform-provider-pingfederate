@@ -428,6 +428,7 @@ type AuthorizationServerSettingsData struct {
 	DisallowPlainPKCE                           types.Bool                   `tfsdk:"disallow_plain_pkce"`
 	ExclusiveScopeGroups                        *[]*ScopeGroupEntryData      `tfsdk:"exclusive_scope_groups"`
 	ExclusiveScopes                             *[]*ScopeEntryData           `tfsdk:"exclusive_scopes"`
+	Id                                          types.String                 `tfsdk:"id"`
 	IncludeIssuerInAuthorizationResponse        types.Bool                   `tfsdk:"include_issuer_in_authorization_response"`
 	JwtSecuredAuthorizationResponseModeLifetime types.Number                 `tfsdk:"jwt_secured_authorization_response_mode_lifetime"`
 	ParReferenceLength                          types.Number                 `tfsdk:"par_reference_length"`

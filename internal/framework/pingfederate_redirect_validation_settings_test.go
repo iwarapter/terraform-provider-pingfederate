@@ -13,20 +13,17 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
 func TestAccPingFederateRedirectValidationSettingsResource(t *testing.T) {
 	resourceName := "pingfederate_redirect_validation_settings.settings"
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
-		CheckDestroy:             testAccCheckPingFederateRedirectValidationSettingsResourceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPingFederateRedirectValidationSettingsResourceConfig("demo"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateRedirectValidationSettingsResourceExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.enable_in_error_resource_validation", "true"),
 					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.enable_target_resource_validation_for_idp_discovery", "true"),
 					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.enable_target_resource_validation_for_slo", "true"),
@@ -44,7 +41,6 @@ func TestAccPingFederateRedirectValidationSettingsResource(t *testing.T) {
 			{
 				Config: testAccPingFederateRedirectValidationSettingsResourceConfig("update"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckPingFederateRedirectValidationSettingsResourceExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.enable_in_error_resource_validation", "true"),
 					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.enable_target_resource_validation_for_idp_discovery", "true"),
 					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.enable_target_resource_validation_for_slo", "true"),
@@ -68,8 +64,69 @@ func TestAccPingFederateRedirectValidationSettingsResource(t *testing.T) {
 	})
 }
 
-func testAccCheckPingFederateRedirectValidationSettingsResourceDestroy(_ *terraform.State) error {
-	return nil
+func TestAccPingFederateRedirectValidationSettingsResourceDefaultValues(t *testing.T) {
+	resourceName := "pingfederate_redirect_validation_settings.settings"
+	resource.Test(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccPingFederateRedirectValidationSettingsResourceConfigWithDefaults("bar.com"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.enable_in_error_resource_validation", "true"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.enable_target_resource_validation_for_idp_discovery", "true"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.enable_target_resource_validation_for_slo", "true"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.enable_target_resource_validation_for_sso", "true"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.white_list.0.allow_query_and_fragment", "false"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.white_list.0.idp_discovery", "false"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.white_list.0.in_error_resource", "false"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.white_list.0.require_https", "true"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.white_list.0.target_resource_slo", "false"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.white_list.0.target_resource_sso", "false"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.white_list.0.valid_domain", "bar.com"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.white_list.0.valid_path", ""),
+				),
+			},
+			{
+				Config: testAccPingFederateRedirectValidationSettingsResourceConfigWithDefaults("foo.com"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.enable_in_error_resource_validation", "true"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.enable_target_resource_validation_for_idp_discovery", "true"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.enable_target_resource_validation_for_slo", "true"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.enable_target_resource_validation_for_sso", "true"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.white_list.0.allow_query_and_fragment", "false"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.white_list.0.idp_discovery", "false"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.white_list.0.in_error_resource", "false"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.white_list.0.require_https", "true"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.white_list.0.target_resource_slo", "false"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.white_list.0.target_resource_sso", "false"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.white_list.0.valid_domain", "foo.com"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_validation_local_settings.white_list.0.valid_path", ""),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func testAccPingFederateRedirectValidationSettingsResourceConfigWithDefaults(configUpdate string) string {
+	return fmt.Sprintf(`
+resource "pingfederate_redirect_validation_settings" "settings" {
+  redirect_validation_local_settings = {
+    enable_in_error_resource_validation                 = true
+    enable_target_resource_validation_for_idp_discovery = true
+    enable_target_resource_validation_for_slo           = true
+    enable_target_resource_validation_for_sso           = true
+    white_list = [
+      {
+        valid_domain             = "%s"
+      }
+    ]
+  }
+}`, configUpdate)
 }
 
 func testAccPingFederateRedirectValidationSettingsResourceConfig(configUpdate string) string {
@@ -97,32 +154,6 @@ resource "pingfederate_redirect_validation_settings" "settings" {
     enable_wreply_validation_slo = true
   }
 }`, configUpdate)
-}
-
-func testAccCheckPingFederateRedirectValidationSettingsResourceExists(n string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		//rs, ok := s.RootModule().Resources[n]
-		//if !ok {
-		//	return fmt.Errorf("not found: %s", n)
-		//}
-		//
-		//if rs.Primary.ID == "" || rs.Primary.ID == "0" {
-		//	return fmt.Errorf("no ID is set")
-		//}
-		//
-		//conn := pfc.RedirectValidation
-		//result, _, err := conn.GetRedirectValidationSettings()
-		//
-		//if err != nil {
-		//	return fmt.Errorf("oauthClient (%s) not found", n)
-		//}
-		//
-		//if rs.Primary.Attributes["name"] != *(*result.RedirectValidationLocalSettings.WhiteList)[0].ValidDomain {
-		//	return fmt.Errorf("redirectValidation response (%s) didnt match state (%s)", *result.Name, rs.Primary.Attributes["name"])
-		//}
-
-		return nil
-	}
 }
 
 func Test_resourcePingFederateRedirectValidationSettingsResourceReadData(t *testing.T) {

@@ -64,6 +64,7 @@ func flattenAuthenticationPolicyContract(in *pf.AuthenticationPolicyContract) *A
 		}
 		result.CoreAttributes = types.SetValueMust(types.StringType, values)
 	}
+
 	if in.ExtendedAttributes != nil {
 		var values []attr.Value
 		for _, s := range *in.ExtendedAttributes {
