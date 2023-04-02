@@ -411,6 +411,7 @@ type AuthnSourcePolicyActionData struct {
 }
 
 type AuthorizationServerSettingsData struct {
+	ID                                          types.String                 `tfsdk:"id"`
 	ActivationCodeCheckMode                     types.String                 `tfsdk:"activation_code_check_mode"`
 	AdminWebServicePcvRef                       types.String                 `tfsdk:"admin_web_service_pcv_ref"`
 	AllowUnidentifiedClientExtensionGrants      types.Bool                   `tfsdk:"allow_unidentified_client_extension_grants"`

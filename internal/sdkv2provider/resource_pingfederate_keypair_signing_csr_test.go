@@ -60,7 +60,7 @@ func generateAndSignCSR(t *testing.T) string {
 		caBuf := new(bytes.Buffer)
 		_ = pem.Encode(caBuf, &pem.Block{Type: "CERTIFICATE", Bytes: caBytes})
 		trustSvc := certificatesCa.New(cfg)
-		trustSvc.ImportTrustedCA(&certificatesCa.ImportTrustedCAInput{Body: pf.X509File{FileData: String(base64.StdEncoding.EncodeToString(caBuf.Bytes()))}})
+		_, _, _ = trustSvc.ImportTrustedCA(&certificatesCa.ImportTrustedCAInput{Body: pf.X509File{FileData: String(base64.StdEncoding.EncodeToString(caBuf.Bytes()))}})
 		svc := keyPairsSigning.New(cfg)
 		_, _, err = svc.CreateKeyPair(&keyPairsSigning.CreateKeyPairInput{Body: pf.NewKeyPairSettings{
 			City:             String("Test"),
