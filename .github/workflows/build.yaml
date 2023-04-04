@@ -48,7 +48,7 @@ jobs:
 
       - name: Test
         run: |
-          TF_ACC=1 go test -mod=vendor ./... -v -trimpath -coverprofile=coverage.out
+          TF_LOG=TRACE TF_LOG_PATH=./terraform.log TF_ACC=1 go test -mod=vendor ./... -v -trimpath -coverprofile=coverage.out
           go tool cover -func=coverage.out
 
       - name: Container logs
@@ -56,6 +56,8 @@ jobs:
         run: |
           docker ps
           docker logs "${{ job.services.pingfederate.id }}"
+          cat internal/framework/terraform.log
+          cat internal/sdkv2provider/terraform.log
 
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
