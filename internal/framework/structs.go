@@ -411,7 +411,6 @@ type AuthnSourcePolicyActionData struct {
 }
 
 type AuthorizationServerSettingsData struct {
-	ID                                          types.String                 `tfsdk:"id"`
 	ActivationCodeCheckMode                     types.String                 `tfsdk:"activation_code_check_mode"`
 	AdminWebServicePcvRef                       types.String                 `tfsdk:"admin_web_service_pcv_ref"`
 	AllowUnidentifiedClientExtensionGrants      types.Bool                   `tfsdk:"allow_unidentified_client_extension_grants"`
@@ -429,6 +428,7 @@ type AuthorizationServerSettingsData struct {
 	DisallowPlainPKCE                           types.Bool                   `tfsdk:"disallow_plain_pkce"`
 	ExclusiveScopeGroups                        *[]*ScopeGroupEntryData      `tfsdk:"exclusive_scope_groups"`
 	ExclusiveScopes                             *[]*ScopeEntryData           `tfsdk:"exclusive_scopes"`
+	Id                                          types.String                 `tfsdk:"id"`
 	IncludeIssuerInAuthorizationResponse        types.Bool                   `tfsdk:"include_issuer_in_authorization_response"`
 	JwtSecuredAuthorizationResponseModeLifetime types.Number                 `tfsdk:"jwt_secured_authorization_response_mode_lifetime"`
 	ParReferenceLength                          types.Number                 `tfsdk:"par_reference_length"`

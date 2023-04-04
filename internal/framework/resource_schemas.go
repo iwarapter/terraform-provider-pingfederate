@@ -476,10 +476,10 @@ func resourceClient() schema.Schema {
 				},
 			},
 			"redirect_uris": schema.SetAttribute{
+				ElementType: types.StringType,
 				Description: `URIs to which the OAuth AS may redirect the resource owner's user agent after authorization is obtained. A redirection URI is used with the Authorization Code and Implicit grant types. Wildcards are allowed. However, for security reasons, make the URL as restrictive as possible.For example: https://*.company.com/* Important: If more than one URI is added or if a single URI uses wildcards, then Authorization Code grant and token requests must contain a specific matching redirect uri parameter.`,
 				Optional:    true,
 				Computed:    true,
-				ElementType: types.StringType,
 				PlanModifiers: []planmodifier.Set{
 					defaults.DefaultSet([]attr.Value{}),
 				},
@@ -715,7 +715,13 @@ func resourceRedirectValidationSettings() schema.Schema {
 			"redirect_validation_partner_settings": schema.SingleNestedAttribute{
 				Description: `Settings for redirection at a partner site.`,
 				Optional:    true,
+				Computed:    true,
 				Attributes:  singleRedirectValidationPartnerSettings(),
+				PlanModifiers: []planmodifier.Object{
+					defaults.DefaultObject(map[string]attr.Value{
+						"enable_wreply_validation_slo": types.BoolValue(false),
+					}),
+				},
 			},
 		},
 	}
@@ -956,9 +962,6 @@ func singleClientAuth() map[string]schema.Attribute {
 			Description: `For GET requests, this field contains the encrypted client secret, if one exists.  For POST and PUT requests, if you wish to reuse the existing secret, this field should be passed back unchanged.`,
 			Optional:    true,
 			Computed:    true,
-			//PlanModifiers: []planmodifier.String{
-			//	stringplanmodifier.UseStateForUnknown(),
-			//},
 		},
 		"enforce_replay_prevention": schema.BoolAttribute{
 			Description: `Enforce replay prevention on JSON Web Tokens. This field is applicable only for Private Key JWT Client Authentication.`,
@@ -993,6 +996,10 @@ func singleClientOIDCPolicy() map[string]schema.Attribute {
 		"grant_access_session_revocation_api": schema.BoolAttribute{
 			Description: `Determines whether this client is allowed to access the Session Revocation API.`,
 			Optional:    true,
+			Computed:    true,
+			PlanModifiers: []planmodifier.Bool{
+				defaults.DefaultBool(false),
+			},
 		},
 		"grant_access_session_session_management_api": schema.BoolAttribute{
 			Description: `Determines whether this client is allowed to access the Session Management API.`,
@@ -1046,6 +1053,10 @@ func singleClientOIDCPolicy() map[string]schema.Attribute {
 		"ping_access_logout_capable": schema.BoolAttribute{
 			Description: `Set this value to true if you wish to enable client application logout, and the client is PingAccess, or its logout endpoints follow the PingAccess path convention.`,
 			Optional:    true,
+			Computed:    true,
+			PlanModifiers: []planmodifier.Bool{
+				defaults.DefaultBool(false),
+			},
 		},
 		"policy_group": schema.StringAttribute{
 			Description: `The Open ID Connect policy. A null value will represent the default policy group.`,
@@ -1172,6 +1183,10 @@ func singleRedirectValidationLocalSettings() map[string]schema.Attribute {
 		"enable_target_resource_validation_for_idp_discovery": schema.BoolAttribute{
 			Description: `Enable target resource validation for IdP discovery.`,
 			Optional:    true,
+			Computed:    true,
+			PlanModifiers: []planmodifier.Bool{
+				defaults.DefaultBool(false),
+			},
 		},
 		"enable_target_resource_validation_for_slo": schema.BoolAttribute{
 			Description: `Enable target resource validation for SLO.`,
@@ -1196,6 +1211,10 @@ func singleRedirectValidationPartnerSettings() map[string]schema.Attribute {
 		"enable_wreply_validation_slo": schema.BoolAttribute{
 			Description: `Enable wreply validation for SLO.`,
 			Optional:    true,
+			Computed:    true,
+			PlanModifiers: []planmodifier.Bool{
+				defaults.DefaultBool(false),
+			},
 		},
 	}
 }
@@ -1205,26 +1224,50 @@ func listRedirectValidationSettingsWhitelistEntry() map[string]schema.Attribute 
 		"allow_query_and_fragment": schema.BoolAttribute{
 			Description: `Allow any query parameters and fragment in the resource.`,
 			Optional:    true,
+			Computed:    true,
+			PlanModifiers: []planmodifier.Bool{
+				defaults.DefaultBool(false),
+			},
 		},
 		"idp_discovery": schema.BoolAttribute{
 			Description: `Enable this target resource for IdP discovery validation.`,
 			Optional:    true,
+			Computed:    true,
+			PlanModifiers: []planmodifier.Bool{
+				defaults.DefaultBool(false),
+			},
 		},
 		"in_error_resource": schema.BoolAttribute{
 			Description: `Enable this target resource for in error resource validation.`,
 			Optional:    true,
+			Computed:    true,
+			PlanModifiers: []planmodifier.Bool{
+				defaults.DefaultBool(false),
+			},
 		},
 		"require_https": schema.BoolAttribute{
 			Description: `Require HTTPS for accessing this resource.`,
 			Optional:    true,
+			Computed:    true,
+			PlanModifiers: []planmodifier.Bool{
+				defaults.DefaultBool(true),
+			},
 		},
 		"target_resource_slo": schema.BoolAttribute{
 			Description: `Enable this target resource for SLO redirect validation.`,
 			Optional:    true,
+			Computed:    true,
+			PlanModifiers: []planmodifier.Bool{
+				defaults.DefaultBool(false),
+			},
 		},
 		"target_resource_sso": schema.BoolAttribute{
 			Description: `Enable this target resource for SSO redirect validation.`,
 			Optional:    true,
+			Computed:    true,
+			PlanModifiers: []planmodifier.Bool{
+				defaults.DefaultBool(false),
+			},
 		},
 		"valid_domain": schema.StringAttribute{
 			Description: `Domain of a valid resource.`,
@@ -1233,6 +1276,10 @@ func listRedirectValidationSettingsWhitelistEntry() map[string]schema.Attribute 
 		"valid_path": schema.StringAttribute{
 			Description: `Path of a valid resource.`,
 			Optional:    true,
+			Computed:    true,
+			PlanModifiers: []planmodifier.String{
+				defaults.DefaultString(""),
+			},
 		},
 	}
 }
