@@ -884,6 +884,270 @@ func flattenParameterValues(in *pf.ParameterValues) *ParameterValuesData {
 	return &result
 }
 
+func flattenAuthorizationServerSettings(in *pf.AuthorizationServerSettings) *AuthorizationServerSettingsData {
+	result := AuthorizationServerSettingsData{}
+	if in.ActivationCodeCheckMode != nil {
+		result.ActivationCodeCheckMode = types.StringValue(*in.ActivationCodeCheckMode)
+	} else {
+		result.ActivationCodeCheckMode = types.StringNull()
+	}
+	if in.AdminWebServicePcvRef != nil && in.AdminWebServicePcvRef.Id != nil && *in.AdminWebServicePcvRef.Id != "" {
+		result.AdminWebServicePcvRef = types.StringValue(*in.AdminWebServicePcvRef.Id)
+	} else {
+		result.AdminWebServicePcvRef = types.StringNull()
+	}
+	if in.AllowUnidentifiedClientExtensionGrants != nil {
+		result.AllowUnidentifiedClientExtensionGrants = types.BoolValue(*in.AllowUnidentifiedClientExtensionGrants)
+	} else {
+		result.AllowUnidentifiedClientExtensionGrants = types.BoolNull()
+	}
+	if in.AllowUnidentifiedClientROCreds != nil {
+		result.AllowUnidentifiedClientROCreds = types.BoolValue(*in.AllowUnidentifiedClientROCreds)
+	} else {
+		result.AllowUnidentifiedClientROCreds = types.BoolNull()
+	}
+	if in.AllowedOrigins != nil {
+		result.AllowedOrigins = flattenStringList(*in.AllowedOrigins)
+	} else {
+		result.AllowedOrigins = types.ListNull(types.StringType)
+	}
+	if in.ApprovedScopesAttribute != nil {
+		result.ApprovedScopesAttribute = types.StringValue(*in.ApprovedScopesAttribute)
+	} else {
+		result.ApprovedScopesAttribute = types.StringNull()
+	}
+	if in.AtmIdForOAuthGrantManagement != nil {
+		result.AtmIdForOAuthGrantManagement = types.StringValue(*in.AtmIdForOAuthGrantManagement)
+	} else {
+		result.AtmIdForOAuthGrantManagement = types.StringNull()
+	}
+	if in.AuthorizationCodeEntropy != nil {
+		result.AuthorizationCodeEntropy = types.NumberValue(big.NewFloat(float64(*in.AuthorizationCodeEntropy)))
+	}
+	if in.AuthorizationCodeTimeout != nil {
+		result.AuthorizationCodeTimeout = types.NumberValue(big.NewFloat(float64(*in.AuthorizationCodeTimeout)))
+	}
+	if in.BypassActivationCodeConfirmation != nil {
+		result.BypassActivationCodeConfirmation = types.BoolValue(*in.BypassActivationCodeConfirmation)
+	}
+	if in.BypassAuthorizationForApprovedGrants != nil {
+		result.BypassAuthorizationForApprovedGrants = types.BoolValue(*in.BypassAuthorizationForApprovedGrants)
+	} else {
+		result.BypassAuthorizationForApprovedGrants = types.BoolNull()
+	}
+	if in.ClientSecretRetentionPeriod != nil {
+		result.ClientSecretRetentionPeriod = types.NumberValue(big.NewFloat(float64(*in.ClientSecretRetentionPeriod)))
+	} else {
+		result.ClientSecretRetentionPeriod = types.NumberNull()
+	}
+	if in.DefaultScopeDescription != nil {
+		result.DefaultScopeDescription = types.StringValue(*in.DefaultScopeDescription)
+	}
+	if in.DevicePollingInterval != nil {
+		result.DevicePollingInterval = types.NumberValue(big.NewFloat(float64(*in.DevicePollingInterval)))
+	}
+	if in.DisallowPlainPKCE != nil {
+		result.DisallowPlainPKCE = types.BoolValue(*in.DisallowPlainPKCE)
+	} else {
+		result.DisallowPlainPKCE = types.BoolNull()
+	}
+	if in.ExclusiveScopeGroups != nil {
+		result.ExclusiveScopeGroups = flattenScopeGroupEntrys(in.ExclusiveScopeGroups)
+	}
+	if in.ExclusiveScopes != nil {
+		result.ExclusiveScopes = flattenScopeEntrys(in.ExclusiveScopes)
+	}
+	if in.IncludeIssuerInAuthorizationResponse != nil {
+		result.IncludeIssuerInAuthorizationResponse = types.BoolValue(*in.IncludeIssuerInAuthorizationResponse)
+	} else {
+		result.IncludeIssuerInAuthorizationResponse = types.BoolNull()
+	}
+	if in.JwtSecuredAuthorizationResponseModeLifetime != nil {
+		result.JwtSecuredAuthorizationResponseModeLifetime = types.NumberValue(big.NewFloat(float64(*in.JwtSecuredAuthorizationResponseModeLifetime)))
+	} else {
+		result.JwtSecuredAuthorizationResponseModeLifetime = types.NumberNull()
+	}
+	if in.ParReferenceLength != nil {
+		result.ParReferenceLength = types.NumberValue(big.NewFloat(float64(*in.ParReferenceLength)))
+	} else {
+		result.ParReferenceLength = types.NumberNull()
+	}
+	if in.ParReferenceTimeout != nil {
+		result.ParReferenceTimeout = types.NumberValue(big.NewFloat(float64(*in.ParReferenceTimeout)))
+	} else {
+		result.ParReferenceTimeout = types.NumberNull()
+	}
+	if in.ParStatus != nil {
+		result.ParStatus = types.StringValue(*in.ParStatus)
+	} else {
+		result.ParStatus = types.StringNull()
+	}
+	if in.PendingAuthorizationTimeout != nil {
+		result.PendingAuthorizationTimeout = types.NumberValue(big.NewFloat(float64(*in.PendingAuthorizationTimeout)))
+	}
+	if in.PersistentGrantContract != nil {
+		result.PersistentGrantContract = flattenPersistentGrantContract(in.PersistentGrantContract)
+	}
+	if in.PersistentGrantIdleTimeout != nil {
+		result.PersistentGrantIdleTimeout = types.NumberValue(big.NewFloat(float64(*in.PersistentGrantIdleTimeout)))
+	} else {
+		result.PersistentGrantIdleTimeout = types.NumberNull()
+	}
+	if in.PersistentGrantIdleTimeoutTimeUnit != nil {
+		result.PersistentGrantIdleTimeoutTimeUnit = types.StringValue(*in.PersistentGrantIdleTimeoutTimeUnit)
+	} else {
+		result.PersistentGrantIdleTimeoutTimeUnit = types.StringNull()
+	}
+	if in.PersistentGrantLifetime != nil {
+		result.PersistentGrantLifetime = types.NumberValue(big.NewFloat(float64(*in.PersistentGrantLifetime)))
+	} else {
+		result.PersistentGrantLifetime = types.NumberNull()
+	}
+	if in.PersistentGrantLifetimeUnit != nil {
+		result.PersistentGrantLifetimeUnit = types.StringValue(*in.PersistentGrantLifetimeUnit)
+	} else {
+		result.PersistentGrantLifetimeUnit = types.StringNull()
+	}
+	if in.PersistentGrantReuseGrantTypes != nil {
+		result.PersistentGrantReuseGrantTypes = flattenStringList(*in.PersistentGrantReuseGrantTypes)
+	} else {
+		result.PersistentGrantReuseGrantTypes = types.ListNull(types.StringType)
+	}
+	if in.RefreshRollingInterval != nil {
+		result.RefreshRollingInterval = types.NumberValue(big.NewFloat(float64(*in.RefreshRollingInterval)))
+	}
+	if in.RefreshTokenLength != nil {
+		result.RefreshTokenLength = types.NumberValue(big.NewFloat(float64(*in.RefreshTokenLength)))
+	}
+	if in.RefreshTokenRollingGracePeriod != nil {
+		result.RefreshTokenRollingGracePeriod = types.NumberValue(big.NewFloat(float64(*in.RefreshTokenRollingGracePeriod)))
+	} else {
+		result.RefreshTokenRollingGracePeriod = types.NumberNull()
+	}
+	if in.RegisteredAuthorizationPath != nil {
+		result.RegisteredAuthorizationPath = types.StringValue(*in.RegisteredAuthorizationPath)
+	}
+	if in.RollRefreshTokenValues != nil {
+		result.RollRefreshTokenValues = types.BoolValue(*in.RollRefreshTokenValues)
+	} else {
+		result.RollRefreshTokenValues = types.BoolNull()
+	}
+	if in.ScopeForOAuthGrantManagement != nil {
+		result.ScopeForOAuthGrantManagement = types.StringValue(*in.ScopeForOAuthGrantManagement)
+	} else {
+		result.ScopeForOAuthGrantManagement = types.StringNull()
+	}
+	if in.ScopeGroups != nil {
+		result.ScopeGroups = flattenScopeGroupEntrys(in.ScopeGroups)
+	}
+	if in.Scopes != nil {
+		result.Scopes = flattenScopeEntrys(in.Scopes)
+	}
+	if in.TokenEndpointBaseUrl != nil {
+		result.TokenEndpointBaseUrl = types.StringValue(*in.TokenEndpointBaseUrl)
+	} else {
+		result.TokenEndpointBaseUrl = types.StringNull()
+	}
+	if in.TrackUserSessionsForLogout != nil {
+		result.TrackUserSessionsForLogout = types.BoolValue(*in.TrackUserSessionsForLogout)
+	} else {
+		result.TrackUserSessionsForLogout = types.BoolNull()
+	}
+	if in.UserAuthorizationConsentAdapter != nil {
+		result.UserAuthorizationConsentAdapter = types.StringValue(*in.UserAuthorizationConsentAdapter)
+	} else {
+		result.UserAuthorizationConsentAdapter = types.StringNull()
+	}
+	if in.UserAuthorizationConsentPageSetting != nil {
+		result.UserAuthorizationConsentPageSetting = types.StringValue(*in.UserAuthorizationConsentPageSetting)
+	} else {
+		result.UserAuthorizationConsentPageSetting = types.StringNull()
+	}
+	if in.UserAuthorizationUrl != nil {
+		result.UserAuthorizationUrl = types.StringValue(*in.UserAuthorizationUrl)
+	} else {
+		result.UserAuthorizationUrl = types.StringNull()
+	}
+
+	return &result
+}
+
+func flattenScopeEntrys(in *[]*pf.ScopeEntry) *[]*ScopeEntryData {
+	results := make([]*ScopeEntryData, 0)
+	for _, data := range *in {
+		results = append(results, flattenScopeEntry(data))
+	}
+	return &results
+}
+func flattenScopeEntry(in *pf.ScopeEntry) *ScopeEntryData {
+	result := ScopeEntryData{}
+	if in.Description != nil {
+		result.Description = types.StringValue(*in.Description)
+	}
+	if in.Dynamic != nil {
+		result.Dynamic = types.BoolValue(*in.Dynamic)
+	} else {
+		result.Dynamic = types.BoolNull()
+	}
+	if in.Name != nil {
+		result.Name = types.StringValue(*in.Name)
+	}
+
+	return &result
+}
+
+func flattenScopeGroupEntrys(in *[]*pf.ScopeGroupEntry) *[]*ScopeGroupEntryData {
+	results := make([]*ScopeGroupEntryData, 0)
+	for _, data := range *in {
+		results = append(results, flattenScopeGroupEntry(data))
+	}
+	return &results
+}
+func flattenScopeGroupEntry(in *pf.ScopeGroupEntry) *ScopeGroupEntryData {
+	result := ScopeGroupEntryData{}
+	if in.Description != nil {
+		result.Description = types.StringValue(*in.Description)
+	}
+	if in.Name != nil {
+		result.Name = types.StringValue(*in.Name)
+	}
+	if in.Scopes != nil {
+		result.Scopes = flattenStringList(*in.Scopes)
+	} else {
+		result.Scopes = types.ListNull(types.StringType)
+	}
+
+	return &result
+}
+
+func flattenPersistentGrantAttributes(in *[]*pf.PersistentGrantAttribute) *[]*PersistentGrantAttributeData {
+	results := make([]*PersistentGrantAttributeData, 0)
+	for _, data := range *in {
+		results = append(results, flattenPersistentGrantAttribute(data))
+	}
+	return &results
+}
+func flattenPersistentGrantAttribute(in *pf.PersistentGrantAttribute) *PersistentGrantAttributeData {
+	result := PersistentGrantAttributeData{}
+	if in.Name != nil {
+		result.Name = types.StringValue(*in.Name)
+	}
+
+	return &result
+}
+
+func flattenPersistentGrantContract(in *pf.PersistentGrantContract) *PersistentGrantContractData {
+	result := PersistentGrantContractData{}
+	if in.CoreAttributes != nil {
+		result.CoreAttributes = flattenPersistentGrantAttributes(in.CoreAttributes)
+	}
+	if in.ExtendedAttributes != nil {
+		result.ExtendedAttributes = flattenPersistentGrantAttributes(in.ExtendedAttributes)
+	}
+
+	return &result
+}
+
 func flattenRedirectValidationLocalSettings(in *pf.RedirectValidationLocalSettings) *RedirectValidationLocalSettingsData {
 	result := RedirectValidationLocalSettingsData{}
 	if in.EnableInErrorResourceValidation != nil {

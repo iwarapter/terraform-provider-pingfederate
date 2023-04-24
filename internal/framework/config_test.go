@@ -20,7 +20,7 @@ func TestConfig_Client(t *testing.T) {
 		// Send response to be tested
 		rw.Header().Set("Content-Type", "application/json;charset=utf-8")
 		rw.WriteHeader(http.StatusUnauthorized)
-		rw.Write([]byte(`{"resultId":"invalid_credentials","message":"The credentials you provided were not recognized."}`))
+		_, _ = rw.Write([]byte(`{"resultId":"invalid_credentials","message":"The credentials you provided were not recognized."}`))
 	}))
 	l, _ := net.Listen("tcp", ":0")
 	server.Listener = l //for CI tests as host.docker.internal is window/macosx
@@ -161,6 +161,3 @@ func TestIsVersionGreaterThan(t *testing.T) {
 		})
 	}
 }
-
-//assert.Equal(t, tt.isVersionLessThan, cli.IsVersionLessThan(10, 1), "expect %d.%d to be less than 10.1", cli.major, cli.minor)
-//assert.Equal(t, tt.isVersionGreaterThan, cli.IsVersionGreaterThan(10, 1), "expect %d.%d to greater than 10.1", cli.major, cli.minor)

@@ -38,10 +38,10 @@ test:
 	@rm -f pingfederate/terraform.log && TF_LOG=TRACE TF_LOG_PATH=./terraform.log TF_ACC=1 go test -mod=vendor ./... -v
 
 test-framework:
-	@TF_ACC=1 go test -mod=vendor ./internal/framework/. -v
+	@TF_ACC=1 go test -mod=vendor ./internal/framework/. -v -trimpath -coverprofile=coverage.out && go tool cover -func=coverage.out
 
 test-sdkv2:
-	@TF_ACC=1 go test -mod=vendor ./internal/sdkv2provider/. -v
+	@TF_ACC=1 go test -mod=vendor ./internal/sdkv2provider/. -v -trimpath -coverprofile=coverage.out && go tool cover -func=coverage.out
 
 test-and-report:
 	@rm -f pingfederate/terraform.log coverage.out report.json

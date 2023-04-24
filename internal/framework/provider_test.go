@@ -11,6 +11,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+
 	"github.com/hashicorp/terraform-plugin-mux/tf5to6server"
 	"github.com/hashicorp/terraform-plugin-mux/tf6muxserver"
 	"github.com/iwarapter/terraform-provider-pingfederate/internal/sdkv2provider"
@@ -93,47 +95,16 @@ func testAccPreCheck(t *testing.T) {
 	// function.
 }
 
-//func testAccPreCheck(t *testing.T) {
-//	err := testAccProvider.Configure(context.TODO(), terraform.NewResourceConfigRaw(nil))
-//	if err != nil {
-//		t.Fatal(err)
-//	}
-//}
+func requiredVersionTestCheckFunc(major, minor int, f resource.TestCheckFunc) resource.TestCheckFunc {
+	if pfc.IsVersionGreaterEqThan(major, minor) {
+		return f
+	}
+	return func(state *terraform.State) error {
+		return nil
+	}
+}
 
 func dataSetup() error {
-	//ssets := serverSettings.New(pfc)
-	//if _, _, err := ssets.UpdateServerSettings(&serverSettings.UpdateServerSettingsInput{
-	//	Body: pf.ServerSettings{
-	//		FederationInfo: &pf.FederationInfo{
-	//			BaseUrl:        String("https://localhost:9031"),
-	//			Saml2EntityId:  String("testing"),
-	//			Saml1xIssuerId: String("foo"),
-	//			WsfedRealm:     String("foo"),
-	//		},
-	//		RolesAndProtocols: &pf.RolesAndProtocols{
-	//			IdpRole: &pf.IdpRole{
-	//				Enable:                     Bool(true),
-	//				EnableOutboundProvisioning: Bool(true),
-	//				Saml20Profile: &pf.SAML20Profile{
-	//					Enable: Bool(true),
-	//				},
-	//			},
-	//			OauthRole: &pf.OAuthRole{
-	//				EnableOauth:         Bool(true),
-	//				EnableOpenIdConnect: Bool(true),
-	//			},
-	//			SpRole: &pf.SpRole{
-	//				Enable: Bool(true),
-	//				Saml20Profile: &pf.SpSAML20Profile{
-	//					Enable: Bool(true),
-	//				},
-	//			},
-	//		},
-	//	},
-	//}); err != nil {
-	//	return fmt.Errorf("unable to set server settings\n%s", err)
-	//}
-
 	pcv := pfc.PasswordCredentialValidators
 	if _, _, err := pcv.GetPasswordCredentialValidator(&passwordCredentialValidators.GetPasswordCredentialValidatorInput{Id: "pcvtestme"}); err != nil {
 		if _, _, err := pcv.CreatePasswordCredentialValidator(&passwordCredentialValidators.CreatePasswordCredentialValidatorInput{

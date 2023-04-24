@@ -18,7 +18,7 @@ func TestConfig_Client(t *testing.T) {
 		// Send response to be tested
 		rw.Header().Set("Content-Type", "application/json;charset=utf-8")
 		rw.WriteHeader(http.StatusUnauthorized)
-		rw.Write([]byte(`{"resultId":"invalid_credentials","message":"The credentials you provided were not recognized."}`))
+		_, _ = rw.Write([]byte(`{"resultId":"invalid_credentials","message":"The credentials you provided were not recognized."}`))
 	}))
 	l, _ := net.Listen("tcp", ":0")
 	server.Listener = l //for CI tests as host.docker.internal is window/macosx
