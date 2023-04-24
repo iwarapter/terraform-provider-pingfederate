@@ -122,7 +122,7 @@ resource "pingfederate_redirect_validation_settings" "settings" {
     enable_target_resource_validation_for_sso           = true
     white_list = [
       {
-        valid_domain             = "%s"
+        valid_domain = "%s"
       }
     ]
   }

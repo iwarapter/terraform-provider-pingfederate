@@ -126,6 +126,7 @@ func (p *pfprovider) Resources(_ context.Context) []func() resource.Resource {
 		NewAuthenticationPolicyContractResource,
 		NewAuthenticationSessionPolicyResource,
 		NewGlobalAuthenticationSessionPolicyResource,
+		NewMetadataUrlResource,
 		NewOauthAuthenticationPolicyContractMappingResource,
 		NewOAuthClientResource,
 		NewRedirectValidationResource,

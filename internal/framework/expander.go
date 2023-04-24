@@ -334,6 +334,30 @@ func expandGlobalAuthenticationSessionPolicy(in GlobalAuthenticationSessionPolic
 	return &result
 }
 
+func expandMetadataUrl(in MetadataUrlData) *pf.MetadataUrl {
+	var result pf.MetadataUrl
+	if in.CertView != nil {
+		result.CertView = expandCertView(*in.CertView)
+	}
+	if !in.Id.IsUnknown() && !in.Id.IsNull() {
+		result.Id = String(in.Id.ValueString())
+	}
+	if !in.Name.IsUnknown() && !in.Name.IsNull() {
+		result.Name = String(in.Name.ValueString())
+	}
+	if !in.Url.IsUnknown() && !in.Url.IsNull() {
+		result.Url = String(in.Url.ValueString())
+	}
+	if !in.ValidateSignature.IsUnknown() && !in.ValidateSignature.IsNull() {
+		result.ValidateSignature = Bool(in.ValidateSignature.ValueBool())
+	}
+	if in.X509File != nil {
+		result.X509File = expandX509File(*in.X509File)
+	}
+
+	return &result
+}
+
 func expandRedirectValidationSettings(in RedirectValidationSettingsData) *pf.RedirectValidationSettings {
 	var result pf.RedirectValidationSettings
 	if in.RedirectValidationLocalSettings != nil {
@@ -404,6 +428,59 @@ func expandBinaryLdapAttributeSettings(in BinaryLdapAttributeSettingsData) *pf.B
 	var result pf.BinaryLdapAttributeSettings
 	if !in.BinaryEncoding.IsUnknown() && !in.BinaryEncoding.IsNull() {
 		result.BinaryEncoding = String(in.BinaryEncoding.ValueString())
+	}
+
+	return &result
+}
+
+func expandCertView(in CertViewData) *pf.CertView {
+	var result pf.CertView
+	if !in.CryptoProvider.IsUnknown() && !in.CryptoProvider.IsNull() {
+		result.CryptoProvider = String(in.CryptoProvider.ValueString())
+	}
+	if !in.Expires.IsUnknown() && !in.Expires.IsNull() {
+		result.Expires = String(in.Expires.ValueString())
+	}
+	if !in.Id.IsUnknown() && !in.Id.IsNull() {
+		result.Id = String(in.Id.ValueString())
+	}
+	if !in.IssuerDN.IsUnknown() && !in.IssuerDN.IsNull() {
+		result.IssuerDN = String(in.IssuerDN.ValueString())
+	}
+	if !in.KeyAlgorithm.IsUnknown() && !in.KeyAlgorithm.IsNull() {
+		result.KeyAlgorithm = String(in.KeyAlgorithm.ValueString())
+	}
+	if !in.KeySize.IsUnknown() && !in.KeySize.IsNull() {
+		i64, _ := in.KeySize.ValueBigFloat().Int64()
+		result.KeySize = Int(int(i64))
+	}
+	if !in.SerialNumber.IsUnknown() && !in.SerialNumber.IsNull() {
+		result.SerialNumber = String(in.SerialNumber.ValueString())
+	}
+	if !in.Sha1Fingerprint.IsUnknown() && !in.Sha1Fingerprint.IsNull() {
+		result.Sha1Fingerprint = String(in.Sha1Fingerprint.ValueString())
+	}
+	if !in.Sha256Fingerprint.IsUnknown() && !in.Sha256Fingerprint.IsNull() {
+		result.Sha256Fingerprint = String(in.Sha256Fingerprint.ValueString())
+	}
+	if !in.SignatureAlgorithm.IsUnknown() && !in.SignatureAlgorithm.IsNull() {
+		result.SignatureAlgorithm = String(in.SignatureAlgorithm.ValueString())
+	}
+	if !in.Status.IsUnknown() && !in.Status.IsNull() {
+		result.Status = String(in.Status.ValueString())
+	}
+	if !in.SubjectAlternativeNames.IsUnknown() && !in.SubjectAlternativeNames.IsNull() {
+		result.SubjectAlternativeNames = expandStringList(in.SubjectAlternativeNames)
+	}
+	if !in.SubjectDN.IsUnknown() && !in.SubjectDN.IsNull() {
+		result.SubjectDN = String(in.SubjectDN.ValueString())
+	}
+	if !in.ValidFrom.IsUnknown() && !in.ValidFrom.IsNull() {
+		result.ValidFrom = String(in.ValidFrom.ValueString())
+	}
+	if !in.Version.IsUnknown() && !in.Version.IsNull() {
+		i64, _ := in.Version.ValueBigFloat().Int64()
+		result.Version = Int(int(i64))
 	}
 
 	return &result
@@ -739,6 +816,21 @@ func expandSourceTypeIdKey(in SourceTypeIdKeyData) *pf.SourceTypeIdKey {
 	}
 	if !in.Type.IsUnknown() && !in.Type.IsNull() {
 		result.Type = String(in.Type.ValueString())
+	}
+
+	return &result
+}
+
+func expandX509File(in X509FileData) *pf.X509File {
+	var result pf.X509File
+	if !in.CryptoProvider.IsUnknown() && !in.CryptoProvider.IsNull() {
+		result.CryptoProvider = String(in.CryptoProvider.ValueString())
+	}
+	if !in.FileData.IsUnknown() && !in.FileData.IsNull() {
+		result.FileData = String(in.FileData.ValueString())
+	}
+	if !in.Id.IsUnknown() && !in.Id.IsNull() {
+		result.Id = String(in.Id.ValueString())
 	}
 
 	return &result
