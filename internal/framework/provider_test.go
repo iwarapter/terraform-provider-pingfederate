@@ -11,6 +11,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+
 	"github.com/hashicorp/terraform-plugin-mux/tf5to6server"
 	"github.com/hashicorp/terraform-plugin-mux/tf6muxserver"
 	"github.com/iwarapter/terraform-provider-pingfederate/internal/sdkv2provider"
@@ -91,6 +93,15 @@ func testAccPreCheck(t *testing.T) {
 	// You can add code here to run prior to any test case execution, for example assertions
 	// about the appropriate environment variables being set are common to see in a pre-check
 	// function.
+}
+
+func requiredVersionTestCheckFunc(major, minor int, f resource.TestCheckFunc) resource.TestCheckFunc {
+	if pfc.IsVersionGreaterEqThan(major, minor) {
+		return f
+	}
+	return func(state *terraform.State) error {
+		return nil
+	}
 }
 
 func dataSetup() error {

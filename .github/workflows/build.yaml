@@ -46,10 +46,13 @@ jobs:
         with:
           go-version-file: 'go.mod'
 
-      - name: Test
+      - name: Test Framework
         run: |
-          TF_LOG=TRACE TF_LOG_PATH=./terraform.log TF_ACC=1 go test -mod=vendor ./... -v -trimpath -coverprofile=coverage.out
-          go tool cover -func=coverage.out
+          make test-framework
+
+      - name: Test SDKv2
+        run: |
+          make test-sdkv2
 
       - name: Container logs
         if: ${{ failure() }}
