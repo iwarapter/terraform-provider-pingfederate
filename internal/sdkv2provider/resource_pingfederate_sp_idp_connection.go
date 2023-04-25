@@ -153,8 +153,9 @@ func resourcePingFederateSpIdpConnectionResourceSchema() map[string]*schema.Sche
 
 func resourcePingFederateSpIdpConnectionResourceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).SpIdpConnections
+	cli := m.(pfClient)
 	input := spIdpConnections.CreateConnectionInput{
-		Body:                     *resourcePingFederateSpIdpConnectionResourceReadData(d),
+		Body:                     *idpConnectionVersionSpecificConfig(cli, resourcePingFederateSpIdpConnectionResourceReadData(d)),
 		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
 	result, _, err := svc.CreateConnectionWithContext(ctx, &input)
@@ -179,9 +180,10 @@ func resourcePingFederateSpIdpConnectionResourceRead(ctx context.Context, d *sch
 
 func resourcePingFederateSpIdpConnectionResourceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	svc := m.(pfClient).SpIdpConnections
+	cli := m.(pfClient)
 	input := spIdpConnections.UpdateConnectionInput{
 		Id:                       d.Id(),
-		Body:                     *resourcePingFederateSpIdpConnectionResourceReadData(d),
+		Body:                     *idpConnectionVersionSpecificConfig(cli, resourcePingFederateSpIdpConnectionResourceReadData(d)),
 		BypassExternalValidation: Bool(m.(pfClient).BypassExternalValidation),
 	}
 	result, _, err := svc.UpdateConnectionWithContext(ctx, &input)
@@ -344,4 +346,15 @@ func resourcePingFederateSpIdpConnectionResourceReadData(d *schema.ResourceData)
 	}
 
 	return &result
+}
+
+func idpConnectionVersionSpecificConfig(cli pfClient, in *pf.IdpConnection) *pf.IdpConnection {
+	if in.Credentials != nil {
+		if in.Credentials.SigningSettings != nil {
+			if cli.IsVersionLessEqThan(11, 0) {
+				in.Credentials.SigningSettings.AlternativeSigningKeyPairRefs = nil
+			}
+		}
+	}
+	return in
 }

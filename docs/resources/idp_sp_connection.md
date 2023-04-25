@@ -566,11 +566,24 @@ Required:
 Optional:
 
 - `algorithm` (String) The algorithm used to sign messages sent to this partner. The default is SHA1withDSA for DSA certs, SHA256withRSA for RSA certs, and SHA256withECDSA for EC certs. For RSA certs, SHA1withRSA, SHA384withRSA, and SHA512withRSA are also supported. For EC certs, SHA384withECDSA and SHA512withECDSA are also supported. If the connection is WS-Federation with JWT token type, then the possible values are RSA SHA256, RSA SHA384, RSA SHA512, ECDSA SHA256, ECDSA SHA384, ECDSA SHA512
+- `alternative_signing_key_pair_refs` (Block List, Max: 1) The list of IDs of alternative key pairs used to sign messages sent to this partner. The ID of the key pair is also known as the alias and can be found by viewing the corresponding certificate under 'Signing & Decryption Keys & Certificates' in the PingFederate admin console. Requires PF 11.1+ (see [below for nested schema](#nestedblock--credentials--signing_settings--alternative_signing_key_pair_refs))
 - `include_cert_in_signature` (Boolean) Determines whether the signing certificate is included in the signature <KeyInfo> element.
 - `include_raw_key_in_signature` (Boolean) Determines whether the <KeyValue> element with the raw public key is included in the signature <KeyInfo> element.
 
 <a id="nestedblock--credentials--signing_settings--signing_key_pair_ref"></a>
 ### Nested Schema for `credentials.signing_settings.signing_key_pair_ref`
+
+Required:
+
+- `id` (String) The ID of the resource.
+
+Read-Only:
+
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
+
+
+<a id="nestedblock--credentials--signing_settings--alternative_signing_key_pair_refs"></a>
+### Nested Schema for `credentials.signing_settings.alternative_signing_key_pair_refs`
 
 Required:
 

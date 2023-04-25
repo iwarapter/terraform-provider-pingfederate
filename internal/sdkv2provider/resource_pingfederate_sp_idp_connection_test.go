@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/stretchr/testify/assert"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/serverSettings"
@@ -280,6 +282,11 @@ func Test_resourcePingFederateSpIdpConnectionResourceReadData(t *testing.T) {
 						SigningKeyPairRef: &pf.ResourceLink{
 							Id:       String("foo"),
 							Location: String("foo"),
+						},
+						AlternativeSigningKeyPairRefs: &[]*pf.ResourceLink{
+							{
+								Id: String("foo"), Location: String("foo"),
+							},
 						},
 					},
 					VerificationIssuerDN:  String("foo"),
@@ -1155,7 +1162,8 @@ func Test_resourcePingFederateSpIdpConnectionResourceReadData(t *testing.T) {
 
 			resourceSchema := resourcePingFederateSpIdpConnectionResourceSchema()
 			resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, map[string]interface{}{})
-			resourcePingFederateSpIdpConnectionResourceReadResult(resourceLocalData, &tc.Resource)
+			diags := resourcePingFederateSpIdpConnectionResourceReadResult(resourceLocalData, &tc.Resource)
+			require.Falsef(t, diags.HasError(), "%v", diags)
 
 			assert.Equal(t, tc.Resource, *resourcePingFederateSpIdpConnectionResourceReadData(resourceLocalData))
 		})

@@ -3348,6 +3348,13 @@ func resourceSigningSettings() *schema.Resource {
 				Description: "Settings related to the manner in which messages sent to the partner are digitally signed. Required for SP Connections.",
 				Elem:        resourceLinkResource(),
 			},
+			"alternative_signing_key_pair_refs": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				MaxItems:    1,
+				Description: "The list of IDs of alternative key pairs used to sign messages sent to this partner. The ID of the key pair is also known as the alias and can be found by viewing the corresponding certificate under 'Signing & Decryption Keys & Certificates' in the PingFederate admin console. Requires PF 11.1+",
+				Elem:        resourceLinkResource(),
+			},
 		},
 	}
 }

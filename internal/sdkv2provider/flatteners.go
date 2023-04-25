@@ -2349,6 +2349,9 @@ func flattenSigningSettings(in *pf.SigningSettings) []map[string]interface{} {
 	if in.SigningKeyPairRef != nil {
 		s["signing_key_pair_ref"] = flattenResourceLink(in.SigningKeyPairRef)
 	}
+	if in.AlternativeSigningKeyPairRefs != nil {
+		s["alternative_signing_key_pair_refs"] = flattenResourceLinksV2(in.AlternativeSigningKeyPairRefs)
+	}
 	if in.Algorithm != nil {
 		s["algorithm"] = *in.Algorithm
 	}
@@ -3101,6 +3104,14 @@ func flattenClientRegistrationOIDCPolicy(in *pf.ClientRegistrationOIDCPolicy) []
 		s["policy_group"] = flattenResourceLink(in.PolicyGroup)
 	}
 	return append(m, s)
+}
+
+func flattenResourceLinksV2(in *[]*pf.ResourceLink) []map[string]interface{} {
+	var m []map[string]interface{}
+	for _, v := range *in {
+		m = append(m, flattenResourceLink(v)...)
+	}
+	return m
 }
 
 func flattenResourceLinks(in *[]*pf.ResourceLink) []interface{} {
