@@ -3,6 +3,7 @@ package framework
 import (
 	"context"
 	"fmt"
+	"math/big"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
@@ -776,8 +777,9 @@ func Test_resourcePingFederateOAuthClientResourceVersionModifications(t *testing
 			before := defaults
 			res.versionRequestModifier(&before)
 			assert.Equal(t, tt.after, before)
-
-			assert.Equal(t, defaults, *res.versionResponseModifier(&before))
+			defaultsCopy := defaults
+			defaultsCopy.PersistentGrantExpirationTime = types.NumberValue(big.NewFloat(0))
+			assert.Equal(t, defaultsCopy, *res.versionResponseModifier(&before))
 		})
 	}
 }
