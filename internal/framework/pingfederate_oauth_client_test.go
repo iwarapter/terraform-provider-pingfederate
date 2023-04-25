@@ -266,6 +266,29 @@ func TestAccPingFederateOAuthClientResourceIssue263(t *testing.T) {
 	})
 }
 
+func TestAccPingFederateOAuthClientResourceIssue275(t *testing.T) {
+	resourceName := "pingfederate_oauth_client.test"
+	resource.ParallelTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccPingFederateOAuthClientResourceIssue275("secret1"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckPingFederateOAuthClientResourceExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "client_auth.secret", "secret1"),
+				),
+			},
+			{
+				Config: testAccPingFederateOAuthClientResourceIssue275("secret2"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckPingFederateOAuthClientResourceExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "client_auth.secret", "secret2"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckPingFederateOAuthClientResourceDestroy(_ *terraform.State) error {
 	return nil
 }
@@ -365,6 +388,23 @@ resource "pingfederate_oauth_client" "test" {
   # persistent_grant_expiration_time_unit = "DAYS"
   # persistent_grant_expiration_type = "OVERRIDE_SERVER_DEFAULT"
 }`
+}
+
+func testAccPingFederateOAuthClientResourceIssue275(secret string) string {
+	return fmt.Sprintf(`
+resource "pingfederate_oauth_client" "test" {
+  client_id   = "test2"
+  name        = "test2"
+  description = "This client is a test client"
+
+  grant_types = [
+    "ACCESS_TOKEN_VALIDATION"
+  ]
+  client_auth = {
+    secret = "%s"
+    type   = "SECRET"
+  }
+}`, secret)
 }
 
 func testAccPingFederateOAuthClientResourceConfig(configUpdate string) string {
