@@ -694,6 +694,45 @@ func resourceGlobalAuthenticationSessionPolicy() schema.Schema {
 	}
 }
 
+func resourceMetadataUrl() schema.Schema {
+	return schema.Schema{
+		Description: `Metadata URL and corresponding Signature Verification Certificate.`,
+		Attributes: map[string]schema.Attribute{
+			"cert_view": schema.SingleNestedAttribute{
+				Description: `The Signature Verification Certificate details. This property is read-only and is always ignored on a POST or PUT.`,
+				Optional:    true,
+				Attributes:  singleCertView(),
+			},
+			"id": schema.StringAttribute{
+				Description: `The persistent, unique ID for the Metadata Url. It can be any combination of [a-z0-9._-]. This property is system-assigned if not specified.`,
+				Optional:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+					stringplanmodifier.RequiresReplace(),
+				},
+			},
+			"name": schema.StringAttribute{
+				Description: `The name for the Metadata URL.`,
+				Required:    true,
+			},
+			"url": schema.StringAttribute{
+				Description: `The Metadata URL.`,
+				Required:    true,
+			},
+			"validate_signature": schema.BoolAttribute{
+				Description: `Perform Metadata Signature Validation. The default value is TRUE.`,
+				Optional:    true,
+			},
+			"x509file": schema.SingleNestedAttribute{
+				Description: `Data of the Signature Verification Certificate for the Metadata URL.`,
+				Optional:    true,
+				Attributes:  singleX509File(),
+			},
+		},
+	}
+}
+
 func resourceRedirectValidationSettings() schema.Schema {
 	return schema.Schema{
 		Description: `Settings for redirect validation for SSO, SLO and IdP discovery.`,
@@ -944,6 +983,78 @@ func mapBinaryLdapAttributeSettings() map[string]schema.Attribute {
 			Validators: []validator.String{
 				stringvalidator.OneOf("BASE64", "HEX", "SID"),
 			},
+		},
+	}
+}
+
+func singleCertView() map[string]schema.Attribute {
+	return map[string]schema.Attribute{
+		"crypto_provider": schema.StringAttribute{
+			Description: `Cryptographic Provider. This is only applicable if Hybrid HSM mode is true.`,
+			Optional:    true,
+			Validators: []validator.String{
+				stringvalidator.OneOf("LOCAL", "HSM"),
+			},
+		},
+		"expires": schema.StringAttribute{
+			Description: `The end date up until which the item is valid, in ISO 8601 format (UTC).`,
+			Optional:    true,
+		},
+		"id": schema.StringAttribute{
+			Description: `The persistent, unique ID for the certificate.`,
+			Optional:    true,
+		},
+		"issuer_dn": schema.StringAttribute{
+			Description: `The issuer's distinguished name.`,
+			Optional:    true,
+		},
+		"key_algorithm": schema.StringAttribute{
+			Description: `The public key algorithm.`,
+			Optional:    true,
+		},
+		"key_size": schema.NumberAttribute{
+			Description: `The public key size.`,
+			Optional:    true,
+		},
+		"serial_number": schema.StringAttribute{
+			Description: `The serial number assigned by the CA.`,
+			Optional:    true,
+		},
+		"sha1fingerprint": schema.StringAttribute{
+			Description: `SHA-1 fingerprint in Hex encoding.`,
+			Optional:    true,
+		},
+		"sha256fingerprint": schema.StringAttribute{
+			Description: `SHA-256 fingerprint in Hex encoding.`,
+			Optional:    true,
+		},
+		"signature_algorithm": schema.StringAttribute{
+			Description: `The signature algorithm.`,
+			Optional:    true,
+		},
+		"status": schema.StringAttribute{
+			Description: `Status of the item.`,
+			Optional:    true,
+			Validators: []validator.String{
+				stringvalidator.OneOf("VALID", "EXPIRED", "NOT_YET_VALID", "REVOKED"),
+			},
+		},
+		"subject_alternative_names": schema.ListAttribute{
+			Description: `The subject alternative names (SAN).`,
+			Optional:    true,
+			ElementType: types.StringType,
+		},
+		"subject_dn": schema.StringAttribute{
+			Description: `The subject's distinguished name.`,
+			Optional:    true,
+		},
+		"valid_from": schema.StringAttribute{
+			Description: `The start date from which the item is valid, in ISO 8601 format (UTC).`,
+			Optional:    true,
+		},
+		"version": schema.NumberAttribute{
+			Description: `The X.509 version to which the item conforms.`,
+			Optional:    true,
 		},
 	}
 }
@@ -1296,6 +1407,26 @@ func singleSourceTypeIdKey() map[string]schema.Attribute {
 			Validators: []validator.String{
 				stringvalidator.OneOf("TOKEN_EXCHANGE_PROCESSOR_POLICY", "ACCOUNT_LINK", "ADAPTER", "ASSERTION", "CONTEXT", "CUSTOM_DATA_STORE", "EXPRESSION", "JDBC_DATA_STORE", "LDAP_DATA_STORE", "PING_ONE_LDAP_GATEWAY_DATA_STORE", "MAPPED_ATTRIBUTES", "NO_MAPPING", "TEXT", "TOKEN", "REQUEST", "OAUTH_PERSISTENT_GRANT", "SUBJECT_TOKEN", "ACTOR_TOKEN", "PASSWORD_CREDENTIAL_VALIDATOR", "IDP_CONNECTION", "AUTHENTICATION_POLICY_CONTRACT", "CLAIMS", "LOCAL_IDENTITY_PROFILE", "EXTENDED_CLIENT_METADATA", "EXTENDED_PROPERTIES", "TRACKED_HTTP_PARAMS", "FRAGMENT", "INPUTS", "ATTRIBUTE_QUERY", "IDENTITY_STORE_USER", "IDENTITY_STORE_GROUP", "SCIM_USER", "SCIM_GROUP"),
 			},
+		},
+	}
+}
+
+func singleX509File() map[string]schema.Attribute {
+	return map[string]schema.Attribute{
+		"crypto_provider": schema.StringAttribute{
+			Description: `Cryptographic Provider. This is only applicable if Hybrid HSM mode is true.`,
+			Optional:    true,
+			Validators: []validator.String{
+				stringvalidator.OneOf("LOCAL", "HSM"),
+			},
+		},
+		"file_data": schema.StringAttribute{
+			Description: `The certificate data in PEM format. New line characters should be omitted or encoded in this value.`,
+			Required:    true,
+		},
+		"id": schema.StringAttribute{
+			Description: `The persistent, unique ID for the certificate. It can be any combination of [a-z0-9._-]. This property is system-assigned if not specified.`,
+			Optional:    true,
 		},
 	}
 }
