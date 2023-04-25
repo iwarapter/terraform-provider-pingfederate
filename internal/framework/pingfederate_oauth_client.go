@@ -3,6 +3,7 @@ package framework
 import (
 	"context"
 	"fmt"
+	"math/big"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 
@@ -370,6 +371,12 @@ func (r *pingfederateOAuthClientResource) versionResponseModifier(data *ClientDa
 	if !r.client.IsVersionGreaterEqThan(11, 1) {
 		data.ClientSecretRetentionPeriodType = types.StringValue("SERVER_DEFAULT")
 		data.RequireJwtSecuredAuthorizationResponseMode = types.BoolValue(false)
+	}
+
+	// depending on the backing store for oauth clients, the following fields may be null
+	// if they are null, we need to set them to 0 so that the state is happy
+	if data.PersistentGrantExpirationTime.IsNull() {
+		data.PersistentGrantExpirationTime = types.NumberValue(big.NewFloat(0))
 	}
 
 	return data
