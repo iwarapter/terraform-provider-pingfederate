@@ -85,6 +85,11 @@ func (r *pingfederateOAuthClientResource) ModifyPlan(ctx context.Context, req re
 		if plan.ClientAuth.Secret.IsNull() {
 			plan.ClientSecretChangedTime = types.StringNull()
 		}
+		if plan.ClientAuth.Secret.String() != state.ClientAuth.Secret.String() {
+			plan.ClientSecretChangedTime = types.StringUnknown()
+		} else {
+			plan.ClientSecretChangedTime = state.ClientSecretChangedTime
+		}
 	}
 
 	// Skip modification if encrypted_secret is known

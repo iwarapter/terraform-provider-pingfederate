@@ -261,9 +261,6 @@ func resourceClient() schema.Schema {
 				Description: `The time at which the client secret was last changed. This property is read only and is ignored on PUT and POST requests.`,
 				Optional:    true,
 				Computed:    true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
 			},
 			"client_secret_retention_period": schema.NumberAttribute{
 				Description: `The length of time in minutes that client secrets will be retained as secondary secrets after secret change. The default value is 0, which will disable secondary client secret retention. This value will override the Client Secret Retention Period value on the Authorization Server Settings.`,
