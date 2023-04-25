@@ -1479,6 +1479,9 @@ func expandSigningSettings(in map[string]interface{}) *pf.SigningSettings {
 	if val, ok := in["signing_key_pair_ref"]; ok {
 		result.SigningKeyPairRef = expandResourceLink(val.([]interface{})[0].(map[string]interface{}))
 	}
+	if val, ok := in["alternative_signing_key_pair_refs"]; ok {
+		result.AlternativeSigningKeyPairRefs = expandResourceLinks(val.([]interface{}))
+	}
 	if val, ok := in["algorithm"]; ok {
 		result.Algorithm = String(val.(string))
 	}
@@ -2847,6 +2850,14 @@ func expandClientRegistrationOIDCPolicy(in map[string]interface{}) *pf.ClientReg
 		result.PolicyGroup = expandResourceLink(val.([]interface{})[0].(map[string]interface{}))
 	}
 	return &result
+}
+
+func expandResourceLinks(configured []interface{}) *[]*pf.ResourceLink {
+	vs := make([]*pf.ResourceLink, 0, len(configured))
+	for _, v := range configured {
+		vs = append(vs, expandResourceLink(v.(map[string]interface{})))
+	}
+	return &vs
 }
 
 func expandResourceLinkList(configured []interface{}) *[]*pf.ResourceLink {

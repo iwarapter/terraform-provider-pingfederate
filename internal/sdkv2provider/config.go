@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"os"
 	"regexp"
+	"strconv"
 	"syscall"
 
 	"github.com/iwarapter/pingfederate-sdk-go/services/pingOneConnections"
@@ -297,4 +298,46 @@ func checkErr(err error) string {
 		}
 	}
 	return err.Error()
+}
+
+func parseVersion(version string) (int, int, error) {
+	re := regexp.MustCompile(`^(\d+)\.(\d+)`)
+	parts := re.FindStringSubmatch(version)
+	if len(parts) != 3 {
+		return 0, 0, fmt.Errorf("unexpected number of parts, got: %d want: 2, value: %v", len(parts), parts)
+	}
+	major, err := strconv.Atoi(parts[1])
+	if err != nil {
+		return 0, 0, fmt.Errorf("unable to parse version major componenent: '%s'", parts[1])
+	}
+	minor, err := strconv.Atoi(parts[2])
+	if err != nil {
+		return 0, 0, fmt.Errorf("unable to parse version minor componenent: '%s'", parts[2])
+	}
+
+	return major, minor, nil
+}
+
+// IsVersionLessEqThan Checks whether we are running against PingFederate a version less or equal than specified
+func (c pfClient) IsVersionLessEqThan(major, minor int) bool {
+	maj, min, _ := parseVersion(c.apiVersion)
+	if maj <= major {
+		if maj == major && minor < min {
+			return false
+		}
+		return true
+	}
+	return false
+}
+
+// IsVersionGreaterEqThan Checks whether we are running against PingFederate a version greater or equal than specified
+func (c pfClient) IsVersionGreaterEqThan(major, minor int) bool {
+	maj, min, _ := parseVersion(c.apiVersion)
+	if maj >= major {
+		if maj == major && minor > min {
+			return false
+		}
+		return true
+	}
+	return false
 }

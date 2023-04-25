@@ -96,7 +96,7 @@ func testAccPreCheck(t *testing.T) {
 }
 
 func requiredVersionTestCheckFunc(major, minor int, f resource.TestCheckFunc) resource.TestCheckFunc {
-	if pfc.IsVersionGreaterEqThan(major, minor) {
+	if pfc != nil && pfc.IsVersionGreaterEqThan(major, minor) {
 		return f
 	}
 	return func(state *terraform.State) error {
