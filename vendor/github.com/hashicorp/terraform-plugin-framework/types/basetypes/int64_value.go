@@ -48,6 +48,16 @@ func NewInt64Value(value int64) Int64Value {
 	}
 }
 
+// NewInt64PointerValue creates a Int64 with a null value if nil or a known
+// value. Access the value via the Int64 type ValueInt64Pointer method.
+func NewInt64PointerValue(value *int64) Int64Value {
+	if value == nil {
+		return NewInt64Null()
+	}
+
+	return NewInt64Value(*value)
+}
+
 // Int64Value represents a 64-bit integer value, exposed as an int64.
 type Int64Value struct {
 	// state represents whether the value is null, unknown, or known. The
@@ -125,10 +135,20 @@ func (i Int64Value) String() string {
 	return fmt.Sprintf("%d", i.value)
 }
 
-// ValueInt64 returns the known float64 value. If Int64 is null or unknown, returns
-// 0.0.
+// ValueInt64 returns the known int64 value. If Int64 is null or unknown, returns
+// 0.
 func (i Int64Value) ValueInt64() int64 {
 	return i.value
+}
+
+// ValueInt64Pointer returns a pointer to the known int64 value, nil for a
+// null value, or a pointer to 0 for an unknown value.
+func (i Int64Value) ValueInt64Pointer() *int64 {
+	if i.IsNull() {
+		return nil
+	}
+
+	return &i.value
 }
 
 // ToInt64Value returns Int64.
