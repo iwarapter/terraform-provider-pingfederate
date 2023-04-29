@@ -3,6 +3,8 @@ package framework
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
@@ -336,8 +338,10 @@ func expandGlobalAuthenticationSessionPolicy(in GlobalAuthenticationSessionPolic
 
 func expandMetadataUrl(in MetadataUrlData) *pf.MetadataUrl {
 	var result pf.MetadataUrl
-	if in.CertView != nil {
-		result.CertView = expandCertView(*in.CertView)
+	if !in.CertView.IsUnknown() && !in.CertView.IsNull() {
+		var view CertViewData
+		in.CertView.As(context.Background(), &view, basetypes.ObjectAsOptions{})
+		result.CertView = expandCertView(view)
 	}
 	if !in.Id.IsUnknown() && !in.Id.IsNull() {
 		result.Id = String(in.Id.ValueString())

@@ -969,7 +969,7 @@ func expandIdpBrowserSso(in map[string]interface{}) *pf.IdpBrowserSso {
 	if val, ok := in["sso_o_auth_mapping"]; ok && len(val.([]interface{})) > 0 {
 		result.SsoOAuthMapping = expandSsoOAuthMapping(val.([]interface{})[0].(map[string]interface{}))
 	}
-	if val, ok := in["oauth_authentication_policy_contract_ref"]; ok {
+	if val, ok := in["oauth_authentication_policy_contract_ref"]; ok && len(val.([]interface{})) > 0 {
 		result.OauthAuthenticationPolicyContractRef = expandResourceLink(val.([]interface{})[0].(map[string]interface{}))
 	}
 	if val, ok := in["assertions_signed"]; ok {
@@ -2501,8 +2501,9 @@ func expandSloServiceEndpointList(in []interface{}) *[]*pf.SloServiceEndpoint {
 	}
 	return &result
 }
+
 func expandAuthenticationPolicyContractMappingList(in []interface{}) *[]*pf.AuthenticationPolicyContractMapping {
-	var result []*pf.AuthenticationPolicyContractMapping
+	result := make([]*pf.AuthenticationPolicyContractMapping, 0)
 	for _, v := range in {
 		result = append(result, expandAuthenticationPolicyContractMapping(v.(map[string]interface{})))
 	}

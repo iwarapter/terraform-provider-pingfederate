@@ -11,6 +11,9 @@ import (
 	"os"
 	"testing"
 
+	"github.com/iwarapter/pingfederate-sdk-go/services/certificatesCa"
+	"github.com/iwarapter/pingfederate-sdk-go/services/keyPairsSslServer"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
 	"github.com/hashicorp/terraform-plugin-mux/tf5to6server"
@@ -105,6 +108,27 @@ func requiredVersionTestCheckFunc(major, minor int, f resource.TestCheckFunc) re
 }
 
 func dataSetup() error {
+	sslPairs, _, err := pfc.KeyPairsSslServer.GetKeyPairs()
+	if err != nil {
+		for _, view := range *sslPairs.Items {
+			if *view.SubjectDN == "CN=ping, O=ping, C=GB" {
+				pfc.KeyPairsSslServer.UpdateSettings(&keyPairsSslServer.UpdateSettingsInput{
+					Body: pf.SslServerSettings{
+						ActiveAdminConsoleCerts:  &[]*pf.ResourceLink{{Id: view.Id}},
+						ActiveRuntimeServerCerts: &[]*pf.ResourceLink{{Id: view.Id}},
+						AdminConsoleCertRef:      &pf.ResourceLink{Id: view.Id},
+						RuntimeServerCertRef:     &pf.ResourceLink{Id: view.Id},
+					},
+				})
+				cert, _, _ := pfc.KeyPairsSslServer.ExportCertificateFile(&keyPairsSslServer.ExportCertificateFileInput{
+					Id: *view.Id,
+				})
+				pfc.CertificatesCa.ImportTrustedCA(&certificatesCa.ImportTrustedCAInput{
+					Body: pf.X509File{Id: String("testing"), FileData: cert},
+				})
+			}
+		}
+	}
 	pcv := pfc.PasswordCredentialValidators
 	if _, _, err := pcv.GetPasswordCredentialValidator(&passwordCredentialValidators.GetPasswordCredentialValidatorInput{Id: "pcvtestme"}); err != nil {
 		if _, _, err := pcv.CreatePasswordCredentialValidator(&passwordCredentialValidators.CreatePasswordCredentialValidatorInput{

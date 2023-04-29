@@ -30,15 +30,31 @@ resource "pingfederate_metadata_url" "test" {
 
 ### Optional
 
-- `cert_view` (Attributes) The Signature Verification Certificate details. This property is read-only and is always ignored on a POST or PUT. (see [below for nested schema](#nestedatt--cert_view))
 - `id` (String) The persistent, unique ID for the Metadata Url. It can be any combination of [a-z0-9._-]. This property is system-assigned if not specified.
 - `validate_signature` (Boolean) Perform Metadata Signature Validation. The default value is TRUE.
 - `x509file` (Attributes) Data of the Signature Verification Certificate for the Metadata URL. (see [below for nested schema](#nestedatt--x509file))
 
+### Read-Only
+
+- `cert_view` (Attributes) The Signature Verification Certificate details. This property is read-only and is always ignored on a POST or PUT. (see [below for nested schema](#nestedatt--cert_view))
+
+<a id="nestedatt--x509file"></a>
+### Nested Schema for `x509file`
+
+Required:
+
+- `file_data` (String) The certificate data in PEM format. New line characters should be omitted or encoded in this value.
+
+Optional:
+
+- `crypto_provider` (String) Cryptographic Provider. This is only applicable if Hybrid HSM mode is true.
+- `id` (String) The persistent, unique ID for the certificate. It can be any combination of [a-z0-9._-]. This property is system-assigned if not specified.
+
+
 <a id="nestedatt--cert_view"></a>
 ### Nested Schema for `cert_view`
 
-Optional:
+Read-Only:
 
 - `crypto_provider` (String) Cryptographic Provider. This is only applicable if Hybrid HSM mode is true.
 - `expires` (String) The end date up until which the item is valid, in ISO 8601 format (UTC).
@@ -55,19 +71,6 @@ Optional:
 - `subject_dn` (String) The subject's distinguished name.
 - `valid_from` (String) The start date from which the item is valid, in ISO 8601 format (UTC).
 - `version` (Number) The X.509 version to which the item conforms.
-
-
-<a id="nestedatt--x509file"></a>
-### Nested Schema for `x509file`
-
-Required:
-
-- `file_data` (String) The certificate data in PEM format. New line characters should be omitted or encoded in this value.
-
-Optional:
-
-- `crypto_provider` (String) Cryptographic Provider. This is only applicable if Hybrid HSM mode is true.
-- `id` (String) The persistent, unique ID for the certificate. It can be any combination of [a-z0-9._-]. This property is system-assigned if not specified.
 
 ## Import
 

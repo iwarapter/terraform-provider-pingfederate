@@ -1,6 +1,8 @@
 package framework
 
-import "github.com/hashicorp/terraform-plugin-framework/types"
+import (
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
 
 type AccessTokenAttributeData struct {
 	MultiValued types.Bool   `tfsdk:"multi_valued"`
@@ -1864,7 +1866,7 @@ type MetadataSigningSettingsData struct {
 }
 
 type MetadataUrlData struct {
-	CertView          *CertViewData `tfsdk:"cert_view"`
+	CertView          types.Object  `tfsdk:"cert_view"`
 	Id                types.String  `tfsdk:"id"`
 	Name              types.String  `tfsdk:"name"`
 	Url               types.String  `tfsdk:"url"`

@@ -397,7 +397,6 @@ Optional:
 Required:
 
 - `idp_identity_mapping` (String) Defines the process in which users authenticated by the IdP are associated with user accounts local to the SP.
-- `oauth_authentication_policy_contract_ref` (Block List, Min: 1, Max: 1) The Authentication policy contract to map into for OAuth. The policy contract can subsequently be mapped into the OAuth persistent grant. (see [below for nested schema](#nestedblock--idp_browser_sso--oauth_authentication_policy_contract_ref))
 - `protocol` (String) The browser-based SSO protocol to use.
 
 Optional:
@@ -413,24 +412,13 @@ Optional:
 - `enabled_profiles` (List of String) The profiles that are enabled for browser-based SSO. SAML 2.0 supports all profiles whereas SAML 1.x IdP connections support both IdP and SP (non-standard) initiated SSO. This is required for SAMLx.x Connections.
 - `incoming_bindings` (List of String) The SAML bindings that are enabled for browser-based SSO. This is required for SAML 2.0 connections when the enabled profiles contain the SP-initiated SSO profile or either SLO profile. For SAML 1.x based connections, it is not used for SP Connections and it is optional for IdP Connections.
 - `message_customizations` (Block List) The message customizations for browser-based SSO. Depending on server settings, connection type, and protocol this may or may not be supported. (see [below for nested schema](#nestedblock--idp_browser_sso--message_customizations))
+- `oauth_authentication_policy_contract_ref` (Block List, Max: 1) The Authentication policy contract to map into for OAuth. The policy contract can subsequently be mapped into the OAuth persistent grant. (see [below for nested schema](#nestedblock--idp_browser_sso--oauth_authentication_policy_contract_ref))
 - `oidc_provider_settings` (Block List) The OpenID Provider configuration settings. Required for an OIDC connection. (see [below for nested schema](#nestedblock--idp_browser_sso--oidc_provider_settings))
 - `sign_authn_requests` (Boolean) Determines whether SAML authentication requests should be signed.
 - `slo_service_endpoints` (Block List) A list of possible endpoints to send SLO requests and responses. (see [below for nested schema](#nestedblock--idp_browser_sso--slo_service_endpoints))
 - `sso_o_auth_mapping` (Block List) Direct mapping from the IdP connection to the OAuth persistent grant. (see [below for nested schema](#nestedblock--idp_browser_sso--sso_o_auth_mapping))
 - `sso_service_endpoints` (Block List) The IdP SSO endpoints that define where to send your authentication requests. Only required for SP initiated SSO. This is required for SAML x.x and WS-FED Connections. (see [below for nested schema](#nestedblock--idp_browser_sso--sso_service_endpoints))
 - `url_whitelist_entries` (Block List) For WS-Federation connections, a whitelist of additional allowed domains and paths used to validate wreply for SLO, if enabled. (see [below for nested schema](#nestedblock--idp_browser_sso--url_whitelist_entries))
-
-<a id="nestedblock--idp_browser_sso--oauth_authentication_policy_contract_ref"></a>
-### Nested Schema for `idp_browser_sso.oauth_authentication_policy_contract_ref`
-
-Required:
-
-- `id` (String) The ID of the resource.
-
-Read-Only:
-
-- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
-
 
 <a id="nestedblock--idp_browser_sso--adapter_mappings"></a>
 ### Nested Schema for `idp_browser_sso.adapter_mappings`
@@ -1227,6 +1215,18 @@ Optional:
 
 - `context_name` (String)
 - `message_expression` (String)
+
+
+<a id="nestedblock--idp_browser_sso--oauth_authentication_policy_contract_ref"></a>
+### Nested Schema for `idp_browser_sso.oauth_authentication_policy_contract_ref`
+
+Required:
+
+- `id` (String) The ID of the resource.
+
+Read-Only:
+
+- `location` (String) A read-only URL that references the resource. If the resource is not currently URL-accessible, this property will be null.
 
 
 <a id="nestedblock--idp_browser_sso--oidc_provider_settings"></a>
