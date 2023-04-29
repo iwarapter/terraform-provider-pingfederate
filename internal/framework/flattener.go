@@ -197,6 +197,17 @@ func flattenAuthorizationServerSettings(in *pf.AuthorizationServerSettings) *Aut
 	return &result
 }
 
+func flattenJdbcDataStores(in []*pf.JdbcDataStore) *JdbcDataStoresData {
+	results := JdbcDataStoresData{
+		Id:    types.StringValue("jdbc-data-stores"),
+		Items: &[]*JdbcDataStoreData{},
+	}
+	for _, data := range in {
+		*results.Items = append(*results.Items, flattenJdbcDataStore(data))
+	}
+	return &results
+}
+
 func flattenApcToPersistentGrantMapping(in *pf.ApcToPersistentGrantMapping) *ApcToPersistentGrantMappingData {
 	result := ApcToPersistentGrantMappingData{}
 	if in.AttributeContractFulfillment != nil {
@@ -710,6 +721,118 @@ func flattenSessionSettings(in *pf.SessionSettings) *SessionSettingsData {
 		result.TrackAdapterSessionsForLogout = types.BoolValue(*in.TrackAdapterSessionsForLogout)
 	} else {
 		result.TrackAdapterSessionsForLogout = types.BoolNull()
+	}
+
+	return &result
+}
+
+func flattenJdbcDataStore(in *pf.JdbcDataStore) *JdbcDataStoreData {
+	result := JdbcDataStoreData{}
+	if in.AllowMultiValueAttributes != nil {
+		result.AllowMultiValueAttributes = types.BoolValue(*in.AllowMultiValueAttributes)
+	} else {
+		result.AllowMultiValueAttributes = types.BoolNull()
+	}
+	if in.BlockingTimeout != nil {
+		result.BlockingTimeout = types.NumberValue(big.NewFloat(float64(*in.BlockingTimeout)))
+	} else {
+		result.BlockingTimeout = types.NumberNull()
+	}
+	if in.ConnectionUrl != nil {
+		result.ConnectionUrl = types.StringValue(*in.ConnectionUrl)
+	} else {
+		result.ConnectionUrl = types.StringNull()
+	}
+	if in.ConnectionUrlTags != nil {
+		result.ConnectionUrlTags = flattenJdbcTagConfigs(in.ConnectionUrlTags)
+	}
+	if in.DriverClass != nil {
+		result.DriverClass = types.StringValue(*in.DriverClass)
+	} else {
+		result.DriverClass = types.StringNull()
+	}
+	if in.EncryptedPassword != nil {
+		result.EncryptedPassword = types.StringValue(*in.EncryptedPassword)
+	} else {
+		result.EncryptedPassword = types.StringNull()
+	}
+	if in.Id != nil {
+		result.Id = types.StringValue(*in.Id)
+	} else {
+		result.Id = types.StringNull()
+	}
+	if in.IdleTimeout != nil {
+		result.IdleTimeout = types.NumberValue(big.NewFloat(float64(*in.IdleTimeout)))
+	} else {
+		result.IdleTimeout = types.NumberNull()
+	}
+	if in.MaskAttributeValues != nil {
+		result.MaskAttributeValues = types.BoolValue(*in.MaskAttributeValues)
+	} else {
+		result.MaskAttributeValues = types.BoolNull()
+	}
+	if in.MaxPoolSize != nil {
+		result.MaxPoolSize = types.NumberValue(big.NewFloat(float64(*in.MaxPoolSize)))
+	} else {
+		result.MaxPoolSize = types.NumberNull()
+	}
+	if in.MinPoolSize != nil {
+		result.MinPoolSize = types.NumberValue(big.NewFloat(float64(*in.MinPoolSize)))
+	} else {
+		result.MinPoolSize = types.NumberNull()
+	}
+	if in.Name != nil {
+		result.Name = types.StringValue(*in.Name)
+	} else {
+		result.Name = types.StringNull()
+	}
+	if in.Password != nil {
+		result.Password = types.StringValue(*in.Password)
+	} else {
+		result.Password = types.StringNull()
+	}
+	if in.Type != nil {
+		result.Type = types.StringValue(*in.Type)
+	} else {
+		result.Type = types.StringNull()
+	}
+	if in.UserName != nil {
+		result.UserName = types.StringValue(*in.UserName)
+	} else {
+		result.UserName = types.StringNull()
+	}
+	if in.ValidateConnectionSql != nil {
+		result.ValidateConnectionSql = types.StringValue(*in.ValidateConnectionSql)
+	} else {
+		result.ValidateConnectionSql = types.StringNull()
+	}
+
+	return &result
+}
+
+func flattenJdbcTagConfigs(in *[]*pf.JdbcTagConfig) *[]*JdbcTagConfigData {
+	results := []*JdbcTagConfigData{}
+	for _, data := range *in {
+		results = append(results, flattenJdbcTagConfig(data))
+	}
+	return &results
+}
+func flattenJdbcTagConfig(in *pf.JdbcTagConfig) *JdbcTagConfigData {
+	result := JdbcTagConfigData{}
+	if in.ConnectionUrl != nil {
+		result.ConnectionUrl = types.StringValue(*in.ConnectionUrl)
+	} else {
+		result.ConnectionUrl = types.StringNull()
+	}
+	if in.DefaultSource != nil {
+		result.DefaultSource = types.BoolValue(*in.DefaultSource)
+	} else {
+		result.DefaultSource = types.BoolNull()
+	}
+	if in.Tags != nil {
+		result.Tags = types.StringValue(*in.Tags)
+	} else {
+		result.Tags = types.StringNull()
 	}
 
 	return &result

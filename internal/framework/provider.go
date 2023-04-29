@@ -136,6 +136,7 @@ func (p *pfprovider) Resources(_ context.Context) []func() resource.Resource {
 
 func (p *pfprovider) DataSources(_ context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
+		NewJdbcDataStoresDataSource,
 		NewKeyPairSslServerCertificateDataSource,
 		NewOauthAuthServerSettingsDataSource,
 	}

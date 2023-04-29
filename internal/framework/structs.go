@@ -1,8 +1,6 @@
 package framework
 
-import (
-	"github.com/hashicorp/terraform-plugin-framework/types"
-)
+import "github.com/hashicorp/terraform-plugin-framework/types"
 
 type AccessTokenAttributeData struct {
 	MultiValued types.Bool   `tfsdk:"multi_valued"`
@@ -1565,6 +1563,11 @@ type JdbcDataStoreRepositoryData struct {
 	JitRepositoryAttributeMapping map[string]*AttributeFulfillmentValueData `tfsdk:"jit_repository_attribute_mapping"`
 	SqlMethod                     *SqlMethodData                            `tfsdk:"sql_method"`
 	Type                          types.String                              `tfsdk:"type"`
+}
+
+type JdbcDataStoresData struct {
+	Id    types.String          `tfsdk:"id"`
+	Items *[]*JdbcDataStoreData `tfsdk:"items"`
 }
 
 type JdbcTagConfigData struct {

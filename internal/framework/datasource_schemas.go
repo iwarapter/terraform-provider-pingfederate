@@ -1,7 +1,9 @@
 package framework
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -196,6 +198,117 @@ func datasourceAuthorizationServerSettings() schema.Schema {
 				Description: `The URL used to generate 'verification_url' and 'verification_url_complete' values in a Device Authorization request`,
 				Computed:    true,
 			},
+		},
+	}
+}
+
+func datasourceJdbcDataStores() schema.Schema {
+	return schema.Schema{
+		Description: `List of available JDBC data stores`,
+		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: ``,
+				Computed:    true,
+			},
+			"items": schema.ListNestedAttribute{
+				Description: ``,
+				Computed:    true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: listJdbcDataStore(),
+				},
+			},
+		},
+	}
+}
+
+func listJdbcDataStore() map[string]schema.Attribute {
+	return map[string]schema.Attribute{
+		"allow_multi_value_attributes": schema.BoolAttribute{
+			Description: `Indicates that this data store can select more than one record from a column and return the results as a multi-value attribute.`,
+			Computed:    true,
+		},
+		"blocking_timeout": schema.NumberAttribute{
+			Description: `The amount of time in milliseconds a request waits to get a connection from the connection pool before it fails. Omitting this attribute will set the value to the connection pool default.`,
+			Computed:    true,
+		},
+		"connection_url": schema.StringAttribute{
+			Description: `The default location of the JDBC database. This field is required if no mapping for JDBC database location and tags are specified.`,
+			Computed:    true,
+		},
+		"connection_url_tags": schema.ListNestedAttribute{
+			Description: `The set of connection URLs and associated tags for this JDBC data store.`,
+			Computed:    true,
+			NestedObject: schema.NestedAttributeObject{
+				Attributes: listJdbcTagConfig(),
+			},
+		},
+		"driver_class": schema.StringAttribute{
+			Description: `The name of the driver class used to communicate with the source database.`,
+			Computed:    true,
+		},
+		"encrypted_password": schema.StringAttribute{
+			Description: `The encrypted password needed to access the database. If you do not want to update the stored value, this attribute should be passed back unchanged. Secret Reference may be provided in this field with format 'OBF:MGR:{secretManagerId}:{secretId}'.`,
+			Computed:    true,
+		},
+		"id": schema.StringAttribute{
+			Description: `The persistent, unique ID for the data store. It can be any combination of [a-zA-Z0-9._-]. This property is system-assigned if not specified.`,
+			Computed:    true,
+		},
+		"idle_timeout": schema.NumberAttribute{
+			Description: `The length of time in minutes the connection can be idle in the pool before it is closed. Omitting this attribute will set the value to the connection pool default.`,
+			Computed:    true,
+		},
+		"mask_attribute_values": schema.BoolAttribute{
+			Description: `Whether attribute values should be masked in the log.`,
+			Computed:    true,
+		},
+		"max_pool_size": schema.NumberAttribute{
+			Description: `The largest number of database connections in the connection pool for the given data store. Omitting this attribute will set the value to the connection pool default.`,
+			Computed:    true,
+		},
+		"min_pool_size": schema.NumberAttribute{
+			Description: `The smallest number of database connections in the connection pool for the given data store. Omitting this attribute will set the value to the connection pool default.`,
+			Computed:    true,
+		},
+		"name": schema.StringAttribute{
+			Description: `The data store name with a unique value across all data sources. Omitting this attribute will set the value to a combination of the connection url and the username.`,
+			Computed:    true,
+		},
+		"password": schema.StringAttribute{
+			Description: `The password needed to access the database. GETs will not return this attribute. To update this field, specify the new value in this attribute.`,
+			Computed:    true,
+		},
+		"type": schema.StringAttribute{
+			Description: `The data store type.`,
+			Computed:    true,
+			Validators: []validator.String{
+				stringvalidator.OneOf("LDAP", "PING_ONE_LDAP_GATEWAY", "JDBC", "CUSTOM"),
+			},
+		},
+		"user_name": schema.StringAttribute{
+			Description: `The name that identifies the user when connecting to the database.`,
+			Computed:    true,
+		},
+		"validate_connection_sql": schema.StringAttribute{
+			Description: `A simple SQL statement used by PingFederate at runtime to verify that the database connection is still active and to reconnect if needed.`,
+			Computed:    true,
+		},
+	}
+}
+
+func listJdbcTagConfig() map[string]schema.Attribute {
+	return map[string]schema.Attribute{
+		"connection_url": schema.StringAttribute{
+			Description: `The location of the JDBC database. `,
+			Computed:    true,
+		},
+		"default_source": schema.BoolAttribute{
+			Description: `Whether this is the default connection. Defaults to false if not specified.`,
+			Computed:    true,
+		},
+		"tags": schema.StringAttribute{
+			Description: `Tags associated with this data source.`,
+			Computed:    true,
 		},
 	}
 }
