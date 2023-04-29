@@ -221,6 +221,25 @@ func datasourceJdbcDataStores() schema.Schema {
 	}
 }
 
+func datasourceLdapDataStores() schema.Schema {
+	return schema.Schema{
+		Description: `List of available LDAP data stores`,
+		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: ``,
+				Computed:    true,
+			},
+			"items": schema.ListNestedAttribute{
+				Description: ``,
+				Computed:    true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: listLdapDataStore(),
+				},
+			},
+		},
+	}
+}
+
 func listJdbcDataStore() map[string]schema.Attribute {
 	return map[string]schema.Attribute{
 		"allow_multi_value_attributes": schema.BoolAttribute{
@@ -305,6 +324,152 @@ func listJdbcTagConfig() map[string]schema.Attribute {
 		"default_source": schema.BoolAttribute{
 			Description: `Whether this is the default connection. Defaults to false if not specified.`,
 			Computed:    true,
+		},
+		"tags": schema.StringAttribute{
+			Description: `Tags associated with this data source.`,
+			Computed:    true,
+		},
+	}
+}
+
+func listLdapDataStore() map[string]schema.Attribute {
+	return map[string]schema.Attribute{
+		"binary_attributes": schema.ListAttribute{
+			Description: `The list of LDAP attributes to be handled as binary data.`,
+			Computed:    true,
+			ElementType: types.StringType,
+		},
+		"bind_anonymously": schema.BoolAttribute{
+			Description: `Whether username and password are required. The default value is false.`,
+			Computed:    true,
+		},
+		"connection_timeout": schema.NumberAttribute{
+			Description: `The maximum number of milliseconds that a connection attempt should be allowed to continue before returning an error. A value of -1 causes the pool to wait indefinitely. Omitting this attribute will set the value to the default value.`,
+			Computed:    true,
+		},
+		"create_if_necessary": schema.BoolAttribute{
+			Description: `Indicates whether temporary connections can be created when the Maximum Connections threshold is reached.`,
+			Computed:    true,
+		},
+		"dns_ttl": schema.NumberAttribute{
+			Description: `The maximum time in milliseconds that DNS information are cached. Omitting this attribute will set the value to the default value.`,
+			Computed:    true,
+		},
+		"encrypted_password": schema.StringAttribute{
+			Description: `The encrypted password credential required to access the data store.  If you do not want to update the stored value, this attribute should be passed back unchanged. Secret Reference may be provided in this field with format 'OBF:MGR:{secretManagerId}:{secretId}'.`,
+			Computed:    true,
+		},
+		"follow_ldap_referrals": schema.BoolAttribute{
+			Description: `Follow LDAP Referrals in the domain tree. The default value is false. This property does not apply to PingDirectory as this functionality is configured in PingDirectory.`,
+			Computed:    true,
+		},
+		"hostnames": schema.ListAttribute{
+			Description: `The default LDAP host names. This field is required if no mapping for host names and tags are specified.`,
+			Computed:    true,
+			ElementType: types.StringType,
+		},
+		"hostnames_tags": schema.ListNestedAttribute{
+			Description: `The set of host names and associated tags for this LDAP data store.`,
+			Computed:    true,
+			NestedObject: schema.NestedAttributeObject{
+				Attributes: listLdapTagConfig(),
+			},
+		},
+		"id": schema.StringAttribute{
+			Description: `The persistent, unique ID for the data store. It can be any combination of [a-zA-Z0-9._-]. This property is system-assigned if not specified.`,
+			Computed:    true,
+		},
+		"ldap_dns_srv_prefix": schema.StringAttribute{
+			Description: `The prefix value used to discover LDAP DNS SRV record. Omitting this attribute will set the value to the default value.`,
+			Computed:    true,
+		},
+		"ldap_type": schema.StringAttribute{
+			Description: `A type that allows PingFederate to configure many provisioning settings automatically. The 'UNBOUNDID_DS' type has been deprecated, please use the 'PING_DIRECTORY' type instead.`,
+			Computed:    true,
+			Validators: []validator.String{
+				stringvalidator.OneOf("ACTIVE_DIRECTORY", "ORACLE_DIRECTORY_SERVER", "ORACLE_UNIFIED_DIRECTORY", "UNBOUNDID_DS", "PING_DIRECTORY", "GENERIC"),
+			},
+		},
+		"ldaps_dns_srv_prefix": schema.StringAttribute{
+			Description: `The prefix value used to discover LDAPs DNS SRV record. Omitting this attribute will set the value to the default value.`,
+			Computed:    true,
+		},
+		"mask_attribute_values": schema.BoolAttribute{
+			Description: `Whether attribute values should be masked in the log.`,
+			Computed:    true,
+		},
+		"max_connections": schema.NumberAttribute{
+			Description: `The largest number of active connections that can remain in each pool without releasing extra ones. Omitting this attribute will set the value to the default value.`,
+			Computed:    true,
+		},
+		"max_wait": schema.NumberAttribute{
+			Description: `The maximum number of milliseconds the pool waits for a connection to become available when trying to obtain a connection from the pool. Omitting this attribute or setting a value of -1 causes the pool not to wait at all and to either create a new connection or produce an error (when no connections are available).`,
+			Computed:    true,
+		},
+		"min_connections": schema.NumberAttribute{
+			Description: `The smallest number of connections that can remain in each pool, without creating extra ones. Omitting this attribute will set the value to the default value.`,
+			Computed:    true,
+		},
+		"name": schema.StringAttribute{
+			Description: `The data store name with a unique value across all data sources. Omitting this attribute will set the value to a combination of the hostname(s) and the principal.`,
+			Computed:    true,
+		},
+		"password": schema.StringAttribute{
+			Description: `The password credential required to access the data store. GETs will not return this attribute. To update this field, specify the new value in this attribute.`,
+			Computed:    true,
+		},
+		"read_timeout": schema.NumberAttribute{
+			Description: `The maximum number of milliseconds a connection waits for a response to be returned before producing an error. A value of -1 causes the connection to wait indefinitely. Omitting this attribute will set the value to the default value.`,
+			Computed:    true,
+		},
+		"test_on_borrow": schema.BoolAttribute{
+			Description: `Indicates whether objects are validated before being borrowed from the pool.`,
+			Computed:    true,
+		},
+		"test_on_return": schema.BoolAttribute{
+			Description: `Indicates whether objects are validated before being returned to the pool.`,
+			Computed:    true,
+		},
+		"time_between_evictions": schema.NumberAttribute{
+			Description: `The frequency, in milliseconds, that the evictor cleans up the connections in the pool. A value of -1 disables the evictor. Omitting this attribute will set the value to the default value.`,
+			Computed:    true,
+		},
+		"type": schema.StringAttribute{
+			Description: `The data store type.`,
+			Computed:    true,
+			Validators: []validator.String{
+				stringvalidator.OneOf("LDAP", "PING_ONE_LDAP_GATEWAY", "JDBC", "CUSTOM"),
+			},
+		},
+		"use_dns_srv_records": schema.BoolAttribute{
+			Description: `Use DNS SRV Records to discover LDAP server information. The default value is false.`,
+			Computed:    true,
+		},
+		"use_ssl": schema.BoolAttribute{
+			Description: `Connects to the LDAP data store using secure SSL/TLS encryption (LDAPS). The default value is false.`,
+			Computed:    true,
+		},
+		"user_dn": schema.StringAttribute{
+			Description: `The username credential required to access the data store.`,
+			Computed:    true,
+		},
+		"verify_host": schema.BoolAttribute{
+			Description: `Verifies that the presented server certificate includes the address to which the client intended to establish a connection. Omitting this attribute will set the value to true.`,
+			Computed:    true,
+		},
+	}
+}
+
+func listLdapTagConfig() map[string]schema.Attribute {
+	return map[string]schema.Attribute{
+		"default_source": schema.BoolAttribute{
+			Description: `Whether this is the default connection. Defaults to false if not specified.`,
+			Computed:    true,
+		},
+		"hostnames": schema.ListAttribute{
+			Description: `The LDAP host names.`,
+			Computed:    true,
+			ElementType: types.StringType,
 		},
 		"tags": schema.StringAttribute{
 			Description: `Tags associated with this data source.`,

@@ -208,6 +208,18 @@ func flattenJdbcDataStores(in []*pf.JdbcDataStore) *JdbcDataStoresData {
 	return &results
 }
 
+func flattenLdapDataStores(in []*pf.LdapDataStore) *LdapDataStoresData {
+	results := LdapDataStoresData{
+		Id:    types.StringValue("ldap-data-stores"),
+		Items: &[]*LdapDataStoreData{},
+	}
+	for _, data := range in {
+		*results.Items = append(*results.Items, flattenLdapDataStore(data))
+	}
+
+	return &results
+}
+
 func flattenApcToPersistentGrantMapping(in *pf.ApcToPersistentGrantMapping) *ApcToPersistentGrantMappingData {
 	result := ApcToPersistentGrantMappingData{}
 	if in.AttributeContractFulfillment != nil {
@@ -828,6 +840,178 @@ func flattenJdbcTagConfig(in *pf.JdbcTagConfig) *JdbcTagConfigData {
 		result.DefaultSource = types.BoolValue(*in.DefaultSource)
 	} else {
 		result.DefaultSource = types.BoolNull()
+	}
+	if in.Tags != nil {
+		result.Tags = types.StringValue(*in.Tags)
+	} else {
+		result.Tags = types.StringNull()
+	}
+
+	return &result
+}
+
+func flattenLdapDataStore(in *pf.LdapDataStore) *LdapDataStoreData {
+	result := LdapDataStoreData{}
+	if in.BinaryAttributes != nil {
+		result.BinaryAttributes = flattenStringList(*in.BinaryAttributes)
+	} else {
+		result.BinaryAttributes = types.ListNull(types.StringType)
+	}
+	if in.BindAnonymously != nil {
+		result.BindAnonymously = types.BoolValue(*in.BindAnonymously)
+	} else {
+		result.BindAnonymously = types.BoolNull()
+	}
+	if in.ConnectionTimeout != nil {
+		result.ConnectionTimeout = types.NumberValue(big.NewFloat(float64(*in.ConnectionTimeout)))
+	} else {
+		result.ConnectionTimeout = types.NumberNull()
+	}
+	if in.CreateIfNecessary != nil {
+		result.CreateIfNecessary = types.BoolValue(*in.CreateIfNecessary)
+	} else {
+		result.CreateIfNecessary = types.BoolNull()
+	}
+	if in.DnsTtl != nil {
+		result.DnsTtl = types.NumberValue(big.NewFloat(float64(*in.DnsTtl)))
+	} else {
+		result.DnsTtl = types.NumberNull()
+	}
+	if in.EncryptedPassword != nil {
+		result.EncryptedPassword = types.StringValue(*in.EncryptedPassword)
+	} else {
+		result.EncryptedPassword = types.StringNull()
+	}
+	if in.FollowLDAPReferrals != nil {
+		result.FollowLDAPReferrals = types.BoolValue(*in.FollowLDAPReferrals)
+	} else {
+		result.FollowLDAPReferrals = types.BoolNull()
+	}
+	if in.Hostnames != nil {
+		result.Hostnames = flattenStringList(*in.Hostnames)
+	} else {
+		result.Hostnames = types.ListNull(types.StringType)
+	}
+	if in.HostnamesTags != nil {
+		result.HostnamesTags = flattenLdapTagConfigs(in.HostnamesTags)
+	}
+	if in.Id != nil {
+		result.Id = types.StringValue(*in.Id)
+	} else {
+		result.Id = types.StringNull()
+	}
+	if in.LdapDnsSrvPrefix != nil {
+		result.LdapDnsSrvPrefix = types.StringValue(*in.LdapDnsSrvPrefix)
+	} else {
+		result.LdapDnsSrvPrefix = types.StringNull()
+	}
+	if in.LdapType != nil {
+		result.LdapType = types.StringValue(*in.LdapType)
+	} else {
+		result.LdapType = types.StringNull()
+	}
+	if in.LdapsDnsSrvPrefix != nil {
+		result.LdapsDnsSrvPrefix = types.StringValue(*in.LdapsDnsSrvPrefix)
+	} else {
+		result.LdapsDnsSrvPrefix = types.StringNull()
+	}
+	if in.MaskAttributeValues != nil {
+		result.MaskAttributeValues = types.BoolValue(*in.MaskAttributeValues)
+	} else {
+		result.MaskAttributeValues = types.BoolNull()
+	}
+	if in.MaxConnections != nil {
+		result.MaxConnections = types.NumberValue(big.NewFloat(float64(*in.MaxConnections)))
+	} else {
+		result.MaxConnections = types.NumberNull()
+	}
+	if in.MaxWait != nil {
+		result.MaxWait = types.NumberValue(big.NewFloat(float64(*in.MaxWait)))
+	} else {
+		result.MaxWait = types.NumberNull()
+	}
+	if in.MinConnections != nil {
+		result.MinConnections = types.NumberValue(big.NewFloat(float64(*in.MinConnections)))
+	} else {
+		result.MinConnections = types.NumberNull()
+	}
+	if in.Name != nil {
+		result.Name = types.StringValue(*in.Name)
+	} else {
+		result.Name = types.StringNull()
+	}
+	if in.Password != nil {
+		result.Password = types.StringValue(*in.Password)
+	} else {
+		result.Password = types.StringNull()
+	}
+	if in.ReadTimeout != nil {
+		result.ReadTimeout = types.NumberValue(big.NewFloat(float64(*in.ReadTimeout)))
+	} else {
+		result.ReadTimeout = types.NumberNull()
+	}
+	if in.TestOnBorrow != nil {
+		result.TestOnBorrow = types.BoolValue(*in.TestOnBorrow)
+	} else {
+		result.TestOnBorrow = types.BoolNull()
+	}
+	if in.TestOnReturn != nil {
+		result.TestOnReturn = types.BoolValue(*in.TestOnReturn)
+	} else {
+		result.TestOnReturn = types.BoolNull()
+	}
+	if in.TimeBetweenEvictions != nil {
+		result.TimeBetweenEvictions = types.NumberValue(big.NewFloat(float64(*in.TimeBetweenEvictions)))
+	} else {
+		result.TimeBetweenEvictions = types.NumberNull()
+	}
+	if in.Type != nil {
+		result.Type = types.StringValue(*in.Type)
+	} else {
+		result.Type = types.StringNull()
+	}
+	if in.UseDnsSrvRecords != nil {
+		result.UseDnsSrvRecords = types.BoolValue(*in.UseDnsSrvRecords)
+	} else {
+		result.UseDnsSrvRecords = types.BoolNull()
+	}
+	if in.UseSsl != nil {
+		result.UseSsl = types.BoolValue(*in.UseSsl)
+	} else {
+		result.UseSsl = types.BoolNull()
+	}
+	if in.UserDN != nil {
+		result.UserDN = types.StringValue(*in.UserDN)
+	} else {
+		result.UserDN = types.StringNull()
+	}
+	if in.VerifyHost != nil {
+		result.VerifyHost = types.BoolValue(*in.VerifyHost)
+	} else {
+		result.VerifyHost = types.BoolNull()
+	}
+
+	return &result
+}
+
+func flattenLdapTagConfigs(in *[]*pf.LdapTagConfig) *[]*LdapTagConfigData {
+	results := []*LdapTagConfigData{}
+	for _, data := range *in {
+		results = append(results, flattenLdapTagConfig(data))
+	}
+	return &results
+}
+func flattenLdapTagConfig(in *pf.LdapTagConfig) *LdapTagConfigData {
+	result := LdapTagConfigData{}
+	if in.DefaultSource != nil {
+		result.DefaultSource = types.BoolValue(*in.DefaultSource)
+	} else {
+		result.DefaultSource = types.BoolNull()
+	}
+	if in.Hostnames != nil {
+		result.Hostnames = flattenStringList(*in.Hostnames)
+	} else {
+		result.Hostnames = types.ListNull(types.StringType)
 	}
 	if in.Tags != nil {
 		result.Tags = types.StringValue(*in.Tags)

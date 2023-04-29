@@ -1750,6 +1750,11 @@ type LdapDataStoreRepositoryData struct {
 	UniqueUserIdFilter            types.String                              `tfsdk:"unique_user_id_filter"`
 }
 
+type LdapDataStoresData struct {
+	Id    types.String          `tfsdk:"id"`
+	Items *[]*LdapDataStoreData `tfsdk:"items"`
+}
+
 type LdapInboundProvisioningUserRepositoryData struct {
 	BaseDn              types.String `tfsdk:"base_dn"`
 	DataStoreRef        types.String `tfsdk:"data_store_ref"`

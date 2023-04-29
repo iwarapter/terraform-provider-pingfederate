@@ -44,7 +44,7 @@ func (p *pingfederateJdbcDataStoresDataSource) Read(ctx context.Context, req dat
 
 	ds, _, err := p.client.DataStores.GetDataStoresWithContext(ctx)
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to read keypair ssl server settings certificate", err.Error())
+		resp.Diagnostics.AddError("Unable to read JDBC data stores", err.Error())
 		return
 	}
 	stores := make([]*pf.JdbcDataStore, 0)
