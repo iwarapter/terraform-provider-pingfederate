@@ -1,19 +1,14 @@
 package framework
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-func AuthorizationServerSettingsSchema() schema.Schema {
+func datasourceAuthorizationServerSettings() schema.Schema {
 	return schema.Schema{
 		Description: `Authorization Server Settings attributes.`,
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Computed: true,
-			},
 			"activation_code_check_mode": schema.StringAttribute{
 				Description: `Determines whether the user is prompted to enter or confirm the activation code after authenticating or before. The default is AFTER_AUTHENTICATION.`,
 				Computed:    true,
@@ -89,6 +84,10 @@ func AuthorizationServerSettingsSchema() schema.Schema {
 					Attributes: listScopeEntry(),
 				},
 			},
+			"id": schema.StringAttribute{
+				Description: ``,
+				Computed:    true,
+			},
 			"include_issuer_in_authorization_response": schema.BoolAttribute{
 				Description: `Determines whether the authorization server's issuer value is added to the authorization response or not. The default value is false.`,
 				Computed:    true,
@@ -108,9 +107,6 @@ func AuthorizationServerSettingsSchema() schema.Schema {
 			"par_status": schema.StringAttribute{
 				Description: `The status of pushed authorization request support. The default value is ENABLED.`,
 				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOf("DISABLED", "ENABLED", "REQUIRED"),
-				},
 			},
 			"pending_authorization_timeout": schema.NumberAttribute{
 				Description: `The 'device_code' and 'user_code' timeout, in seconds.`,
@@ -118,9 +114,8 @@ func AuthorizationServerSettingsSchema() schema.Schema {
 			},
 			"persistent_grant_contract": schema.SingleNestedAttribute{
 				Description: `The persistent grant contract defines attributes that are associated with OAuth persistent grants.`,
-
-				Computed:   true,
-				Attributes: singlePersistentGrantContract(),
+				Computed:    true,
+				Attributes:  singlePersistentGrantContract(),
 			},
 			"persistent_grant_idle_timeout": schema.NumberAttribute{
 				Description: `The persistent grant idle timeout. The default value is 30 (days). -1 indicates an indefinite amount of time.`,
@@ -129,9 +124,6 @@ func AuthorizationServerSettingsSchema() schema.Schema {
 			"persistent_grant_idle_timeout_time_unit": schema.StringAttribute{
 				Description: `The persistent grant idle timeout time unit.`,
 				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOf("MINUTES", "DAYS", "HOURS"),
-				},
 			},
 			"persistent_grant_lifetime": schema.NumberAttribute{
 				Description: `The persistent grant lifetime. The default value is indefinite. -1 indicates an indefinite amount of time.`,
@@ -140,13 +132,9 @@ func AuthorizationServerSettingsSchema() schema.Schema {
 			"persistent_grant_lifetime_unit": schema.StringAttribute{
 				Description: `The persistent grant lifetime unit.`,
 				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOf("MINUTES", "DAYS", "HOURS"),
-				},
 			},
 			"persistent_grant_reuse_grant_types": schema.ListAttribute{
 				Description: `The grant types that the OAuth AS can reuse rather than creating a new grant for each request. Only 'IMPLICIT' or 'AUTHORIZATION_CODE' or 'RESOURCE_OWNER_CREDENTIALS' are valid grant types.`,
-
 				Computed:    true,
 				ElementType: types.StringType,
 			},
@@ -203,13 +191,38 @@ func AuthorizationServerSettingsSchema() schema.Schema {
 			"user_authorization_consent_page_setting": schema.StringAttribute{
 				Description: `User Authorization Consent Page setting to use PingFederate's internal consent page or an external system`,
 				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOf("INTERNAL", "ADAPTER"),
-				},
 			},
 			"user_authorization_url": schema.StringAttribute{
 				Description: `The URL used to generate 'verification_url' and 'verification_url_complete' values in a Device Authorization request`,
 				Computed:    true,
+			},
+		},
+	}
+}
+
+func listPersistentGrantAttribute() map[string]schema.Attribute {
+	return map[string]schema.Attribute{
+		"name": schema.StringAttribute{
+			Description: `The name of this attribute.`,
+			Computed:    true,
+		},
+	}
+}
+
+func singlePersistentGrantContract() map[string]schema.Attribute {
+	return map[string]schema.Attribute{
+		"core_attributes": schema.ListNestedAttribute{
+			Description: `This is a read-only list of persistent grant attributes and includes USER_KEY and USER_NAME. Changes to this field will be ignored.`,
+			Computed:    true,
+			NestedObject: schema.NestedAttributeObject{
+				Attributes: listPersistentGrantAttribute(),
+			},
+		},
+		"extended_attributes": schema.ListNestedAttribute{
+			Description: `A list of additional attributes for the persistent grant contract.`,
+			Computed:    true,
+			NestedObject: schema.NestedAttributeObject{
+				Attributes: listPersistentGrantAttribute(),
 			},
 		},
 	}
@@ -246,34 +259,6 @@ func listScopeGroupEntry() map[string]schema.Attribute {
 			Description: `The set of scopes for this scope group.`,
 			Computed:    true,
 			ElementType: types.StringType,
-		},
-	}
-}
-
-func listPersistentGrantAttribute() map[string]schema.Attribute {
-	return map[string]schema.Attribute{
-		"name": schema.StringAttribute{
-			Description: `The name of this attribute.`,
-			Computed:    true,
-		},
-	}
-}
-
-func singlePersistentGrantContract() map[string]schema.Attribute {
-	return map[string]schema.Attribute{
-		"core_attributes": schema.ListNestedAttribute{
-			Description: `This is a read-only list of persistent grant attributes and includes USER_KEY and USER_NAME. Changes to this field will be ignored.`,
-			Computed:    true,
-			NestedObject: schema.NestedAttributeObject{
-				Attributes: listPersistentGrantAttribute(),
-			},
-		},
-		"extended_attributes": schema.ListNestedAttribute{
-			Description: `A list of additional attributes for the persistent grant contract.`,
-			Computed:    true,
-			NestedObject: schema.NestedAttributeObject{
-				Attributes: listPersistentGrantAttribute(),
-			},
 		},
 	}
 }

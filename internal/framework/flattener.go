@@ -9,124 +9,6 @@ import (
 	pf "github.com/iwarapter/pingfederate-sdk-go/pingfederate/models"
 )
 
-func flattenApcToPersistentGrantMapping(in *pf.ApcToPersistentGrantMapping) *ApcToPersistentGrantMappingData {
-	result := ApcToPersistentGrantMappingData{}
-	if in.AttributeContractFulfillment != nil {
-		result.AttributeContractFulfillment = flattenMapAttributeFulfillmentValues(in.AttributeContractFulfillment)
-	}
-	if in.AttributeSources != nil && len(*in.AttributeSources) > 0 {
-		result.JdbcAttributeSources = append(result.JdbcAttributeSources, flattenJdbcAttributeSources(in.AttributeSources)...)
-	}
-	if in.AttributeSources != nil && len(*in.AttributeSources) > 0 {
-		result.LdapAttributeSources = append(result.LdapAttributeSources, flattenLdapAttributeSources(in.AttributeSources)...)
-	}
-	if in.AttributeSources != nil && len(*in.AttributeSources) > 0 {
-		result.CustomAttributeSources = append(result.CustomAttributeSources, flattenCustomAttributeSources(in.AttributeSources)...)
-	}
-	if in.AuthenticationPolicyContractRef != nil && in.AuthenticationPolicyContractRef.Id != nil && *in.AuthenticationPolicyContractRef.Id != "" {
-		result.AuthenticationPolicyContractRef = types.StringValue(*in.AuthenticationPolicyContractRef.Id)
-	} else {
-		result.AuthenticationPolicyContractRef = types.StringNull()
-	}
-	if in.Id != nil {
-		result.Id = types.StringValue(*in.Id)
-	} else {
-		result.Id = types.StringNull()
-	}
-	if in.IssuanceCriteria != nil && issuanceCriteriaShouldFlatten(in.IssuanceCriteria) {
-		result.IssuanceCriteria = flattenIssuanceCriteria(in.IssuanceCriteria)
-	}
-
-	return &result
-}
-
-func flattenApplicationSessionPolicy(in *pf.ApplicationSessionPolicy) *ApplicationSessionPolicyData {
-	result := ApplicationSessionPolicyData{}
-	if in.IdleTimeoutMins != nil {
-		result.IdleTimeoutMins = types.NumberValue(big.NewFloat(float64(*in.IdleTimeoutMins)))
-	} else {
-		result.IdleTimeoutMins = types.NumberNull()
-	}
-	if in.MaxTimeoutMins != nil {
-		result.MaxTimeoutMins = types.NumberValue(big.NewFloat(float64(*in.MaxTimeoutMins)))
-	} else {
-		result.MaxTimeoutMins = types.NumberNull()
-	}
-
-	return &result
-}
-
-func flattenAuthenticationPolicyContract(in *pf.AuthenticationPolicyContract) *AuthenticationPolicyContractData {
-	result := AuthenticationPolicyContractData{}
-	if in.CoreAttributes != nil {
-		var values []attr.Value
-		for _, s := range *in.CoreAttributes {
-			values = append(values, types.StringValue(*s.Name))
-		}
-		result.CoreAttributes = types.SetValueMust(types.StringType, values)
-	}
-
-	if in.ExtendedAttributes != nil {
-		var values []attr.Value
-		for _, s := range *in.ExtendedAttributes {
-			values = append(values, types.StringValue(*s.Name))
-		}
-		result.ExtendedAttributes = types.SetValueMust(types.StringType, values)
-	}
-	if in.Id != nil {
-		result.Id = types.StringValue(*in.Id)
-	} else {
-		result.Id = types.StringNull()
-	}
-	if in.Name != nil {
-		result.Name = types.StringValue(*in.Name)
-	}
-
-	return &result
-}
-
-func flattenAuthenticationSessionPolicy(in *pf.AuthenticationSessionPolicy) *AuthenticationSessionPolicyData {
-	result := AuthenticationSessionPolicyData{}
-	if in.AuthenticationSource != nil {
-		result.AuthenticationSource = flattenAuthenticationSource(in.AuthenticationSource)
-	}
-	if in.AuthnContextSensitive != nil {
-		result.AuthnContextSensitive = types.BoolValue(*in.AuthnContextSensitive)
-	} else {
-		result.AuthnContextSensitive = types.BoolNull()
-	}
-	if in.EnableSessions != nil {
-		result.EnableSessions = types.BoolValue(*in.EnableSessions)
-	}
-	if in.Id != nil {
-		result.Id = types.StringValue(*in.Id)
-	} else {
-		result.Id = types.StringNull()
-	}
-	if in.IdleTimeoutMins != nil {
-		result.IdleTimeoutMins = types.NumberValue(big.NewFloat(float64(*in.IdleTimeoutMins)))
-	} else {
-		result.IdleTimeoutMins = types.NumberNull()
-	}
-	if in.MaxTimeoutMins != nil {
-		result.MaxTimeoutMins = types.NumberValue(big.NewFloat(float64(*in.MaxTimeoutMins)))
-	} else {
-		result.MaxTimeoutMins = types.NumberNull()
-	}
-	if in.Persistent != nil {
-		result.Persistent = types.BoolValue(*in.Persistent)
-	} else {
-		result.Persistent = types.BoolNull()
-	}
-	if in.TimeoutDisplayUnit != nil {
-		result.TimeoutDisplayUnit = types.StringValue(*in.TimeoutDisplayUnit)
-	} else {
-		result.TimeoutDisplayUnit = types.StringNull()
-	}
-
-	return &result
-}
-
 func flattenAuthorizationServerSettings(in *pf.AuthorizationServerSettings) *AuthorizationServerSettingsData {
 	result := AuthorizationServerSettingsData{}
 	if in.ActivationCodeCheckMode != nil {
@@ -310,6 +192,124 @@ func flattenAuthorizationServerSettings(in *pf.AuthorizationServerSettings) *Aut
 		result.UserAuthorizationUrl = types.StringValue(*in.UserAuthorizationUrl)
 	} else {
 		result.UserAuthorizationUrl = types.StringNull()
+	}
+
+	return &result
+}
+
+func flattenApcToPersistentGrantMapping(in *pf.ApcToPersistentGrantMapping) *ApcToPersistentGrantMappingData {
+	result := ApcToPersistentGrantMappingData{}
+	if in.AttributeContractFulfillment != nil {
+		result.AttributeContractFulfillment = flattenMapAttributeFulfillmentValues(in.AttributeContractFulfillment)
+	}
+	if in.AttributeSources != nil && len(*in.AttributeSources) > 0 {
+		result.JdbcAttributeSources = append(result.JdbcAttributeSources, flattenJdbcAttributeSources(in.AttributeSources)...)
+	}
+	if in.AttributeSources != nil && len(*in.AttributeSources) > 0 {
+		result.LdapAttributeSources = append(result.LdapAttributeSources, flattenLdapAttributeSources(in.AttributeSources)...)
+	}
+	if in.AttributeSources != nil && len(*in.AttributeSources) > 0 {
+		result.CustomAttributeSources = append(result.CustomAttributeSources, flattenCustomAttributeSources(in.AttributeSources)...)
+	}
+	if in.AuthenticationPolicyContractRef != nil && in.AuthenticationPolicyContractRef.Id != nil && *in.AuthenticationPolicyContractRef.Id != "" {
+		result.AuthenticationPolicyContractRef = types.StringValue(*in.AuthenticationPolicyContractRef.Id)
+	} else {
+		result.AuthenticationPolicyContractRef = types.StringNull()
+	}
+	if in.Id != nil {
+		result.Id = types.StringValue(*in.Id)
+	} else {
+		result.Id = types.StringNull()
+	}
+	if in.IssuanceCriteria != nil && issuanceCriteriaShouldFlatten(in.IssuanceCriteria) {
+		result.IssuanceCriteria = flattenIssuanceCriteria(in.IssuanceCriteria)
+	}
+
+	return &result
+}
+
+func flattenApplicationSessionPolicy(in *pf.ApplicationSessionPolicy) *ApplicationSessionPolicyData {
+	result := ApplicationSessionPolicyData{}
+	if in.IdleTimeoutMins != nil {
+		result.IdleTimeoutMins = types.NumberValue(big.NewFloat(float64(*in.IdleTimeoutMins)))
+	} else {
+		result.IdleTimeoutMins = types.NumberNull()
+	}
+	if in.MaxTimeoutMins != nil {
+		result.MaxTimeoutMins = types.NumberValue(big.NewFloat(float64(*in.MaxTimeoutMins)))
+	} else {
+		result.MaxTimeoutMins = types.NumberNull()
+	}
+
+	return &result
+}
+
+func flattenAuthenticationPolicyContract(in *pf.AuthenticationPolicyContract) *AuthenticationPolicyContractData {
+	result := AuthenticationPolicyContractData{}
+	if in.CoreAttributes != nil {
+		var values []attr.Value
+		for _, s := range *in.CoreAttributes {
+			values = append(values, types.StringValue(*s.Name))
+		}
+		result.CoreAttributes = types.SetValueMust(types.StringType, values)
+	}
+
+	if in.ExtendedAttributes != nil {
+		var values []attr.Value
+		for _, s := range *in.ExtendedAttributes {
+			values = append(values, types.StringValue(*s.Name))
+		}
+		result.ExtendedAttributes = types.SetValueMust(types.StringType, values)
+	}
+	if in.Id != nil {
+		result.Id = types.StringValue(*in.Id)
+	} else {
+		result.Id = types.StringNull()
+	}
+	if in.Name != nil {
+		result.Name = types.StringValue(*in.Name)
+	}
+
+	return &result
+}
+
+func flattenAuthenticationSessionPolicy(in *pf.AuthenticationSessionPolicy) *AuthenticationSessionPolicyData {
+	result := AuthenticationSessionPolicyData{}
+	if in.AuthenticationSource != nil {
+		result.AuthenticationSource = flattenAuthenticationSource(in.AuthenticationSource)
+	}
+	if in.AuthnContextSensitive != nil {
+		result.AuthnContextSensitive = types.BoolValue(*in.AuthnContextSensitive)
+	} else {
+		result.AuthnContextSensitive = types.BoolNull()
+	}
+	if in.EnableSessions != nil {
+		result.EnableSessions = types.BoolValue(*in.EnableSessions)
+	}
+	if in.Id != nil {
+		result.Id = types.StringValue(*in.Id)
+	} else {
+		result.Id = types.StringNull()
+	}
+	if in.IdleTimeoutMins != nil {
+		result.IdleTimeoutMins = types.NumberValue(big.NewFloat(float64(*in.IdleTimeoutMins)))
+	} else {
+		result.IdleTimeoutMins = types.NumberNull()
+	}
+	if in.MaxTimeoutMins != nil {
+		result.MaxTimeoutMins = types.NumberValue(big.NewFloat(float64(*in.MaxTimeoutMins)))
+	} else {
+		result.MaxTimeoutMins = types.NumberNull()
+	}
+	if in.Persistent != nil {
+		result.Persistent = types.BoolValue(*in.Persistent)
+	} else {
+		result.Persistent = types.BoolNull()
+	}
+	if in.TimeoutDisplayUnit != nil {
+		result.TimeoutDisplayUnit = types.StringValue(*in.TimeoutDisplayUnit)
+	} else {
+		result.TimeoutDisplayUnit = types.StringNull()
 	}
 
 	return &result
@@ -710,6 +710,92 @@ func flattenSessionSettings(in *pf.SessionSettings) *SessionSettingsData {
 		result.TrackAdapterSessionsForLogout = types.BoolValue(*in.TrackAdapterSessionsForLogout)
 	} else {
 		result.TrackAdapterSessionsForLogout = types.BoolNull()
+	}
+
+	return &result
+}
+
+func flattenPersistentGrantAttributes(in *[]*pf.PersistentGrantAttribute) *[]*PersistentGrantAttributeData {
+	results := []*PersistentGrantAttributeData{}
+	for _, data := range *in {
+		results = append(results, flattenPersistentGrantAttribute(data))
+	}
+	return &results
+}
+func flattenPersistentGrantAttribute(in *pf.PersistentGrantAttribute) *PersistentGrantAttributeData {
+	result := PersistentGrantAttributeData{}
+	if in.Name != nil {
+		result.Name = types.StringValue(*in.Name)
+	} else {
+		result.Name = types.StringNull()
+	}
+
+	return &result
+}
+
+func flattenPersistentGrantContract(in *pf.PersistentGrantContract) *PersistentGrantContractData {
+	result := PersistentGrantContractData{}
+	if in.CoreAttributes != nil {
+		result.CoreAttributes = flattenPersistentGrantAttributes(in.CoreAttributes)
+	}
+	if in.ExtendedAttributes != nil {
+		result.ExtendedAttributes = flattenPersistentGrantAttributes(in.ExtendedAttributes)
+	}
+
+	return &result
+}
+
+func flattenScopeEntrys(in *[]*pf.ScopeEntry) *[]*ScopeEntryData {
+	results := []*ScopeEntryData{}
+	for _, data := range *in {
+		results = append(results, flattenScopeEntry(data))
+	}
+	return &results
+}
+func flattenScopeEntry(in *pf.ScopeEntry) *ScopeEntryData {
+	result := ScopeEntryData{}
+	if in.Description != nil {
+		result.Description = types.StringValue(*in.Description)
+	} else {
+		result.Description = types.StringNull()
+	}
+	if in.Dynamic != nil {
+		result.Dynamic = types.BoolValue(*in.Dynamic)
+	} else {
+		result.Dynamic = types.BoolNull()
+	}
+	if in.Name != nil {
+		result.Name = types.StringValue(*in.Name)
+	} else {
+		result.Name = types.StringNull()
+	}
+
+	return &result
+}
+
+func flattenScopeGroupEntrys(in *[]*pf.ScopeGroupEntry) *[]*ScopeGroupEntryData {
+	results := []*ScopeGroupEntryData{}
+	for _, data := range *in {
+		results = append(results, flattenScopeGroupEntry(data))
+	}
+	return &results
+}
+func flattenScopeGroupEntry(in *pf.ScopeGroupEntry) *ScopeGroupEntryData {
+	result := ScopeGroupEntryData{}
+	if in.Description != nil {
+		result.Description = types.StringValue(*in.Description)
+	} else {
+		result.Description = types.StringNull()
+	}
+	if in.Name != nil {
+		result.Name = types.StringValue(*in.Name)
+	} else {
+		result.Name = types.StringNull()
+	}
+	if in.Scopes != nil {
+		result.Scopes = flattenStringList(*in.Scopes)
+	} else {
+		result.Scopes = types.ListNull(types.StringType)
 	}
 
 	return &result
@@ -1185,34 +1271,6 @@ func flattenParameterValues(in *pf.ParameterValues) *ParameterValuesData {
 	return &result
 }
 
-func flattenPersistentGrantAttributes(in *[]*pf.PersistentGrantAttribute) *[]*PersistentGrantAttributeData {
-	results := []*PersistentGrantAttributeData{}
-	for _, data := range *in {
-		results = append(results, flattenPersistentGrantAttribute(data))
-	}
-	return &results
-}
-func flattenPersistentGrantAttribute(in *pf.PersistentGrantAttribute) *PersistentGrantAttributeData {
-	result := PersistentGrantAttributeData{}
-	if in.Name != nil {
-		result.Name = types.StringValue(*in.Name)
-	}
-
-	return &result
-}
-
-func flattenPersistentGrantContract(in *pf.PersistentGrantContract) *PersistentGrantContractData {
-	result := PersistentGrantContractData{}
-	if in.CoreAttributes != nil {
-		result.CoreAttributes = flattenPersistentGrantAttributes(in.CoreAttributes)
-	}
-	if in.ExtendedAttributes != nil {
-		result.ExtendedAttributes = flattenPersistentGrantAttributes(in.ExtendedAttributes)
-	}
-
-	return &result
-}
-
 func flattenRedirectValidationLocalSettings(in *pf.RedirectValidationLocalSettings) *RedirectValidationLocalSettingsData {
 	result := RedirectValidationLocalSettingsData{}
 	if in.EnableInErrorResourceValidation != nil {
@@ -1299,54 +1357,6 @@ func flattenRedirectValidationSettingsWhitelistEntry(in *pf.RedirectValidationSe
 		result.ValidPath = types.StringValue(*in.ValidPath)
 	} else {
 		result.ValidPath = types.StringNull()
-	}
-
-	return &result
-}
-
-func flattenScopeEntrys(in *[]*pf.ScopeEntry) *[]*ScopeEntryData {
-	results := []*ScopeEntryData{}
-	for _, data := range *in {
-		results = append(results, flattenScopeEntry(data))
-	}
-	return &results
-}
-func flattenScopeEntry(in *pf.ScopeEntry) *ScopeEntryData {
-	result := ScopeEntryData{}
-	if in.Description != nil {
-		result.Description = types.StringValue(*in.Description)
-	}
-	if in.Dynamic != nil {
-		result.Dynamic = types.BoolValue(*in.Dynamic)
-	} else {
-		result.Dynamic = types.BoolNull()
-	}
-	if in.Name != nil {
-		result.Name = types.StringValue(*in.Name)
-	}
-
-	return &result
-}
-
-func flattenScopeGroupEntrys(in *[]*pf.ScopeGroupEntry) *[]*ScopeGroupEntryData {
-	results := []*ScopeGroupEntryData{}
-	for _, data := range *in {
-		results = append(results, flattenScopeGroupEntry(data))
-	}
-	return &results
-}
-func flattenScopeGroupEntry(in *pf.ScopeGroupEntry) *ScopeGroupEntryData {
-	result := ScopeGroupEntryData{}
-	if in.Description != nil {
-		result.Description = types.StringValue(*in.Description)
-	}
-	if in.Name != nil {
-		result.Name = types.StringValue(*in.Name)
-	}
-	if in.Scopes != nil {
-		result.Scopes = flattenStringList(*in.Scopes)
-	} else {
-		result.Scopes = types.ListNull(types.StringType)
 	}
 
 	return &result
