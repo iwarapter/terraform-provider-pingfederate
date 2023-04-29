@@ -82,7 +82,7 @@ data "pingfederate_version" "instance" {}
 
 locals {
   isSupported = length(regexall("(10|11).[0-9]", data.pingfederate_version.instance.version)) > 0
-  isPF11_2 = length(regexall("(11).[2-9]", data.pingfederate_version.instance.version)) > 0
+  isPF11_2    = length(regexall("(11).[2-9]", data.pingfederate_version.instance.version)) > 0
 }
 
 resource "pingfederate_notification_publisher" "demo" {
@@ -100,7 +100,7 @@ resource "pingfederate_notification_publisher" "demo" {
         value = "false"
       }
     }
-	dynamic "fields" {
+    dynamic "fields" {
       for_each = local.isPF11_2 ? [1] : []
       content {
         name  = "Sender Name"

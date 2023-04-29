@@ -1,6 +1,7 @@
 package framework
 
 import (
+	"context"
 	"math/big"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
@@ -653,7 +654,10 @@ func flattenGlobalAuthenticationSessionPolicy(in *pf.GlobalAuthenticationSession
 func flattenMetadataUrl(in *pf.MetadataUrl) *MetadataUrlData {
 	result := MetadataUrlData{}
 	if in.CertView != nil {
-		result.CertView = flattenCertView(in.CertView)
+		flat := flattenCertView(in.CertView)
+		result.CertView, _ = types.ObjectValueFrom(context.Background(), certViewAttrTypes, *flat)
+	} else {
+		result.CertView = types.ObjectNull(certViewAttrTypes)
 	}
 	if in.Id != nil {
 		result.Id = types.StringValue(*in.Id)

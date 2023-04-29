@@ -1714,7 +1714,7 @@ func resourceIdpBrowserSso() *schema.Resource {
 			},
 			"oauth_authentication_policy_contract_ref": {
 				Type:        schema.TypeList,
-				Required:    true,
+				Optional:    true,
 				MaxItems:    1,
 				Description: "The Authentication policy contract to map into for OAuth. The policy contract can subsequently be mapped into the OAuth persistent grant.",
 				Elem:        resourceLinkResource(),
