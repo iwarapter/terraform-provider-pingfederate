@@ -11,7 +11,7 @@ require (
 	github.com/hashicorp/terraform-plugin-mux v0.10.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.26.1
 	github.com/iwarapter/pingfederate-sdk-go v0.0.0-20221208185138-f071259ac55b
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.8.4
 )
 
 require (
