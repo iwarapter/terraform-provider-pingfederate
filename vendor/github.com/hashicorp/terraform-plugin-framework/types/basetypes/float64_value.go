@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package basetypes
 
 import (
@@ -21,6 +24,21 @@ type Float64Valuable interface {
 
 	// ToFloat64Value should convert the value type to a Float64.
 	ToFloat64Value(ctx context.Context) (Float64Value, diag.Diagnostics)
+}
+
+// Float64ValuableWithSemanticEquals extends Float64Valuable with semantic
+// equality logic.
+type Float64ValuableWithSemanticEquals interface {
+	Float64Valuable
+
+	// Float64SemanticEquals should return true if the given value is
+	// semantically equal to the current value. This logic is used to prevent
+	// Terraform data consistency errors and resource drift where a value change
+	// may have inconsequential differences, such as rounding.
+	//
+	// Only known values are compared with this method as changing a value's
+	// state implicitly represents a different value.
+	Float64SemanticEquals(context.Context, Float64Valuable) (bool, diag.Diagnostics)
 }
 
 // Float64Null creates a Float64 with a null value. Determine whether the value is
@@ -52,6 +70,16 @@ func NewFloat64Value(value float64) Float64Value {
 		state: attr.ValueStateKnown,
 		value: value,
 	}
+}
+
+// NewFloat64PointerValue creates a Float64 with a null value if nil or a known
+// value. Access the value via the Float64 type ValueFloat64Pointer method.
+func NewFloat64PointerValue(value *float64) Float64Value {
+	if value == nil {
+		return NewFloat64Null()
+	}
+
+	return NewFloat64Value(*value)
 }
 
 // Float64Value represents a 64-bit floating point value, exposed as a float64.
@@ -135,6 +163,16 @@ func (f Float64Value) String() string {
 // 0.0.
 func (f Float64Value) ValueFloat64() float64 {
 	return f.value
+}
+
+// ValueFloat64Pointer returns a pointer to the known float64 value, nil for a
+// null value, or a pointer to 0.0 for an unknown value.
+func (f Float64Value) ValueFloat64Pointer() *float64 {
+	if f.IsNull() {
+		return nil
+	}
+
+	return &f.value
 }
 
 // ToFloat64Value returns Float64.

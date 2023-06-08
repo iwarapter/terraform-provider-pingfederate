@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package fwserver
 
 import (
@@ -135,7 +138,9 @@ func AttributeModifyPlan(ctx context.Context, a fwschema.Attribute, req ModifyAt
 			return
 		}
 
-		planList, diags := coerceListValue(ctx, req.AttributePath, req.AttributePlan)
+		// Use response as the planned value may have been modified with list
+		// plan modifiers.
+		planList, diags := coerceListValue(ctx, req.AttributePath, resp.AttributePlan)
 
 		resp.Diagnostics.Append(diags...)
 
@@ -220,7 +225,9 @@ func AttributeModifyPlan(ctx context.Context, a fwschema.Attribute, req ModifyAt
 			return
 		}
 
-		planSet, diags := coerceSetValue(ctx, req.AttributePath, req.AttributePlan)
+		// Use response as the planned value may have been modified with set
+		// plan modifiers.
+		planSet, diags := coerceSetValue(ctx, req.AttributePath, resp.AttributePlan)
 
 		resp.Diagnostics.Append(diags...)
 
@@ -305,7 +312,9 @@ func AttributeModifyPlan(ctx context.Context, a fwschema.Attribute, req ModifyAt
 			return
 		}
 
-		planMap, diags := coerceMapValue(ctx, req.AttributePath, req.AttributePlan)
+		// Use response as the planned value may have been modified with map
+		// plan modifiers.
+		planMap, diags := coerceMapValue(ctx, req.AttributePath, resp.AttributePlan)
 
 		resp.Diagnostics.Append(diags...)
 
@@ -390,7 +399,9 @@ func AttributeModifyPlan(ctx context.Context, a fwschema.Attribute, req ModifyAt
 			return
 		}
 
-		planObject, diags := coerceObjectValue(ctx, req.AttributePath, req.AttributePlan)
+		// Use response as the planned value may have been modified with object
+		// plan modifiers.
+		planObject, diags := coerceObjectValue(ctx, req.AttributePath, resp.AttributePlan)
 
 		resp.Diagnostics.Append(diags...)
 
@@ -1756,23 +1767,4 @@ func NestedAttributeObjectPlanModify(ctx context.Context, o fwschema.NestedAttri
 	resp.Diagnostics.Append(diags...)
 
 	resp.AttributePlan = newPlanValue
-}
-
-func attributePlanModificationValueError(ctx context.Context, value attr.Value, description fwschemadata.DataDescription, err error) diag.Diagnostic {
-	return diag.NewErrorDiagnostic(
-		"Attribute Plan Modification "+description.Title()+" Value Error",
-		"An unexpected error occurred while fetching a "+value.Type(ctx).String()+" element value in the "+description.String()+". "+
-			"This is an issue with the provider and should be reported to the provider developers.\n\n"+
-			"Original Error: "+err.Error(),
-	)
-}
-
-func attributePlanModificationWalkError(schemaPath path.Path, value attr.Value) diag.Diagnostic {
-	return diag.NewAttributeErrorDiagnostic(
-		schemaPath,
-		"Attribute Plan Modification Walk Error",
-		"An unexpected error occurred while walking the schema for attribute plan modification. "+
-			"This is an issue with terraform-plugin-framework and should be reported to the provider developers.\n\n"+
-			fmt.Sprintf("unknown attribute value type (%T) at path: %s", value, schemaPath),
-	)
 }

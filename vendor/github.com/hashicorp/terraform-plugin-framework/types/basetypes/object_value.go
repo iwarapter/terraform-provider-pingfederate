@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package basetypes
 
 import (
@@ -14,19 +17,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
 )
 
-var (
-	_ ObjectTypable  = ObjectType{}
-	_ ObjectValuable = &ObjectValue{}
-)
-
-// ObjectTypable extends attr.Type for object types.
-// Implement this interface to create a custom ObjectType type.
-type ObjectTypable interface {
-	attr.Type
-
-	// ValueFromObject should convert the Object to an ObjectValuable type.
-	ValueFromObject(context.Context, ObjectValue) (ObjectValuable, diag.Diagnostics)
-}
+var _ ObjectValuable = &ObjectValue{}
 
 // ObjectValuable extends attr.Value for object value types.
 // Implement this interface to create a custom Object value type.
@@ -37,152 +28,20 @@ type ObjectValuable interface {
 	ToObjectValue(ctx context.Context) (ObjectValue, diag.Diagnostics)
 }
 
-// ObjectType is an AttributeType representing an object.
-type ObjectType struct {
-	AttrTypes map[string]attr.Type
-}
+// ObjectValuableWithSemanticEquals extends ObjectValuable with semantic
+// equality logic.
+type ObjectValuableWithSemanticEquals interface {
+	ObjectValuable
 
-// WithAttributeTypes returns a new copy of the type with its attribute types
-// set.
-func (o ObjectType) WithAttributeTypes(typs map[string]attr.Type) attr.TypeWithAttributeTypes {
-	return ObjectType{
-		AttrTypes: typs,
-	}
-}
-
-// AttributeTypes returns a copy of the type's attribute types.
-func (o ObjectType) AttributeTypes() map[string]attr.Type {
-	// Ensure callers cannot mutate the value
-	result := make(map[string]attr.Type, len(o.AttrTypes))
-
-	for key, value := range o.AttrTypes {
-		result[key] = value
-	}
-
-	return result
-}
-
-// TerraformType returns the tftypes.Type that should be used to
-// represent this type. This constrains what user input will be
-// accepted and what kind of data can be set in state. The framework
-// will use this to translate the AttributeType to something Terraform
-// can understand.
-func (o ObjectType) TerraformType(ctx context.Context) tftypes.Type {
-	attributeTypes := map[string]tftypes.Type{}
-	for k, v := range o.AttrTypes {
-		attributeTypes[k] = v.TerraformType(ctx)
-	}
-	return tftypes.Object{
-		AttributeTypes: attributeTypes,
-	}
-}
-
-// ValueFromTerraform returns an attr.Value given a tftypes.Value.
-// This is meant to convert the tftypes.Value into a more convenient Go
-// type for the provider to consume the data with.
-func (o ObjectType) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
-	if in.Type() == nil {
-		return NewObjectNull(o.AttrTypes), nil
-	}
-	if !in.Type().Equal(o.TerraformType(ctx)) {
-		return nil, fmt.Errorf("expected %s, got %s", o.TerraformType(ctx), in.Type())
-	}
-	if !in.IsKnown() {
-		return NewObjectUnknown(o.AttrTypes), nil
-	}
-	if in.IsNull() {
-		return NewObjectNull(o.AttrTypes), nil
-	}
-	attributes := map[string]attr.Value{}
-
-	val := map[string]tftypes.Value{}
-	err := in.As(&val)
-	if err != nil {
-		return nil, err
-	}
-
-	for k, v := range val {
-		a, err := o.AttrTypes[k].ValueFromTerraform(ctx, v)
-		if err != nil {
-			return nil, err
-		}
-		attributes[k] = a
-	}
-	// ValueFromTerraform above on each attribute should make this safe.
-	// Otherwise, this will need to do some Diagnostics to error conversion.
-	return NewObjectValueMust(o.AttrTypes, attributes), nil
-}
-
-// Equal returns true if `candidate` is also an ObjectType and has the same
-// AttributeTypes.
-func (o ObjectType) Equal(candidate attr.Type) bool {
-	other, ok := candidate.(ObjectType)
-	if !ok {
-		return false
-	}
-	if len(other.AttrTypes) != len(o.AttrTypes) {
-		return false
-	}
-	for k, v := range o.AttrTypes {
-		attr, ok := other.AttrTypes[k]
-		if !ok {
-			return false
-		}
-		if !v.Equal(attr) {
-			return false
-		}
-	}
-	return true
-}
-
-// ApplyTerraform5AttributePathStep applies the given AttributePathStep to the
-// object.
-func (o ObjectType) ApplyTerraform5AttributePathStep(step tftypes.AttributePathStep) (interface{}, error) {
-	attrName, ok := step.(tftypes.AttributeName)
-
-	if !ok {
-		return nil, fmt.Errorf("cannot apply step %T to ObjectType", step)
-	}
-
-	attrType, ok := o.AttrTypes[string(attrName)]
-
-	if !ok {
-		return nil, fmt.Errorf("undefined attribute name %s in ObjectType", attrName)
-	}
-
-	return attrType, nil
-}
-
-// String returns a human-friendly description of the ObjectType.
-func (o ObjectType) String() string {
-	var res strings.Builder
-	res.WriteString("types.ObjectType[")
-	keys := make([]string, 0, len(o.AttrTypes))
-	for k := range o.AttrTypes {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-	for pos, key := range keys {
-		if pos != 0 {
-			res.WriteString(", ")
-		}
-		res.WriteString(`"` + key + `":`)
-		res.WriteString(o.AttrTypes[key].String())
-	}
-	res.WriteString("]")
-	return res.String()
-}
-
-// ValueType returns the Value type.
-func (o ObjectType) ValueType(_ context.Context) attr.Value {
-	return ObjectValue{
-		attributeTypes: o.AttrTypes,
-	}
-}
-
-// ValueFromObject returns an ObjectValuable type given an Object.
-func (o ObjectType) ValueFromObject(_ context.Context, obj ObjectValue) (ObjectValuable, diag.Diagnostics) {
-	return obj, nil
+	// ObjectSemanticEquals should return true if the given value is
+	// semantically equal to the current value. This logic is used to prevent
+	// Terraform data consistency errors and resource drift where a value change
+	// may have inconsequential differences, such as computed attribute values
+	// changed by a remote system.
+	//
+	// Only known values are compared with this method as changing a value's
+	// state implicitly represents a different value.
+	ObjectSemanticEquals(context.Context, ObjectValuable) (bool, diag.Diagnostics)
 }
 
 // NewObjectNull creates a Object with a null value. Determine whether the value is
@@ -437,8 +296,9 @@ func (o ObjectValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error
 	}
 }
 
-// Equal returns true if the Object is considered semantically equal
-// (same type and same value) to the attr.Value passed as an argument.
+// Equal returns true if the given attr.Value is also an ObjectValue, has the
+// same value state, and contains exactly the same attribute types/values as
+// defined by the Equal method of those underlying types/values.
 func (o ObjectValue) Equal(c attr.Value) bool {
 	other, ok := c.(ObjectValue)
 

@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package basetypes
 
 import (
@@ -23,6 +26,21 @@ type Int64Valuable interface {
 	ToInt64Value(ctx context.Context) (Int64Value, diag.Diagnostics)
 }
 
+// Int64ValuableWithSemanticEquals extends Int64Valuable with semantic
+// equality logic.
+type Int64ValuableWithSemanticEquals interface {
+	Int64Valuable
+
+	// Int64SemanticEquals should return true if the given value is
+	// semantically equal to the current value. This logic is used to prevent
+	// Terraform data consistency errors and resource drift where a value change
+	// may have inconsequential differences, such as rounding.
+	//
+	// Only known values are compared with this method as changing a value's
+	// state implicitly represents a different value.
+	Int64SemanticEquals(context.Context, Int64Valuable) (bool, diag.Diagnostics)
+}
+
 // NewInt64Null creates a Int64 with a null value. Determine whether the value is
 // null via the Int64 type IsNull method.
 func NewInt64Null() Int64Value {
@@ -46,6 +64,16 @@ func NewInt64Value(value int64) Int64Value {
 		state: attr.ValueStateKnown,
 		value: value,
 	}
+}
+
+// NewInt64PointerValue creates a Int64 with a null value if nil or a known
+// value. Access the value via the Int64 type ValueInt64Pointer method.
+func NewInt64PointerValue(value *int64) Int64Value {
+	if value == nil {
+		return NewInt64Null()
+	}
+
+	return NewInt64Value(*value)
 }
 
 // Int64Value represents a 64-bit integer value, exposed as an int64.
@@ -125,10 +153,20 @@ func (i Int64Value) String() string {
 	return fmt.Sprintf("%d", i.value)
 }
 
-// ValueInt64 returns the known float64 value. If Int64 is null or unknown, returns
-// 0.0.
+// ValueInt64 returns the known int64 value. If Int64 is null or unknown, returns
+// 0.
 func (i Int64Value) ValueInt64() int64 {
 	return i.value
+}
+
+// ValueInt64Pointer returns a pointer to the known int64 value, nil for a
+// null value, or a pointer to 0 for an unknown value.
+func (i Int64Value) ValueInt64Pointer() *int64 {
+	if i.IsNull() {
+		return nil
+	}
+
+	return &i.value
 }
 
 // ToInt64Value returns Int64.
