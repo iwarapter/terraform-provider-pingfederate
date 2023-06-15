@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package basetypes
 
 import (
@@ -23,6 +26,21 @@ type BoolValuable interface {
 	ToBoolValue(ctx context.Context) (BoolValue, diag.Diagnostics)
 }
 
+// BoolValuableWithSemanticEquals extends BoolValuable with semantic
+// equality logic.
+type BoolValuableWithSemanticEquals interface {
+	BoolValuable
+
+	// BoolSemanticEquals should return true if the given value is
+	// semantically equal to the current value. This logic is used to prevent
+	// Terraform data consistency errors and resource drift where a value change
+	// may have inconsequential differences.
+	//
+	// Only known values are compared with this method as changing a value's
+	// state implicitly represents a different value.
+	BoolSemanticEquals(context.Context, BoolValuable) (bool, diag.Diagnostics)
+}
+
 // NewBoolNull creates a Bool with a null value. Determine whether the value is
 // null via the Bool type IsNull method.
 func NewBoolNull() BoolValue {
@@ -46,6 +64,16 @@ func NewBoolValue(value bool) BoolValue {
 		state: attr.ValueStateKnown,
 		value: value,
 	}
+}
+
+// NewBoolPointerValue creates a Bool with a null value if nil or a known
+// value. Access the value via the Bool type ValueBoolPointer method.
+func NewBoolPointerValue(value *bool) BoolValue {
+	if value == nil {
+		return NewBoolNull()
+	}
+
+	return NewBoolValue(*value)
 }
 
 // BoolValue represents a boolean value.
@@ -129,6 +157,16 @@ func (b BoolValue) String() string {
 // false.
 func (b BoolValue) ValueBool() bool {
 	return b.value
+}
+
+// ValueBoolPointer returns a pointer to the known bool value, nil for a null
+// value, or a pointer to false for an unknown value.
+func (b BoolValue) ValueBoolPointer() *bool {
+	if b.IsNull() {
+		return nil
+	}
+
+	return &b.value
 }
 
 // ToBoolValue returns Bool.
