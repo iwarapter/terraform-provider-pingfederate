@@ -9,6 +9,12 @@ PingFederate Terraform Provider
   ![GitHub release (latest by date)](https://img.shields.io/github/v/release/iwarapter/terraform-provider-pingfederate)
   [![Github All Releases](https://img.shields.io/github/downloads/iwarapter/terraform-provider-pingfederate/total.svg)]()
 
+---
+
+**The PingFederate provider has been archived, and is no longer under active maintainenance. Ping Identity are developing their own https://github.com/pingidentity/terraform-provider-pingfederate**
+
+---
+
 Requirements
 ------------
 
