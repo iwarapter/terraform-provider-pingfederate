@@ -90,7 +90,7 @@ func resourcePingFederateSpIdpConnectionResourceSchema() map[string]*schema.Sche
 			Optional:    true,
 		},
 		"idp_browser_sso": {
-			Type:        schema.TypeList,
+			Type:        schema.TypeSet,
 			Elem:        resourceIdpBrowserSso(),
 			Description: "The browser-based SSO settings used to communicate with your IdP.",
 			Optional:    true,
