@@ -7,13 +7,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-func AuthorizationServerSettingsSchema() schema.Schema {
+func datasourceAuthorizationServerSettings() schema.Schema {
 	return schema.Schema{
 		Description: `Authorization Server Settings attributes.`,
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Computed: true,
-			},
 			"activation_code_check_mode": schema.StringAttribute{
 				Description: `Determines whether the user is prompted to enter or confirm the activation code after authenticating or before. The default is AFTER_AUTHENTICATION.`,
 				Computed:    true,
@@ -89,6 +86,10 @@ func AuthorizationServerSettingsSchema() schema.Schema {
 					Attributes: listScopeEntry(),
 				},
 			},
+			"id": schema.StringAttribute{
+				Description: ``,
+				Computed:    true,
+			},
 			"include_issuer_in_authorization_response": schema.BoolAttribute{
 				Description: `Determines whether the authorization server's issuer value is added to the authorization response or not. The default value is false.`,
 				Computed:    true,
@@ -108,9 +109,6 @@ func AuthorizationServerSettingsSchema() schema.Schema {
 			"par_status": schema.StringAttribute{
 				Description: `The status of pushed authorization request support. The default value is ENABLED.`,
 				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOf("DISABLED", "ENABLED", "REQUIRED"),
-				},
 			},
 			"pending_authorization_timeout": schema.NumberAttribute{
 				Description: `The 'device_code' and 'user_code' timeout, in seconds.`,
@@ -118,9 +116,8 @@ func AuthorizationServerSettingsSchema() schema.Schema {
 			},
 			"persistent_grant_contract": schema.SingleNestedAttribute{
 				Description: `The persistent grant contract defines attributes that are associated with OAuth persistent grants.`,
-
-				Computed:   true,
-				Attributes: singlePersistentGrantContract(),
+				Computed:    true,
+				Attributes:  singlePersistentGrantContract(),
 			},
 			"persistent_grant_idle_timeout": schema.NumberAttribute{
 				Description: `The persistent grant idle timeout. The default value is 30 (days). -1 indicates an indefinite amount of time.`,
@@ -129,9 +126,6 @@ func AuthorizationServerSettingsSchema() schema.Schema {
 			"persistent_grant_idle_timeout_time_unit": schema.StringAttribute{
 				Description: `The persistent grant idle timeout time unit.`,
 				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOf("MINUTES", "DAYS", "HOURS"),
-				},
 			},
 			"persistent_grant_lifetime": schema.NumberAttribute{
 				Description: `The persistent grant lifetime. The default value is indefinite. -1 indicates an indefinite amount of time.`,
@@ -140,13 +134,9 @@ func AuthorizationServerSettingsSchema() schema.Schema {
 			"persistent_grant_lifetime_unit": schema.StringAttribute{
 				Description: `The persistent grant lifetime unit.`,
 				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOf("MINUTES", "DAYS", "HOURS"),
-				},
 			},
 			"persistent_grant_reuse_grant_types": schema.ListAttribute{
 				Description: `The grant types that the OAuth AS can reuse rather than creating a new grant for each request. Only 'IMPLICIT' or 'AUTHORIZATION_CODE' or 'RESOURCE_OWNER_CREDENTIALS' are valid grant types.`,
-
 				Computed:    true,
 				ElementType: types.StringType,
 			},
@@ -203,13 +193,314 @@ func AuthorizationServerSettingsSchema() schema.Schema {
 			"user_authorization_consent_page_setting": schema.StringAttribute{
 				Description: `User Authorization Consent Page setting to use PingFederate's internal consent page or an external system`,
 				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOf("INTERNAL", "ADAPTER"),
-				},
 			},
 			"user_authorization_url": schema.StringAttribute{
 				Description: `The URL used to generate 'verification_url' and 'verification_url_complete' values in a Device Authorization request`,
 				Computed:    true,
+			},
+		},
+	}
+}
+
+func datasourceJdbcDataStores() schema.Schema {
+	return schema.Schema{
+		Description: `List of available JDBC data stores`,
+		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: ``,
+				Computed:    true,
+			},
+			"items": schema.ListNestedAttribute{
+				Description: ``,
+				Computed:    true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: listJdbcDataStore(),
+				},
+			},
+		},
+	}
+}
+
+func datasourceLdapDataStores() schema.Schema {
+	return schema.Schema{
+		Description: `List of available LDAP data stores`,
+		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: ``,
+				Computed:    true,
+			},
+			"items": schema.ListNestedAttribute{
+				Description: ``,
+				Computed:    true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: listLdapDataStore(),
+				},
+			},
+		},
+	}
+}
+
+func listJdbcDataStore() map[string]schema.Attribute {
+	return map[string]schema.Attribute{
+		"allow_multi_value_attributes": schema.BoolAttribute{
+			Description: `Indicates that this data store can select more than one record from a column and return the results as a multi-value attribute.`,
+			Computed:    true,
+		},
+		"blocking_timeout": schema.NumberAttribute{
+			Description: `The amount of time in milliseconds a request waits to get a connection from the connection pool before it fails. Omitting this attribute will set the value to the connection pool default.`,
+			Computed:    true,
+		},
+		"connection_url": schema.StringAttribute{
+			Description: `The default location of the JDBC database. This field is required if no mapping for JDBC database location and tags are specified.`,
+			Computed:    true,
+		},
+		"connection_url_tags": schema.ListNestedAttribute{
+			Description: `The set of connection URLs and associated tags for this JDBC data store.`,
+			Computed:    true,
+			NestedObject: schema.NestedAttributeObject{
+				Attributes: listJdbcTagConfig(),
+			},
+		},
+		"driver_class": schema.StringAttribute{
+			Description: `The name of the driver class used to communicate with the source database.`,
+			Computed:    true,
+		},
+		"encrypted_password": schema.StringAttribute{
+			Description: `The encrypted password needed to access the database. If you do not want to update the stored value, this attribute should be passed back unchanged. Secret Reference may be provided in this field with format 'OBF:MGR:{secretManagerId}:{secretId}'.`,
+			Computed:    true,
+		},
+		"id": schema.StringAttribute{
+			Description: `The persistent, unique ID for the data store. It can be any combination of [a-zA-Z0-9._-]. This property is system-assigned if not specified.`,
+			Computed:    true,
+		},
+		"idle_timeout": schema.NumberAttribute{
+			Description: `The length of time in minutes the connection can be idle in the pool before it is closed. Omitting this attribute will set the value to the connection pool default.`,
+			Computed:    true,
+		},
+		"mask_attribute_values": schema.BoolAttribute{
+			Description: `Whether attribute values should be masked in the log.`,
+			Computed:    true,
+		},
+		"max_pool_size": schema.NumberAttribute{
+			Description: `The largest number of database connections in the connection pool for the given data store. Omitting this attribute will set the value to the connection pool default.`,
+			Computed:    true,
+		},
+		"min_pool_size": schema.NumberAttribute{
+			Description: `The smallest number of database connections in the connection pool for the given data store. Omitting this attribute will set the value to the connection pool default.`,
+			Computed:    true,
+		},
+		"name": schema.StringAttribute{
+			Description: `The data store name with a unique value across all data sources. Omitting this attribute will set the value to a combination of the connection url and the username.`,
+			Computed:    true,
+		},
+		"password": schema.StringAttribute{
+			Description: `The password needed to access the database. GETs will not return this attribute. To update this field, specify the new value in this attribute.`,
+			Computed:    true,
+		},
+		"type": schema.StringAttribute{
+			Description: `The data store type.`,
+			Computed:    true,
+			Validators: []validator.String{
+				stringvalidator.OneOf("LDAP", "PING_ONE_LDAP_GATEWAY", "JDBC", "CUSTOM"),
+			},
+		},
+		"user_name": schema.StringAttribute{
+			Description: `The name that identifies the user when connecting to the database.`,
+			Computed:    true,
+		},
+		"validate_connection_sql": schema.StringAttribute{
+			Description: `A simple SQL statement used by PingFederate at runtime to verify that the database connection is still active and to reconnect if needed.`,
+			Computed:    true,
+		},
+	}
+}
+
+func listJdbcTagConfig() map[string]schema.Attribute {
+	return map[string]schema.Attribute{
+		"connection_url": schema.StringAttribute{
+			Description: `The location of the JDBC database. `,
+			Computed:    true,
+		},
+		"default_source": schema.BoolAttribute{
+			Description: `Whether this is the default connection. Defaults to false if not specified.`,
+			Computed:    true,
+		},
+		"tags": schema.StringAttribute{
+			Description: `Tags associated with this data source.`,
+			Computed:    true,
+		},
+	}
+}
+
+func listLdapDataStore() map[string]schema.Attribute {
+	return map[string]schema.Attribute{
+		"binary_attributes": schema.ListAttribute{
+			Description: `The list of LDAP attributes to be handled as binary data.`,
+			Computed:    true,
+			ElementType: types.StringType,
+		},
+		"bind_anonymously": schema.BoolAttribute{
+			Description: `Whether username and password are required. The default value is false.`,
+			Computed:    true,
+		},
+		"connection_timeout": schema.NumberAttribute{
+			Description: `The maximum number of milliseconds that a connection attempt should be allowed to continue before returning an error. A value of -1 causes the pool to wait indefinitely. Omitting this attribute will set the value to the default value.`,
+			Computed:    true,
+		},
+		"create_if_necessary": schema.BoolAttribute{
+			Description: `Indicates whether temporary connections can be created when the Maximum Connections threshold is reached.`,
+			Computed:    true,
+		},
+		"dns_ttl": schema.NumberAttribute{
+			Description: `The maximum time in milliseconds that DNS information are cached. Omitting this attribute will set the value to the default value.`,
+			Computed:    true,
+		},
+		"encrypted_password": schema.StringAttribute{
+			Description: `The encrypted password credential required to access the data store.  If you do not want to update the stored value, this attribute should be passed back unchanged. Secret Reference may be provided in this field with format 'OBF:MGR:{secretManagerId}:{secretId}'.`,
+			Computed:    true,
+		},
+		"follow_ldap_referrals": schema.BoolAttribute{
+			Description: `Follow LDAP Referrals in the domain tree. The default value is false. This property does not apply to PingDirectory as this functionality is configured in PingDirectory.`,
+			Computed:    true,
+		},
+		"hostnames": schema.ListAttribute{
+			Description: `The default LDAP host names. This field is required if no mapping for host names and tags are specified.`,
+			Computed:    true,
+			ElementType: types.StringType,
+		},
+		"hostnames_tags": schema.ListNestedAttribute{
+			Description: `The set of host names and associated tags for this LDAP data store.`,
+			Computed:    true,
+			NestedObject: schema.NestedAttributeObject{
+				Attributes: listLdapTagConfig(),
+			},
+		},
+		"id": schema.StringAttribute{
+			Description: `The persistent, unique ID for the data store. It can be any combination of [a-zA-Z0-9._-]. This property is system-assigned if not specified.`,
+			Computed:    true,
+		},
+		"ldap_dns_srv_prefix": schema.StringAttribute{
+			Description: `The prefix value used to discover LDAP DNS SRV record. Omitting this attribute will set the value to the default value.`,
+			Computed:    true,
+		},
+		"ldap_type": schema.StringAttribute{
+			Description: `A type that allows PingFederate to configure many provisioning settings automatically. The 'UNBOUNDID_DS' type has been deprecated, please use the 'PING_DIRECTORY' type instead.`,
+			Computed:    true,
+			Validators: []validator.String{
+				stringvalidator.OneOf("ACTIVE_DIRECTORY", "ORACLE_DIRECTORY_SERVER", "ORACLE_UNIFIED_DIRECTORY", "UNBOUNDID_DS", "PING_DIRECTORY", "GENERIC"),
+			},
+		},
+		"ldaps_dns_srv_prefix": schema.StringAttribute{
+			Description: `The prefix value used to discover LDAPs DNS SRV record. Omitting this attribute will set the value to the default value.`,
+			Computed:    true,
+		},
+		"mask_attribute_values": schema.BoolAttribute{
+			Description: `Whether attribute values should be masked in the log.`,
+			Computed:    true,
+		},
+		"max_connections": schema.NumberAttribute{
+			Description: `The largest number of active connections that can remain in each pool without releasing extra ones. Omitting this attribute will set the value to the default value.`,
+			Computed:    true,
+		},
+		"max_wait": schema.NumberAttribute{
+			Description: `The maximum number of milliseconds the pool waits for a connection to become available when trying to obtain a connection from the pool. Omitting this attribute or setting a value of -1 causes the pool not to wait at all and to either create a new connection or produce an error (when no connections are available).`,
+			Computed:    true,
+		},
+		"min_connections": schema.NumberAttribute{
+			Description: `The smallest number of connections that can remain in each pool, without creating extra ones. Omitting this attribute will set the value to the default value.`,
+			Computed:    true,
+		},
+		"name": schema.StringAttribute{
+			Description: `The data store name with a unique value across all data sources. Omitting this attribute will set the value to a combination of the hostname(s) and the principal.`,
+			Computed:    true,
+		},
+		"password": schema.StringAttribute{
+			Description: `The password credential required to access the data store. GETs will not return this attribute. To update this field, specify the new value in this attribute.`,
+			Computed:    true,
+		},
+		"read_timeout": schema.NumberAttribute{
+			Description: `The maximum number of milliseconds a connection waits for a response to be returned before producing an error. A value of -1 causes the connection to wait indefinitely. Omitting this attribute will set the value to the default value.`,
+			Computed:    true,
+		},
+		"test_on_borrow": schema.BoolAttribute{
+			Description: `Indicates whether objects are validated before being borrowed from the pool.`,
+			Computed:    true,
+		},
+		"test_on_return": schema.BoolAttribute{
+			Description: `Indicates whether objects are validated before being returned to the pool.`,
+			Computed:    true,
+		},
+		"time_between_evictions": schema.NumberAttribute{
+			Description: `The frequency, in milliseconds, that the evictor cleans up the connections in the pool. A value of -1 disables the evictor. Omitting this attribute will set the value to the default value.`,
+			Computed:    true,
+		},
+		"type": schema.StringAttribute{
+			Description: `The data store type.`,
+			Computed:    true,
+			Validators: []validator.String{
+				stringvalidator.OneOf("LDAP", "PING_ONE_LDAP_GATEWAY", "JDBC", "CUSTOM"),
+			},
+		},
+		"use_dns_srv_records": schema.BoolAttribute{
+			Description: `Use DNS SRV Records to discover LDAP server information. The default value is false.`,
+			Computed:    true,
+		},
+		"use_ssl": schema.BoolAttribute{
+			Description: `Connects to the LDAP data store using secure SSL/TLS encryption (LDAPS). The default value is false.`,
+			Computed:    true,
+		},
+		"user_dn": schema.StringAttribute{
+			Description: `The username credential required to access the data store.`,
+			Computed:    true,
+		},
+		"verify_host": schema.BoolAttribute{
+			Description: `Verifies that the presented server certificate includes the address to which the client intended to establish a connection. Omitting this attribute will set the value to true.`,
+			Computed:    true,
+		},
+	}
+}
+
+func listLdapTagConfig() map[string]schema.Attribute {
+	return map[string]schema.Attribute{
+		"default_source": schema.BoolAttribute{
+			Description: `Whether this is the default connection. Defaults to false if not specified.`,
+			Computed:    true,
+		},
+		"hostnames": schema.ListAttribute{
+			Description: `The LDAP host names.`,
+			Computed:    true,
+			ElementType: types.StringType,
+		},
+		"tags": schema.StringAttribute{
+			Description: `Tags associated with this data source.`,
+			Computed:    true,
+		},
+	}
+}
+
+func listPersistentGrantAttribute() map[string]schema.Attribute {
+	return map[string]schema.Attribute{
+		"name": schema.StringAttribute{
+			Description: `The name of this attribute.`,
+			Computed:    true,
+		},
+	}
+}
+
+func singlePersistentGrantContract() map[string]schema.Attribute {
+	return map[string]schema.Attribute{
+		"core_attributes": schema.ListNestedAttribute{
+			Description: `This is a read-only list of persistent grant attributes and includes USER_KEY and USER_NAME. Changes to this field will be ignored.`,
+			Computed:    true,
+			NestedObject: schema.NestedAttributeObject{
+				Attributes: listPersistentGrantAttribute(),
+			},
+		},
+		"extended_attributes": schema.ListNestedAttribute{
+			Description: `A list of additional attributes for the persistent grant contract.`,
+			Computed:    true,
+			NestedObject: schema.NestedAttributeObject{
+				Attributes: listPersistentGrantAttribute(),
 			},
 		},
 	}
@@ -246,34 +537,6 @@ func listScopeGroupEntry() map[string]schema.Attribute {
 			Description: `The set of scopes for this scope group.`,
 			Computed:    true,
 			ElementType: types.StringType,
-		},
-	}
-}
-
-func listPersistentGrantAttribute() map[string]schema.Attribute {
-	return map[string]schema.Attribute{
-		"name": schema.StringAttribute{
-			Description: `The name of this attribute.`,
-			Computed:    true,
-		},
-	}
-}
-
-func singlePersistentGrantContract() map[string]schema.Attribute {
-	return map[string]schema.Attribute{
-		"core_attributes": schema.ListNestedAttribute{
-			Description: `This is a read-only list of persistent grant attributes and includes USER_KEY and USER_NAME. Changes to this field will be ignored.`,
-			Computed:    true,
-			NestedObject: schema.NestedAttributeObject{
-				Attributes: listPersistentGrantAttribute(),
-			},
-		},
-		"extended_attributes": schema.ListNestedAttribute{
-			Description: `A list of additional attributes for the persistent grant contract.`,
-			Computed:    true,
-			NestedObject: schema.NestedAttributeObject{
-				Attributes: listPersistentGrantAttribute(),
-			},
 		},
 	}
 }

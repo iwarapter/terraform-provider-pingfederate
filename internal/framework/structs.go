@@ -1,8 +1,6 @@
 package framework
 
-import (
-	"github.com/hashicorp/terraform-plugin-framework/types"
-)
+import "github.com/hashicorp/terraform-plugin-framework/types"
 
 type AccessTokenAttributeData struct {
 	MultiValued types.Bool   `tfsdk:"multi_valued"`
@@ -1567,6 +1565,11 @@ type JdbcDataStoreRepositoryData struct {
 	Type                          types.String                              `tfsdk:"type"`
 }
 
+type JdbcDataStoresData struct {
+	Id    types.String          `tfsdk:"id"`
+	Items *[]*JdbcDataStoreData `tfsdk:"items"`
+}
+
 type JdbcTagConfigData struct {
 	ConnectionUrl types.String `tfsdk:"connection_url"`
 	DefaultSource types.Bool   `tfsdk:"default_source"`
@@ -1745,6 +1748,11 @@ type LdapDataStoreRepositoryData struct {
 	JitRepositoryAttributeMapping map[string]*AttributeFulfillmentValueData `tfsdk:"jit_repository_attribute_mapping"`
 	Type                          types.String                              `tfsdk:"type"`
 	UniqueUserIdFilter            types.String                              `tfsdk:"unique_user_id_filter"`
+}
+
+type LdapDataStoresData struct {
+	Id    types.String          `tfsdk:"id"`
+	Items *[]*LdapDataStoreData `tfsdk:"items"`
 }
 
 type LdapInboundProvisioningUserRepositoryData struct {

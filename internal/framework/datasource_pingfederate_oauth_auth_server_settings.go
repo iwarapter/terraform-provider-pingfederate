@@ -34,7 +34,7 @@ func (p *pingfederateOauthAuthServerSettingsDataSource) Configure(ctx context.Co
 }
 
 func (p *pingfederateOauthAuthServerSettingsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = AuthorizationServerSettingsSchema()
+	resp.Schema = datasourceAuthorizationServerSettings()
 }
 
 func (p *pingfederateOauthAuthServerSettingsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
